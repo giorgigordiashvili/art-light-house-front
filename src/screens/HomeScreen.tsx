@@ -1,15 +1,22 @@
-'use client'
-import styled from 'styled-components'
+"use client";
+import styled from "styled-components";
+import Header from "../components/Header";
 
 const StyledComponent = styled.div`
   background: red;
   height: 200px;
-`
+`;
 
-type Props = {}
+type Props = {};
 
 function HomeScreen({}: Props) {
-  return <StyledComponent>HomeScreen</StyledComponent>
+  return (
+    <>
+      <StyledComponent>
+        <Header />
+      </StyledComponent>
+    </>
+  );
 }
 
-export default HomeScreen
+export default HomeScreen;
