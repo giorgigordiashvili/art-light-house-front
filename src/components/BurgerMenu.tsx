@@ -6,12 +6,15 @@ const StyledBurgeMenu = styled.div`
   width: 100%;
   position: fixed;
   bottom: 0;
-  display: flex;
+  display: none;
   flex-direction: column;
   color: white;
   background-color: #1c1c1c;
   padding: 20px 20px 72px 20px;
   z-index: 1000;
+  @media (max-width: 1080px) {
+    display: flex;
+  }
 `;
 
 const StyledBurgerMenuContent = styled.div`
