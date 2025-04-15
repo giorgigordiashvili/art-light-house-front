@@ -3,19 +3,35 @@ import UserMenuItem from "../components/UserMenuItem";
 import styled from "styled-components";
 
 const StyledContainer = styled.div`
-  width: 100%;
+  width: 304px;
   display: flex;
   flex-direction: column;
-  position: fixed;
-  bottom: 0;
-  background-color: #1c1c1c;
-  padding: 19px 20px 72px 20px;
-  z-index: 1000;
+  position: absolute;
+  top: 17px; 
+  right: 0;
+  background-color: transparent;
+  padding: 0;
+  z-index: 1001;
+
+  @media (max-width: 1080px) {
+    position: fixed;
+    width: 100%;
+    bottom: 0;
+    top: auto;
+    background-color: #1c1c1c;
+    padding: 19px 20px 72px 20px;
+    right: 0;
+  }
 `;
 
 const StyledUserMenuContent = styled.div`
   border: 1px solid #2c2c2c;
   border-radius: 14px;
+  background-color: #1c1c1c;
+
+  @media (max-width: 1080px) {
+    width: 100%;
+  }
 `;
 
 const StyledUserMenuItem = styled.div`
@@ -35,22 +51,22 @@ const UserMenu = () => {
     <StyledContainer>
       <StyledUserMenuContent>
         <StyledUserMenuItem>
-          <UserMenuItem text="ჩემი დეტალები" icon="/assets/detailsIcon.svg"></UserMenuItem>
+          <UserMenuItem text="ჩემი დეტალები" icon="/assets/detailsIcon.svg" />
         </StyledUserMenuItem>
         <StyledUserMenuItem>
-          <UserMenuItem text="ჩემი მისამართები" icon="/assets/addressIcon.svg"></UserMenuItem>
+          <UserMenuItem text="ჩემი მისამართები" icon="/assets/addressIcon.svg" />
         </StyledUserMenuItem>
         <StyledUserMenuItem>
-          <UserMenuItem text="ჩემი შეკვეთები" icon="/assets/orderIcon.svg"></UserMenuItem>
+          <UserMenuItem text="ჩემი შეკვეთები" icon="/assets/orderIcon.svg" />
         </StyledUserMenuItem>
         <StyledUserMenuItem>
-          <UserMenuItem text="გადახდის მეთოდები" icon="/assets/paymentIcon.svg"></UserMenuItem>
+          <UserMenuItem text="გადახდის მეთოდები" icon="/assets/paymentIcon.svg" />
         </StyledUserMenuItem>
         <StyledUserMenuItem>
-          <UserMenuItem text="პარამეტრები" icon="/assets/settingsIcon.svg"></UserMenuItem>
+          <UserMenuItem text="პარამეტრები" icon="/assets/settingsIcon.svg" />
         </StyledUserMenuItem>
         <StyledUserMenuItem>
-          <UserMenuItem text="გასვლა" icon="/assets/exitIcon.svg" color="red"></UserMenuItem>
+          <UserMenuItem text="გასვლა" icon="/assets/exitIcon.svg" color="red" />
         </StyledUserMenuItem>
       </StyledUserMenuContent>
     </StyledContainer>

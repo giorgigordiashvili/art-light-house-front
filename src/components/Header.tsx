@@ -12,9 +12,11 @@ import UserMenu from "./UserMenu";
 const StyledContainer = styled.div`
   position: sticky;
   top: 0;
-  padding: 20px 0;
-  background-color: #000;
+  padding: 20px 20px;
+  background-color: rgba(11, 11, 11, 0.34);
+  backdrop-filter: blur(98.80000305175781px);
   z-index: 1001;
+
   @media (max-width: 1080px) {
     padding: 17px 0;
   }
@@ -24,6 +26,7 @@ const StyledNavigation = styled.div`
   display: flex;
   align-items: center;
   gap: 33px;
+
   @media (max-width: 1080px) {
     display: none;
   }
@@ -39,6 +42,7 @@ const StyledVerticalLine = styled.div`
   width: 1px;
   height: 18px;
   background-color: #3f3e3d;
+
   @media (max-width: 1080px) {
     display: none;
   }
@@ -53,9 +57,20 @@ const StyledUserActions = styled.div`
   align-items: center;
   gap: 18px;
   margin-left: 18px;
+
   @media (max-width: 1080px) {
     gap: 20px;
     margin-left: 0;
+  }
+`;
+
+const ResponsiveGapWrapper = styled.div`
+  display: flex;
+  gap: 0;
+
+  @media (max-width: 1080px) {
+    gap: 20px;
+    align-items: center;
   }
 `;
 
@@ -67,6 +82,23 @@ const Overlay = styled.div`
   bottom: 0;
   background-color: #00000080;
   z-index: 1000;
+`;
+
+const StyledTestWrapper = styled.div`
+  @media (max-width: 1332px) {
+    padding-inline: 20px;
+  }
+`;
+
+const StyledTest = styled.div`
+  width: 1292px;
+  display: flex;
+  position: relative;
+  margin: auto;
+
+  @media (max-width: 1332px) {
+    width: 100%;
+  }
 `;
 
 const Header = () => {
@@ -147,18 +179,20 @@ const Header = () => {
               <StyledUserActions>
                 <StyledVerticalLine />
                 <ShoppingCartIcon itemCount={cartItemCount} />
-                <div ref={authButtonRef}>
-                  <AuthorizationButton
-                    isAuthorized={isUserAuthorized}
-                    username={currentUser.username}
-                    userImage={currentUser.userImage}
-                    text="ავტორიზაცია"
-                    onClick={toggleUserMenu}
-                  />
-                </div>
-                <div ref={burgerIconRef}>
-                  <BurgerIcon onClick={toggleBurgerMenu} />
-                </div>
+                <ResponsiveGapWrapper>
+                  <div ref={authButtonRef}>
+                    <AuthorizationButton
+                      isAuthorized={isUserAuthorized}
+                      username={currentUser.username}
+                      userImage={currentUser.userImage}
+                      text="ავტორიზაცია"
+                      onClick={toggleUserMenu}
+                    />
+                  </div>
+                  <div ref={burgerIconRef}>
+                    <BurgerIcon onClick={toggleBurgerMenu} />
+                  </div>
+                </ResponsiveGapWrapper>
               </StyledUserActions>
             </StyledActionsWrapper>
           </StyledContentWrapper>
@@ -174,14 +208,18 @@ const Header = () => {
         </>
       )}
 
-      {isUserMenuOpen && (
-        <>
-          <Overlay />
-          <div ref={userMenuRef}>
-            <UserMenu />
-          </div>
-        </>
-      )}
+      <StyledTestWrapper>
+        <StyledTest>
+          {isUserMenuOpen && (
+            <>
+              <Overlay />
+              <div ref={userMenuRef}>
+                <UserMenu />
+              </div>
+            </>
+          )}
+        </StyledTest>
+      </StyledTestWrapper>
     </>
   );
 };
