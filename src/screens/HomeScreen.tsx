@@ -4,12 +4,10 @@ import Header from "../components/Header";
 
 const StyledComponent = styled.div`
   background: red;
-  height: 200px;
+  height: 1920px;
 `;
 
-type Props = {};
-
-function HomeScreen({}: Props) {
+function HomeScreen() {
   return (
     <>
       <StyledComponent>

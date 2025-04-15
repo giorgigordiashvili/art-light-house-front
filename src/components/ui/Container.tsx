@@ -6,7 +6,7 @@ const StyledContainer = styled.div`
   margin: auto;
   @media (max-width: 1080px) {
     width: 100%;
-    margin: 0 20px;
+    padding-inline: 20px;
   }
 `;
 type Props = {
