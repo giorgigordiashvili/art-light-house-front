@@ -1,19 +1,19 @@
 @font-face {
-  font-family: 'Helvetica';
-  src: url('/fonts/helgeo45.ttf') format('truetype');
+  font-family: "Helvetica";
+  src: url("/fonts/helgeo45.ttf") format("truetype");
   font-weight: normal;
   font-style: normal;
 }
 
 @font-face {
-  font-family: 'Helvetica';
-  src: url('/fonts/helgeo75.ttf') format('truetype');
+  font-family: "Helvetica";
+  src: url("/fonts/helgeo75.ttf") format("truetype");
   font-weight: 700;
   font-style: normal;
 }
 
 body {
-  font-family: 'Helvetica', sans-serif;
+  font-family: "Helvetica", sans-serif;
 }
 
 /* 1. Use a more-intuitive box-sizing model */
@@ -93,30 +93,29 @@ h6 {
 }
 
 @font-face {
-  font-family: 'HelGeo45';
-  src: url('/fonts/helgeo45.ttf') format('truetype');
+  font-family: "HelGeo45";
+  src: url("/fonts/helgeo45.ttf") format("truetype");
   font-weight: normal;
   font-style: normal;
 }
 
 @font-face {
-  font-family: 'HelGeo75';
-  src: url('/fonts/helgeo75.ttf') format('truetype');
+  font-family: "HelGeo75";
+  src: url("/fonts/helgeo75.ttf") format("truetype");
   font-weight: bold;
   font-style: normal;
 }
 
 @font-face {
-  font-family: 'HelRom';
-  src: url('/fonts/helrom.ttf') format('truetype');
+  font-family: "HelRom";
+  src: url("/fonts/helrom.ttf") format("truetype");
   font-weight: normal;
   font-style: normal;
 }
 
 @font-face {
-  font-family: 'HelveticaNeueGeo';
-  src: url('/fonts/helvetica-neue-lt-geo-55-ro.ttf') format('truetype');
+  font-family: "HelveticaNeueGeo";
+  src: url("/fonts/helvetica-neue-lt-geo-55-ro.ttf") format("truetype");
   font-weight: normal;
   font-style: normal;
 }
-

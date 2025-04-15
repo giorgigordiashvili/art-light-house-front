@@ -1,6 +1,6 @@
-import React from 'react';
-import styled from 'styled-components';
-import Image from 'next/image';
+import React from "react";
+import styled from "styled-components";
+import Image from "next/image";
 
 const StyledButton = styled.div`
   width: 141px;
@@ -9,7 +9,7 @@ const StyledButton = styled.div`
   align-items: center;
   justify-content: center;
   border-radius: 31px;
-  background-color: #FFCB40;
+  background-color: #ffcb40;
   color: #000000;
   font-family: HelRom;
   font-weight: 500;
@@ -91,7 +91,7 @@ type Props = {
 
 const AuthorizationButton = ({ text, username, userImage, isAuthorized, onClick }: Props) => {
   return (
-    <StyledButton className={isAuthorized ? 'authorized' : 'unauthorized'} onClick={onClick}>
+    <StyledButton className={isAuthorized ? "authorized" : "unauthorized"} onClick={onClick}>
       {isAuthorized && userImage && (
         <Image src={userImage} alt="User Profile" width={30} height={30} />
       )}
@@ -114,5 +114,3 @@ const AuthorizationButton = ({ text, username, userImage, isAuthorized, onClick 
 };
 
 export default AuthorizationButton;
-
-

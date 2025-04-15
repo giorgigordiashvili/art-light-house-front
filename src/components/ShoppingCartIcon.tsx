@@ -1,5 +1,5 @@
-import React from 'react';
-import Image from 'next/image';
+import React from "react";
+import Image from "next/image";
 import styled from "styled-components";
 
 const StyledContainer = styled.div`
@@ -23,20 +23,16 @@ const StyledCount = styled.div`
 `;
 
 type Props = {
-    itemCount?: number;
+  itemCount?: number;
 };
 
 const ShoppingCartIcon = ({ itemCount = 0 }: Props) => {
-    return (
-        <StyledContainer>
-            <Image src="/assets/CartIcon.svg" alt="shopping-cart-icon" width={24} height={24} />
-            {itemCount > 0 && (
-                <StyledCount>
-                    {itemCount}
-                </StyledCount>
-            )}
-        </StyledContainer>
-    );
+  return (
+    <StyledContainer>
+      <Image src="/assets/CartIcon.svg" alt="shopping-cart-icon" width={24} height={24} />
+      {itemCount > 0 && <StyledCount>{itemCount}</StyledCount>}
+    </StyledContainer>
+  );
 };
 
 export default ShoppingCartIcon;

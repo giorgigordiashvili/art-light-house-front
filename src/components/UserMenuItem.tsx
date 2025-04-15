@@ -1,9 +1,9 @@
-import React from 'react';
-import styled from 'styled-components';
-import Image from 'next/image';
+import React from "react";
+import styled from "styled-components";
+import Image from "next/image";
 
 interface StyledContainerProps {
-    textcolor?: string;
+  textcolor?: string;
 }
 
 const StyledContainer = styled.div<StyledContainerProps>`
@@ -17,24 +17,24 @@ const StyledContainer = styled.div<StyledContainerProps>`
   display: flex;
   align-items: center;
   gap: 18px;
-  color: ${(props) => props.textcolor || '#EDEDEDCC'};
+  color: ${(props) => props.textcolor || "#EDEDEDCC"};
 `;
 
 type Props = {
-    text: string;
-    icon: string;
-    color?: 'white' | 'red';
+  text: string;
+  icon: string;
+  color?: "white" | "red";
 };
 
 const UserMenuItem = ({ text, icon, color }: Props) => {
-    const textcolor = color === 'white' ? 'white' : color === 'red' ? '#FF4545' : undefined;
+  const textcolor = color === "white" ? "white" : color === "red" ? "#FF4545" : undefined;
 
-    return (
-        <StyledContainer textcolor={textcolor}>
-            <Image src={icon} alt="menu icon" width={24} height={24} />
-            <p>{text}</p>
-        </StyledContainer>
-    );
+  return (
+    <StyledContainer textcolor={textcolor}>
+      <Image src={icon} alt="menu icon" width={24} height={24} />
+      <p>{text}</p>
+    </StyledContainer>
+  );
 };
 
 export default UserMenuItem;

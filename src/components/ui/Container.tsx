@@ -14,11 +14,7 @@ type Props = {
 };
 
 function Container({ children }: Props) {
-  return (
-    <StyledContainer>
-      {children}
-    </StyledContainer>
-  );
+  return <StyledContainer>{children}</StyledContainer>;
 }
 
 export default Container;

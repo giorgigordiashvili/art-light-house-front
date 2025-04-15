@@ -1,13 +1,13 @@
-import React, { useEffect, useRef, useState } from 'react';
-import styled from 'styled-components';
-import Container from './ui/Container';
-import Logo from './Logo';
-import NavItem from './NavItem';
-import ShoppingCartIcon from './ShoppingCartIcon';
-import AuthorizationButton from './AuthorizationButton';
-import BurgerIcon from './BurgerIcon';
-import BurgerMenu from './BurgerMenu';
-import UserMenu from './UserMenu';
+import React, { useEffect, useRef, useState } from "react";
+import styled from "styled-components";
+import Container from "./ui/Container";
+import Logo from "./Logo";
+import NavItem from "./NavItem";
+import ShoppingCartIcon from "./ShoppingCartIcon";
+import AuthorizationButton from "./AuthorizationButton";
+import BurgerIcon from "./BurgerIcon";
+import BurgerMenu from "./BurgerMenu";
+import UserMenu from "./UserMenu";
 
 const StyledContainer = styled.div`
   position: sticky;
@@ -79,17 +79,17 @@ const Header = () => {
   const authButtonRef = useRef<HTMLDivElement>(null);
 
   const toggleBurgerMenu = () => {
-    setIsBurgerMenuOpen(prev => !prev);
+    setIsBurgerMenuOpen((prev) => !prev);
   };
 
   const toggleUserMenu = () => {
-    setIsUserMenuOpen(prev => !prev);
+    setIsUserMenuOpen((prev) => !prev);
   };
 
   useEffect(() => {
-    document.body.style.overflow = isBurgerMenuOpen || isUserMenuOpen ? 'hidden' : 'visible';
+    document.body.style.overflow = isBurgerMenuOpen || isUserMenuOpen ? "hidden" : "visible";
     return () => {
-      document.body.style.overflow = 'visible';
+      document.body.style.overflow = "visible";
     };
   }, [isBurgerMenuOpen, isUserMenuOpen]);
 
@@ -106,8 +106,7 @@ const Header = () => {
         setIsBurgerMenuOpen(false);
       }
 
-      const clickedOutsideUserMenu =
-        userMenuRef.current && !userMenuRef.current.contains(target);
+      const clickedOutsideUserMenu = userMenuRef.current && !userMenuRef.current.contains(target);
       const clickedOutsideAuthButton =
         authButtonRef.current && !authButtonRef.current.contains(target);
 
@@ -117,19 +116,19 @@ const Header = () => {
     };
 
     if (isBurgerMenuOpen || isUserMenuOpen) {
-      document.addEventListener('mousedown', handleClickOutside);
+      document.addEventListener("mousedown", handleClickOutside);
     }
 
     return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener("mousedown", handleClickOutside);
     };
   }, [isBurgerMenuOpen, isUserMenuOpen]);
 
   const cartItemCount = 4;
   const isUserAuthorized = true;
   const currentUser = {
-    username: 'Nikoloz Baratashvili',
-    userImage: '/assets/user.svg',
+    username: "Nikoloz Baratashvili",
+    userImage: "/assets/user.svg",
   };
 
   return (
