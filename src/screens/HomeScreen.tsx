@@ -1,6 +1,5 @@
 "use client";
 import styled from "styled-components";
-import Header from "../components/Header";
 
 const StyledComponent = styled.div`
   background: red;
@@ -11,7 +10,6 @@ function HomeScreen() {
   return (
     <>
       <StyledComponent>
-        <Header />
       </StyledComponent>
     </>
   );

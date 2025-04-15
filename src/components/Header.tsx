@@ -10,7 +10,8 @@ import BurgerMenu from "./BurgerMenu";
 import UserMenu from "./UserMenu";
 
 const StyledContainer = styled.div`
-  position: sticky;
+  position: fixed;
+  width: 100%;
   top: 0;
   padding: 20px 20px;
   background-color: rgba(11, 11, 11, 0.34);
