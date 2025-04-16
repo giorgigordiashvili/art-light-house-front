@@ -1,5 +1,5 @@
 import React from "react";
-import UserMenuItem from "../components/UserMenuItem";
+import UserMenuItem from "./UserMenuItem";
 import styled from "styled-components";
 
 const StyledContainer = styled.div`
@@ -7,7 +7,7 @@ const StyledContainer = styled.div`
   display: flex;
   flex-direction: column;
   position: absolute;
-  top: 99px; 
+  top: 99px;
   right: 0;
   background-color: transparent;
   padding: 0;
