@@ -7,7 +7,7 @@ const StyledContainer = styled.div`
   display: flex;
   flex-direction: column;
   position: absolute;
-  top: 17px; 
+  top: 99px; 
   right: 0;
   background-color: transparent;
   padding: 0;
