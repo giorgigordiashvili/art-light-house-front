@@ -16,7 +16,7 @@ const StyledContainer = styled.div`
   padding: 20px 20px;
   background-color: rgba(11, 11, 11, 0.34);
   backdrop-filter: blur(98.80000305175781px);
-  border-bottom: 1px solid #FFFFFF14;
+  border-bottom: 1px solid #ffffff14;
   z-index: 1001;
   @media (max-width: 1080px) {
     padding: 20px 0;

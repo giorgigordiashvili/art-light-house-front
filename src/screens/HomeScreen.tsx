@@ -9,8 +9,7 @@ const StyledComponent = styled.div`
 function HomeScreen() {
   return (
     <>
-      <StyledComponent>
-      </StyledComponent>
+      <StyledComponent></StyledComponent>
     </>
   );
 }
