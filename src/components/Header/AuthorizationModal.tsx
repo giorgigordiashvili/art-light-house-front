@@ -59,10 +59,9 @@ const StyledForgetPassword = styled.div`
   margin-top: 10px;
 `;
 
-const StyledPrimaryButton = styled.div<{ isRegister: boolean }>`
-  margin-top: ${({ isRegister }) => (isRegister ? "50px" : "24px")};
+const StyledPrimaryButton = styled.div<{ $isRegister: boolean }>`
+  margin-top: ${({ $isRegister }) => ($isRegister ? "50px" : "24px")};
 `;
-
 
 const AuthorizationModal: React.FC<AuthorizationModalProps> = ({ onClose, onRecoverPasswordClick, onRegisterSuccess }) => {
   const [activeTab, setActiveTab] = useState<"auth" | "register">("auth");
@@ -107,7 +106,7 @@ const AuthorizationModal: React.FC<AuthorizationModalProps> = ({ onClose, onReco
             <AdditionalAction text="დაგავიწყდა პაროლი?" />
           </StyledForgetPassword>
         )}
-        <StyledPrimaryButton isRegister={activeTab === "register"}>
+        <StyledPrimaryButton $isRegister={activeTab === "register"}>
           <PrimaryButton
             text={activeTab === "auth" ? "შესვლა" : "რეგისტრაცია"}
             width="460px"
@@ -120,6 +119,7 @@ const AuthorizationModal: React.FC<AuthorizationModalProps> = ({ onClose, onReco
             }}
           />
         </StyledPrimaryButton>
+
       </StyledModal>
     </StyledContainer>
   );
