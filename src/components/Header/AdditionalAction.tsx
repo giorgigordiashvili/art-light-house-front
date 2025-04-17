@@ -13,12 +13,13 @@ const StyledContainer = styled.div`
 
 type Props = {
   text: string;
+  onClick?: () => void;
 };
 
-const AdditionalAction = (props: Props) => {
+const AdditionalAction = ({ text, onClick }: Props) => {
   return (
-    <StyledContainer>
-      <p>{props.text}</p>
+    <StyledContainer onClick={onClick}>
+      <p>{text}</p>
     </StyledContainer>
   );
 };

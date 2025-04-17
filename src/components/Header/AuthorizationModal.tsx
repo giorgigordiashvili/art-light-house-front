@@ -10,6 +10,7 @@ import AdditionalAction from "./AdditionalAction";
 
 interface AuthorizationModalProps {
   onClose: () => void;
+  onRecoverPasswordClick: () => void;
 }
 
 const StyledContainer = styled.div`
@@ -60,7 +61,7 @@ const StyledPrimaryButton = styled.div`
   margin-top: 24px;
 `;
 
-const AuthorizationModal: React.FC<AuthorizationModalProps> = ({ onClose }) => {
+const AuthorizationModal: React.FC<AuthorizationModalProps> = ({ onClose, onRecoverPasswordClick }) => {
   const [activeTab, setActiveTab] = useState<"auth" | "register">("auth");
 
   return (
@@ -95,7 +96,7 @@ const AuthorizationModal: React.FC<AuthorizationModalProps> = ({ onClose }) => {
           <ModalInput placeholder="თქვენი პაროლი" />
         </StyledModalInput>
 
-        <StyledForgetPassword>
+        <StyledForgetPassword onClick={onRecoverPasswordClick}>
           <AdditionalAction text="დაგავიწყდა პაროლი?" />
         </StyledForgetPassword>
 
