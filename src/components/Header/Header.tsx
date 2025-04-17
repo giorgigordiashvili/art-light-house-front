@@ -111,6 +111,7 @@ const Header = () => {
   const [isBurgerMenuOpen, setIsBurgerMenuOpen] = useState(false);
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
   const [isRecoverPasswordOpen, setIsRecoverPasswordOpen] = useState(false);
+  const [isRegistrationCodeOpen, setIsRegistrationCodeOpen] = useState(false);
 
   const burgerMenuRef = useRef<HTMLDivElement>(null);
   const burgerIconRef = useRef<HTMLDivElement>(null);
@@ -247,8 +248,11 @@ const Header = () => {
                       setIsUserMenuOpen(false);
                       setIsRecoverPasswordOpen(true);
                     }}
+                    onRegisterSuccess={() => {
+                      setIsUserMenuOpen(false);
+                      setIsRegistrationCodeOpen(true);
+                    }}
                   />
-
                 )}
               </div>
             </>
@@ -259,6 +263,18 @@ const Header = () => {
         <>
           <Overlay onClick={() => setIsRecoverPasswordOpen(false)} />
           <RecoverPasswordModal onClose={() => setIsRecoverPasswordOpen(false)} />
+        </>
+      )}
+      {isRegistrationCodeOpen && (
+        <>
+          <Overlay onClick={() => setIsRegistrationCodeOpen(false)} />
+          <RegistrationCodeModal
+            onClose={() => setIsRegistrationCodeOpen(false)}
+            onReturn={() => {
+              setIsRegistrationCodeOpen(false);
+              setIsUserMenuOpen(true);
+            }}
+          />
         </>
       )}
     </>

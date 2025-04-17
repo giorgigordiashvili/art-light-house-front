@@ -11,7 +11,9 @@ import AdditionalAction from "./AdditionalAction";
 interface AuthorizationModalProps {
   onClose: () => void;
   onRecoverPasswordClick?: () => void;
+  onRegisterSuccess?: () => void; // <-- Add this
 }
+
 
 const StyledContainer = styled.div`
   position: fixed;
@@ -61,7 +63,7 @@ const StyledPrimaryButton = styled.div`
   margin-top: 24px;
 `;
 
-const AuthorizationModal: React.FC<AuthorizationModalProps> = ({ onClose, onRecoverPasswordClick }) => {
+const AuthorizationModal: React.FC<AuthorizationModalProps> = ({ onClose, onRecoverPasswordClick, onRegisterSuccess}) => {
   const [activeTab, setActiveTab] = useState<"auth" | "register">("auth");
 
   return (
@@ -97,8 +99,8 @@ const AuthorizationModal: React.FC<AuthorizationModalProps> = ({ onClose, onReco
         </StyledModalInput>
 
         <StyledForgetPassword onClick={() => {
-          onClose(); 
-          onRecoverPasswordClick?.(); 
+          onClose();
+          onRecoverPasswordClick?.();
         }}>
           <AdditionalAction text="დაგავიწყდა პაროლი?" />
         </StyledForgetPassword>
@@ -109,7 +111,14 @@ const AuthorizationModal: React.FC<AuthorizationModalProps> = ({ onClose, onReco
             text={activeTab === "auth" ? "შესვლა" : "რეგისტრაცია"}
             width="460px"
             height="50px"
+            onClick={() => {
+              if (activeTab === "register") {
+                onClose(); // Close current modal
+                onRegisterSuccess?.(); // Open RegistrationCodeModal
+              }
+            }}
           />
+
         </StyledPrimaryButton>
       </StyledModal>
     </StyledContainer>

@@ -1,4 +1,4 @@
-import React from 'react'
+import React from 'react';
 import styled from 'styled-components';
 import PrimaryButton from '../PrimaryButton/PrimaryButton';
 import ModalInput from './ModalInput';
@@ -18,7 +18,8 @@ const StyledContainer = styled.div`
     left: 50%;
     transform: translate(-50%);
     z-index: 1002;
-`
+    cursor: pointer;
+`;
 
 const StyledCloseIcon = styled.div`
   position: absolute;
@@ -39,48 +40,61 @@ const StyledAdditionalAction = styled.div`
     margin-top: 24px;
 `;
 
-
 const StyledDescription = styled.div`
     display: flex;
     justify-content: center;
     max-width: 460px;
     margin-top: 31px;
     text-align: center;
-`
+`;
 
 const StyledInput = styled.div`
     margin-top: 52px;
-`
+`;
 
 const StyledPrimaryButton = styled.div`
-margin-top: 41px;
-`
+  margin-top: 41px;
+`;
 
-const RegistrationCodeModal = () => {
+const RegistrationCodeModal = ({
+    onClose,
+    onReturn,
+}: {
+    onClose: () => void;
+    onReturn: () => void;
+}) => {
+    const handleClickInside = (e: React.MouseEvent) => {
+        e.stopPropagation();
+    };
+
     return (
-        <StyledContainer>
-            <StyledCloseIcon>
+        <StyledContainer onClick={handleClickInside}>
+            <StyledCloseIcon onClick={onClose}>
                 <CloseIcon />
             </StyledCloseIcon>
-            <StyledReturnIcon>
+            <StyledReturnIcon onClick={onReturn}>
                 <ReturnIcon />
             </StyledReturnIcon>
-            <ModalTitle text='რეგისტრაცია' />
+            <ModalTitle text="რეგისტრაცია" />
             <StyledDescription>
-                <ModalDescription variant='alt' text='მითიტებულ ელ.ფოსტაზე “gagi.murjikneli@gmail.com” გაიგზავნა ერთჯერადი დადასტურების კოდი. გთხოვთ შეიყვანოთ.' />
+                <ModalDescription
+                    variant="alt"
+                    text="მითიტებულ ელ.ფოსტაზე “gagi.murjikneli@gmail.com” გაიგზავნა ერთჯერადი დადასტურების კოდი. გთხოვთ შეიყვანოთ."
+                />
             </StyledDescription>
             <StyledInput>
-                <InputTitle text='ერჯერადი კოდი' />
-                <ModalInput placeholder='ჩაწერე ერთჯერადი კოდი აქ' />
+                <InputTitle text="ერჯერადი კოდი" />
+                <ModalInput placeholder="ჩაწერე ერთჯერადი კოდი აქ" />
             </StyledInput>
             <StyledAdditionalAction>
-                <AdditionalAction text='თავიდან გაგზავნა' />
+                <AdditionalAction text="თავიდან გაგზავნა" />
             </StyledAdditionalAction>
             <StyledPrimaryButton>
-                <PrimaryButton text='დადასტურება' width='460px' height='50px' />
+                <PrimaryButton text="დადასტურება" width="460px" height="50px" />
             </StyledPrimaryButton>
         </StyledContainer>
-    )
-}
+    );
+};
 
-export default RegistrationCodeModal
+export default RegistrationCodeModal;
+
