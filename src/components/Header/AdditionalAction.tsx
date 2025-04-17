@@ -15,7 +15,7 @@ type Props = {
   text: string;
 };
 
-const ForgetPassword = (props: Props) => {
+const AdditionalAction = (props: Props) => {
   return (
     <StyledContainer>
       <p>{props.text}</p>
@@ -23,4 +23,4 @@ const ForgetPassword = (props: Props) => {
   );
 };
 
-export default ForgetPassword;
+export default AdditionalAction;

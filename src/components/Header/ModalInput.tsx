@@ -5,13 +5,16 @@ const StyledContainer = styled.div`
   margin-top: 12px;
 `;
 
-type Props = {};
+type Props = {
+  placeholder?: string;
+};
 
-const ModalInput = (props: Props) => {
+const ModalInput = ({ placeholder }: Props) => {
   return (
     <StyledContainer>
       <input
         type="text"
+        placeholder={placeholder}
         style={{
           width: "460px",
           height: "50px",

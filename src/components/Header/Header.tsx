@@ -9,6 +9,9 @@ import BurgerIcon from "./BurgerIcon";
 import BurgerMenu from "./BurgerMenu";
 import UserMenu from "./UserMenu";
 import AuthorizationModal from "./AuthorizationModal";
+import RecoverPasswordModal from "./RecoverPasswordModal";
+import RegistrationCodeModal from "./RegistrationCodeModal";
+import RegistrationSuccessModal from "./RegistrationSuccessModal";
 
 const StyledContainer = styled.div`
   position: fixed;
@@ -16,9 +19,10 @@ const StyledContainer = styled.div`
   top: 0;
   padding: 20px 20px;
   background-color: rgba(11, 11, 11, 0.34);
-  backdrop-filter: blur(98.80000305175781px);
+  backdrop-filter: blur(98.8px);
   border-bottom: 1px solid #ffffff14;
   z-index: 1001;
+
   @media (max-width: 1080px) {
     padding: 20px 0;
   }
@@ -214,11 +218,19 @@ const Header = () => {
             <>
               <Overlay />
               <div ref={userMenuRef}>
-                <UserMenu />
+                {isUserAuthorized ? (
+                  <UserMenu />
+                ) : (
+                  <AuthorizationModal onClose={() => setIsUserMenuOpen(false)} />
+                )}
               </div>
             </>
           )}
+
         </StyledTest>
+        {/* <RegistrationSuccessModal/> */}
+        {/* <RecoverPasswordModal/> */}
+        {/* <RegistrationCodeModal/> */}
       </StyledTestWrapper>
     </>
   );

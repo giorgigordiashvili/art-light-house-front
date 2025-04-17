@@ -2,12 +2,13 @@ import React from "react";
 import styled from "styled-components";
 
 const StyledContainer = styled.div`
-  font-family: HelRom;
+  font-family: Helvetica;
   font-weight: 300;
   font-size: 32px;
   line-height: 100%;
   letter-spacing: 0%;
   color: #ffffff;
+  text-align: center;
 `;
 
 type Props = {
