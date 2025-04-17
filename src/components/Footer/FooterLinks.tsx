@@ -9,7 +9,7 @@ const Links = styled.div`
   display: flex;
   gap: 64px;
 
-  @media (max-width: 768px) {
+  @media (max-width: 1080px) {
     flex-direction: column;
     gap: 32px;
     width: 100%;
@@ -31,6 +31,9 @@ const Column = styled.div`
     white-space: nowrap;
     color: #ffffff;
   }
+  @media (max-width: 1080px) {
+    margin-top: 21px;
+  }
 `;
 
 const Column1 = styled.div`
@@ -46,6 +49,9 @@ const Column1 = styled.div`
     line-height: 24px;
     white-space: nowrap;
     color: #ffffff;
+  }
+  @media (max-width: 1080px) {
+    margin-top: 21px;
   }
 `;
 

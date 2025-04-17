@@ -9,6 +9,9 @@ const StyledFooter = styled.div`
   width: 100%;
   height: 385px;
   top: 3910px;
+  @media (max-width: 1080px) {
+    height: 856px;
+  }
 `;
 
 type Props = {};
