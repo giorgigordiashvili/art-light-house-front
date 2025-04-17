@@ -1,21 +1,30 @@
-import React from 'react';
-import styled from 'styled-components';
-import InputTitle from './InputTitle';
-import ModalInput from './ModalInput';
-import CloseIcon from './CloseIcon';
-import ModalDescription from './ModalDescription';
-import PrimaryButton from '../PrimaryButton/PrimaryButton';
-import ModalTitle from './ModalTitle';
+import React from "react";
+import styled from "styled-components";
+import InputTitle from "./InputTitle";
+import ModalInput from "./ModalInput";
+import CloseIcon from "./CloseIcon";
+import ModalDescription from "./ModalDescription";
+import PrimaryButton from "../PrimaryButton/PrimaryButton";
+import ModalTitle from "./ModalTitle";
+
+const StyledOverlayWrapper = styled.div`
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 1002;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+`;
 
 const StyledContainer = styled.div`
   padding: 30px 24px 35px 24px;
   background-color: #1c1c1c;
   border-radius: 20px;
-  position: fixed;
-  top: 93px;
-  left: 50%;
-  transform: translate(-50%);
-  z-index: 1002;
+  position: relative;
+  margin-top: 93px;
 `;
 
 const StyledCloseIcon = styled.div`
@@ -45,25 +54,31 @@ const StyledInput = styled.div`
 `;
 
 const RecoverPasswordModal = ({ onClose }: { onClose: () => void }) => {
+    const handleClickInside = (e: React.MouseEvent) => {
+        e.stopPropagation();
+    };
+
     return (
-        <StyledContainer>
-            <StyledCloseIcon onClick={onClose}>
-                <CloseIcon />
-            </StyledCloseIcon>
-            <StyledTitle>
-                <ModalTitle text="პაროლის აღდგენა" />
-            </StyledTitle>
-            <StyledDescription>
-                <ModalDescription text="პაროლის აღსადგენად ჩაწერეთ რეგისტრირებული ელ.ფოსტა" />
-            </StyledDescription>
-            <StyledInput>
-                <InputTitle text="პაროლის აღდგენა" />
-                <ModalInput placeholder="შეიყვანეთ ელ.ფოსტა" />
-            </StyledInput>
-            <StyledPrimaryButton>
-                <PrimaryButton text="გაგზავნა" width="460px" height="50px" />
-            </StyledPrimaryButton>
-        </StyledContainer>
+        <StyledOverlayWrapper onClick={onClose}>
+            <StyledContainer onClick={handleClickInside}>
+                <StyledCloseIcon onClick={onClose}>
+                    <CloseIcon />
+                </StyledCloseIcon>
+                <StyledTitle>
+                    <ModalTitle text="პაროლის აღდგენა" />
+                </StyledTitle>
+                <StyledDescription>
+                    <ModalDescription text="პაროლის აღსადგენად ჩაწერეთ რეგისტრირებული ელ.ფოსტა" />
+                </StyledDescription>
+                <StyledInput>
+                    <InputTitle text="პაროლის აღდგენა" />
+                    <ModalInput placeholder="შეიყვანეთ ელ.ფოსტა" />
+                </StyledInput>
+                <StyledPrimaryButton>
+                    <PrimaryButton text="გაგზავნა" width="460px" height="50px" />
+                </StyledPrimaryButton>
+            </StyledContainer>
+        </StyledOverlayWrapper>
     );
 };
 

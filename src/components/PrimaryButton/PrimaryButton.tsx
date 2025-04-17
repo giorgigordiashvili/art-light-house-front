@@ -5,11 +5,12 @@ type Props = {
   text: string;
   width?: string;
   height?: string;
+  onClick?: () => void;
 };
 
 const StyledContainer = styled.div``;
 
-const StyledButton = styled.div<{ width?: string; height?: string }>`
+const StyledButton = styled.button<{ width?: string; height?: string }>`
   height: ${(props) => props.height || "50px"};
   width: ${(props) => props.width || "252px"};
   display: flex;
@@ -35,7 +36,7 @@ const StyledButton = styled.div<{ width?: string; height?: string }>`
 const PrimaryButton = (props: Props) => {
   return (
     <StyledContainer>
-      <StyledButton width={props.width} height={props.height}>
+      <StyledButton width={props.width} height={props.height} onClick={props.onClick}>
         {props.text}
       </StyledButton>
     </StyledContainer>

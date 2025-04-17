@@ -10,7 +10,7 @@ import AdditionalAction from "./AdditionalAction";
 
 interface AuthorizationModalProps {
   onClose: () => void;
-  onRecoverPasswordClick: () => void;
+  onRecoverPasswordClick?: () => void;
 }
 
 const StyledContainer = styled.div`
@@ -96,9 +96,13 @@ const AuthorizationModal: React.FC<AuthorizationModalProps> = ({ onClose, onReco
           <ModalInput placeholder="თქვენი პაროლი" />
         </StyledModalInput>
 
-        <StyledForgetPassword onClick={onRecoverPasswordClick}>
+        <StyledForgetPassword onClick={() => {
+          onClose(); 
+          onRecoverPasswordClick?.(); 
+        }}>
           <AdditionalAction text="დაგავიწყდა პაროლი?" />
         </StyledForgetPassword>
+
 
         <StyledPrimaryButton>
           <PrimaryButton

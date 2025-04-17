@@ -110,7 +110,7 @@ const StyledTest = styled.div`
 const Header = () => {
   const [isBurgerMenuOpen, setIsBurgerMenuOpen] = useState(false);
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
-  const [activeModal, setActiveModal] = useState<"authorization" | "recover-password" | null>("authorization");
+  const [isRecoverPasswordOpen, setIsRecoverPasswordOpen] = useState(false);
 
   const burgerMenuRef = useRef<HTMLDivElement>(null);
   const burgerIconRef = useRef<HTMLDivElement>(null);
@@ -136,22 +136,35 @@ const Header = () => {
     const handleClickOutside = (e: MouseEvent) => {
       const target = e.target as Node;
 
+      const clickedOutsideBurgerMenu =
+        burgerMenuRef.current && !burgerMenuRef.current.contains(target);
+      const clickedOutsideBurgerIcon =
+        burgerIconRef.current && !burgerIconRef.current.contains(target);
+
       if (
         isBurgerMenuOpen &&
         burgerMenuRef.current &&
         !burgerMenuRef.current.contains(target) &&
         burgerIconRef.current &&
-        !burgerIconRef.current.contains(target)
+        !burgerIconRef.current.contains(target) &&
+        clickedOutsideBurgerMenu &&
+        clickedOutsideBurgerIcon
       ) {
         setIsBurgerMenuOpen(false);
       }
+
+      const clickedOutsideUserMenu = userMenuRef.current && !userMenuRef.current.contains(target);
+      const clickedOutsideAuthButton =
+        authButtonRef.current && !authButtonRef.current.contains(target);
 
       if (
         isUserMenuOpen &&
         userMenuRef.current &&
         !userMenuRef.current.contains(target) &&
         authButtonRef.current &&
-        !authButtonRef.current.contains(target)
+        !authButtonRef.current.contains(target) &&
+        clickedOutsideUserMenu &&
+        clickedOutsideAuthButton
       ) {
         setIsUserMenuOpen(false);
       }
@@ -166,7 +179,7 @@ const Header = () => {
     };
   }, [isBurgerMenuOpen, isUserMenuOpen]);
 
-  const cartItemCount = 4;
+  const cartItemCount = 7;
   const isUserAuthorized = false;
   const currentUser = {
     username: "Nikoloz Baratashvili",
@@ -198,7 +211,7 @@ const Header = () => {
                       text="ავტორიზაცია"
                       onClick={() => {
                         setIsUserMenuOpen(true);
-                        setActiveModal("authorization");
+                        toggleUserMenu;
                       }}
                     />
                   </div>
@@ -211,7 +224,6 @@ const Header = () => {
           </StyledContentWrapper>
         </Container>
       </StyledContainer>
-
       {isBurgerMenuOpen && (
         <>
           <Overlay />
@@ -220,27 +232,35 @@ const Header = () => {
           </div>
         </>
       )}
-
       <StyledTestWrapper>
         <StyledTest>
           {isUserMenuOpen && (
             <>
               <Overlay />
               <div ref={userMenuRef}>
-                {!isUserAuthorized && activeModal === "authorization" && (
+                {isUserAuthorized ? (
+                  <UserMenu />
+                ) : (
                   <AuthorizationModal
                     onClose={() => setIsUserMenuOpen(false)}
-                    onRecoverPasswordClick={() => setActiveModal("recover-password")}
+                    onRecoverPasswordClick={() => {
+                      setIsUserMenuOpen(false);
+                      setIsRecoverPasswordOpen(true);
+                    }}
                   />
-                )}
-                {activeModal === "recover-password" && (
-                  <RecoverPasswordModal onClose={() => setIsUserMenuOpen(false)} />
+
                 )}
               </div>
             </>
           )}
         </StyledTest>
       </StyledTestWrapper>
+      {isRecoverPasswordOpen && (
+        <>
+          <Overlay onClick={() => setIsRecoverPasswordOpen(false)} />
+          <RecoverPasswordModal onClose={() => setIsRecoverPasswordOpen(false)} />
+        </>
+      )}
     </>
   );
 };
