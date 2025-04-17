@@ -32,7 +32,6 @@ function FooterContent() {
         <FooterDescription />
         <FooterLinks />
       </TopSection>
-
       <FooterIcons /> {/* ← აი აქ Icons გადმოგვაქვს */}
       <Divider />
       <FooterBottom />

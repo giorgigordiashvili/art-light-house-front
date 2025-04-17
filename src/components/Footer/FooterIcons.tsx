@@ -8,7 +8,7 @@ const IconsWrapper = styled.div`
   margin-top: 32px;
   gap: 24px;
 
-  @media (max-width: 1080px){
+  @media (max-width: 1080px) {
     justify-content: center;
   }
 

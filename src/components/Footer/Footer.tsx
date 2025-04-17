@@ -2,7 +2,6 @@
 import styled from "styled-components";
 import Container from "@/components/ui/Container";
 import FooterContent from "./FooterContent";
-// import FooterDescription from "./FooterDescription";
 
 const StyledFooter = styled.div`
   background: #000000;
@@ -14,9 +13,7 @@ const StyledFooter = styled.div`
   }
 `;
 
-type Props = {};
-
-function Footer({}: Props) {
+function Footer() {
   return (
     <StyledFooter>
       <Container>
@@ -25,5 +22,6 @@ function Footer({}: Props) {
     </StyledFooter>
   );
 }
+
 
 export default Footer;
