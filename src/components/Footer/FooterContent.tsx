@@ -1,0 +1,42 @@
+"use client";
+import styled from "styled-components";
+import FooterDescription from "./FooterDescription";
+import FooterBottom from "./FooterBottom";
+import FooterLinks from "./FooterLinks";
+import FooterIcons from "./FooterIcons"; // ახალ კომპონენტად ვყოფთ Icons-ს
+
+const TopSection = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 64px;
+
+  @media (max-width: 1080px) {
+    flex-direction: column;
+    gap: 32px;
+  }
+`;
+
+const Divider = styled.div`
+  margin-top: 58px;
+  border-top: 1px solid #e9eaeb26;
+  @media (max-width: 1080px) {
+    margin-top: 41px;
+  }
+`;
+
+function FooterContent() {
+  return (
+    <>
+      <TopSection>
+        <FooterDescription />
+        <FooterLinks />
+      </TopSection>
+      <FooterIcons /> {/* ← აი აქ Icons გადმოგვაქვს */}
+      <Divider />
+      <FooterBottom />
+    </>
+  );
+}
+
+export default FooterContent;
