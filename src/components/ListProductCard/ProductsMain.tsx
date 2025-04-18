@@ -2,15 +2,15 @@
 import styled from "styled-components";
 import CardGrid from "@/components/ListProductCard/CardGrid";
 import FilterSidebar from "@/components/FilterSidebar/FilterSidebar";
-import SortButton from "@/components/Sort/SortButtom";
+// import SortButton from "@/components/Sort/SortButtom";
 import Container from "@/components/ui/Container";
 import FilterButton from "@/components/FilterSidebar/FilterButtom";
+import SortDropdown from "@/components/Sort/SortDropdown";
 
 const StyledComponent = styled.div`
   background: black;
-  height: 2280px;
+  height: auto;
   display: flex;
-  flex-direction: column;
   align-items: center;
 `;
 
@@ -71,7 +71,8 @@ function HomeScreen() {
           <OnMobile>
             <FilterButton />
           </OnMobile>
-          <SortButton />
+          {/* <SortButton /> */}
+          <SortDropdown />
         </SortWrapper>
         <ContentWrapper>
           <OnDesktop>
