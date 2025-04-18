@@ -10,12 +10,12 @@ const StyledLampaImage = styled.div`
   height: 218px;
   top: 30px;
   left: -1px;
-  
+
   @media (max-width: 1080px) {
     width: 129.24px;
     height: 129.24px;
     left: 20px;
-    top: 17px; 
+    top: 17px;
   }
 `;
 
@@ -39,22 +39,10 @@ const LampaImage = () => {
   return (
     <StyledLampaImage>
       <MobileOnlyIcons>
-        <Image
-          src={mobilelampa}
-          alt="Mobile Lampa"
-          layout="fill"
-          objectFit="contain"
-          priority
-        />
+        <Image src={mobilelampa} alt="Mobile Lampa" layout="fill" objectFit="contain" priority />
       </MobileOnlyIcons>
       <DesktopOnlyIcons>
-        <Image
-          src={Desktoplampa}
-          alt="Desktop Lampa"
-          layout="fill"
-          objectFit="contain"
-          priority
-        />
+        <Image src={Desktoplampa} alt="Desktop Lampa" layout="fill" objectFit="contain" priority />
       </DesktopOnlyIcons>
     </StyledLampaImage>
   );

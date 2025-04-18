@@ -1,9 +1,8 @@
 "use client";
 import styled from "styled-components";
-import CardGrid from "@/components/ListProductCard/CardGrid";
+import ProductsMain from "@/components/ListProductCard/ProductsMain";
 const StyledComponent = styled.div`
-  background: red;
-  height: 1920px;
+  background: black;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -12,7 +11,7 @@ const StyledComponent = styled.div`
 function HomeScreen() {
   return (
     <StyledComponent>
-      <CardGrid></CardGrid>
+      <ProductsMain />={" "}
     </StyledComponent>
   );
 }

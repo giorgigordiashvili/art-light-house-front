@@ -12,7 +12,7 @@ const StyledAddButton = styled.div`
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  margin-top: 342Px;
+  margin-top: 342px;
   margin-left: 20px;
   @media (max-width: 1080px) {
     width: 154px;

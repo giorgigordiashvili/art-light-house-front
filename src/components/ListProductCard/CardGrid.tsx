@@ -5,12 +5,10 @@ const GridWrapper = styled.div`
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 24px;
-  padding: 20px;
 
   @media (max-width: 1080px) {
     grid-template-columns: repeat(2, 1fr);
-    gap: 16px;
-    padding: 16px;
+    gap: 10px;
   }
 `;
 
