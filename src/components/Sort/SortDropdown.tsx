@@ -24,8 +24,8 @@ const SortDropdown = () => {
   };
 
   const handleSortChange = (option: string) => {
-    setIsOpen(false); // არჩევის შემდეგ დახურე dropdown
-    console.log("Sort selected:", option); // ან გააკეთე რამე სხვა
+    setIsOpen(false);
+    console.log("Sort selected:", option);
   };
 
   return (
