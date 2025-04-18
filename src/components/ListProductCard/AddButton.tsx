@@ -12,12 +12,12 @@ const StyledAddButton = styled.div`
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  margin-top: 121.5px;
+  margin-top: 342Px;
   margin-left: 20px;
   @media (max-width: 1080px) {
     width: 154px;
     height: 48px;
-    margin-top: 85.76px;
+    margin-top: 218px;
     margin-left: 8px;
   }
 `;
