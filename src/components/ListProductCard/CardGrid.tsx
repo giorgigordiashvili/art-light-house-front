@@ -1,4 +1,3 @@
-import React from "react";
 import styled from "styled-components";
 import Card from "./Card";
 
@@ -15,13 +14,41 @@ const GridWrapper = styled.div`
   }
 `;
 
+const DesktopOnly = styled.div`
+  display: block;
+
+  @media (max-width: 1080px) {
+    display: none;
+  }
+`;
+
+const MobileOnly = styled.div`
+  display: none;
+
+  @media (max-width: 1080px) {
+    display: block;
+  }
+`;
+
 const CardGrid = () => {
   return (
-    <GridWrapper>
-      {Array.from({ length: 11 }).map((_, i) => (
-        <Card key={i} />
-      ))}
-    </GridWrapper>
+    <>
+      <DesktopOnly>
+        <GridWrapper>
+          {Array.from({ length: 11 }).map((_, i) => (
+            <Card key={i} />
+          ))}
+        </GridWrapper>
+      </DesktopOnly>
+
+      <MobileOnly>
+        <GridWrapper>
+          {Array.from({ length: 6 }).map((_, i) => (
+            <Card key={i} />
+          ))}
+        </GridWrapper>
+      </MobileOnly>
+    </>
   );
 };
 
