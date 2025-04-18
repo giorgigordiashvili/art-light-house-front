@@ -1,12 +1,16 @@
-import React, { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import styled from "styled-components";
-import Container from "./ui/Container";
-import Logo from "./Logo";
-import NavItem from "./NavItem";
-import ShoppingCartIcon from "./ShoppingCartIcon";
+import Logo from "../Logo/Logo";
+import Container from "../ui/Container";
 import AuthorizationButton from "./AuthorizationButton";
+import AuthorizationModal from "./AuthorizationModal";
 import BurgerIcon from "./BurgerIcon";
 import BurgerMenu from "./BurgerMenu";
+import NavItem from "./NavItem";
+import RecoverPasswordModal from "./RecoverPasswordModal";
+import RegistrationCodeModal from "./RegistrationCodeModal";
+import RegistrationSuccessModal from "./RegistrationSuccessModal";
+import ShoppingCartIcon from "./ShoppingCartIcon";
 import UserMenu from "./UserMenu";
 
 const StyledContainer = styled.div`
@@ -15,9 +19,10 @@ const StyledContainer = styled.div`
   top: 0;
   padding: 20px 20px;
   background-color: rgba(11, 11, 11, 0.34);
-  backdrop-filter: blur(98.80000305175781px);
+  backdrop-filter: blur(98.8px);
   border-bottom: 1px solid #ffffff14;
   z-index: 1001;
+
   @media (max-width: 1080px) {
     padding: 20px 0;
   }
@@ -105,6 +110,9 @@ const StyledTest = styled.div`
 const Header = () => {
   const [isBurgerMenuOpen, setIsBurgerMenuOpen] = useState(false);
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
+  const [isRecoverPasswordOpen, setIsRecoverPasswordOpen] = useState(false);
+  const [isRegistrationCodeOpen, setIsRegistrationCodeOpen] = useState(false);
+  const [isRegistrationSuccessOpen, setIsRegistrationSuccessOpen] = useState(false);
 
   const burgerMenuRef = useRef<HTMLDivElement>(null);
   const burgerIconRef = useRef<HTMLDivElement>(null);
@@ -113,10 +121,6 @@ const Header = () => {
 
   const toggleBurgerMenu = () => {
     setIsBurgerMenuOpen((prev) => !prev);
-  };
-
-  const toggleUserMenu = () => {
-    setIsUserMenuOpen((prev) => !prev);
   };
 
   useEffect(() => {
@@ -135,7 +139,15 @@ const Header = () => {
       const clickedOutsideBurgerIcon =
         burgerIconRef.current && !burgerIconRef.current.contains(target);
 
-      if (isBurgerMenuOpen && clickedOutsideBurgerMenu && clickedOutsideBurgerIcon) {
+      if (
+        isBurgerMenuOpen &&
+        burgerMenuRef.current &&
+        !burgerMenuRef.current.contains(target) &&
+        burgerIconRef.current &&
+        !burgerIconRef.current.contains(target) &&
+        clickedOutsideBurgerMenu &&
+        clickedOutsideBurgerIcon
+      ) {
         setIsBurgerMenuOpen(false);
       }
 
@@ -143,7 +155,15 @@ const Header = () => {
       const clickedOutsideAuthButton =
         authButtonRef.current && !authButtonRef.current.contains(target);
 
-      if (isUserMenuOpen && clickedOutsideUserMenu && clickedOutsideAuthButton) {
+      if (
+        isUserMenuOpen &&
+        userMenuRef.current &&
+        !userMenuRef.current.contains(target) &&
+        authButtonRef.current &&
+        !authButtonRef.current.contains(target) &&
+        clickedOutsideUserMenu &&
+        clickedOutsideAuthButton
+      ) {
         setIsUserMenuOpen(false);
       }
     };
@@ -157,8 +177,8 @@ const Header = () => {
     };
   }, [isBurgerMenuOpen, isUserMenuOpen]);
 
-  const cartItemCount = 4;
-  const isUserAuthorized = true;
+  const cartItemCount = 7;
+  const isUserAuthorized = false;
   const currentUser = {
     username: "Nikoloz Baratashvili",
     userImage: "/assets/user.svg",
@@ -187,7 +207,9 @@ const Header = () => {
                       username={currentUser.username}
                       userImage={currentUser.userImage}
                       text="ავტორიზაცია"
-                      onClick={toggleUserMenu}
+                      onClick={() => {
+                        setIsUserMenuOpen(true);
+                      }}
                     />
                   </div>
                   <div ref={burgerIconRef}>
@@ -199,7 +221,6 @@ const Header = () => {
           </StyledContentWrapper>
         </Container>
       </StyledContainer>
-
       {isBurgerMenuOpen && (
         <>
           <Overlay />
@@ -208,19 +229,60 @@ const Header = () => {
           </div>
         </>
       )}
-
       <StyledTestWrapper>
         <StyledTest>
           {isUserMenuOpen && (
             <>
               <Overlay />
               <div ref={userMenuRef}>
-                <UserMenu />
+                {isUserAuthorized ? (
+                  <UserMenu />
+                ) : (
+                  <AuthorizationModal
+                    onClose={() => setIsUserMenuOpen(false)}
+                    onRecoverPasswordClick={() => {
+                      setIsUserMenuOpen(false);
+                      setIsRecoverPasswordOpen(true);
+                    }}
+                    onRegisterSuccess={() => {
+                      setIsUserMenuOpen(false);
+                      setIsRegistrationCodeOpen(true);
+                    }}
+                  />
+                )}
               </div>
             </>
           )}
         </StyledTest>
       </StyledTestWrapper>
+      {isRecoverPasswordOpen && (
+        <>
+          <Overlay onClick={() => setIsRecoverPasswordOpen(false)} />
+          <RecoverPasswordModal onClose={() => setIsRecoverPasswordOpen(false)} />
+        </>
+      )}
+      {isRegistrationCodeOpen && (
+        <>
+          <Overlay onClick={() => setIsRegistrationCodeOpen(false)} />
+          <RegistrationCodeModal
+            onClose={() => setIsRegistrationCodeOpen(false)}
+            onReturn={() => {
+              setIsRegistrationCodeOpen(false);
+              setIsUserMenuOpen(true);
+            }}
+            onConfirm={() => {
+              setIsRegistrationCodeOpen(false);
+              setIsRegistrationSuccessOpen(true);
+            }}
+          />
+        </>
+      )}
+      {isRegistrationSuccessOpen && (
+        <>
+          <Overlay onClick={() => setIsRegistrationSuccessOpen(false)} />
+          <RegistrationSuccessModal onClose={() => setIsRegistrationSuccessOpen(false)} />
+        </>
+      )}
     </>
   );
 };

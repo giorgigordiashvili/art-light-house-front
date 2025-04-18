@@ -1,8 +1,8 @@
 "use client";
-import styled from "styled-components";
 import CardGrid from "@/components/ListProductCard/CardGrid";
+import styled from "styled-components";
 const StyledComponent = styled.div`
-  background: red;
+  background: #000;
   height: 1920px;
   display: flex;
   justify-content: center;
