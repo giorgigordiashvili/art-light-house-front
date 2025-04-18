@@ -10,7 +10,6 @@ const IconsWrapper = styled.div`
   @media (max-width: 1080px) {
     justify-content: center;
     margin-top: 32px;
-
   }
 
   a {

@@ -1,4 +1,3 @@
-import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import Card from "./Card";
 
@@ -16,7 +15,7 @@ const GridWrapper = styled.div`
 `;
 
 const DesktopOnly = styled.div`
-  display: block;   
+  display: block;
 
   @media (max-width: 1080px) {
     display: none;

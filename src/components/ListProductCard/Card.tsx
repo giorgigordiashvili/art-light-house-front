@@ -2,7 +2,7 @@ import React from "react";
 import styled from "styled-components";
 import AddButton from "./AddButton";
 import LampaImage from "./Image";
-import ProductText from "./Text"
+import ProductText from "./Text";
 const StyledRectangle = styled.div`
   width: 308px;
   height: 417px;
@@ -19,13 +19,13 @@ const StyledRectangle = styled.div`
 `;
 
 function Card() {
-    return (
-      <StyledRectangle>
-        <LampaImage />
-        <ProductText />
-        <AddButton />
-      </StyledRectangle>
-    );
-  }
+  return (
+    <StyledRectangle>
+      <LampaImage />
+      <ProductText />
+      <AddButton />
+    </StyledRectangle>
+  );
+}
 
 export default Card;

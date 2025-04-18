@@ -7,9 +7,8 @@ const TextWrapper = styled.div`
   left: 20px;
   @media (max-width: 1080px) {
     font-size: 14px;
-    top:167px;
+    top: 167px;
     left: 10px;
-
   }
 `;
 
@@ -31,7 +30,7 @@ const PriceText = styled.div`
 const DescriptionText = styled.div`
   width: auto;
   height: 24px;
-  margin-top: 5px; 
+  margin-top: 5px;
   font-family: "Helvetica Neue LT GEO", sans-serif;
   font-weight: 400;
   font-size: 16px;
@@ -40,7 +39,7 @@ const DescriptionText = styled.div`
   color: white;
   @media (max-width: 1080px) {
     font-size: 14px;
-    margin-top: 7px; 
+    margin-top: 7px;
     height: 14px;
   }
 `;
