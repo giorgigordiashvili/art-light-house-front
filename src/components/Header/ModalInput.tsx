@@ -2,7 +2,7 @@ import React from "react";
 import styled from "styled-components";
 import Image from "next/image";
 
-const StyledContainer = styled.div<{ hasIcon: boolean }>`
+const StyledContainer = styled.div<{ $hasIcon: boolean }>`
   position: relative;
   margin-top: 12px;
 
@@ -18,7 +18,7 @@ const StyledContainer = styled.div<{ hasIcon: boolean }>`
     outline: none;
     cursor: pointer;
 
-    ${({ hasIcon }) => hasIcon && `padding-right: 48px;`}
+    ${({ $hasIcon }) => $hasIcon && `padding-right: 48px;`}
 
     @media (max-width: 1080px) {
       width: 100%;
@@ -51,7 +51,7 @@ const ModalInput = ({
   const hasIcon = Boolean(iconSrc);
 
   return (
-    <StyledContainer hasIcon={hasIcon}>
+    <StyledContainer $hasIcon={hasIcon}>
       <input type="text" placeholder={placeholder} />
       {iconSrc && (
         <StyledIconWrapper>
