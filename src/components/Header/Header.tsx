@@ -123,10 +123,6 @@ const Header = () => {
     setIsBurgerMenuOpen((prev) => !prev);
   };
 
-  const toggleUserMenu = () => {
-    setIsUserMenuOpen((prev) => !prev);
-  };
-
   useEffect(() => {
     document.body.style.overflow = isBurgerMenuOpen || isUserMenuOpen ? "hidden" : "visible";
     return () => {
@@ -182,7 +178,7 @@ const Header = () => {
   }, [isBurgerMenuOpen, isUserMenuOpen]);
 
   const cartItemCount = 7;
-  const isUserAuthorized = false;
+  const isUserAuthorized = true;
   const currentUser = {
     username: "Nikoloz Baratashvili",
     userImage: "/assets/user.svg",
@@ -213,7 +209,6 @@ const Header = () => {
                       text="ავტორიზაცია"
                       onClick={() => {
                         setIsUserMenuOpen(true);
-                        toggleUserMenu;
                       }}
                     />
                   </div>

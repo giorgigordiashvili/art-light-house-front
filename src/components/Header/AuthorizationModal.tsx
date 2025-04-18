@@ -14,7 +14,6 @@ interface AuthorizationModalProps {
   onRegisterSuccess?: () => void;
 }
 
-
 const StyledContainer = styled.div`
   position: fixed;
   top: 93px;
@@ -112,7 +111,10 @@ const AuthorizationModal: React.FC<AuthorizationModalProps> = ({ onClose, onReco
 
         <StyledModalInput>
           <InputTitle text="პაროლი" />
-          <ModalInput placeholder="თქვენი პაროლი" />
+          <ModalInput
+            placeholder="თქვენი პაროლი"
+            iconSrc="/assets/eye.svg"
+          />
         </StyledModalInput>
 
         {activeTab === "auth" && (
@@ -136,7 +138,6 @@ const AuthorizationModal: React.FC<AuthorizationModalProps> = ({ onClose, onReco
             }}
           />
         </StyledPrimaryButton>
-
       </StyledModal>
     </StyledContainer>
   );

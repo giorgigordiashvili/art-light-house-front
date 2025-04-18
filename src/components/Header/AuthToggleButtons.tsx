@@ -13,10 +13,6 @@ const StyledContainer = styled.div`
   }
 `;
 
-type ButtonProps = {
-  active: boolean;
-};
-
 const ToggleButton = styled.button<{ $active: boolean }>`
   width: 219px;
   height: 47px;
