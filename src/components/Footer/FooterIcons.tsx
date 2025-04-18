@@ -5,11 +5,11 @@ import Image from "next/image";
 const IconsWrapper = styled.div`
   display: flex;
   justify-content: flex-end;
-  margin-top: 32px;
   gap: 24px;
 
   @media (max-width: 1080px) {
     justify-content: center;
+    margin-top: 32px;
   }
 
   a {
