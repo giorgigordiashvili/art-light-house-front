@@ -1,17 +1,17 @@
-import React, { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import styled from "styled-components";
-import Container from "../ui/Container";
 import Logo from "../Logo/Logo";
-import NavItem from "./NavItem";
-import ShoppingCartIcon from "./ShoppingCartIcon";
+import Container from "../ui/Container";
 import AuthorizationButton from "./AuthorizationButton";
+import AuthorizationModal from "./AuthorizationModal";
 import BurgerIcon from "./BurgerIcon";
 import BurgerMenu from "./BurgerMenu";
-import UserMenu from "./UserMenu";
-import AuthorizationModal from "./AuthorizationModal";
+import NavItem from "./NavItem";
 import RecoverPasswordModal from "./RecoverPasswordModal";
 import RegistrationCodeModal from "./RegistrationCodeModal";
 import RegistrationSuccessModal from "./RegistrationSuccessModal";
+import ShoppingCartIcon from "./ShoppingCartIcon";
+import UserMenu from "./UserMenu";
 
 const StyledContainer = styled.div`
   position: fixed;
