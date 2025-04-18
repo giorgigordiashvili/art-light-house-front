@@ -11,7 +11,7 @@ import AdditionalAction from "./AdditionalAction";
 interface AuthorizationModalProps {
   onClose: () => void;
   onRecoverPasswordClick?: () => void;
-  onRegisterSuccess?: () => void; // <-- Add this
+  onRegisterSuccess?: () => void;
 }
 
 
@@ -21,6 +21,15 @@ const StyledContainer = styled.div`
   left: 50%;
   transform: translate(-50%);
   z-index: 1002;
+  @media (max-width: 1080px) {
+    width: 100%;
+    top: auto;
+    left: 0;
+    transform: none;
+    bottom: -1px;
+    border-radius: 0px;
+
+  }
 `;
 
 const StyledModal = styled.div`
@@ -30,6 +39,14 @@ const StyledModal = styled.div`
   height: fit-content;
   border-radius: 20px;
   padding: 30px 24px 24px 24px;
+  @media (max-width: 1080px) {
+    width: auto;
+    height: auto;
+    border-radius: 0;
+    padding: 31px 16px 71px 16px;
+    border-top-left-radius: 20px;
+    border-top-right-radius: 20px;
+  }
 `;
 
 const StyledCloseIcon = styled.div`

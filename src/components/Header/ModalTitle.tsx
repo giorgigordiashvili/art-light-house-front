@@ -9,6 +9,13 @@ const StyledContainer = styled.div`
   letter-spacing: 0%;
   color: #ffffff;
   text-align: center;
+  @media (max-width: 1080px) {
+    font-family: Helvetica;
+    font-weight: 300;
+    font-size: 24px;
+    line-height: 100%;
+    letter-spacing: 0%;
+  }
 `;
 
 type Props = {

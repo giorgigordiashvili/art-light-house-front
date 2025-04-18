@@ -8,6 +8,9 @@ const StyledContainer = styled.div`
   padding: 5px;
   border-radius: 12px;
   width: fit-content;
+  @media (max-width: 1080px) {
+    width: auto;
+  }
 `;
 
 type ButtonProps = {
@@ -32,6 +35,10 @@ const ToggleButton = styled.button<{ $active: boolean }>`
 
   &:hover {
     background-color: ${(props) => (props.$active ? "#ffcb40" : "#2a2a2a")};
+  }
+
+  @media (max-width: 1080px) {
+    width: 100%;
   }
 `;
 

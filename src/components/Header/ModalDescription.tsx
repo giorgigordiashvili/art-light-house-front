@@ -17,6 +17,9 @@ const StyledContainer = styled.div<StyledProps>`
           letter-spacing: 0%;
           text-align: center;
           color: #FFFFFF;
+          @media (max-width: 1080px) {
+            font-size: 18px;
+          }
         `;
       case 'strong':
         return css`
@@ -36,6 +39,9 @@ const StyledContainer = styled.div<StyledProps>`
           line-height: 100%;
           letter-spacing: 0%;
           color: #FFFFFF;
+          @media (max-width: 1080px) {
+            font-size: 18px;
+          }
         `;
     }
   }}

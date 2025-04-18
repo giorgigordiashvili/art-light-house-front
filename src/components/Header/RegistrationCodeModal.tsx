@@ -19,6 +19,17 @@ const StyledContainer = styled.div`
     transform: translate(-50%);
     z-index: 1002;
     cursor: pointer;
+    @media (max-width: 1080px) {
+        top: auto;
+        left: auto;
+        transform: none;
+        bottom: 0;
+        border-radius: 0;
+        border-top-left-radius: 20px;
+        border-top-right-radius: 20px;
+        width: 100%;
+        padding: 31px 16px 71px 16px;
+    }
 `;
 
 const StyledCloseIcon = styled.div`
@@ -46,6 +57,10 @@ const StyledDescription = styled.div`
     max-width: 460px;
     margin-top: 31px;
     text-align: center;
+    @media (max-width: 1080px) {
+        max-width: none;
+        font-size: 18px;
+    }
 `;
 
 const StyledInput = styled.div`
@@ -59,9 +74,11 @@ const StyledPrimaryButton = styled.div`
 const RegistrationCodeModal = ({
     onClose,
     onReturn,
+    onConfirm,
 }: {
     onClose: () => void;
     onReturn: () => void;
+    onConfirm: () => void;
 }) => {
     const handleClickInside = (e: React.MouseEvent) => {
         e.stopPropagation();
@@ -90,7 +107,7 @@ const RegistrationCodeModal = ({
                 <AdditionalAction text="თავიდან გაგზავნა" />
             </StyledAdditionalAction>
             <StyledPrimaryButton>
-                <PrimaryButton text="დადასტურება" width="460px" height="50px" />
+                <PrimaryButton text="დადასტურება" width="460px" height="50px" onClick={onConfirm}/>
             </StyledPrimaryButton>
         </StyledContainer>
     );

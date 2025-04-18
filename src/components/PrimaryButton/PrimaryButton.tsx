@@ -31,6 +31,9 @@ const StyledButton = styled.button<{ width?: string; height?: string }>`
   &:hover {
     color: #fff;
   }
+  @media (max-width: 1080px) {
+    width: 100%;
+  }
 `;
 
 const PrimaryButton = (props: Props) => {

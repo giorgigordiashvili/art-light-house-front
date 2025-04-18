@@ -15,6 +15,20 @@ const StyledContainer = styled.div`
     left: 50%;
     transform: translate(-50%);
     z-index: 1002;
+    @media (max-width: 1080px) {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      border-radius: 0;
+      top: auto;
+      left: auto;
+      bottom: 0;
+      width: 100%;
+      transform: none;
+      border-top-right-radius: 20px;
+      border-top-left-radius: 20px;
+  }
 `
 const StyledCloseIcon = styled.div`
   position: absolute;
@@ -43,13 +57,13 @@ const StyledPrimaryButton = styled.div`
   margin-top: 69px;
 `;
 
-const RegistrationSuccessModal = () => {
+const RegistrationSuccessModal = ({ onClose }: { onClose: () => void }) => {
   return (
     <StyledContainer>
       <StyledCheckMark>
         <CheckMarkIcon />
       </StyledCheckMark>
-      <StyledCloseIcon>
+      <StyledCloseIcon onClick={onClose}>
         <CloseIcon />
       </StyledCloseIcon>
       <StyledStrongDescription>
@@ -59,7 +73,7 @@ const RegistrationSuccessModal = () => {
         <ModalDescription text='ახლა უკვე შეგიძლია თავისუფლად შეუკვეთო პროდუქტები რომლებსაც შენთვის აარჩევ' variant='alt' />
       </StyledDescription>
       <StyledPrimaryButton>
-        <PrimaryButton text='მთავარზე დაბრუნება' width='242px' height='50px'/>
+        <PrimaryButton text='მთავარზე დაბრუნება' width='242px' height='50px' onClick={onClose} />
       </StyledPrimaryButton>
     </StyledContainer>
   )
