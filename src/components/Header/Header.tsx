@@ -178,7 +178,7 @@ const Header = () => {
   }, [isBurgerMenuOpen, isUserMenuOpen]);
 
   const cartItemCount = 7;
-  const isUserAuthorized = true;
+  const isUserAuthorized = false;
   const currentUser = {
     username: "Nikoloz Baratashvili",
     userImage: "/assets/user.svg",
