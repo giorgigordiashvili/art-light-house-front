@@ -1,5 +1,5 @@
 import React from "react";
-import RangeSlider from "./RangeSlider";
+// import RangeSlider from "./RangeSlider";
 import styled from "styled-components";
 
 const Title = styled.p`
@@ -17,7 +17,7 @@ const PriceFilter: React.FC = () => {
   return (
     <>
       <Title>ფასი</Title>
-      <RangeSlider minLabel="დან" maxLabel="მდე" />
+      {/* <RangeSlider minLabel="დან" maxLabel="მდე" /> */}
     </>
   );
 };

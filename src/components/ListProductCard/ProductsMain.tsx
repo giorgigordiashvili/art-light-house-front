@@ -71,7 +71,6 @@ function HomeScreen() {
           <OnMobile>
             <FilterButton />
           </OnMobile>
-          {/* <SortButton /> */}
           <SortDropdown />
         </SortWrapper>
         <ContentWrapper>
