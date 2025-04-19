@@ -42,12 +42,7 @@ type Props = {
   iconSize?: number;
 };
 
-const ModalInput = ({
-  placeholder,
-  iconSrc,
-  iconAlt = "input icon",
-  iconSize = 20,
-}: Props) => {
+const ModalInput = ({ placeholder, iconSrc, iconAlt = "input icon", iconSize = 20 }: Props) => {
   const hasIcon = Boolean(iconSrc);
 
   return (
@@ -55,12 +50,7 @@ const ModalInput = ({
       <input type="text" placeholder={placeholder} />
       {iconSrc && (
         <StyledIconWrapper>
-          <Image
-            src={iconSrc}
-            alt={iconAlt}
-            width={iconSize}
-            height={iconSize}
-          />
+          <Image src={iconSrc} alt={iconAlt} width={iconSize} height={iconSize} />
         </StyledIconWrapper>
       )}
     </StyledContainer>

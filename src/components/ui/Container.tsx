@@ -3,7 +3,7 @@ import styled from "styled-components";
 
 const StyledContainer = styled.div`
   max-width: 1292px;
-  margin: auto;
+  margin: 0 auto;
   @media (max-width: 1080px) {
     width: 100%;
     padding-inline: 20px;

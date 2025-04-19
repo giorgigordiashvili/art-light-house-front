@@ -27,7 +27,6 @@ const StyledContainer = styled.div`
     transform: none;
     bottom: -1px;
     border-radius: 0px;
-
   }
 `;
 
@@ -79,7 +78,11 @@ const StyledPrimaryButton = styled.div<{ $isRegister: boolean }>`
   margin-top: ${({ $isRegister }) => ($isRegister ? "50px" : "24px")};
 `;
 
-const AuthorizationModal: React.FC<AuthorizationModalProps> = ({ onClose, onRecoverPasswordClick, onRegisterSuccess }) => {
+const AuthorizationModal: React.FC<AuthorizationModalProps> = ({
+  onClose,
+  onRecoverPasswordClick,
+  onRegisterSuccess,
+}) => {
   const [activeTab, setActiveTab] = useState<"auth" | "register">("auth");
 
   return (
@@ -111,17 +114,16 @@ const AuthorizationModal: React.FC<AuthorizationModalProps> = ({ onClose, onReco
 
         <StyledModalInput>
           <InputTitle text="პაროლი" />
-          <ModalInput
-            placeholder="თქვენი პაროლი"
-            iconSrc="/assets/eye.svg"
-          />
+          <ModalInput placeholder="თქვენი პაროლი" iconSrc="/assets/eye.svg" />
         </StyledModalInput>
 
         {activeTab === "auth" && (
-          <StyledForgetPassword onClick={() => {
-            onClose();
-            onRecoverPasswordClick?.();
-          }}>
+          <StyledForgetPassword
+            onClick={() => {
+              onClose();
+              onRecoverPasswordClick?.();
+            }}
+          >
             <AdditionalAction text="დაგავიწყდა პაროლი?" />
           </StyledForgetPassword>
         )}
