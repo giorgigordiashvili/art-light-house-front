@@ -1,11 +1,11 @@
 "use client";
-import styled from "styled-components";
-import CardGrid from "@/components/ListProductCard/CardGrid";
 import FilterSidebar from "@/components/FilterSidebar/FilterSidebar";
+import CardGrid from "@/components/ListProductCard/CardGrid";
+import styled from "styled-components";
 // import SortButton from "@/components/Sort/SortButtom";
-import Container from "@/components/ui/Container";
 import FilterButton from "@/components/FilterSidebar/FilterButtom";
 import SortDropdown from "@/components/Sort/SortDropdown";
+import Container from "@/components/ui/Container";
 
 const StyledComponent = styled.div`
   background: black;
@@ -61,7 +61,7 @@ const OnDesktop = styled.div`
   }
 `;
 
-function HomeScreen() {
+function ProductsMain() {
   return (
     <StyledComponent>
       <Container>
@@ -84,4 +84,4 @@ function HomeScreen() {
   );
 }
 
-export default HomeScreen;
+export default ProductsMain;

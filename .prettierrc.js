@@ -8,5 +8,5 @@ module.exports = {
   arrowParens: "always",
   endOfLine: "lf",
   jsxSingleQuote: false,
-  jsxBracketSameLine: false,
+  bracketSameLine: false, // Updated from jsxBracketSameLine
 };

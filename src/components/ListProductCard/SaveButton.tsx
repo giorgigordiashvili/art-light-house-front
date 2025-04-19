@@ -1,11 +1,14 @@
-import React from "react";
-import styled from "styled-components";
 import Image from "next/image";
+import styled from "styled-components";
 
 const StyledSaveButton = styled.div`
   width: 268px;
   height: 55px;
-  background: linear-gradient(92.9deg, #f7cb57 3.7%, #d8b146 97.98%);
+  background: linear-gradient(
+    92.9deg,
+    rgba(247, 203, 87, 0.4) 3.7%,
+    rgba(216, 177, 70, 0.4) 97.98%
+  );
   border-radius: 12px;
   display: flex;
   align-items: center;
