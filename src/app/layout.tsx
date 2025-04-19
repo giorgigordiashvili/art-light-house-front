@@ -1,8 +1,8 @@
 "use client";
-import StyledComponentsRegistry from "../../lib/registry";
-import Header from "@/components/Header";
-import "./globals.css";
 import Footer from "@/components/Footer/Footer";
+import Header from "@/components/Header/Header";
+import StyledComponentsRegistry from "../../lib/registry";
+import "./globals.css";
 
 export default function RootLayout({
   children,

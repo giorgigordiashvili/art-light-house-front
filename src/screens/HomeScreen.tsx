@@ -1,8 +1,9 @@
 "use client";
-import styled from "styled-components";
 
+import styled from "styled-components";
 const StyledComponent = styled.div`
-  background: black;
+  background: red;
+  height: 1920px;
   display: flex;
   min-height: 100dvh;
   flex-direction: column;

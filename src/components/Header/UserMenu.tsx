@@ -1,5 +1,5 @@
 import React from "react";
-import UserMenuItem from "../components/UserMenuItem";
+import UserMenuItem from "./UserMenuItem";
 import styled from "styled-components";
 
 const StyledContainer = styled.div`
