@@ -11,7 +11,21 @@ const StyledRectangle = styled.div`
   background: #1a1a1a96;
   backdrop-filter: blur(114px);
   &:hover {
-    background-image: url("/assets/Product Card.svg");
+    &::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      padding: 1px; /* სიგანე ბორდერის */
+      border-radius: 17px;
+      background: linear-gradient(180deg, #f2c754 0%, rgba(242, 199, 84, 0) 100%);
+      -webkit-mask:
+        linear-gradient(#fff 0 0) content-box,
+        linear-gradient(#fff 0 0);
+      -webkit-mask-composite: destination-out;
+      mask-composite: exclude;
+      z-index: 1;
+      pointer-events: none;
+    }
   }
   @media (max-width: 1080px) {
     width: 170px;
@@ -19,7 +33,21 @@ const StyledRectangle = styled.div`
     top: 335px;
     left: 20px;
     &:hover {
-      background-image: url("/assets/mobProduct Card.svg");
+      &::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        padding: 1px; /* სიგანე ბორდერის */
+        border-radius: 17px;
+        background: linear-gradient(180deg, #f2c754 0%, rgba(242, 199, 84, 0) 100%);
+        -webkit-mask:
+          linear-gradient(#fff 0 0) content-box,
+          linear-gradient(#fff 0 0);
+        -webkit-mask-composite: destination-out;
+        mask-composite: exclude;
+        z-index: 1;
+        pointer-events: none;
+      }
     }
   }
 `;
