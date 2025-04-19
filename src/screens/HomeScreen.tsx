@@ -1,5 +1,4 @@
 "use client";
-import ProductsScreen from "./ProductsScreen";
 import styled from "styled-components";
 const StyledComponent = styled.div`
   background: red;
@@ -12,11 +11,7 @@ const StyledComponent = styled.div`
 `;
 
 const HomeScreen = () => {
-  return (
-    <StyledComponent>
-      <ProductsScreen></ProductsScreen>
-    </StyledComponent>
-  );
+  return <StyledComponent></StyledComponent>;
 };
 
 export default HomeScreen;
