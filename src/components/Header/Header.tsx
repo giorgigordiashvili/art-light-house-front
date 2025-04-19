@@ -1,17 +1,17 @@
-import { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import styled from "styled-components";
-import Logo from "../Logo/Logo";
 import Container from "../ui/Container";
+import Logo from "../Logo/Logo";
+import NavItem from "./NavItem";
+import ShoppingCartIcon from "./ShoppingCartIcon";
 import AuthorizationButton from "./AuthorizationButton";
-import AuthorizationModal from "./AuthorizationModal";
 import BurgerIcon from "./BurgerIcon";
 import BurgerMenu from "./BurgerMenu";
-import NavItem from "./NavItem";
+import UserMenu from "./UserMenu";
+import AuthorizationModal from "./AuthorizationModal";
 import RecoverPasswordModal from "./RecoverPasswordModal";
 import RegistrationCodeModal from "./RegistrationCodeModal";
 import RegistrationSuccessModal from "./RegistrationSuccessModal";
-import ShoppingCartIcon from "./ShoppingCartIcon";
-import UserMenu from "./UserMenu";
 
 const StyledContainer = styled.div`
   position: fixed;
@@ -208,9 +208,16 @@ const Header = () => {
                       userImage={currentUser.userImage}
                       text="ავტორიზაცია"
                       onClick={() => {
+                        if (isRegistrationCodeOpen) {
+                          setIsRegistrationCodeOpen(false);
+                        }
+                        if (isRegistrationSuccessOpen) {
+                          setIsRegistrationSuccessOpen(false)
+                        }
                         setIsUserMenuOpen(true);
                       }}
                     />
+
                   </div>
                   <div ref={burgerIconRef}>
                     <BurgerIcon onClick={toggleBurgerMenu} />
