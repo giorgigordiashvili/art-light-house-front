@@ -18,7 +18,7 @@ const Button = styled.button`
   height: 52px;
 
   &:hover {
-    background-color: #2a3435;
+    border: 1px solid #ffc743;
   }
 
   @media (max-width: 1080px) {

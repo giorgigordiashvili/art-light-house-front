@@ -1,5 +1,4 @@
 "use client";
-
 import styled from "styled-components";
 const StyledComponent = styled.div`
   background: red;

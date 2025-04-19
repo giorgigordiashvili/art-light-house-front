@@ -24,7 +24,7 @@ const PageNumber = styled.button<{ active?: boolean }>`
   padding: 0;
   transition: all 0.2s ease;
   position: relative;
-  top: ${({ active }) => (active ? "0" : "7px")}; // თუ გინდა დაბლა დაჯდეს
+  top: ${({ active }) => (active ? "0" : "0")}; // თუ გინდა დაბლა დაჯდეს 7პხ
   background-color: ${({ active }) => (active ? "#F1C654" : "transparent")};
 `;
 
