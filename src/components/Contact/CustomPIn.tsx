@@ -9,9 +9,7 @@ const StyledContainer = styled.div`
   border: 9px solid #ffcb40;
 `;
 
-type Props = {};
-
-const CustomPin = (props: Props) => {
+const CustomPin = () => {
   return <StyledContainer></StyledContainer>;
 };
 

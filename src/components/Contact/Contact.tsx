@@ -25,9 +25,7 @@ const StyledContactCard = styled.div`
   }
 `;
 
-type Props = {};
-
-const Contact = (props: Props) => {
+const Contact = () => {
   return (
     <StyledContainer>
       <Container>
