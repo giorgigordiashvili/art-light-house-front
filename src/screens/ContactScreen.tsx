@@ -1,6 +1,6 @@
 "use client";
 import styled from "styled-components";
-import Intro from "@/components/Contact/GoogleMapsCard";
+import Contact from "@/components/Contact/Contact";
 
 const StyledComponent = styled.div`
   background: black;
@@ -8,13 +8,15 @@ const StyledComponent = styled.div`
   min-height: 100dvh;
   flex-direction: column;
   justify-content: center;
-  align-items: center;
+  @media (max-width: 1080px) {
+    padding-top: 162px;
+  }
 `;
 
 const ContactScreen = () => {
   return (
     <StyledComponent>
-      <Intro />
+      <Contact />
     </StyledComponent>
   );
 };
