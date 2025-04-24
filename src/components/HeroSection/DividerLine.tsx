@@ -5,6 +5,9 @@ const StyledLine = styled.div`
   border: 1px solid #3b3a36;
   width: 100%;
   height: 1px;
+  @media (max-width: 1080px) {
+    display: none;
+  }
 `;
 
 const DividerLine = () => {

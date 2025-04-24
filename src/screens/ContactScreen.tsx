@@ -16,7 +16,7 @@ const StyledComponent = styled.div`
 const ContactScreen = () => {
   return (
     <StyledComponent>
-      <Contact />
+      <Contact variant="1" />
     </StyledComponent>
   );
 };

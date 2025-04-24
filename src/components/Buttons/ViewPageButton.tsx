@@ -11,6 +11,10 @@ const StyledButton = styled.button`
   display: flex;
   align-items: center;
   gap: 25px;
+  @media (max-width: 1080px) {
+    gap: 17px;
+    padding: 8px 16px 10px 17px;
+  }
 `;
 
 const StyledButtonText = styled.p`
@@ -20,6 +24,9 @@ const StyledButtonText = styled.p`
   line-height: 28px;
   letter-spacing: 0%;
   color: #000000;
+  @media (max-width: 1080px) {
+    font-size: 14px;
+  }
 `;
 
 type Props = {

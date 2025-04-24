@@ -4,13 +4,13 @@ import HeroTitle from "./HeroTitle";
 import ViewPageButton from "../Buttons/ViewPageButton";
 import HeroDescription from "./HeroDescription";
 import DividerLine from "./DividerLine";
-import CategoryTitle from "./CategoryTitle";
+import SectionTitle from "./SectionTitle";
 import Container from "../ui/Container";
+import CategorySection from "./CategorySection";
 
 const StyledContainer = styled.div`
   position: relative;
   width: 100%;
-  height: 1248px;
   overflow: hidden;
 `;
 
@@ -32,7 +32,7 @@ const StyledLinearGradient = styled.div`
   bottom: 0;
   left: 0;
   width: 100%;
-  height: 1248px;
+  height: 100%;
   background: linear-gradient(
     180deg,
     rgba(11, 11, 11, 0.6) 0%,
@@ -48,10 +48,13 @@ const ContentWrapper = styled.div`
   z-index: 2;
   width: 100%;
   height: 100%;
-  margin-top: 212px;
+  padding-top: 212px;
   display: flex;
   flex-direction: column;
   align-items: center;
+  @media (max-width: 1080px) {
+    padding-top: 181px;
+  }
 `;
 
 const StyledDescription = styled.div`
@@ -64,12 +67,17 @@ const StyledButton = styled.div`
 
 const StyledCategorySection = styled.div`
   width: 100%;
-  height: 100%;
   margin-top: 151px;
+  @media (max-width: 1080px) {
+    margin-top: 0;
+  }
 `;
 
 const StyledCategoryTitle = styled.div`
   margin-top: 51px;
+  @media (max-width: 1080px) {
+    margin-top: 175px;
+  }
 `;
 
 const HeroAndCategory = () => {
@@ -89,10 +97,11 @@ const HeroAndCategory = () => {
           <DividerLine />
           <Container>
             <StyledCategoryTitle>
-              <CategoryTitle text="აირჩიე გემოვნებით" />
+              <SectionTitle text="აირჩიე გემოვნებით" image="category" />
             </StyledCategoryTitle>
           </Container>
         </StyledCategorySection>
+        <CategorySection />
       </ContentWrapper>
     </StyledContainer>
   );

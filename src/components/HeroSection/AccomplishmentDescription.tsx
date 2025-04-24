@@ -3,17 +3,16 @@ import styled from "styled-components";
 
 const StyledDescription = styled.p`
   font-family: Helvetica;
-  font-weight: 300;
-  font-size: 16px;
-  line-height: 24px;
+  font-weight: 250;
+  font-size: 20px;
+  line-height: 30px;
   letter-spacing: 0%;
   text-align: center;
-  max-width: 620px;
-  color: #fafafa;
+  color: #ffffff;
+  max-width: 768px;
   @media (max-width: 1080px) {
     font-size: 12px;
-    line-height: 18px;
-    max-width: 350px;
+    line-height: 21px;
   }
 `;
 
@@ -21,8 +20,8 @@ type Props = {
   text: string;
 };
 
-const HeroDescription = (props: Props) => {
+const AccomplishmentDescription = (props: Props) => {
   return <StyledDescription>{props.text}</StyledDescription>;
 };
 
-export default HeroDescription;
+export default AccomplishmentDescription;

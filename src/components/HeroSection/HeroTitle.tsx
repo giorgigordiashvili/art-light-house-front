@@ -9,6 +9,9 @@ const StyledContainer = styled.h1`
   letter-spacing: -1.2%;
   text-align: center;
   color: #fafafa;
+  @media (max-width: 1080px) {
+    font-size: 34px;
+  }
 `;
 
 const StyledSpan = styled.span`
@@ -23,7 +26,7 @@ type Props = {
 const HeroTitle = (props: Props) => {
   return (
     <StyledContainer>
-      <StyledSpan>{props.lightText}</StyledSpan>
+      <StyledSpan>{props.lightText}&nbsp;</StyledSpan>
       {props.text}
     </StyledContainer>
   );
