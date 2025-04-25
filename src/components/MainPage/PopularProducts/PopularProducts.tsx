@@ -1,6 +1,6 @@
 import React from "react";
-import SectionTitle from "./SectionTitle";
-import Container from "../ui/Container";
+import SectionTitle from "../SectionTitle";
+import Container from "../../ui/Container";
 import styled from "styled-components";
 import PopularProductCard from "./PopularProductCard";
 

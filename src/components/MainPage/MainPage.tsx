@@ -1,9 +1,8 @@
 import React from "react";
 import HeroAndCategory from "@/components/MainPage/HeroAndCategory/HeroAndCategory";
-// import NewProducts from "@/components/MainPage/NewProducts/NewProducts";
-import NewProducts from "./NewProducts";
-import PopularProducts from "./PopularProducts";
-import Accomplishments from "./Accomplishments";
+import NewProducts from "./NewProducts/NewProducts";
+import PopularProducts from "./PopularProducts/PopularProducts";
+import Accomplishments from "./Accomplishments/Accomplishments";
 import Contact from "../Contact/Contact";
 
 const MainPage = () => {

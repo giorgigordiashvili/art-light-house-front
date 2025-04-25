@@ -4,7 +4,7 @@ import AccomplishmentDescription from "./AccomplishmentDescription";
 import AccomplishmentTitle from "./AccomplishmentTitle";
 import Counts from "./Counts";
 import CountLine from "./CountLine";
-import Container from "../ui/Container";
+import Container from "../../ui/Container";
 
 const StyledComponent = styled.div`
   @media (max-width: 1332px) {

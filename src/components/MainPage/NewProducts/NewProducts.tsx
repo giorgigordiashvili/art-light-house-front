@@ -1,9 +1,9 @@
 import React from "react";
 import styled from "styled-components";
-import SectionTitle from "./SectionTitle";
-import ReturnIcon from "../Header/ReturnIcon";
+import SectionTitle from "../SectionTitle";
+import ReturnIcon from "../../Header/ReturnIcon";
 import RightSlide from "./RightSlide";
-import Container from "../ui/Container";
+import Container from "../../ui/Container";
 import NewProductCard from "./NewProductCard";
 
 const StyledContainer = styled.div`
