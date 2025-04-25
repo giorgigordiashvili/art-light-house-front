@@ -11,6 +11,7 @@ const StyledButton = styled.button`
   display: flex;
   align-items: center;
   gap: 25px;
+  cursor: pointer;
   @media (max-width: 1080px) {
     gap: 17px;
     padding: 8px 16px 10px 17px;

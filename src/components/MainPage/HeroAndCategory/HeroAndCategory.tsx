@@ -1,11 +1,11 @@
 import React from "react";
 import styled from "styled-components";
 import HeroTitle from "./HeroTitle";
-import ViewPageButton from "../Buttons/ViewPageButton";
+import ViewPageButton from "../../Buttons/ViewPageButton";
 import HeroDescription from "./HeroDescription";
 import DividerLine from "./DividerLine";
-import SectionTitle from "./SectionTitle";
-import Container from "../ui/Container";
+import SectionTitle from "../SectionTitle";
+import Container from "../../ui/Container";
 import CategorySection from "./CategorySection";
 
 const StyledContainer = styled.div`

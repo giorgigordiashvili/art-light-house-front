@@ -9,6 +9,7 @@ const StyledContainer = styled.div`
   border-radius: 50%;
   backdrop-filter: blur(114px);
   color: #1a1a1a96;
+  cursor: pointer;
 `;
 
 const ReturnIcon = () => {

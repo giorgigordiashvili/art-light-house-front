@@ -2,10 +2,18 @@ import React from "react";
 import styled from "styled-components";
 import Image from "next/image";
 
-const StyledContainer = styled.div`
+const StyledContainer = styled.div<{ $isCategory: boolean }>`
   display: flex;
   gap: 14px;
   align-items: center;
+
+  @media (max-width: 1292px) {
+    padding-inline: ${({ $isCategory }) => ($isCategory ? "20px" : "0")};
+  }
+
+  @media (max-width: 1080px) {
+    padding-inline: ${({ $isCategory }) => ($isCategory ? "0" : "0")};
+  }
 `;
 
 const StyledText = styled.div`
@@ -15,6 +23,7 @@ const StyledText = styled.div`
   line-height: 24px;
   letter-spacing: 0%;
   color: #ffffff;
+
   @media (max-width: 1080px) {
     font-family: Helvetica;
     font-size: 24px;
@@ -44,8 +53,10 @@ const getImageSrc = (type: ImageType) => {
 };
 
 const SectionTitle: React.FC<Props> = ({ text, image }) => {
+  const isCategory = image === "category";
+
   return (
-    <StyledContainer>
+    <StyledContainer $isCategory={isCategory}>
       <Image src={getImageSrc(image)} alt={image} width={32} height={32} />
       <StyledText>{text}</StyledText>
     </StyledContainer>

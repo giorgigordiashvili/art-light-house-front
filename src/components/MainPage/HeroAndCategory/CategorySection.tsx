@@ -1,6 +1,6 @@
 import React from "react";
 import styled from "styled-components";
-import Container from "../ui/Container";
+import Container from "../../ui/Container";
 
 const StyledContainer = styled.div`
   width: 100%;
@@ -19,6 +19,9 @@ const RowWrapper = styled.div`
   flex-direction: column;
   gap: 20px;
   min-width: max-content;
+  @media (max-width: 1292px) {
+    padding-inline: 20px;
+  }
 `;
 
 const Row = styled.div`
@@ -46,6 +49,7 @@ const Card = styled.div<{
   background-position: right;
   background-size: contain;
   z-index: 0;
+  cursor: pointer;
 
   &::before {
     content: "";

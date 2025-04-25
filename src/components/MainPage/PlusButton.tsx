@@ -11,6 +11,7 @@ const StyledButton = styled.button`
   align-items: center;
   justify-content: center;
   background: linear-gradient(92.9deg, #f7cb57 3.7%, #d8b146 97.98%);
+  cursor: pointer;
 `;
 
 const PlusButton = () => {

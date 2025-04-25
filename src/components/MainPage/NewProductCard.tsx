@@ -14,6 +14,7 @@ const StyledContainer = styled.div`
   padding: 13px 20px 20px 17px;
   position: relative;
   overflow: hidden;
+  cursor: pointer;
 
   &:hover {
     &::before {
@@ -53,9 +54,7 @@ const StyledActions = styled.div`
   justify-content: space-between;
 `;
 
-type Props = {};
-
-const NewProductCard = (props: Props) => {
+const NewProductCard = () => {
   return (
     <StyledContainer>
       <StyledImageWrapper>

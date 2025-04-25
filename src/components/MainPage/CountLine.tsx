@@ -4,12 +4,10 @@ import styled from "styled-components";
 const StyledLine = styled.div`
   height: 112px;
   width: 1px;
-  background-color: #ffcb40;
+  background-color: #44391a;
 `;
 
-type Props = {};
-
-const CountLine = (props: Props) => {
+const CountLine = () => {
   return <StyledLine></StyledLine>;
 };
 

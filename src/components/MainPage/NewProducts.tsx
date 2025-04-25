@@ -7,7 +7,10 @@ import Container from "../ui/Container";
 import NewProductCard from "./NewProductCard";
 
 const StyledContainer = styled.div`
-  margin-top: 133px;
+  margin-top: 120px;
+  @media (max-width: 1080px) {
+    margin-top: 91px;
+  }
 `;
 
 const StyledTitleAndActions = styled.div`
@@ -52,9 +55,8 @@ const StyledCards = styled.div`
     margin-left: -20px;
   }
 `;
-type Props = {};
 
-const NewProducts = (props: Props) => {
+const NewProducts = () => {
   return (
     <Container>
       <StyledContainer>

@@ -11,6 +11,7 @@ const StyledContainer = styled.div`
   }
   @media (max-width: 1080px) {
     padding-inline: 0;
+    margin-top: 91px;
   }
 `;
 
@@ -23,9 +24,7 @@ const StyledCards = styled.div`
   }
 `;
 
-type Props = {};
-
-const PopularProducts = (props: Props) => {
+const PopularProducts = () => {
   return (
     <Container>
       <StyledContainer>
