@@ -35,6 +35,12 @@ const Card = styled.div<{
       background-color: #121212;
     `}
 
+  &:hover {
+    img {
+      transform: ${({ $isMiddleCard }) => ($isMiddleCard ? "scale(1.3)" : "scale(1.15)")};
+    }
+  }
+
   @media (max-width: 1080px) {
     width: 100%;
     ${({ $changeHeightMobile }) =>
@@ -53,19 +59,6 @@ const Image = styled.img<{
   position: absolute;
   top: 0;
   transition: transform 0.3s ease;
-
-  ${({ $isMiddleCard }) =>
-    $isMiddleCard
-      ? css`
-          &:hover {
-            transform: scale(1.3);
-          }
-        `
-      : css`
-          &:hover {
-            transform: scale(1.15);
-          }
-        `}
 
   ${({ $isRightAligned }) =>
     $isRightAligned &&
