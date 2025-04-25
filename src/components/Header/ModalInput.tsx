@@ -16,7 +16,6 @@ const StyledContainer = styled.div<{ $hasIcon: boolean }>`
     background-color: #2a2a2a96;
     color: #fafafa;
     outline: none;
-    cursor: pointer;
 
     ${({ $hasIcon }) => $hasIcon && `padding-right: 48px;`}
 
