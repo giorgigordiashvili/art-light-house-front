@@ -27,6 +27,7 @@ const Card = styled.div<{
   box-sizing: border-box;
   position: relative;
   cursor: pointer;
+  overflow: hidden;
 
   ${({ $isMiddleCard }) =>
     $isMiddleCard &&
@@ -44,10 +45,28 @@ const Card = styled.div<{
   }
 `;
 
-const Image = styled.img<{ $isRightAligned?: boolean; $isMiddleCard?: boolean }>`
+const Image = styled.img<{
+  $isRightAligned?: boolean;
+  $isMiddleCard?: boolean;
+}>`
   object-fit: contain;
   position: absolute;
   top: 0;
+  transition: transform 0.3s ease;
+
+  ${({ $isMiddleCard }) =>
+    $isMiddleCard
+      ? css`
+          &:hover {
+            transform: scale(1.3);
+          }
+        `
+      : css`
+          &:hover {
+            transform: scale(1.15);
+          }
+        `}
+
   ${({ $isRightAligned }) =>
     $isRightAligned &&
     css`
@@ -57,6 +76,7 @@ const Image = styled.img<{ $isRightAligned?: boolean; $isMiddleCard?: boolean }>
         height: 200px;
       }
     `}
+
   ${({ $isMiddleCard }) =>
     $isMiddleCard &&
     css`
