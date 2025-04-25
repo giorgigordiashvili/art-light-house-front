@@ -1,11 +1,21 @@
+"use client";
+
 import React from "react";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 
 type Props = {
   size?: "small" | "large";
+  href: string;
 };
 
-const Logo = ({ size }: Props) => {
+const Logo = ({ size, href }: Props) => {
+  const router = useRouter();
+
+  const handleClick = () => {
+    router.push(href);
+  };
+
   let width = 111;
   let height = 41;
 
@@ -28,6 +38,7 @@ const Logo = ({ size }: Props) => {
       width={width}
       height={height}
       style={{ cursor: "pointer" }}
+      onClick={handleClick}
     />
   );
 };

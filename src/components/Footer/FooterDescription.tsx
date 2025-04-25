@@ -26,7 +26,7 @@ const DescriptionText = styled.p`
 function FooterDescription() {
   return (
     <Description>
-      <Logo size="large" />
+      <Logo size="large" href="/" />
       <DescriptionText>
         ჩვენი განათება ქმნის განსაკუთრებულ გარემოს, რომელიც ვიზუალურად მიმზიდველია და ემოციურ
         გამოცდილებას ქმნის.
