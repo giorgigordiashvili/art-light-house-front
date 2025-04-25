@@ -12,12 +12,12 @@ const StyledContainer = styled.div`
   cursor: pointer;
 `;
 
-const ReturnIcon = () => {
+const RightSlide = () => {
   return (
     <StyledContainer>
-      <Image src={"/assets/returnIcon.svg"} width={24} height={24} alt="return-icon" />
+      <Image src={"/assets/RightSlideIcon.svg"} width={24} height={24} alt="right slide" />
     </StyledContainer>
   );
 };
 
-export default ReturnIcon;
+export default RightSlide;

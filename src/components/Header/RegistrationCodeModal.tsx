@@ -1,6 +1,6 @@
 import React from "react";
 import styled from "styled-components";
-import PrimaryButton from "../PrimaryButton/PrimaryButton";
+import PrimaryButton from "../Buttons/PrimaryButton";
 import ModalInput from "./ModalInput";
 import ModalTitle from "./ModalTitle";
 import ModalDescription from "./ModalDescription";

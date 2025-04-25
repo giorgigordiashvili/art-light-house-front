@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import styled from "styled-components";
-import PrimaryButton from "../PrimaryButton/PrimaryButton";
+import PrimaryButton from "../Buttons/PrimaryButton";
 import CloseIcon from "../Header/CloseIcon";
 import ModalTitle from "./ModalTitle";
 import AuthToggleButtons from "./AuthToggleButtons";

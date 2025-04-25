@@ -4,7 +4,7 @@ import InputTitle from "./InputTitle";
 import ModalInput from "./ModalInput";
 import CloseIcon from "./CloseIcon";
 import ModalDescription from "./ModalDescription";
-import PrimaryButton from "../PrimaryButton/PrimaryButton";
+import PrimaryButton from "../Buttons/PrimaryButton";
 import ModalTitle from "./ModalTitle";
 
 const StyledOverlayWrapper = styled.div`

@@ -42,7 +42,7 @@ const StyledContainer = styled.div`
   flex-direction: column;
   padding: 12px;
   border-radius: 22px;
-  background-color: #000;
+  background-color: #111110;
   @media (max-width: 1080px) {
     padding: 8px;
   }

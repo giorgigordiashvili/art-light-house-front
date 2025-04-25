@@ -1,7 +1,7 @@
 import React from "react";
 import styled from "styled-components";
 import CloseIcon from "./CloseIcon";
-import PrimaryButton from "../PrimaryButton/PrimaryButton";
+import PrimaryButton from "../Buttons/PrimaryButton";
 import ModalDescription from "./ModalDescription";
 import CheckMarkIcon from "./CheckMarkIcon";
 
