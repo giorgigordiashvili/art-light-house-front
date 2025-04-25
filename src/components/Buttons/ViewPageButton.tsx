@@ -5,13 +5,15 @@ import Image from "next/image";
 const StyledButton = styled.button`
   padding: 14px 20px 18px 29px;
   background-color: #ffcb40;
-  box-shadow: 0px 14px 32.8px -8px #f7cb576e;
   border-radius: 142px;
   border: none;
   display: flex;
   align-items: center;
   gap: 25px;
   cursor: pointer;
+  &:hover {
+    box-shadow: 0px 14px 32.8px -8px #f7cb576e;
+  }
   @media (max-width: 1080px) {
     gap: 17px;
     padding: 8px 16px 10px 17px;
