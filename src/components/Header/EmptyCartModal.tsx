@@ -55,7 +55,7 @@ const StyledContainer = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  position: fixed;
+  position: absolute;
   top: 99px;
   right: 0;
   background-color: #1a1a1a96;

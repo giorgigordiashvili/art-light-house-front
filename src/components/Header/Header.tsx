@@ -586,7 +586,11 @@ const Header = () => {
       {isEmptyCartModalOpen && (
         <>
           <Overlay onClick={() => setIsEmptyCartModalOpen(false)} />
-          <EmptyCartModal />
+          <StyledTestWrapper>
+            <StyledTest>
+              <EmptyCartModal />
+            </StyledTest>
+          </StyledTestWrapper>
         </>
       )}
     </>
