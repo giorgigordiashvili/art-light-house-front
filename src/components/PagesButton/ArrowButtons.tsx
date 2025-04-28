@@ -1,4 +1,5 @@
 import styled from "styled-components";
+import Image from "next/image"; // Import Image from next/image
 
 const ArrowButton = styled.button`
   width: 50px;
@@ -12,11 +13,6 @@ const ArrowButton = styled.button`
   display: flex;
   align-items: center;
   justify-content: center;
-
-  img {
-    width: 24px;
-    height: 24px;
-  }
 `;
 
 const LeftArrowButton = styled(ArrowButton)`
@@ -30,7 +26,7 @@ const RightArrowButton = styled(ArrowButton)`
 export const LeftArrow = () => {
   return (
     <LeftArrowButton>
-      <img src={"/assets/leftArrow.svg"} alt="Left arrow" />
+      <Image src={"/assets/leftArrow.svg"} alt="Left arrow" width={24} height={24} />
     </LeftArrowButton>
   );
 };
@@ -38,7 +34,7 @@ export const LeftArrow = () => {
 export const RightArrow = () => {
   return (
     <RightArrowButton>
-      <img src={"/assets/rightArrow.svg"} alt="Right arrow" />
+      <Image src={"/assets/rightArrow.svg"} alt="Right arrow" width={24} height={24} />
     </RightArrowButton>
   );
 };
