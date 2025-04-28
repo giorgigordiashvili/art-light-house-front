@@ -509,7 +509,7 @@ const Header = () => {
                         if (isRegistrationCodeOpen) setIsRegistrationCodeOpen(false);
                         if (isRegistrationSuccessOpen) setIsRegistrationSuccessOpen(false);
                         setIsUserMenuOpen(true);
-                        closeEmptyCartModal(); // Close EmptyCartModal
+                        closeEmptyCartModal();
                       }}
                     />
                   </div>

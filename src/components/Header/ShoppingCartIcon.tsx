@@ -39,8 +39,8 @@
 
 // ShoppingCartIcon.tsx
 import React from "react";
-import Image from "next/image";
 import styled from "styled-components";
+import CartIcon from "@/app/icons/CartIcon";
 
 const StyledContainer = styled.div`
   position: relative;
@@ -70,7 +70,8 @@ type Props = {
 const ShoppingCartIcon = ({ itemCount = 0, onClick }: Props) => {
   return (
     <StyledContainer onClick={onClick}>
-      <Image src="/assets/CartIcon.svg" alt="shopping-cart-icon" width={24} height={24} />
+      {/* <Image src="/assets/CartIcon.svg" alt="shopping-cart-icon" width={24} height={24} /> */}
+      <CartIcon />
       {itemCount > 0 && <StyledCount>{itemCount}</StyledCount>}
     </StyledContainer>
   );
