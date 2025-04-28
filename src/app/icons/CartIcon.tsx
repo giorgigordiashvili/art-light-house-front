@@ -1,23 +1,20 @@
 import * as React from "react";
 
-const CartIcon = ({ color = "#fff" }) => {
-  const [currentColor, setCurrentColor] = React.useState(color);
+type CartIconProps = {
+  color?: string;
+};
 
-  const handleClick = () => {
-    setCurrentColor("#FFCB40");
-  };
-
+const CartIcon = ({ color = "#fff" }: CartIconProps) => {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
       width={24}
       height={24}
       fill="none"
-      onClick={handleClick}
       style={{ cursor: "pointer" }}
     >
       <path
-        stroke={currentColor}
+        stroke={color}
         strokeLinecap="round"
         strokeLinejoin="round"
         strokeWidth={2}

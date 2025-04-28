@@ -415,6 +415,7 @@ const Header = () => {
   const [isRegistrationCodeOpen, setIsRegistrationCodeOpen] = useState(false);
   const [isRegistrationSuccessOpen, setIsRegistrationSuccessOpen] = useState(false);
   const [isEmptyCartModalOpen, setIsEmptyCartModalOpen] = useState(false);
+  const [cartIconColor, setCartIconColor] = useState("#fff"); // Manage CartIcon color manually
 
   const burgerMenuRef = useRef<HTMLDivElement>(null);
   const burgerIconRef = useRef<HTMLDivElement>(null);
@@ -474,13 +475,19 @@ const Header = () => {
 
   const handleCartClick = () => {
     if (isCartEmpty) {
-      setIsEmptyCartModalOpen(true);
+      if (isEmptyCartModalOpen) {
+        closeEmptyCartModal();
+      } else {
+        setIsEmptyCartModalOpen(true);
+        setCartIconColor("#FFCB40");
+      }
     }
-    // You can add else logic here to navigate to cart page, if needed
   };
 
-  // Close EmptyCartModal when opening any other modal
-  const closeEmptyCartModal = () => setIsEmptyCartModalOpen(false);
+  const closeEmptyCartModal = () => {
+    setIsEmptyCartModalOpen(false);
+    setCartIconColor("#fff");
+  };
 
   return (
     <>
@@ -497,7 +504,11 @@ const Header = () => {
               </StyledNavigation>
               <StyledUserActions>
                 <StyledVerticalLine />
-                <ShoppingCartIcon itemCount={cartItemCount} onClick={handleCartClick} />
+                <ShoppingCartIcon
+                  itemCount={cartItemCount}
+                  onClick={handleCartClick}
+                  color={cartIconColor}
+                />
                 <ResponsiveGapWrapper>
                   <div ref={authButtonRef}>
                     <AuthorizationButton
@@ -594,7 +605,7 @@ const Header = () => {
       )}
       {isEmptyCartModalOpen && (
         <>
-          <Overlay onClick={() => setIsEmptyCartModalOpen(false)} />
+          <Overlay onClick={closeEmptyCartModal} />
           <StyledTestWrapper>
             <StyledTest>
               <EmptyCartModal />

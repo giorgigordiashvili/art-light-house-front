@@ -65,13 +65,13 @@ const StyledCount = styled.div`
 type Props = {
   itemCount?: number;
   onClick?: () => void;
+  color?: string;
 };
 
-const ShoppingCartIcon = ({ itemCount = 0, onClick }: Props) => {
+const ShoppingCartIcon = ({ itemCount = 0, onClick, color }: Props) => {
   return (
     <StyledContainer onClick={onClick}>
-      {/* <Image src="/assets/CartIcon.svg" alt="shopping-cart-icon" width={24} height={24} /> */}
-      <CartIcon />
+      <CartIcon color={color} />
       {itemCount > 0 && <StyledCount>{itemCount}</StyledCount>}
     </StyledContainer>
   );
