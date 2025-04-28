@@ -9,7 +9,7 @@ const Container = styled.div`
   backdrop-filter: blur(114px);
   border: 1px solid #ffffff12;
   border-radius: 17px;
-  color: #fff;
+  color: #edededcc;
   font-family: inherit;
   display: flex;
   flex-direction: column;
@@ -25,13 +25,20 @@ const Item = styled.div<{ logout?: boolean }>`
   cursor: pointer;
   padding: 0 24px;
   height: 24px;
-  color: ${({ logout }) => (logout ? "#FF4D4F" : "#fff")};
-
+  color: ${({ logout }) => (logout ? "#FF4D4F" : "#edededcc")};
+  &:hover {
+    color: #ffcb40;
+  }
+  &:hover {
+    filter: brightness(0) saturate(100%) invert(67%) sepia(81%) saturate(360%) hue-rotate(5deg)
+      brightness(104%) contrast(102%);
+  }
   ${({ logout }) =>
     logout
       ? `
         margin-top: 24px;
         margin-bottom: 24px;
+        color: #ff4d4f;
       `
       : `
         margin-top: 24px;
@@ -50,6 +57,7 @@ const IconWrapper = styled.div`
   height: 24px;
   position: relative;
   flex-shrink: 0;
+  transition: filter 0.3s ease;
 `;
 
 const menuItems = [
@@ -68,16 +76,16 @@ const DetailBar = () => {
           {index !== 0 && <Divider />}
           <Item>
             <IconWrapper>
-              <Image src={icon} alt={label} fill sizes="18px" />
+              <Image src={icon} alt={label} width={24} height={24} />
             </IconWrapper>
             {label}
           </Item>
         </div>
       ))}
       <Divider last="true" />
-      <Item logout>
+      <Item logout={true}>
         <IconWrapper>
-          <Image src="/assets/icons/Logout.svg" alt="გასვლა" fill sizes="18px" />
+          <Image src="/assets/icons/Logout.svg" alt="გასვლა" width={24} height={24} />
         </IconWrapper>
         გასვლა
       </Item>
