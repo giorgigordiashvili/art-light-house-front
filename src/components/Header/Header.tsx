@@ -479,6 +479,9 @@ const Header = () => {
     // You can add else logic here to navigate to cart page, if needed
   };
 
+  // Close EmptyCartModal when opening any other modal
+  const closeEmptyCartModal = () => setIsEmptyCartModalOpen(false);
+
   return (
     <>
       <StyledContainer>
@@ -506,11 +509,17 @@ const Header = () => {
                         if (isRegistrationCodeOpen) setIsRegistrationCodeOpen(false);
                         if (isRegistrationSuccessOpen) setIsRegistrationSuccessOpen(false);
                         setIsUserMenuOpen(true);
+                        closeEmptyCartModal(); // Close EmptyCartModal
                       }}
                     />
                   </div>
                   <div ref={burgerIconRef}>
-                    <BurgerIcon onClick={toggleBurgerMenu} />
+                    <BurgerIcon
+                      onClick={() => {
+                        toggleBurgerMenu();
+                        closeEmptyCartModal();
+                      }}
+                    />
                   </div>
                 </ResponsiveGapWrapper>
               </StyledUserActions>
