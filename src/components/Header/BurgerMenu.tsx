@@ -36,16 +36,16 @@ const BurgerMenu = () => {
     <StyledBurgeMenu>
       <StyledBurgerMenuContent>
         <StyledNavItem>
-          <NavItem text="პროდუქცია" />
+          <NavItem text="პროდუქცია" href="/products" />
         </StyledNavItem>
         <StyledNavItem>
-          <NavItem text="ფასდაკლება" />
+          <NavItem text="ფასდაკლება" href="/" />
         </StyledNavItem>
         <StyledNavItem>
-          <NavItem text="პროექტი" />
+          <NavItem text="პროექტი" href="/" />
         </StyledNavItem>
         <StyledNavItem>
-          <NavItem text="კონტაქტი" />
+          <NavItem text="კონტაქტი" href="/contact" />
         </StyledNavItem>
       </StyledBurgerMenuContent>
     </StyledBurgeMenu>

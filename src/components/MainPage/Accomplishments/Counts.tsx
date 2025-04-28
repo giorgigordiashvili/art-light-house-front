@@ -7,14 +7,30 @@ const StyledContainer = styled.div`
   gap: 12px;
 `;
 
-const StyledCount = styled.p`
+const StyledCountWrapper = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`;
+
+const Number = styled.span`
   color: #ffcb40;
   font-family: Helvetica;
   font-weight: 600;
   font-size: 60px;
   line-height: 72px;
   letter-spacing: -2%;
-  text-align: center;
+`;
+
+const Plus = styled.span`
+  color: #ffcb40;
+  font-family: Helvetica;
+  font-weight: 600;
+  font-size: 60px;
+  line-height: 72px;
+  margin-left: 4px;
+  position: relative;
+  top: -6px;
 `;
 
 const StyledSubTitle = styled.p`
@@ -33,10 +49,16 @@ type Props = {
 };
 
 const Counts = (props: Props) => {
+  const hasPlus = props.count.includes("+");
+  const numberOnly = props.count.replace("+", "");
+
   return (
     <StyledContainer>
-      <StyledCount> {props.count} </StyledCount>
-      <StyledSubTitle> {props.subTitle} </StyledSubTitle>
+      <StyledCountWrapper>
+        <Number>{numberOnly}</Number>
+        {hasPlus && <Plus>+</Plus>}
+      </StyledCountWrapper>
+      <StyledSubTitle>{props.subTitle}</StyledSubTitle>
     </StyledContainer>
   );
 };

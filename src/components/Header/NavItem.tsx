@@ -1,5 +1,8 @@
+"use client";
+
 import React from "react";
 import styled from "styled-components";
+import { useRouter } from "next/navigation";
 
 const StyledText = styled.div`
   font-family: HelRom;
@@ -13,12 +16,19 @@ const StyledText = styled.div`
 
 type Props = {
   text: string;
+  href: string;
 };
 
-const NavItem = (props: Props) => {
+const NavItem = ({ text, href }: Props) => {
+  const router = useRouter();
+
+  const handleClick = () => {
+    router.push(href);
+  };
+
   return (
-    <StyledText>
-      <p>{props.text}</p>
+    <StyledText onClick={handleClick}>
+      <p>{text}</p>
     </StyledText>
   );
 };

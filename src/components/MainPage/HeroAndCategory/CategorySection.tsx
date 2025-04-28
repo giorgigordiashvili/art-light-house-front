@@ -24,15 +24,19 @@ const RowWrapper = styled.div`
   }
 `;
 
-const Row = styled.div`
+const Row = styled.div.withConfig({
+  shouldForwardProp: (prop) => prop !== "isSecond",
+})<{ isSecond?: boolean }>`
   display: flex;
   gap: 20px;
+  ${(props) => props.isSecond && "height: 223px;"}
 `;
 
 const Card = styled.div<{
   width: number;
   height: number;
   gradient?: string;
+  $backgroundImage?: string;
 }>`
   position: relative;
   width: ${(props) => props.width}px;
@@ -45,11 +49,10 @@ const Card = styled.div<{
   align-items: flex-end;
   justify-content: flex-start;
   backdrop-filter: blur(114px);
-  background-repeat: no-repeat;
-  background-position: right;
-  background-size: contain;
   z-index: 0;
   cursor: pointer;
+  overflow: hidden;
+  transition: box-shadow 0.3s ease;
 
   &::before {
     content: "";
@@ -66,6 +69,31 @@ const Card = styled.div<{
     z-index: 1;
     pointer-events: none;
   }
+
+  &::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-image: url(${(props) => props.$backgroundImage || "none"});
+    background-repeat: no-repeat;
+    background-position: right;
+    background-size: contain;
+    z-index: 0;
+    transition: transform 0.2s ease;
+  }
+
+  &:hover::after {
+    transform: scale(1.1);
+  }
+
+  &:hover {
+    box-shadow: 0 0 0 0.5px #ffcb40;
+  }
+
+  > * {
+    position: relative;
+    z-index: 2;
+  }
 `;
 
 const CategorySection = () => {
@@ -79,7 +107,7 @@ const CategorySection = () => {
                 width={374}
                 height={222}
                 gradient="linear-gradient(116.95deg, rgba(255, 255, 255, 0.03) 3.48%, rgba(246, 202, 86, 0.45) 98.94%)"
-                style={{ backgroundImage: 'url("/assets/light.png")' }}
+                $backgroundImage="/assets/light.png"
               >
                 განათება
               </Card>
@@ -87,24 +115,20 @@ const CategorySection = () => {
                 width={374}
                 height={222}
                 gradient="linear-gradient(240.36deg, rgba(255, 255, 255, 0.03) 1.87%, rgba(246, 202, 86, 0.45) 93.88%)"
-                style={{ backgroundImage: 'url("/assets/PillarLight.png")' }}
+                $backgroundImage="/assets/PillarLight.png"
               >
                 ეზოს განათება
               </Card>
-              <Card
-                width={505}
-                height={222}
-                style={{ backgroundImage: 'url("/assets/furniture.png")' }}
-              >
+              <Card width={505} height={222} $backgroundImage="/assets/furniture.png">
                 ავეჯი
               </Card>
             </Row>
-            <Row>
+            <Row isSecond>
               <Card
                 width={505}
                 height={222}
                 gradient="linear-gradient(79.22deg, rgba(255, 255, 255, 0.03) 2.74%, rgba(246, 202, 86, 0.45) 81.45%)"
-                style={{ backgroundImage: 'url("/assets/decorations.png")' }}
+                $backgroundImage="/assets/decorations.png"
               >
                 დეკორაციები
               </Card>
@@ -112,15 +136,11 @@ const CategorySection = () => {
                 width={374}
                 height={222}
                 gradient="linear-gradient(330deg, rgba(255, 255, 255, 0.03) 3.22%, rgba(246, 202, 86, 0.45) 97.55%)"
-                style={{ backgroundImage: 'url("/assets/moon.png")' }}
+                $backgroundImage="/assets/moon.png"
               >
                 დეკორაციები
               </Card>
-              <Card
-                width={374}
-                height={222}
-                style={{ backgroundImage: 'url("/path/to/star.png")' }}
-              >
+              <Card width={374} height={222} $backgroundImage="/path/to/star.png">
                 სხვა
               </Card>
             </Row>

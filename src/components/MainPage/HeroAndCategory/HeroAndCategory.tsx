@@ -91,7 +91,7 @@ const HeroAndCategory = () => {
           <HeroDescription text="ჩვენი განათება ქმნის განსაკუთრებულ გარემოს, რომელიც ვიზუალურად მიმზიდველია და ემოციურ გამოცდილებას ქმნის." />
         </StyledDescription>
         <StyledButton>
-          <ViewPageButton text="ყველა პროდუქტი" />
+          <ViewPageButton text="ყველა პროდუქტი" href="/products" />
         </StyledButton>
         <StyledCategorySection>
           <DividerLine />

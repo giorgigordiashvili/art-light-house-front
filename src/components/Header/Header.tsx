@@ -189,13 +189,13 @@ const Header = () => {
       <StyledContainer>
         <Container>
           <StyledContentWrapper>
-            <Logo size="small" />
+            <Logo size="small" href="/" />
             <StyledActionsWrapper>
               <StyledNavigation>
-                <NavItem text="პროდუქცია" />
-                <NavItem text="ფასდაკლება" />
-                <NavItem text="პროექტი" />
-                <NavItem text="კონტაქტი" />
+                <NavItem text="პროდუქცია" href="/products" />
+                <NavItem text="ფასდაკლება" href="/" />
+                <NavItem text="პროექტი" href="/" />
+                <NavItem text="კონტაქტი" href="/contact" />
               </StyledNavigation>
               <StyledUserActions>
                 <StyledVerticalLine />
