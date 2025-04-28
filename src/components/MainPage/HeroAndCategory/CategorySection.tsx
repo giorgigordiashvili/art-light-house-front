@@ -24,9 +24,12 @@ const RowWrapper = styled.div`
   }
 `;
 
-const Row = styled.div`
+const Row = styled.div.withConfig({
+  shouldForwardProp: (prop) => prop !== "isSecond",
+})<{ isSecond?: boolean }>`
   display: flex;
   gap: 20px;
+  ${(props) => props.isSecond && "height: 223px;"}
 `;
 
 const Card = styled.div<{
@@ -34,7 +37,6 @@ const Card = styled.div<{
   height: number;
   gradient?: string;
   $backgroundImage?: string;
-  $hoverable?: boolean;
 }>`
   position: relative;
   width: ${(props) => props.width}px;
@@ -77,25 +79,16 @@ const Card = styled.div<{
     background-position: right;
     background-size: contain;
     z-index: 0;
-
-    ${(props) =>
-      props.$hoverable &&
-      `
-      transition: transform 0.2s ease;
-    `}
+    transition: transform 0.2s ease;
   }
 
-  ${(props) =>
-    props.$hoverable &&
-    `
-      &:hover::after {
-        transform: scale(1.1);
-      }
+  &:hover::after {
+    transform: scale(1.1);
+  }
 
-      &:hover {
-        box-shadow: 0 0 0 0.5px #ffcb40;
-      }
-    `}
+  &:hover {
+    box-shadow: 0 0 0 0.5px #ffcb40;
+  }
 
   > * {
     position: relative;
@@ -123,7 +116,6 @@ const CategorySection = () => {
                 height={222}
                 gradient="linear-gradient(240.36deg, rgba(255, 255, 255, 0.03) 1.87%, rgba(246, 202, 86, 0.45) 93.88%)"
                 $backgroundImage="/assets/PillarLight.png"
-                $hoverable
               >
                 ეზოს განათება
               </Card>
@@ -131,7 +123,7 @@ const CategorySection = () => {
                 ავეჯი
               </Card>
             </Row>
-            <Row>
+            <Row isSecond>
               <Card
                 width={505}
                 height={222}

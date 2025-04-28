@@ -1,8 +1,8 @@
 import React from "react";
 import styled from "styled-components";
 import Image from "next/image";
-import PlusButton from "../PlusButton";
-import CardText from "../CardText";
+import PlusButton from "./PlusButton";
+import CardText from "./CardText";
 
 const StyledContainer = styled.div`
   background-color: #141414;
