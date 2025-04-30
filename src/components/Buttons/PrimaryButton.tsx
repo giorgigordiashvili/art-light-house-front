@@ -1,16 +1,17 @@
 import React from "react";
-import styled from "styled-components";
+import styled, { css } from "styled-components";
 
 type Props = {
   text: string;
   width?: string;
   height?: string;
   onClick?: () => void;
+  media?: "yes" | "no";
 };
 
 const StyledContainer = styled.div``;
 
-const StyledButton = styled.button<{ width?: string; height?: string }>`
+const StyledButton = styled.button<{ width?: string; height?: string; media?: "yes" | "no" }>`
   height: ${(props) => props.height || "50px"};
   width: ${(props) => props.width || "252px"};
   display: flex;
@@ -31,16 +32,21 @@ const StyledButton = styled.button<{ width?: string; height?: string }>`
   &:hover {
     color: #fff;
   }
-  @media (max-width: 1080px) {
-    width: 100%;
-  }
+
+  ${(props) =>
+    props.media !== "no" &&
+    css`
+      @media (max-width: 1080px) {
+        width: 100%;
+      }
+    `}
 `;
 
-const PrimaryButton = (props: Props) => {
+const PrimaryButton = ({ text, width, height, onClick, media }: Props) => {
   return (
     <StyledContainer>
-      <StyledButton width={props.width} height={props.height} onClick={props.onClick}>
-        {props.text}
+      <StyledButton width={width} height={height} onClick={onClick} media={media}>
+        {text}
       </StyledButton>
     </StyledContainer>
   );

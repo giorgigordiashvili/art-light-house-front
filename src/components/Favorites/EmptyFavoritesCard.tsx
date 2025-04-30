@@ -51,7 +51,7 @@ const EmptyFavoritesCard = () => {
           <CartSubTitle text="ნახე პროდუქტები და შენი არჩევანი დაამატე კალათაში" />
         </StyledSubTitle>
         <StyledButton>
-          <PrimaryButton text="პროდუქტები" width="205px" height="55px" />
+          <PrimaryButton text="პროდუქტები" width="205px" height="55px" media="no" />
         </StyledButton>
       </StyledContent>
     </StyledContainer>
