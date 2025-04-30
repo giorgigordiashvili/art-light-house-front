@@ -1,9 +1,9 @@
 import React from "react";
 import styled from "styled-components";
 import PrimaryButton from "../Buttons/PrimaryButton";
-import CartTitle from "./CartTitle";
-import CartSubTitle from "./CartSubTitle";
-import CartImage from "./CartImage";
+import CartTitle from "../Cart/CartTitle";
+import CartSubTitle from "../Cart/CartSubTitle";
+import CartImage from "../Cart/CartImage";
 
 const StyledContainer = styled.div`
   display: flex;
@@ -39,11 +39,11 @@ const StyledButton = styled.div`
   margin-top: 59px;
 `;
 
-const EmptyCartCard = () => {
+const EmptyFavoritesCard = () => {
   return (
     <StyledContainer>
       <StyledContent>
-        <CartImage image="cart" />
+        <CartImage image="favorite" />
         <StyledTitle>
           <CartTitle text="კალათა ცარიელია" />
         </StyledTitle>
@@ -58,4 +58,4 @@ const EmptyCartCard = () => {
   );
 };
 
-export default EmptyCartCard;
+export default EmptyFavoritesCard;
