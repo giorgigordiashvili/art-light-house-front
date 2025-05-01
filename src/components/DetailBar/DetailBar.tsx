@@ -27,7 +27,9 @@ const Item = styled.div<{ logout?: boolean }>`
   height: 24px;
   color: ${({ logout }) => (logout ? "#FF4D4F" : "#edededcc")};
   &:hover {
-    color: #ffcb40;
+    background: linear-gradient(90deg, #f7cb57 0%, #ffd700 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
   }
   &:hover {
     filter: brightness(0) saturate(100%) invert(67%) sepia(81%) saturate(360%) hue-rotate(5deg)

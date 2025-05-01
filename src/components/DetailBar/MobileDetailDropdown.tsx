@@ -7,7 +7,7 @@ const Wrapper = styled.div`
   width: 350px;
   background-color: transparent;
 
-  @media (min-width: 1081px) {
+  @media (min-width: 1080px) {
     display: none;
   }
 `;
@@ -16,8 +16,8 @@ const DropdownHeader = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 16px 20px;
-  background-color: #1a1a1a96;
+  padding: 20px;
+  background: #1a1a1a96;
   backdrop-filter: blur(114px);
   border-radius: 16px;
   border: 1px solid #ffffff12;
@@ -27,12 +27,15 @@ const DropdownHeader = styled.div`
 const HeaderLeft = styled.div`
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 13px;
 
   span {
-    color: #ffcb40;
-    font-weight: bold;
-    font-size: 18px;
+    background: linear-gradient(90deg, #f7cb57 0%, #ffd700 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    font-weight: 700;
+    font-size: 14px;
+    line-height: 28px;
   }
 
   img {
@@ -47,45 +50,56 @@ const HeaderRight = styled.div<{ open: boolean }>`
 `;
 
 const DropdownMenu = styled.div`
-  margin-top: 10px;
+  margin-top: 8px;
   background-color: #1a1a1a96;
   backdrop-filter: blur(114px);
   border: 1px solid #ffffff12;
-  border-radius: 16px;
+  border-radius: 17px;
   overflow: hidden;
 `;
 
 const MenuItem = styled.div<{ selected: boolean }>`
   display: flex;
   align-items: center;
-  gap: 16px;
-  padding: 16px 20px;
-  font-size: 16px;
+  gap: 18px;
+  padding: 16px 24px;
+  /* 20 არის თუ 16 გასარკვევია პადინგ ტოპ */
+  font-weight: 700;
+  font-size: 14px;
+  line-height: 28px;
   cursor: pointer;
   border-bottom: 1px solid #242424;
-  color: ${({ selected }) => (selected ? "#ffcb40" : "#edededcc")};
+  background-color: transparent;
 
   &:last-child {
     border-bottom: none;
   }
 
+  color: ${({ selected }) => (selected ? "transparent" : "#edededcc")};
+  background: ${({ selected }) =>
+    selected ? "linear-gradient(90deg, #F7CB57 0%, #FFD700 100%)" : "none"};
+  -webkit-background-clip: ${({ selected }) => (selected ? "text" : "unset")};
+  -webkit-text-fill-color: ${({ selected }) => (selected ? "transparent" : "#edededcc")};
+
   &:hover {
-    color: ${({ selected }) => (selected ? "#ffcb40" : "#ffcb40")};
+    color: transparent;
+    background: linear-gradient(90deg, #f7cb57 0%, #ffd700 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
   }
 
   img {
     flex-shrink: 0;
     filter: ${({ selected }) =>
       selected
-        ? "brightness(0) saturate(100%) invert(67%) sepia(81%) saturate(360%) hue-rotate(5deg) brightness(104%) contrast(102%)"
+        ? `brightness(0) saturate(100%) invert(67%) sepia(81%) saturate(360%) hue-rotate(5deg)
+        brightness(104%) contrast(102%)`
         : "none"};
   }
 
   &:hover img {
-    filter: ${({ selected }) =>
-      selected
-        ? "brightness(0) saturate(100%) invert(67%) sepia(81%) saturate(360%) hue-rotate(5deg) brightness(104%) contrast(102%)"
-        : "brightness(0) saturate(100%) invert(67%) sepia(81%) saturate(360%) hue-rotate(5deg) brightness(104%) contrast(102%)"};
+    filter: brightness(0) saturate(100%) invert(67%) sepia(81%) saturate(360%) hue-rotate(5deg)
+      brightness(104%) contrast(102%);
   }
 `;
 
