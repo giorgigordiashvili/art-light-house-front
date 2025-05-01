@@ -37,9 +37,7 @@ const Column = styled.div`
 `;
 
 const Column1 = styled.div`
-  width: 152px;
   height: 168px;
-  min-width: 96px;
 
   p {
     margin-bottom: 16px;
