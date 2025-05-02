@@ -1,45 +1,65 @@
 "use client";
 import styled from "styled-components";
-import { useState } from "react";
 import Image from "next/image";
 
 const Container = styled.div`
-  width: 230px;
-  background-color: #0d0d0d;
-  border-radius: 16px;
-  color: #fff;
+  width: 472px;
+  height: 544px;
+  background: #1a1a1a96;
+  backdrop-filter: blur(114px);
+  border: 1px solid #ffffff12;
+  border-radius: 17px;
+  color: #edededcc;
   font-family: inherit;
   display: flex;
   flex-direction: column;
   overflow: hidden;
 `;
 
-const Item = styled.div<{ active?: boolean; logout?: boolean }>`
-  padding: 12px 20px;
-  font-size: 15px;
-  color: ${({ active, logout }) => (logout ? "#ff4d4f" : active ? "#ffd700" : "#bcbcbc")};
-  font-weight: ${({ active }) => (active ? "bold" : "normal")};
-  cursor: pointer;
-  border-bottom: 1px solid #1f1f1f;
+const Item = styled.div<{ logout?: boolean }>`
   display: flex;
   align-items: center;
-  gap: 12px;
-
-  &:last-child {
-    border-bottom: none;
-    margin-top: auto;
-  }
-
+  gap: 18px;
+  font-size: 20px;
+  font-weight: 400;
+  cursor: pointer;
+  padding: 0 24px;
+  height: 24px;
+  color: ${({ logout }) => (logout ? "#FF4D4F" : "#edededcc")};
   &:hover {
-    background-color: #1a1a1a;
+    background: linear-gradient(90deg, #f7cb57 0%, #ffd700 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
   }
+  &:hover {
+    filter: brightness(0) saturate(100%) invert(67%) sepia(81%) saturate(360%) hue-rotate(5deg)
+      brightness(104%) contrast(102%);
+  }
+  ${({ logout }) =>
+    logout
+      ? `
+        margin-top: 24px;
+        margin-bottom: 24px;
+        color: #ff4d4f;
+      `
+      : `
+        margin-top: 24px;
+        margin-bottom: 24px;
+      `}
+`;
+
+const Divider = styled.div<{ last?: string }>`
+  height: 1px;
+  background-color: #242424;
+  margin-top: ${(props) => (props.last === "true" ? "105px" : "0")};
 `;
 
 const IconWrapper = styled.div`
-  width: 18px;
-  height: 18px;
+  width: 24px;
+  height: 24px;
   position: relative;
   flex-shrink: 0;
+  transition: filter 0.3s ease;
 `;
 
 const menuItems = [
@@ -51,21 +71,23 @@ const menuItems = [
 ];
 
 const DetailBar = () => {
-  const [active, setActive] = useState("ჩემი დეტალები");
-
   return (
     <Container>
-      {menuItems.map(({ label, icon }) => (
-        <Item key={label} active={active === label} onClick={() => setActive(label)}>
-          <IconWrapper>
-            <Image src={icon} alt={label} fill sizes="18px" />
-          </IconWrapper>
-          {label}
-        </Item>
+      {menuItems.map(({ label, icon }, index) => (
+        <div key={label}>
+          {index !== 0 && <Divider />}
+          <Item>
+            <IconWrapper>
+              <Image src={icon} alt={label} width={24} height={24} />
+            </IconWrapper>
+            {label}
+          </Item>
+        </div>
       ))}
-      <Item logout>
+      <Divider last="true" />
+      <Item logout={true}>
         <IconWrapper>
-          <Image src="/assets/icons/Logout.svg" alt="გასვლა" fill sizes="18px" />
+          <Image src="/assets/icons/Logout.svg" alt="გასვლა" width={24} height={24} />
         </IconWrapper>
         გასვლა
       </Item>

@@ -26,8 +26,8 @@ const Column = styled.div`
     margin-bottom: 16px;
     font-family: "Helvetica Neue LT GEO", sans-serif;
     font-weight: 700;
-    font-size: 16px;
-    line-height: 24px;
+    font-size: 14px;
+    line-height: 20px;
     white-space: nowrap;
     color: #ffffff;
   }
@@ -45,8 +45,8 @@ const Column1 = styled.div`
     margin-bottom: 16px;
     font-family: "Helvetica Neue LT GEO", sans-serif;
     font-weight: 700;
-    font-size: 16px;
-    line-height: 24px;
+    font-size: 14px;
+    line-height: 20px;
     white-space: nowrap;
     color: #ffffff;
   }
