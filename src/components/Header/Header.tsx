@@ -13,6 +13,7 @@ import RecoverPasswordModal from "./RecoverPasswordModal";
 import RegistrationCodeModal from "./RegistrationCodeModal";
 import RegistrationSuccessModal from "./RegistrationSuccessModal";
 import EmptyCartModal from "./EmptyCartModal";
+import CartModal from "./CartModal";
 
 const StyledContainer = styled.div`
   position: fixed;
@@ -109,12 +110,14 @@ const StyledTest = styled.div`
 `;
 
 const Header = () => {
+  const [cartItemCount] = useState<number>(4);
   const [isBurgerMenuOpen, setIsBurgerMenuOpen] = useState(false);
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
   const [isRecoverPasswordOpen, setIsRecoverPasswordOpen] = useState(false);
   const [isRegistrationCodeOpen, setIsRegistrationCodeOpen] = useState(false);
   const [isRegistrationSuccessOpen, setIsRegistrationSuccessOpen] = useState(false);
   const [isEmptyCartModalOpen, setIsEmptyCartModalOpen] = useState(false);
+  const [isCartModalOpen, setIsCartModalOpen] = useState(false);
   const [cartIconColor, setCartIconColor] = useState("#fff");
 
   const burgerMenuRef = useRef<HTMLDivElement>(null);
@@ -128,11 +131,13 @@ const Header = () => {
 
   useEffect(() => {
     document.body.style.overflow =
-      isBurgerMenuOpen || isUserMenuOpen || isEmptyCartModalOpen ? "hidden" : "visible";
+      isBurgerMenuOpen || isUserMenuOpen || isEmptyCartModalOpen || isCartModalOpen
+        ? "hidden"
+        : "visible";
     return () => {
       document.body.style.overflow = "visible";
     };
-  }, [isBurgerMenuOpen, isUserMenuOpen, isEmptyCartModalOpen]);
+  }, [isBurgerMenuOpen, isUserMenuOpen, isEmptyCartModalOpen, isCartModalOpen]);
 
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
@@ -165,12 +170,21 @@ const Header = () => {
     };
   }, [isBurgerMenuOpen, isUserMenuOpen]);
 
-  const cartItemCount = 7;
-  const isCartEmpty = true;
+  const isCartEmpty = cartItemCount === 0;
   const isUserAuthorized = false;
   const currentUser = {
     username: "Nikoloz Baratashvili",
     userImage: "/assets/user.svg",
+  };
+
+  const closeEmptyCartModal = () => {
+    setIsEmptyCartModalOpen(false);
+    setCartIconColor("#fff");
+  };
+
+  const closeCartModal = () => {
+    setIsCartModalOpen(false);
+    setCartIconColor("#fff");
   };
 
   const handleCartClick = () => {
@@ -181,12 +195,10 @@ const Header = () => {
         setIsEmptyCartModalOpen(true);
         setCartIconColor("#FFCB40");
       }
+    } else {
+      setIsCartModalOpen(true);
+      setCartIconColor("#FFCB40");
     }
-  };
-
-  const closeEmptyCartModal = () => {
-    setIsEmptyCartModalOpen(false);
-    setCartIconColor("#fff");
   };
 
   return (
@@ -221,6 +233,7 @@ const Header = () => {
                         if (isRegistrationSuccessOpen) setIsRegistrationSuccessOpen(false);
                         setIsUserMenuOpen(true);
                         closeEmptyCartModal();
+                        closeCartModal();
                       }}
                     />
                   </div>
@@ -229,6 +242,7 @@ const Header = () => {
                       onClick={() => {
                         toggleBurgerMenu();
                         closeEmptyCartModal();
+                        closeCartModal();
                       }}
                     />
                   </div>
@@ -281,6 +295,7 @@ const Header = () => {
           <RecoverPasswordModal onClose={() => setIsRecoverPasswordOpen(false)} />
         </>
       )}
+
       {isRegistrationCodeOpen && (
         <>
           <Overlay onClick={() => setIsRegistrationCodeOpen(false)} />
@@ -297,18 +312,31 @@ const Header = () => {
           />
         </>
       )}
+
       {isRegistrationSuccessOpen && (
         <>
           <Overlay onClick={() => setIsRegistrationSuccessOpen(false)} />
           <RegistrationSuccessModal onClose={() => setIsRegistrationSuccessOpen(false)} />
         </>
       )}
+
       {isEmptyCartModalOpen && (
         <>
           <Overlay onClick={closeEmptyCartModal} />
           <StyledTestWrapper>
             <StyledTest>
               <EmptyCartModal />
+            </StyledTest>
+          </StyledTestWrapper>
+        </>
+      )}
+
+      {isCartModalOpen && (
+        <>
+          <Overlay onClick={closeCartModal} />
+          <StyledTestWrapper>
+            <StyledTest>
+              <CartModal itemCount={cartItemCount} />
             </StyledTest>
           </StyledTestWrapper>
         </>
