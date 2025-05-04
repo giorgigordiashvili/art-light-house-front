@@ -196,8 +196,12 @@ const Header = () => {
         setCartIconColor("#FFCB40");
       }
     } else {
-      setIsCartModalOpen(true);
-      setCartIconColor("#FFCB40");
+      if (isCartModalOpen) {
+        closeCartModal();
+      } else {
+        setIsCartModalOpen(true);
+        setCartIconColor("#FFCB40");
+      }
     }
   };
 
