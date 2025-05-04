@@ -1,6 +1,7 @@
 import React from "react";
 import styled from "styled-components";
 import CartProduct from "./CartProduct";
+import PrimaryButton from "../Buttons/PrimaryButton";
 
 const StyledContainer = styled.div`
   width: 349px;
@@ -62,6 +63,10 @@ const ProductWrapper = styled.div`
   flex-shrink: 0;
 `;
 
+const StyledButton = styled.div`
+  margin-top: 24px;
+`;
+
 const CartModal = ({ itemCount }: { itemCount: number }) => {
   return (
     <ModalLayoutWrapper>
@@ -77,6 +82,9 @@ const CartModal = ({ itemCount }: { itemCount: number }) => {
               </ProductWrapper>
             ))}
           </ProductList>
+          <StyledButton>
+            <PrimaryButton text="კალათაში გადასვლა" height="50px" width="317px" />
+          </StyledButton>
         </StyledContainer>
       </ModalLayout>
     </ModalLayoutWrapper>

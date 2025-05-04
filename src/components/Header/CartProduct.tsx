@@ -2,6 +2,7 @@ import React from "react";
 import styled from "styled-components";
 import TrashIcon from "./TrashIcon";
 import QuantitySelector from "./QuantitySelector";
+import ProductContent from "./ProductContent";
 
 const StyledContainer = styled.div`
   width: 325px;
@@ -24,6 +25,7 @@ const CartProduct = () => {
       <StyledTrashButton>
         <TrashIcon />
       </StyledTrashButton>
+      <ProductContent />
       <QuantitySelector />
     </StyledContainer>
   );
