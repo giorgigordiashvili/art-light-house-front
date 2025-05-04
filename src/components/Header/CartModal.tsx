@@ -21,6 +21,16 @@ const StyledContainer = styled.div`
   @media (max-width: 1332px) {
     right: 20px;
   }
+
+  @media (max-width: 1080px) {
+    right: 0;
+    width: 100%;
+    bottom: 0;
+    top: auto;
+    border-radius: 0;
+    border-top-left-radius: 17px;
+    border-top-right-radius: 17px;
+  }
 `;
 
 const StyledSpanContainer = styled.div`
@@ -67,12 +77,19 @@ const ProductList = styled.div`
 
 const ProductWrapper = styled.div`
   flex-shrink: 0;
+  @media (max-width: 1080px) {
+    width: 100%;
+    padding-inline: 12px;
+  }
 `;
 
 const StyledButton = styled.div`
   margin-top: 24px;
   display: flex;
   justify-content: center;
+  @media (max-width: 1080px) {
+    padding-inline: 16px;
+  }
 `;
 
 const CartModal = ({ itemCount }: { itemCount: number }) => {
@@ -92,7 +109,7 @@ const CartModal = ({ itemCount }: { itemCount: number }) => {
           </ProductList>
           <SummaryPrice />
           <StyledButton>
-            <PrimaryButton text="კალათაში გადასვლა" height="50px" width="317px" />
+            <PrimaryButton text="კალათაში გადასვლა" height="50px" width="317px" media="full" />
           </StyledButton>
         </StyledContainer>
       </ModalLayout>
