@@ -51,33 +51,10 @@ const ProductList = styled.div`
   display: flex;
   flex-direction: column;
   gap: 10px;
-  overflow-y: auto;
+  overflow-y: overlay;
   max-height: 246px;
   box-sizing: border-box;
-
-  &::-webkit-scrollbar {
-    width: 6px;
-    background: transparent;
-  }
-
-  &::-webkit-scrollbar-track {
-    background: transparent;
-  }
-
-  &::-webkit-scrollbar-thumb {
-    background-color: red;
-    border-radius: 0;
-    min-height: 99px;
-  }
-
-  &::-webkit-scrollbar-button {
-    display: none;
-    height: 0;
-    width: 0;
-  }
-
-  scrollbar-width: thin;
-  scrollbar-color: #454545 transparent;
+  scrollbar-width: none;
 `;
 
 const ProductWrapper = styled.div`
