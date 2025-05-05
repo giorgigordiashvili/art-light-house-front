@@ -1,15 +1,21 @@
+"use client";
 import React from "react";
+import Favorites from "@/components/FavoritesPage/Favorites";
 import styled from "styled-components";
-import Favorites from "@/components/Favorites/Favorites";
+import Container from "@/components/ui/Container";
 
 const StyledContainer = styled.div`
-  background-color: black;
+  background-color: #000;
+  padding-bottom: 118px;
+  padding-top: 186px;
 `;
 
 const FavoritesScreen = () => {
   return (
     <StyledContainer>
-      <Favorites />
+      <Container>
+        <Favorites />
+      </Container>
     </StyledContainer>
   );
 };
