@@ -1,6 +1,5 @@
 import styled from "styled-components";
-import Image from "next/image"; // Import Image from next/image
-
+import Image from "next/image";
 const ArrowButton = styled.button`
   width: 50px;
   height: 50px;
@@ -34,7 +33,7 @@ export const LeftArrow = () => {
 export const RightArrow = () => {
   return (
     <RightArrowButton>
-      <Image src={"/assets/rightArrow.svg"} alt="Right arrow" width={24} height={24} />
+      <Image src={"/assets/icons/Chevron.svg"} alt="Right arrow" width={24} height={24} />
     </RightArrowButton>
   );
 };

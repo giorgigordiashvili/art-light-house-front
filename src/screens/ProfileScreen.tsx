@@ -1,6 +1,6 @@
 "use client";
 import styled from "styled-components";
-import DetailMain from "@/components/ProductDetail/DetailMain";
+import ProfileMain from "@/components/Profile/ProfileMain";
 
 const StyledComponent = styled.div`
   background: black;
@@ -11,12 +11,12 @@ const StyledComponent = styled.div`
   align-items: center;
 `;
 
-const MyDetails = () => {
+const ProfileScreen = () => {
   return (
     <StyledComponent>
-      <DetailMain></DetailMain>
+      <ProfileMain></ProfileMain>
     </StyledComponent>
   );
 };
 
-export default MyDetails;
+export default ProfileScreen;
