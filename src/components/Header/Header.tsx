@@ -340,7 +340,8 @@ const Header = () => {
           <Overlay onClick={closeCartModal} />
           <StyledTestWrapper>
             <StyledTest>
-              <CartModal itemCount={cartItemCount} />
+              <CartModal itemCount={cartItemCount} onClose={closeCartModal} />{" "}
+              {/* Pass the onClose prop */}
             </StyledTest>
           </StyledTestWrapper>
         </>
