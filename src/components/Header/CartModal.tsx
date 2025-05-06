@@ -103,7 +103,7 @@ const CartModal = ({ itemCount, onClose }: Props) => {
   const router = useRouter();
 
   const handleRedirect = () => {
-    router.push("/cart");
+    router.push("/favorites");
     onClose();
   };
 
