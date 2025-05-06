@@ -3,7 +3,7 @@ import styled from "styled-components";
 import Favorites from "@/components/Favorites/Favorites";
 
 const StyledContainer = styled.div`
-  background-color: black;
+  background-color: #0b0b0b;
 `;
 
 const EmptyFavoritesScreen = () => {

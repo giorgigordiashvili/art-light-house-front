@@ -4,7 +4,7 @@ import styled from "styled-components";
 import Cart from "@/components/Cart/Cart";
 
 const StyledContainer = styled.div`
-  background-color: black;
+  background-color: #0b0b0b;
 `;
 
 const EmptyCartScreen = () => {
