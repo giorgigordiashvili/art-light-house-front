@@ -12,6 +12,8 @@ import AuthorizationModal from "./AuthorizationModal";
 import RecoverPasswordModal from "./RecoverPasswordModal";
 import RegistrationCodeModal from "./RegistrationCodeModal";
 import RegistrationSuccessModal from "./RegistrationSuccessModal";
+import EmptyCartModal from "./EmptyCartModal";
+import CartModal from "./CartModal";
 
 const StyledContainer = styled.div`
   position: fixed;
@@ -108,11 +110,15 @@ const StyledTest = styled.div`
 `;
 
 const Header = () => {
+  const [cartItemCount] = useState<number>(4);
   const [isBurgerMenuOpen, setIsBurgerMenuOpen] = useState(false);
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
   const [isRecoverPasswordOpen, setIsRecoverPasswordOpen] = useState(false);
   const [isRegistrationCodeOpen, setIsRegistrationCodeOpen] = useState(false);
   const [isRegistrationSuccessOpen, setIsRegistrationSuccessOpen] = useState(false);
+  const [isEmptyCartModalOpen, setIsEmptyCartModalOpen] = useState(false);
+  const [isCartModalOpen, setIsCartModalOpen] = useState(false);
+  const [cartIconColor, setCartIconColor] = useState("#fff");
 
   const burgerMenuRef = useRef<HTMLDivElement>(null);
   const burgerIconRef = useRef<HTMLDivElement>(null);
@@ -124,11 +130,14 @@ const Header = () => {
   };
 
   useEffect(() => {
-    document.body.style.overflow = isBurgerMenuOpen || isUserMenuOpen ? "hidden" : "visible";
+    document.body.style.overflow =
+      isBurgerMenuOpen || isUserMenuOpen || isEmptyCartModalOpen || isCartModalOpen
+        ? "hidden"
+        : "visible";
     return () => {
       document.body.style.overflow = "visible";
     };
-  }, [isBurgerMenuOpen, isUserMenuOpen]);
+  }, [isBurgerMenuOpen, isUserMenuOpen, isEmptyCartModalOpen, isCartModalOpen]);
 
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
@@ -139,15 +148,7 @@ const Header = () => {
       const clickedOutsideBurgerIcon =
         burgerIconRef.current && !burgerIconRef.current.contains(target);
 
-      if (
-        isBurgerMenuOpen &&
-        burgerMenuRef.current &&
-        !burgerMenuRef.current.contains(target) &&
-        burgerIconRef.current &&
-        !burgerIconRef.current.contains(target) &&
-        clickedOutsideBurgerMenu &&
-        clickedOutsideBurgerIcon
-      ) {
+      if (isBurgerMenuOpen && clickedOutsideBurgerMenu && clickedOutsideBurgerIcon) {
         setIsBurgerMenuOpen(false);
       }
 
@@ -155,15 +156,7 @@ const Header = () => {
       const clickedOutsideAuthButton =
         authButtonRef.current && !authButtonRef.current.contains(target);
 
-      if (
-        isUserMenuOpen &&
-        userMenuRef.current &&
-        !userMenuRef.current.contains(target) &&
-        authButtonRef.current &&
-        !authButtonRef.current.contains(target) &&
-        clickedOutsideUserMenu &&
-        clickedOutsideAuthButton
-      ) {
+      if (isUserMenuOpen && clickedOutsideUserMenu && clickedOutsideAuthButton) {
         setIsUserMenuOpen(false);
       }
     };
@@ -177,11 +170,39 @@ const Header = () => {
     };
   }, [isBurgerMenuOpen, isUserMenuOpen]);
 
-  const cartItemCount = 7;
+  const isCartEmpty = cartItemCount === 0;
   const isUserAuthorized = false;
   const currentUser = {
     username: "Nikoloz Baratashvili",
     userImage: "/assets/user.svg",
+  };
+
+  const closeEmptyCartModal = () => {
+    setIsEmptyCartModalOpen(false);
+    setCartIconColor("#fff");
+  };
+
+  const closeCartModal = () => {
+    setIsCartModalOpen(false);
+    setCartIconColor("#fff");
+  };
+
+  const handleCartClick = () => {
+    if (isCartEmpty) {
+      if (isEmptyCartModalOpen) {
+        closeEmptyCartModal();
+      } else {
+        setIsEmptyCartModalOpen(true);
+        setCartIconColor("#FFCB40");
+      }
+    } else {
+      if (isCartModalOpen) {
+        closeCartModal();
+      } else {
+        setIsCartModalOpen(true);
+        setCartIconColor("#FFCB40");
+      }
+    }
   };
 
   return (
@@ -199,7 +220,11 @@ const Header = () => {
               </StyledNavigation>
               <StyledUserActions>
                 <StyledVerticalLine />
-                <ShoppingCartIcon itemCount={cartItemCount} />
+                <ShoppingCartIcon
+                  itemCount={cartItemCount}
+                  onClick={handleCartClick}
+                  color={cartIconColor}
+                />
                 <ResponsiveGapWrapper>
                   <div ref={authButtonRef}>
                     <AuthorizationButton
@@ -208,18 +233,22 @@ const Header = () => {
                       userImage={currentUser.userImage}
                       text="ავტორიზაცია"
                       onClick={() => {
-                        if (isRegistrationCodeOpen) {
-                          setIsRegistrationCodeOpen(false);
-                        }
-                        if (isRegistrationSuccessOpen) {
-                          setIsRegistrationSuccessOpen(false);
-                        }
+                        if (isRegistrationCodeOpen) setIsRegistrationCodeOpen(false);
+                        if (isRegistrationSuccessOpen) setIsRegistrationSuccessOpen(false);
                         setIsUserMenuOpen(true);
+                        closeEmptyCartModal();
+                        closeCartModal();
                       }}
                     />
                   </div>
                   <div ref={burgerIconRef}>
-                    <BurgerIcon onClick={toggleBurgerMenu} />
+                    <BurgerIcon
+                      onClick={() => {
+                        toggleBurgerMenu();
+                        closeEmptyCartModal();
+                        closeCartModal();
+                      }}
+                    />
                   </div>
                 </ResponsiveGapWrapper>
               </StyledUserActions>
@@ -227,6 +256,7 @@ const Header = () => {
           </StyledContentWrapper>
         </Container>
       </StyledContainer>
+
       {isBurgerMenuOpen && (
         <>
           <Overlay />
@@ -235,6 +265,7 @@ const Header = () => {
           </div>
         </>
       )}
+
       <StyledTestWrapper>
         <StyledTest>
           {isUserMenuOpen && (
@@ -261,12 +292,14 @@ const Header = () => {
           )}
         </StyledTest>
       </StyledTestWrapper>
+
       {isRecoverPasswordOpen && (
         <>
           <Overlay onClick={() => setIsRecoverPasswordOpen(false)} />
           <RecoverPasswordModal onClose={() => setIsRecoverPasswordOpen(false)} />
         </>
       )}
+
       {isRegistrationCodeOpen && (
         <>
           <Overlay onClick={() => setIsRegistrationCodeOpen(false)} />
@@ -283,10 +316,34 @@ const Header = () => {
           />
         </>
       )}
+
       {isRegistrationSuccessOpen && (
         <>
           <Overlay onClick={() => setIsRegistrationSuccessOpen(false)} />
           <RegistrationSuccessModal onClose={() => setIsRegistrationSuccessOpen(false)} />
+        </>
+      )}
+
+      {isEmptyCartModalOpen && (
+        <>
+          <Overlay onClick={closeEmptyCartModal} />
+          <StyledTestWrapper>
+            <StyledTest>
+              <EmptyCartModal />
+            </StyledTest>
+          </StyledTestWrapper>
+        </>
+      )}
+
+      {isCartModalOpen && (
+        <>
+          <Overlay onClick={closeCartModal} />
+          <StyledTestWrapper>
+            <StyledTest>
+              <CartModal itemCount={cartItemCount} onClose={closeCartModal} />{" "}
+              {/* Pass the onClose prop */}
+            </StyledTest>
+          </StyledTestWrapper>
         </>
       )}
     </>

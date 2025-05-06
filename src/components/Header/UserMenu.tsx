@@ -6,12 +6,15 @@ const StyledContainer = styled.div`
   width: 304px;
   display: flex;
   flex-direction: column;
-  position: absolute;
+  position: fixed;
   top: 99px;
-  right: 0;
   background-color: transparent;
   padding: 0;
   z-index: 1001;
+
+  @media (max-width: 1332px) {
+    right: 20px;
+  }
 
   @media (max-width: 1080px) {
     position: fixed;
@@ -46,30 +49,45 @@ const StyledUserMenuItem = styled.div`
   }
 `;
 
+const ModalLayoutWrapper = styled.div`
+  width: 100%;
+  margin: auto;
+`;
+
+const ModalLayout = styled.div`
+  width: 1292px;
+  display: flex;
+  justify-content: flex-end;
+`;
+
 const UserMenu = () => {
   return (
-    <StyledContainer>
-      <StyledUserMenuContent>
-        <StyledUserMenuItem>
-          <UserMenuItem text="ჩემი დეტალები" icon="/assets/detailsIcon.svg" />
-        </StyledUserMenuItem>
-        <StyledUserMenuItem>
-          <UserMenuItem text="ჩემი მისამართები" icon="/assets/addressIcon.svg" />
-        </StyledUserMenuItem>
-        <StyledUserMenuItem>
-          <UserMenuItem text="ჩემი შეკვეთები" icon="/assets/orderIcon.svg" />
-        </StyledUserMenuItem>
-        <StyledUserMenuItem>
-          <UserMenuItem text="გადახდის მეთოდები" icon="/assets/paymentIcon.svg" />
-        </StyledUserMenuItem>
-        <StyledUserMenuItem>
-          <UserMenuItem text="პარამეტრები" icon="/assets/settingsIcon.svg" />
-        </StyledUserMenuItem>
-        <StyledUserMenuItem>
-          <UserMenuItem text="გასვლა" icon="/assets/exitIcon.svg" color="red" />
-        </StyledUserMenuItem>
-      </StyledUserMenuContent>
-    </StyledContainer>
+    <ModalLayoutWrapper>
+      <ModalLayout>
+        <StyledContainer>
+          <StyledUserMenuContent>
+            <StyledUserMenuItem>
+              <UserMenuItem text="ჩემი დეტალები" icon="/assets/detailsIcon.svg" />
+            </StyledUserMenuItem>
+            <StyledUserMenuItem>
+              <UserMenuItem text="ჩემი მისამართები" icon="/assets/addressIcon.svg" />
+            </StyledUserMenuItem>
+            <StyledUserMenuItem>
+              <UserMenuItem text="ჩემი შეკვეთები" icon="/assets/orderIcon.svg" />
+            </StyledUserMenuItem>
+            <StyledUserMenuItem>
+              <UserMenuItem text="გადახდის მეთოდები" icon="/assets/paymentIcon.svg" />
+            </StyledUserMenuItem>
+            <StyledUserMenuItem>
+              <UserMenuItem text="პარამეტრები" icon="/assets/settingsIcon.svg" />
+            </StyledUserMenuItem>
+            <StyledUserMenuItem>
+              <UserMenuItem text="გასვლა" icon="/assets/exitIcon.svg" color="red" />
+            </StyledUserMenuItem>
+          </StyledUserMenuContent>
+        </StyledContainer>
+      </ModalLayout>
+    </ModalLayoutWrapper>
   );
 };
 
