@@ -43,9 +43,7 @@ const StyledButton = styled.div`
   padding: 20px;
 `;
 
-type Props = {};
-
-const Summary = (props: Props) => {
+const Summary = () => {
   return (
     <StyledContainer>
       <StyledSummary>

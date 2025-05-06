@@ -29,9 +29,7 @@ const StyledPrice = styled.p`
   color: #ffffff;
 `;
 
-type Props = {};
-
-const SummaryPrice = (props: Props) => {
+const SummaryPrice = () => {
   return (
     <StyledContainer>
       <StyledText>ჯამური ფასი</StyledText>

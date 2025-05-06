@@ -39,9 +39,7 @@ const StyledSummary = styled.div`
   }
 `;
 
-type Props = {};
-
-const Cart = (props: Props) => {
+const Cart = () => {
   const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
