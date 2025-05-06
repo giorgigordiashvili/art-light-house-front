@@ -3,19 +3,14 @@ import ContactTitle from "../Contact/ContactTitle";
 import FavoriteCard from "./FavoriteCard";
 import styled from "styled-components";
 
-const StyledContainer = styled.div`
-  @media (max-width: 1332px) {
-    padding-inline: 20px;
-  }
-
-  @media (max-width: 1080px) {
-    padding-inline: 0;
-  }
-`;
+const StyledContainer = styled.div``;
 
 const StyledTitle = styled.div``;
 
 const StyledCards = styled.div`
+  max-height: 508px;
+  overflow: scroll;
+  scrollbar-width: none;
   width: 800px;
   display: flex;
   flex-direction: column;
@@ -23,6 +18,9 @@ const StyledCards = styled.div`
   margin-top: 117px;
   @media (max-width: 1080px) {
     width: 100%;
+    max-height: 258px;
+    gap: 10px;
+    margin-top: 48px;
   }
 `;
 
@@ -33,6 +31,7 @@ const Favorites = () => {
         <ContactTitle text="შენახული პროდუქტები" />
       </StyledTitle>
       <StyledCards>
+        <FavoriteCard card="favorite" />
         <FavoriteCard card="favorite" />
         <FavoriteCard card="favorite" />
         <FavoriteCard card="favorite" />

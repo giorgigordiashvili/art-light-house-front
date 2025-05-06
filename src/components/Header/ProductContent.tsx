@@ -8,6 +8,9 @@ const StyledContainer = styled.div`
   display: flex;
   gap: 12px;
   padding: 15px 0 0 15px;
+  @media (max-width: 1080px) {
+    height: 116px;
+  }
 `;
 
 const StyledTextContent = styled.div`
@@ -15,6 +18,10 @@ const StyledTextContent = styled.div`
   flex-direction: column;
   justify-content: center;
   gap: 6px;
+  @media (max-width: 1080px) {
+    justify-content: flex-start;
+    margin-top: 6px;
+  }
 `;
 
 const ProductContent = () => {

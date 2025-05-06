@@ -18,6 +18,10 @@ const StyledText = styled.p<{ size: "small" | "large" }>`
       ? css`
           font-size: 16px;
           line-height: 24px;
+          @media (max-width: 1080px) {
+            font-size: 12px;
+            color: #fff;
+          }
         `
       : css`
           font-size: 12px;

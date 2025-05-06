@@ -3,12 +3,11 @@ import styled, { css } from "styled-components";
 
 type Props = {
   text: string;
-  size?: "small" | "large";
+  size?: "small" | "large" | "normal";
 };
 
-const StyledText = styled.p<{ size: "small" | "large" }>`
+const StyledText = styled.p<{ size: "small" | "large" | "normal" }>`
   font-family: Helvetica;
-  font-weight: 700;
   letter-spacing: 0%;
   vertical-align: middle;
   color: #ffffff;
@@ -18,10 +17,18 @@ const StyledText = styled.p<{ size: "small" | "large" }>`
       ? css`
           font-size: 16px;
           line-height: 24px;
+          font-weight: 700;
         `
-      : css`
-          font-size: 12px;
-        `}
+      : size === "normal"
+        ? css`
+            font-size: 16px;
+            line-height: 24px;
+            font-weight: 500;
+          `
+        : css`
+            font-size: 12px;
+            font-weight: 700;
+          `}
 `;
 
 const ProductPrice = ({ text, size = "small" }: Props) => {
