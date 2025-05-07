@@ -1,7 +1,8 @@
 "use client";
 import styled from "styled-components";
+import { useState } from "react";
 import DetailBar from "@/components/DetailBar/DetailBar";
-import Container from "@/components/Profile/PersonalInf";
+import Personal from "@/components/Profile/PersonalInf";
 import Pass from "@/components/Profile/Pass";
 import MobileDetailDropdown from "@/components/DetailBar/MobileDetailDropdown";
 
@@ -9,13 +10,21 @@ const StyledComponent = styled.div`
   background: black;
   margin-top: 80px;
   margin-bottom: 219px;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+`;
+
+const Container = styled.div`
+  width: 100%;
+  max-width: 1200px;
 
   @media (max-width: 1080px) {
-    display: flex;
-    align-items: center;
-    flex-direction: column;
+    max-width: 100%;
+    padding: 0 16px;
   }
 `;
+
 const DesktopWrapper = styled.div`
   @media (max-width: 1080px) {
     display: none;
@@ -23,10 +32,15 @@ const DesktopWrapper = styled.div`
 `;
 
 const MobileWrapper = styled.div`
-  @media (min-width: 1081px) {
-    display: none;
+  display: none;
+
+  @media (max-width: 1080px) {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
   }
 `;
+
 const ContentWrapper = styled.div`
   display: flex;
   flex-direction: row;
@@ -39,7 +53,9 @@ const RightSection = styled.div`
   flex-direction: column;
   flex-grow: 1;
   gap: 20px;
+  width: 100%;
 `;
+
 const PageTitle = styled.h1`
   font-family: "Helvetica Neue LT GEO";
   font-weight: 250;
@@ -52,27 +68,50 @@ const PageTitle = styled.h1`
   @media (max-width: 1080px) {
     font-size: 34px;
     line-height: 24px;
-    margin-bottom: 47px;
+    margin-bottom: 20px;
+    margin-top: 120px;
+    font-family: "Helvetica Neue LT GEO";
+  }
+`;
+
+const DetailBarWrapper = styled.div<{ $isOpen: boolean }>`
+  display: ${({ $isOpen }) => ($isOpen ? "block" : "none")};
+  margin-bottom: 20px;
+
+  @media (min-width: 1081px) {
+    display: none;
   }
 `;
 
 const MyDetails = () => {
+  const [isDropdownOpen] = useState(false);
+
   return (
     <StyledComponent>
-      <DesktopWrapper>
-        <PageTitle>ჩემი პროფილი</PageTitle>
-        <ContentWrapper>
-          <DetailBar />
+      <Container>
+        <DesktopWrapper>
+          <PageTitle>ჩემი პროფილი</PageTitle>
+          <ContentWrapper>
+            <DetailBar />
+            <RightSection>
+              <Personal />
+              <Pass />
+            </RightSection>
+          </ContentWrapper>
+        </DesktopWrapper>
+
+        <MobileWrapper>
+          <PageTitle>ჩემი პროფილი</PageTitle>
+          <MobileDetailDropdown />
+          <DetailBarWrapper $isOpen={isDropdownOpen}>
+            <DetailBar />
+          </DetailBarWrapper>
           <RightSection>
-            <Container />
+            <Personal />
             <Pass />
           </RightSection>
-        </ContentWrapper>
-      </DesktopWrapper>
-
-      <MobileWrapper>
-        <MobileDetailDropdown />
-      </MobileWrapper>
+        </MobileWrapper>
+      </Container>
     </StyledComponent>
   );
 };

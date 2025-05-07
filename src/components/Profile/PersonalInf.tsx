@@ -3,30 +3,34 @@ import InputWithLabel from "./Input";
 import SaveButton from "@/ProfileButton/Save";
 import Cancel from "@/ProfileButton/Cancel";
 const StylePersonal = styled.div`
-  /* max-width: 100%; */
   width: 800px;
-  height: 544px;
+  min-height: 544px;
   padding: 24px;
   background: #1a1a1a96;
   border-radius: 17px;
-  align-items: center;
-  justify-content: center;
+  display: flex;
+  flex-direction: column;
   position: relative;
-  cursor: pointer;
   border: 1px solid #ffffff12;
   backdrop-filter: blur(114px);
 
   @media (max-width: 1080px) {
-    max-width: 100%;
-    /* width: 100%; */
+    width: 100%;
     padding: 16px;
-    height: 678px;
+    min-height: auto;
   }
 `;
+
 const InputsWrapper = styled.div`
   display: flex;
   gap: 24px;
+
+  @media (max-width: 1080px) {
+    flex-direction: column;
+    gap: 20px;
+  }
 `;
+
 const LeftColumn = styled.div`
   display: flex;
   flex-direction: column;
@@ -52,6 +56,7 @@ const ButtonRow = styled.div`
     align-items: stretch;
     width: 100%;
     position: static;
+    margin-top: 24px;
   }
 `;
 const Title = styled.p`
