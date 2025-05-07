@@ -117,7 +117,7 @@ const CategorySection = () => {
                 gradient="linear-gradient(240.36deg, rgba(255, 255, 255, 0.03) 1.87%, rgba(246, 202, 86, 0.45) 93.88%)"
                 $backgroundImage="/assets/PillarLight.png"
               >
-                ეზოს განათება
+                ეზოს სანათები
               </Card>
               <Card width={505} height={222} $backgroundImage="/assets/furniture.png">
                 ავეჯი
@@ -141,7 +141,7 @@ const CategorySection = () => {
                 დეკორაციები
               </Card>
               <Card width={374} height={222} $backgroundImage="/path/to/star.png">
-                სხვა
+                სარკე
               </Card>
             </Row>
           </RowWrapper>

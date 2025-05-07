@@ -5,13 +5,16 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 
 const StyledButton = styled.button`
-  padding: 14px 20px 18px 29px;
+  padding: 18px 20px 18px 29px;
   background-color: #ffcb40;
   border-radius: 142px;
   border: none;
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 25px;
+  width: 252px;
+  height: 60px;
   cursor: pointer;
   transition: 0.2s ease;
   &:hover {
@@ -20,6 +23,7 @@ const StyledButton = styled.button`
   @media (max-width: 1080px) {
     gap: 17px;
     padding: 8px 16px 10px 17px;
+    width: 194px;
   }
 `;
 

@@ -48,7 +48,7 @@ const ContentWrapper = styled.div`
   z-index: 2;
   width: 100%;
   height: 100%;
-  padding-top: 212px;
+  padding-top: 210px;
   display: flex;
   flex-direction: column;
   align-items: center;
