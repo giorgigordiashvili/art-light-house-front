@@ -3,7 +3,9 @@ import InputWithLabel from "./Input";
 import SaveButton from "@/ProfileButton/Save";
 import Cancel from "@/ProfileButton/Cancel";
 const StylePass = styled.div`
-  width: 800px;
+  /* width: 800px; */
+  width: 100%;
+  max-width: 100%;
   min-height: 512px;
   padding: 24px;
   background: #1a1a1a96;
