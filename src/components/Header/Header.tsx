@@ -26,7 +26,7 @@ const StyledContainer = styled.div`
   z-index: 1001;
 
   @media (max-width: 1080px) {
-    padding: 20px 0;
+    padding: 17px 0 18px 0;
   }
 `;
 
