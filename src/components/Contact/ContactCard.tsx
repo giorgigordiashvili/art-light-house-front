@@ -40,7 +40,7 @@ const OuterContainer = styled.div<{ side?: "left" | "right" }>`
 const StyledContainer = styled.div`
   display: flex;
   flex-direction: column;
-  padding: 12px;
+  padding: 12px 12px 5px 12px;
   border-radius: 22px;
   background-color: #111110;
   @media (max-width: 1080px) {
