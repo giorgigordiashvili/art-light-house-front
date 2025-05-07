@@ -5,28 +5,24 @@ import Data from "./Data";
 import GoogleMapButton from "./GoogleMapButton";
 
 const OuterContainer = styled.div<{ side?: "left" | "right" }>`
-  padding: 2px;
   border-radius: 24px;
-  width: fit-content;
-
-  ${({ side }) =>
+  width: 636px;
+  background: ${({ side }) =>
     side === "right"
-      ? css`
-          background: linear-gradient(
-            298.19deg,
-            rgba(255, 255, 255, 0.03) 0%,
-            rgba(253, 243, 218, 0.121183) 70.77%,
-            rgba(246, 202, 86, 0.45) 98.36%
-          );
-        `
-      : css`
-          background: linear-gradient(
-            54.18deg,
-            rgba(255, 255, 255, 0.03) 3.13%,
-            rgba(253, 246, 225, 0.1043) 66.14%,
-            rgba(246, 202, 86, 0.45) 100%
-          );
-        `}
+      ? `linear-gradient(
+          298.19deg,
+          rgba(255, 255, 255, 0.03) 0%,
+          rgba(253, 243, 218, 0.121183) 70.77%,
+          rgba(246, 202, 86, 0.45) 98.36%
+        )`
+      : `linear-gradient(
+          54.18deg,
+          rgba(255, 255, 255, 0.03) 3.13%,
+          rgba(253, 246, 225, 0.1043) 66.14%,
+          rgba(246, 202, 86, 0.45) 100%
+        )`};
+  padding: 1px;
+  box-sizing: border-box;
 
   @media (max-width: 1346px) {
     width: 100%;
@@ -40,9 +36,11 @@ const OuterContainer = styled.div<{ side?: "left" | "right" }>`
 const StyledContainer = styled.div`
   display: flex;
   flex-direction: column;
-  padding: 12px 12px 5px 12px;
   border-radius: 22px;
+  padding: 12px 12px 5px 12px;
   background-color: #111110;
+  width: 100%;
+
   @media (max-width: 1080px) {
     padding: 8px;
   }
