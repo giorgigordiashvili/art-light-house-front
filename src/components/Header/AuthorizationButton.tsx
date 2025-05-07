@@ -4,7 +4,7 @@ import Image from "next/image";
 
 const StyledButton = styled.div`
   width: 141px;
-  height: 41px;
+  height: 40px;
   display: flex;
   align-items: center;
   justify-content: center;
