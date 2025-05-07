@@ -35,7 +35,7 @@ const StyledActions = styled.div`
 const StyledCards = styled.div`
   display: flex;
   gap: 20px;
-  margin-top: 44px;
+  margin-top: 39px;
   overflow: scroll;
   scrollbar-width: none;
 
