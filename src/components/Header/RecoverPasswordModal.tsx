@@ -88,7 +88,7 @@ const RecoverPasswordModal = ({ onClose }: { onClose: () => void }) => {
           <ModalDescription text="პაროლის აღსადგენად ჩაწერეთ რეგისტრირებული ელ.ფოსტა" />
         </StyledDescription>
         <StyledInput>
-          <InputTitle text="პაროლის აღდგენა" />
+          <InputTitle text="ელ.ფოსტა" />
           <ModalInput placeholder="შეიყვანეთ ელ.ფოსტა" />
         </StyledInput>
         <StyledPrimaryButton>

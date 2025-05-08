@@ -36,9 +36,10 @@ const StyledContainer = styled.div<StyledProps>`
           font-family: "Helvetica";
           font-weight: 300;
           font-size: 13px;
-          line-height: 100%;
+          line-height: 24px;
           letter-spacing: 0%;
           color: #ffffff;
+          text-align: center;
           @media (max-width: 1080px) {
             font-size: 18px;
           }
