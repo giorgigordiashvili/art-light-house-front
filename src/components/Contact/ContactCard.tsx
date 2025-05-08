@@ -1,5 +1,5 @@
 import React from "react";
-import styled, { css } from "styled-components";
+import styled from "styled-components";
 import GoogleMap from "./GoogleMap";
 import Data from "./Data";
 import GoogleMapButton from "./GoogleMapButton";

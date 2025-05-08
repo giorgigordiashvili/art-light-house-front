@@ -6,7 +6,7 @@ import { APIProvider, Map, AdvancedMarker, InfoWindow } from "@vis.gl/react-goog
 import CustomPin from "./CustomPIn";
 
 const StyledMap = styled.div`
-  width: 612px;
+  width: 610px;
   height: 241px;
   border-radius: 24px;
   overflow: hidden;
