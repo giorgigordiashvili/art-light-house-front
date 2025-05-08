@@ -4,7 +4,7 @@ import Card from "./Card";
 const GridWrapper = styled.div`
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 24px;
+  gap: 20px;
 
   @media (max-width: 1080px) {
     grid-template-columns: repeat(2, 1fr);

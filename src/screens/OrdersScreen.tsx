@@ -1,6 +1,6 @@
 "use client";
 import styled from "styled-components";
-import DetailMain from "@/components/ProductDetail/DetailMain";
+import OrderMain from "@/MyOrders/OrderMain";
 
 const StyledComponent = styled.div`
   background: black;
@@ -11,12 +11,12 @@ const StyledComponent = styled.div`
   align-items: center;
 `;
 
-const MyDetails = () => {
+const OrdersScreen = () => {
   return (
     <StyledComponent>
-      <DetailMain></DetailMain>
+      <OrderMain></OrderMain>
     </StyledComponent>
   );
 };
 
-export default MyDetails;
+export default OrdersScreen;

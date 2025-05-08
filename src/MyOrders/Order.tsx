@@ -1,0 +1,76 @@
+import styled from "styled-components";
+import OrderCard from "@/MyOrders/OrderCard";
+
+const StylePass = styled.div`
+  width: 100%;
+  max-width: 100%;
+
+  min-height: 544px;
+  padding: 24px;
+  background: #1a1a1a96;
+  border-radius: 17px;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  border: 1px solid #ffffff12;
+  backdrop-filter: blur(114px);
+
+  @media (max-width: 1080px) {
+    width: 100%;
+    padding: 16px;
+    min-height: auto;
+  }
+`;
+
+const InputsWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+
+  @media (max-width: 1080px) {
+  }
+`;
+
+const Title = styled.p`
+  position: relative;
+  color: white;
+  font-size: 18px;
+  font-weight: 700;
+  margin-bottom: 24px;
+  padding-bottom: 24px;
+
+  &::after {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: -24px;
+    right: -24px;
+    height: 1px;
+    background-color: #242424;
+  }
+
+  /* @media (max-width: 1080px) {
+    font-size: 16px;
+    padding-bottom: 12px;
+
+    &::after {
+      left: -16px;
+      right: -16px;
+    }
+  } */
+`;
+
+const Order = () => {
+  return (
+    <StylePass>
+      <Title>შეკვეთები</Title>
+      <InputsWrapper>
+        <OrderCard />
+        <OrderCard />
+        <OrderCard />
+      </InputsWrapper>
+    </StylePass>
+  );
+};
+
+export default Order;

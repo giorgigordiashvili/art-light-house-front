@@ -5,10 +5,13 @@ import Image from "next/image";
 
 const Wrapper = styled.div`
   width: 350px;
+  max-width: 100%;
   background-color: transparent;
 
   @media (min-width: 1080px) {
     display: none;
+    width: 100%;
+    max-width: 100%;
   }
 `;
 
