@@ -11,6 +11,7 @@ const StyledContainer = styled.h1`
   color: #fafafa;
   @media (max-width: 1080px) {
     font-size: 34px;
+    line-height: 44px;
   }
 `;
 

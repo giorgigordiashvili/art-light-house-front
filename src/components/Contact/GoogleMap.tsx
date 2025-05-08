@@ -13,6 +13,9 @@ const StyledMap = styled.div`
   @media (max-width: 1346px) {
     width: 100%;
   }
+  @media (max-width: 1080px) {
+    border-radius: 12px;
+  }
 `;
 
 export default function GoogleMap() {

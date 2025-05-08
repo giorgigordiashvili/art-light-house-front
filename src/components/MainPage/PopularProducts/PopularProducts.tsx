@@ -21,6 +21,8 @@ const StyledCards = styled.div`
   margin-top: 44px;
   @media (max-width: 1080px) {
     flex-direction: column;
+    margin-top: 32px;
+    gap: 17px;
   }
 `;
 

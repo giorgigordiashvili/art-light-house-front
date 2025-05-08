@@ -1,10 +1,14 @@
 import React from "react";
 import styled from "styled-components";
 import Container from "../../ui/Container";
+import ProductTitle from "./ProductTitle";
 
 const StyledContainer = styled.div`
   width: 100%;
   padding: 44px 0 0 0;
+  @media (max-width: 1080px) {
+    padding: 26px 0 0 0;
+  }
 `;
 
 const ScrollableWrapper = styled.div`
@@ -22,6 +26,12 @@ const RowWrapper = styled.div`
   @media (max-width: 1292px) {
     padding-inline: 20px;
   }
+  @media (max-width: 1080px) {
+    padding-inline: 0;
+  }
+  @media (max-width: 522px) {
+    gap: 10px;
+  }
 `;
 
 const Row = styled.div.withConfig({
@@ -29,7 +39,13 @@ const Row = styled.div.withConfig({
 })<{ isSecond?: boolean }>`
   display: flex;
   gap: 20px;
+
   ${(props) => props.isSecond && "height: 223px;"}
+
+  @media (max-width: 578px) {
+    ${(props) => props.isSecond && "height: auto;"}
+    gap: 10px;
+  }
 `;
 
 const Card = styled.div<{
@@ -94,6 +110,36 @@ const Card = styled.div<{
     position: relative;
     z-index: 2;
   }
+
+  @media (max-width: 522px) {
+    padding: 16px;
+
+    .first-row & {
+      width: 154px !important;
+      height: 92px !important;
+    }
+
+    .second-row & {
+      &:nth-child(1) {
+        width: 210px !important;
+        height: 92px !important;
+      }
+
+      &:nth-child(2) {
+        width: 154px !important;
+        height: 92px !important;
+      }
+
+      &:nth-child(3) {
+        width: 98px !important;
+        height: 92px !important;
+      }
+    }
+
+    &::after {
+      background-size: 70%;
+    }
+  }
 `;
 
 const CategorySection = () => {
@@ -102,14 +148,14 @@ const CategorySection = () => {
       <StyledContainer>
         <ScrollableWrapper>
           <RowWrapper>
-            <Row>
+            <Row className="first-row">
               <Card
                 width={374}
                 height={222}
                 gradient="linear-gradient(116.95deg, rgba(255, 255, 255, 0.03) 3.48%, rgba(246, 202, 86, 0.45) 98.94%)"
                 $backgroundImage="/assets/light.png"
               >
-                განათება
+                <ProductTitle text="განათება" />
               </Card>
               <Card
                 width={374}
@@ -117,20 +163,21 @@ const CategorySection = () => {
                 gradient="linear-gradient(240.36deg, rgba(255, 255, 255, 0.03) 1.87%, rgba(246, 202, 86, 0.45) 93.88%)"
                 $backgroundImage="/assets/PillarLight.png"
               >
-                ეზოს სანათები
+                <ProductTitle text="ეზოს სანათები" />
               </Card>
               <Card width={505} height={222} $backgroundImage="/assets/furniture.png">
-                ავეჯი
+                <ProductTitle text="ავეჯი" />
               </Card>
             </Row>
-            <Row isSecond>
+
+            <Row isSecond className="second-row">
               <Card
                 width={505}
                 height={222}
                 gradient="linear-gradient(79.22deg, rgba(255, 255, 255, 0.03) 2.74%, rgba(246, 202, 86, 0.45) 81.45%)"
                 $backgroundImage="/assets/decorations.png"
               >
-                დეკორაციები
+                <ProductTitle text="დეკორაციები" />
               </Card>
               <Card
                 width={374}
@@ -138,10 +185,10 @@ const CategorySection = () => {
                 gradient="linear-gradient(330deg, rgba(255, 255, 255, 0.03) 3.22%, rgba(246, 202, 86, 0.45) 97.55%)"
                 $backgroundImage="/assets/moon.png"
               >
-                დეკორაციები
+                <ProductTitle text="დეკორაციები" />
               </Card>
               <Card width={374} height={222} $backgroundImage="/path/to/star.png">
-                სარკე
+                <ProductTitle text="სარკე" />
               </Card>
             </Row>
           </RowWrapper>

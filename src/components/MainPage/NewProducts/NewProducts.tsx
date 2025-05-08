@@ -53,6 +53,7 @@ const StyledCards = styled.div`
     padding-left: 20px;
     padding-right: 20px;
     margin-left: -20px;
+    gap: 15px;
   }
 `;
 

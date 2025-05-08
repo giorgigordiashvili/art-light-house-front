@@ -59,10 +59,16 @@ const ContentWrapper = styled.div`
 
 const StyledDescription = styled.div`
   margin-top: 38px;
+  @media (max-width: 1080px) {
+    padding-top: 14px;
+  }
 `;
 
 const StyledButton = styled.div`
   margin-top: 70px;
+  @media (max-width: 1080px) {
+    padding-top: 43px;
+  }
 `;
 
 const StyledCategorySection = styled.div`

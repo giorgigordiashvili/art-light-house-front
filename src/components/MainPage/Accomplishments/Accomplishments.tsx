@@ -32,6 +32,9 @@ const BorderWrapper = styled.div`
   margin-top: 95px;
   width: 100%;
   max-width: 1292px;
+  @media (max-width: 1080px) {
+    margin-top: 76px;
+  }
 `;
 
 const StyledContainer = styled.div`
@@ -44,12 +47,11 @@ const StyledContainer = styled.div`
   flex-direction: column;
   justify-content: center;
   align-items: center;
-
-  @media (max-width: 1080px) {
-    padding: 25px 24px;
-  }
   @media (max-width: 1332px) {
     padding-inline: 32px;
+  }
+  @media (max-width: 1080px) {
+    padding: 25px 30px 54px 30px;
   }
 `;
 
