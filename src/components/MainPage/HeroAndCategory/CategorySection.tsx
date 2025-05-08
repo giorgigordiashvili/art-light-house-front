@@ -38,7 +38,7 @@ const Row = styled.div.withConfig({
   shouldForwardProp: (prop) => prop !== "isSecond",
 })<{ isSecond?: boolean }>`
   display: flex;
-  gap: 20px;
+  gap: 19px;
 
   ${(props) => props.isSecond && "height: 223px;"}
 
