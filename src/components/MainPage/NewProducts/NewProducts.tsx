@@ -35,7 +35,7 @@ const StyledActions = styled.div`
 const StyledCards = styled.div`
   display: flex;
   gap: 20px;
-  margin-top: 44px;
+  margin-top: 39px;
   overflow: scroll;
   scrollbar-width: none;
 
@@ -53,6 +53,7 @@ const StyledCards = styled.div`
     padding-left: 20px;
     padding-right: 20px;
     margin-left: -20px;
+    gap: 15px;
   }
 `;
 

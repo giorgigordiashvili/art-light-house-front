@@ -22,9 +22,9 @@ const StyledContactCard = styled.div<{ $variant: "1" | "2" }>`
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    margin-top: 44px;
     gap: 24px;
-    padding-bottom: 199px;
+    margin-top: ${({ $variant }) => ($variant === "1" ? "44px" : "46px")};
+    padding-bottom: ${({ $variant }) => ($variant === "1" ? "199px" : "108px")};
   }
 `;
 

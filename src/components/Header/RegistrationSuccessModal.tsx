@@ -69,10 +69,7 @@ const RegistrationSuccessModal = ({ onClose }: { onClose: () => void }) => {
         <ModalDescription text="რეგისტრავია წატმატებით გაიარე." variant="strong" />
       </StyledStrongDescription>
       <StyledDescription>
-        <ModalDescription
-          text="ახლა უკვე შეგიძლია თავისუფლად შეუკვეთო პროდუქტები რომლებსაც შენთვის აარჩევ"
-          variant="alt"
-        />
+        <ModalDescription text="ახლა უკვე შეგიძლია თავისუფლად შეუკვეთო პროდუქტები რომლებსაც შენთვის აარჩევ" />
       </StyledDescription>
       <StyledPrimaryButton>
         <PrimaryButton text="მთავარზე დაბრუნება" width="242px" height="50px" onClick={onClose} />

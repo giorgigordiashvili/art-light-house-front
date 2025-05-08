@@ -19,6 +19,16 @@ const StyledContainer = styled.div<{ $hasIcon: boolean }>`
 
     ${({ $hasIcon }) => $hasIcon && `padding-right: 48px;`}
 
+    &::placeholder {
+      font-weight: 400;
+      font-size: 12px;
+      line-height: 28px;
+      letter-spacing: 0%;
+      color: #919191;
+      opacity: 0.6;
+      font-family: Helvetica;
+    }
+
     @media (max-width: 1080px) {
       width: 100%;
     }

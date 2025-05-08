@@ -6,12 +6,15 @@ import { APIProvider, Map, AdvancedMarker, InfoWindow } from "@vis.gl/react-goog
 import CustomPin from "./CustomPIn";
 
 const StyledMap = styled.div`
-  width: 612px;
+  width: 610px;
   height: 241px;
   border-radius: 24px;
   overflow: hidden;
   @media (max-width: 1346px) {
     width: 100%;
+  }
+  @media (max-width: 1080px) {
+    border-radius: 12px;
   }
 `;
 

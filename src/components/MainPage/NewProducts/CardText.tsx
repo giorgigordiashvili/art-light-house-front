@@ -12,6 +12,10 @@ const StyledName = styled.p`
   line-height: 24px;
   letter-spacing: 0%;
   color: #ffffff;
+  @media (max-width: 1080px) {
+    font-size: 12px;
+    line-height: 17.6px;
+  }
 `;
 
 const StyledPrice = styled.p`
@@ -21,6 +25,10 @@ const StyledPrice = styled.p`
   line-height: 24px;
   letter-spacing: 0%;
   color: #ffffff;
+  @media (max-width: 1080px) {
+    font-size: 15px;
+    line-height: 17.6px;
+  }
 `;
 
 type Props = {

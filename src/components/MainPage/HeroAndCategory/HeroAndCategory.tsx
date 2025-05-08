@@ -48,7 +48,7 @@ const ContentWrapper = styled.div`
   z-index: 2;
   width: 100%;
   height: 100%;
-  padding-top: 212px;
+  padding-top: 210px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -59,10 +59,16 @@ const ContentWrapper = styled.div`
 
 const StyledDescription = styled.div`
   margin-top: 38px;
+  @media (max-width: 1080px) {
+    padding-top: 14px;
+  }
 `;
 
 const StyledButton = styled.div`
   margin-top: 70px;
+  @media (max-width: 1080px) {
+    padding-top: 43px;
+  }
 `;
 
 const StyledCategorySection = styled.div`

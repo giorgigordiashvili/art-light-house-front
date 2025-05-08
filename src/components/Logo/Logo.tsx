@@ -27,7 +27,7 @@ const Logo = ({ size, href }: Props) => {
     case "small":
     default:
       width = 111;
-      height = 41;
+      height = 45;
       break;
   }
 

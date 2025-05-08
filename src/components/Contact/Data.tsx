@@ -7,7 +7,7 @@ const StyledContainer = styled.div`
   display: flex;
   gap: 13px;
   color: #fff;
-  padding: 18px 0 19px 25px;
+  padding: 30px 0 18px 13px;
 `;
 
 const StyledTextWrapper = styled.div`

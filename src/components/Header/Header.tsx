@@ -19,14 +19,14 @@ const StyledContainer = styled.div`
   position: fixed;
   width: 100%;
   top: 0;
-  padding: 20px 20px;
+  padding: 17px 20px 18px 20px;
   background-color: rgba(11, 11, 11, 0.34);
   backdrop-filter: blur(98.8px);
   border-bottom: 1px solid #ffffff14;
   z-index: 1001;
 
   @media (max-width: 1080px) {
-    padding: 20px 0;
+    padding: 17px 0 18px 0;
   }
 `;
 

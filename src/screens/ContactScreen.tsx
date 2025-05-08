@@ -8,6 +8,7 @@ const StyledComponent = styled.div`
   padding-top: 186px;
   @media (max-width: 1080px) {
     padding-top: 162px;
+    padding-bottom: 0;
   }
 `;
 

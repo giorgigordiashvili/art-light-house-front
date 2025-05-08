@@ -5,7 +5,7 @@ const StyledContainer = styled.div`
   font-family: Helvetica;
   font-weight: 300;
   font-size: 32px;
-  line-height: 100%;
+  line-height: 39px;
   letter-spacing: 0%;
   color: #ffffff;
   text-align: center;

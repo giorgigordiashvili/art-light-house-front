@@ -12,6 +12,10 @@ const StyledText = styled.div`
   letter-spacing: 0%;
   color: #fafafa;
   cursor: pointer;
+  transition: 0.2s;
+  &:hover {
+    opacity: 80%;
+  }
 `;
 
 type Props = {

@@ -10,7 +10,7 @@ import ReturnIcon from "./ReturnIcon";
 import AdditionalAction from "./AdditionalAction";
 
 const StyledContainer = styled.div`
-  padding: 30px 24px 35px 24px;
+  padding: 30px 24px 24px 24px;
   background-color: #1c1c1c;
   border-radius: 20px;
   position: fixed;

@@ -22,7 +22,7 @@ const ToggleButton = styled.button<{ $active: boolean }>`
   background-color: ${(props) => (props.$active ? "#ffcb40" : "transparent")};
   color: ${(props) => (props.$active ? "#000000" : "#ffffff")};
   font-family: HelRom;
-  font-weight: 700;
+  font-weight: ${(props) => (props.$active ? 700 : 400)};
   font-size: 14px;
   line-height: 100%;
   letter-spacing: 0%;
