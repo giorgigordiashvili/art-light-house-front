@@ -58,7 +58,7 @@ const Card = styled.div<{
   width: ${(props) => props.width}px;
   height: ${(props) => props.height}px;
   background-color: #101010;
-  border-radius: 16px;
+  border-radius: 32px;
   padding: 38px;
   color: white;
   display: flex;
@@ -75,7 +75,7 @@ const Card = styled.div<{
     position: absolute;
     inset: 0;
     padding: 1px;
-    border-radius: 16px;
+    border-radius: 32px;
     background: ${(props) => props.gradient || "transparent"};
     -webkit-mask:
       linear-gradient(#fff 0 0) content-box,
