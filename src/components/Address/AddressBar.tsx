@@ -4,6 +4,7 @@ import AddressCard from "./AddressCard";
 import AddressTitle from "./AddressTitle";
 import DividerLine from "../MainPage/HeroAndCategory/DividerLine";
 import AddedAddressCard from "./AddedAddressCard";
+import { AddressData } from "@/types";
 
 const StyledContainer = styled.div`
   background-color: #1a1a1a96;
@@ -25,17 +26,23 @@ type Props = {
   onOpenModal: () => void;
 };
 
-const AddressBar = ({ onOpenModal }: Props) => {
-  return (
-    <StyledContainer>
-      <AddressTitle text="ჩემი მისამართები" />
-      <DividerLine />
-      <StyledCardsWrapper>
-        <AddressCard onOpenModal={onOpenModal} />
-        <AddedAddressCard />
-      </StyledCardsWrapper>
-    </StyledContainer>
-  );
-};
+const AddressBar = ({
+  onOpenModal,
+  addresses,
+}: {
+  onOpenModal: () => void;
+  addresses: AddressData[];
+}) => (
+  <StyledContainer>
+    <AddressTitle text="ჩემი მისამართები" />
+    <DividerLine />
+    <StyledCardsWrapper>
+      <AddressCard onOpenModal={onOpenModal} />
+      {addresses.map((item, index) => (
+        <AddedAddressCard key={index} data={item} />
+      ))}
+    </StyledCardsWrapper>
+  </StyledContainer>
+);
 
 export default AddressBar;

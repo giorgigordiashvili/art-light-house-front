@@ -9,36 +9,56 @@ const StyledContainer = styled.div`
   border: 1px solid #474748;
   border-radius: 20px;
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  padding-left: 38px;
-  padding-right: 49px;
+  overflow: hidden;
 `;
 
-const StyledItemWrapper = styled.div`
+interface StyledItemWrapperProps extends React.HTMLAttributes<HTMLDivElement> {
+  selected?: boolean;
+  label?: string;
+}
+
+const StyledItemWrapper = styled.div<StyledItemWrapperProps>`
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 7px;
   cursor: pointer;
+  width: ${({ label }) => (label === "სამსახური" ? "159px" : "150px")};
+  height: 59px;
+  background: ${({ selected }) => (selected ? "#FFCB401A" : "transparent")};
+  border-right: 1px solid #404143;
+
+  &:last-child {
+    border-right: none;
+  }
 `;
 
-type Props = {};
+type Props = {
+  selectedPlace: string;
+  onSelect: (place: string) => void;
+};
 
-const PlaceSelector = (props: Props) => {
+const PlaceSelector = ({ selectedPlace, onSelect }: Props) => {
+  const items = [
+    { icon: "/assets/home.svg", label: "სახლი" },
+    { icon: "/assets/briefcase.svg", label: "სამსახური" },
+    { icon: "/assets/pin.svg", label: "სხვა" },
+  ];
+
   return (
     <StyledContainer>
-      <StyledItemWrapper>
-        <Image src={"/assets/home.svg"} width={24} height={24} alt="home" />
-        <SelectorTitle text="სახლი" />
-      </StyledItemWrapper>
-      <StyledItemWrapper>
-        <Image src={"/assets/briefcase.svg"} width={24} height={24} alt="work" />
-        <SelectorTitle text="სამსახური" />
-      </StyledItemWrapper>
-      <StyledItemWrapper>
-        <Image src={"/assets/pin.svg"} width={24} height={24} alt="other" />
-        <SelectorTitle text="სხვა" />
-      </StyledItemWrapper>
+      {items.map(({ icon, label }) => (
+        <StyledItemWrapper
+          key={label}
+          selected={selectedPlace === label}
+          onClick={() => onSelect(label)}
+          label={label}
+        >
+          <Image src={icon} width={24} height={24} alt={label} />
+          <SelectorTitle text={label} />
+        </StyledItemWrapper>
+      ))}
     </StyledContainer>
   );
 };

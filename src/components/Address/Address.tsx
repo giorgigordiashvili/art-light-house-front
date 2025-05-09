@@ -4,6 +4,7 @@ import styled from "styled-components";
 import DetailBar from "../DetailBar/DetailBar";
 import AddressBar from "./AddressBar";
 import AddressModal from "./modal/AddressModal";
+import { AddressData } from "@/types";
 
 const StyledContainer = styled.div`
   display: flex;
@@ -28,6 +29,11 @@ type Props = {};
 
 const Address = (props: Props) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [addresses, setAddresses] = useState<AddressData[]>([]);
+
+  const handleSaveAddress = (newAddress: AddressData) => {
+    setAddresses([...addresses, newAddress]);
+  };
 
   useEffect(() => {
     document.body.style.overflow = isModalOpen ? "hidden" : "";
@@ -40,13 +46,13 @@ const Address = (props: Props) => {
     <>
       <StyledContainer>
         <DetailBar />
-        <AddressBar onOpenModal={() => setIsModalOpen(true)} />
+        <AddressBar onOpenModal={() => setIsModalOpen(true)} addresses={addresses} />
       </StyledContainer>
 
       {isModalOpen && (
         <Overlay onClick={() => setIsModalOpen(false)}>
           <div onClick={(e) => e.stopPropagation()}>
-            <AddressModal />
+            <AddressModal onClose={() => setIsModalOpen(false)} onSave={handleSaveAddress} />
           </div>
         </Overlay>
       )}

@@ -40,18 +40,28 @@ const StyledAddress = styled.p`
 const StyledTextWrapper = styled.div`
   display: flex;
   flex-direction: column;
+  min-width: 170px;
 `;
 
-type Props = {};
+type AddressData = {
+  place: string;
+  address: string;
+  additionalInfo?: string;
+};
 
-const AddedAddressCard = (props: Props) => {
+const iconMap: Record<string, string> = {
+  სახლი: "/assets/home.svg",
+  სამსახური: "/assets/briefcase.svg",
+  სხვა: "/assets/pin.svg",
+};
+
+const AddedAddressCard = ({ data }: { data: AddressData }) => {
   return (
     <StyledContainer>
-      <AddedAddressIcon />
-      <Image src={"/assests/pin.svg"} width={24} height={24} alt="icon" />
+      <Image src={iconMap[data.place]} width={24} height={24} alt="icon" />
       <StyledTextWrapper>
-        <StyledPlace>სამსახური</StyledPlace>
-        <StyledAddress>5 Petre Kavtaradze Street</StyledAddress>
+        <StyledPlace>{data.place}</StyledPlace>
+        <StyledAddress>{data.address}</StyledAddress>
       </StyledTextWrapper>
       <EditIcon />
     </StyledContainer>

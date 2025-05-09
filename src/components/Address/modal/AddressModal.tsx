@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import styled from "styled-components";
 import ModalInput from "@/components/Header/ModalInput";
 import InputTitle from "@/components/Header/InputTitle";
@@ -7,6 +7,7 @@ import CancelButton from "@/ProfileButton/Cancel";
 import PlaceSelector from "./PlaceSelector";
 import ModalTitle from "./ModalTitle";
 import GoogleMap from "@/components/Contact/GoogleMap";
+import { AddressData } from "@/types";
 
 const StyledContainer = styled.div`
   width: 508px;
@@ -37,27 +38,50 @@ const StyledButton = styled.div`
 
 type Props = {};
 
-const AddressModal = (props: Props) => {
+const AddressModal = ({
+  onClose,
+  onSave,
+}: {
+  onClose: () => void;
+  onSave: (data: AddressData) => void;
+}) => {
+  const [selectedPlace, setSelectedPlace] = useState("სახლი");
+  const [address, setAddress] = useState("");
+  const [additionalInfo, setAdditionalInfo] = useState("");
+
+  const handleSave = () => {
+    onSave({ place: selectedPlace, address, additionalInfo });
+    onClose(); // close modal
+  };
+
   return (
     <StyledContainer>
       <ModalTitle text="მისამართის დამატება" />
       <StyledSelector>
-        <PlaceSelector />
+        <PlaceSelector selectedPlace={selectedPlace} onSelect={setSelectedPlace} />
       </StyledSelector>
       <StyledInputWrapper>
         <InputTitle text="შეიყვანეთ მისამართი" />
-        <ModalInput placeholder="ქუჩა და ნომერი" />
+        <ModalInput
+          placeholder="ქუჩა და ნომერი"
+          value={address}
+          onChange={(e) => setAddress(e.target.value)}
+        />
       </StyledInputWrapper>
       <StyledInputWrapper>
-        <InputTitle text="დაამატებითი ინფორმაცია" />
-        <ModalInput placeholder="მაგ: სადარბაზო 2, სართული 4, ბინა 17" />
+        <InputTitle text="დამატებითი ინფორმაცია" />
+        <ModalInput
+          placeholder="მაგ: სადარბაზო 2, სართული 4, ბინა 17"
+          value={additionalInfo}
+          onChange={(e) => setAdditionalInfo(e.target.value)}
+        />
       </StyledInputWrapper>
       <StyledMap>
         <GoogleMap variant={2} />
       </StyledMap>
       <StyledButton>
-        <CancelButton />
-        <SaveButton />
+        <CancelButton onClick={onClose} />
+        <SaveButton onClick={handleSave} />
       </StyledButton>
     </StyledContainer>
   );
