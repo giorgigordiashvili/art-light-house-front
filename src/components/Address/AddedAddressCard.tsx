@@ -2,6 +2,7 @@ import React from "react";
 import styled from "styled-components";
 import EditIcon from "./EditIcon";
 import AddedAddressIcon from "./AddedAddressIcon";
+import Image from "next/image";
 
 const StyledContainer = styled.div`
   display: flex;
@@ -47,6 +48,7 @@ const AddedAddressCard = (props: Props) => {
   return (
     <StyledContainer>
       <AddedAddressIcon />
+      <Image src={"/assests/pin.svg"} width={24} height={24} alt="icon" />
       <StyledTextWrapper>
         <StyledPlace>სამსახური</StyledPlace>
         <StyledAddress>5 Petre Kavtaradze Street</StyledAddress>
