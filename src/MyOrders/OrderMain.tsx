@@ -3,7 +3,9 @@ import styled from "styled-components";
 import { useState } from "react";
 import DetailBar from "@/components/DetailBar/DetailBar";
 import MobileDetailDropdown from "@/components/DetailBar/MobileDetailDropdown";
+import MobileOrderDropdown from "./MobileOrderDropDown";
 import Order from "@/MyOrders/Order";
+
 const StyledComponent = styled.div`
   background: black;
   margin-top: 80px;
@@ -53,7 +55,6 @@ const RightSection = styled.div`
   flex-direction: column;
   flex-grow: 1;
   gap: 20px;
-  /* width: 100%; */
 `;
 
 const PageTitle = styled.h1`
@@ -89,6 +90,7 @@ const MyOrder = () => {
   return (
     <StyledComponent>
       <Container>
+        {/* Desktop */}
         <DesktopWrapper>
           <PageTitle>ჩემი პროფილი</PageTitle>
           <ContentWrapper>
@@ -99,13 +101,14 @@ const MyOrder = () => {
           </ContentWrapper>
         </DesktopWrapper>
 
+        {/* Mobile */}
         <MobileWrapper>
           <PageTitle>ჩემი პროფილი</PageTitle>
           <MobileDetailDropdown />
+          <MobileOrderDropdown />
           <DetailBarWrapper $isOpen={isDropdownOpen}>
             <DetailBar />
           </DetailBarWrapper>
-          <RightSection></RightSection>
         </MobileWrapper>
       </Container>
     </StyledComponent>
