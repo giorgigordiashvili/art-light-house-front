@@ -9,6 +9,9 @@ const StyledTitle = styled.p`
   letter-spacing: 0px;
   vertical-align: middle;
   color: #ffffff;
+  @media (max-width: 1080px) {
+    padding-inline: 4px;
+  }
 `;
 
 type Props = {

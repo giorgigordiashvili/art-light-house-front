@@ -10,6 +10,9 @@ const StyledText = styled.p`
   vertical-align: middle;
   color: #fafafa;
   padding: 24px 0 24px 24px;
+  @media (max-width: 1080px) {
+    font-size: 14px;
+  }
 `;
 
 type Props = {

@@ -9,6 +9,9 @@ const StyledContainer = styled.div`
   border: 1px solid #ffffff12;
   backdrop-filter: blur(114px);
   border-radius: 10px;
+  @media (max-width: 1080px) {
+    width: 100%;
+  }
 `;
 
 const StyledIcon = styled.div`
@@ -17,6 +20,10 @@ const StyledIcon = styled.div`
   gap: 20px;
   padding: 26px 0 26px 26px;
   cursor: pointer;
+  @media (max-width: 1080px) {
+    padding: 26px 0 26px 16px;
+    gap: 13px;
+  }
 `;
 
 const StyledTitle = styled.p`

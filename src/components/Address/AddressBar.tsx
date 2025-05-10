@@ -13,6 +13,9 @@ const StyledContainer = styled.div`
   border-radius: 17px;
   width: 800px;
   height: 544px;
+  @media (max-width: 1080px) {
+    width: 100%;
+  }
 `;
 
 const StyledCardsWrapper = styled.div`
@@ -20,6 +23,11 @@ const StyledCardsWrapper = styled.div`
   grid-template-columns: 1fr 1fr;
   gap: 20px;
   padding: 22px 24px 24px 24px;
+  @media (max-width: 1080px) {
+    display: flex;
+    flex-direction: column;
+    padding: 22px 16px 24px 16px;
+  }
 `;
 
 type Props = {

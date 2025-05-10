@@ -3,12 +3,16 @@ import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import DetailBar from "../DetailBar/DetailBar";
 import AddressBar from "./AddressBar";
-import AddressModal from "./modal/AddressModal";
+import AddressModal from "./AddressModal/AddressModal";
+import MobileDetailDropdown from "../DetailBar/MobileDetailDropdown";
+import ContactTitle from "../Contact/ContactTitle";
 import { AddressData } from "@/types";
 
 const StyledContainer = styled.div`
-  display: flex;
-  gap: 20px;
+  padding-inline: 20px;
+  @media (max-width: 1080px) {
+    padding-inline: 0;
+  }
 `;
 
 const Overlay = styled.div`
@@ -25,9 +29,40 @@ const Overlay = styled.div`
   z-index: 9999;
 `;
 
-type Props = {};
+const StyledModal = styled.div`
+  @media (max-width: 1080px) {
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+  }
+`;
 
-const Address = (props: Props) => {
+const StyledBars = styled.div`
+  display: flex;
+  gap: 20px;
+  margin-top: 71px;
+  @media (max-width: 1080px) {
+    flex-direction: column;
+    gap: 19px;
+    margin-top: 41px;
+  }
+`;
+const StyledDesktopDetail = styled.div`
+  display: flex;
+  flex-shrink: 0;
+  @media (max-width: 1080px) {
+    display: none;
+  }
+`;
+
+const StyledMobileDetail = styled.div`
+  display: none;
+  @media (max-width: 1080px) {
+    display: flex;
+  }
+`;
+
+const Address = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [addresses, setAddresses] = useState<AddressData[]>([]);
 
@@ -45,15 +80,25 @@ const Address = (props: Props) => {
   return (
     <>
       <StyledContainer>
-        <DetailBar />
-        <AddressBar onOpenModal={() => setIsModalOpen(true)} addresses={addresses} />
+        <div>
+          <ContactTitle text="ჩემი მისამართები" />
+        </div>
+        <StyledBars>
+          <StyledDesktopDetail>
+            <DetailBar />
+          </StyledDesktopDetail>
+          <StyledMobileDetail>
+            <MobileDetailDropdown />
+          </StyledMobileDetail>
+          <AddressBar onOpenModal={() => setIsModalOpen(true)} addresses={addresses} />
+        </StyledBars>
       </StyledContainer>
 
       {isModalOpen && (
         <Overlay onClick={() => setIsModalOpen(false)}>
-          <div onClick={(e) => e.stopPropagation()}>
+          <StyledModal onClick={(e) => e.stopPropagation()}>
             <AddressModal onClose={() => setIsModalOpen(false)} onSave={handleSaveAddress} />
-          </div>
+          </StyledModal>
         </Overlay>
       )}
     </>

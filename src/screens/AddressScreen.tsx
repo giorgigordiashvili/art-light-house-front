@@ -3,23 +3,23 @@ import React from "react";
 import styled from "styled-components";
 import Container from "@/components/ui/Container";
 import Address from "@/components/Address/Address";
-import ContactTitle from "@/components/Contact/ContactTitle";
 
 const StyledContainer = styled.div`
   padding-top: 186px;
   padding-bottom: 143px;
   background-color: #0b0b0b;
+  @media (max-width: 1080px) {
+    padding-top: 157px;
+    padding-bottom: 68px;
+  }
 `;
 
-const StyledAddress = styled.div`
-  margin-top: 71px;
-`;
+const StyledAddress = styled.div``;
 
 const AddressScreen = () => {
   return (
     <StyledContainer>
       <Container>
-        <ContactTitle text="ჩემი მისამართები" />
         <StyledAddress>
           <Address />
         </StyledAddress>

@@ -11,6 +11,9 @@ const StyledContainer = styled.div`
   display: flex;
   align-items: center;
   overflow: hidden;
+  @media (max-width: 1080px) {
+    width: 100%;
+  }
 `;
 
 interface StyledItemWrapperProps extends React.HTMLAttributes<HTMLDivElement> {
@@ -31,6 +34,10 @@ const StyledItemWrapper = styled.div<StyledItemWrapperProps>`
 
   &:last-child {
     border-right: none;
+  }
+
+  @media (max-width: 1080px) {
+    width: 100%;
   }
 `;
 

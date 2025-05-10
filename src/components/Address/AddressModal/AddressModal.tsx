@@ -15,10 +15,21 @@ const StyledContainer = styled.div`
   background-color: #1c1c1c;
   border-radius: 20px;
   padding: 32px 24px 24px 24px;
+  @media (max-width: 1080px) {
+    width: 100%;
+    height: 100%;
+    border-radius: 0;
+    border-top-left-radius: 20px;
+    border-top-right-radius: 20px;
+    padding: 20px 16px 63px 16px;
+  }
 `;
 
 const StyledSelector = styled.div`
   margin-top: 42px;
+  @media (max-width: 1080px) {
+    padding-inline: 4px;
+  }
 `;
 
 const StyledInputWrapper = styled.div`
@@ -34,6 +45,9 @@ const StyledButton = styled.div`
   justify-content: flex-end;
   gap: 12px;
   margin-top: 20px;
+  @media (max-width: 1080px) {
+    flex-direction: column-reverse;
+  }
 `;
 
 type Props = {};
@@ -51,7 +65,7 @@ const AddressModal = ({
 
   const handleSave = () => {
     onSave({ place: selectedPlace, address, additionalInfo });
-    onClose(); // close modal
+    onClose();
   };
 
   return (

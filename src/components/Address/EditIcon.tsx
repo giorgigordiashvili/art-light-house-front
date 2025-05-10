@@ -3,11 +3,11 @@ import styled from "styled-components";
 import Image from "next/image";
 
 const StyledContainer = styled.div`
-  padding: 12px;
+  padding: 9px;
   border-radius: 50%;
   border: 1px solid #ffffff1a;
-  width: 48px;
-  height: 48px;
+  width: 40px;
+  height: 40px;
 `;
 type Props = {};
 

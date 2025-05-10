@@ -7,7 +7,7 @@ import Image from "next/image";
 const StyledContainer = styled.div`
   display: flex;
   align-items: center;
-  gap: 32px;
+  gap: 62px;
   width: 367px;
   height: 100px;
   background-color: #2a2a2a96;
@@ -15,6 +15,11 @@ const StyledContainer = styled.div`
   backdrop-filter: blur(114px);
   border-radius: 10px;
   padding: 26px 23px 26px 26px;
+  @media (max-width: 1080px) {
+    width: 100%;
+    gap: 0;
+    justify-content: space-between;
+  }
 `;
 
 const StyledPlace = styled.p`
@@ -41,6 +46,13 @@ const StyledTextWrapper = styled.div`
   display: flex;
   flex-direction: column;
   min-width: 170px;
+  max-width: 170px;
+`;
+
+const StyledContent = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 20px;
 `;
 
 type AddressData = {
@@ -58,11 +70,13 @@ const iconMap: Record<string, string> = {
 const AddedAddressCard = ({ data }: { data: AddressData }) => {
   return (
     <StyledContainer>
-      <Image src={iconMap[data.place]} width={24} height={24} alt="icon" />
-      <StyledTextWrapper>
-        <StyledPlace>{data.place}</StyledPlace>
-        <StyledAddress>{data.address}</StyledAddress>
-      </StyledTextWrapper>
+      <StyledContent>
+        <Image src={iconMap[data.place]} width={24} height={24} alt="icon" />
+        <StyledTextWrapper>
+          <StyledPlace>{data.place}</StyledPlace>
+          <StyledAddress>{data.address}</StyledAddress>
+        </StyledTextWrapper>
+      </StyledContent>
       <EditIcon />
     </StyledContainer>
   );
