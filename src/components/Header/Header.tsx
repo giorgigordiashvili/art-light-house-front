@@ -92,6 +92,15 @@ const Overlay = styled.div`
   z-index: 1000;
 `;
 
+const OverlayWithoutBackground = styled.div`
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 1000;
+`;
+
 const StyledTestWrapper = styled.div`
   @media (max-width: 1332px) {
     padding-inline: 20px;
@@ -171,7 +180,7 @@ const Header = () => {
   }, [isBurgerMenuOpen, isUserMenuOpen]);
 
   const isCartEmpty = cartItemCount === 0;
-  const isUserAuthorized = false;
+  const isUserAuthorized = true;
   const currentUser = {
     username: "Nikoloz Baratashvili",
     userImage: "/assets/user.svg",
@@ -243,6 +252,7 @@ const Header = () => {
                   </div>
                   <div ref={burgerIconRef}>
                     <BurgerIcon
+                      isOpen={isBurgerMenuOpen}
                       onClick={() => {
                         toggleBurgerMenu();
                         closeEmptyCartModal();
@@ -259,7 +269,7 @@ const Header = () => {
 
       {isBurgerMenuOpen && (
         <>
-          <Overlay />
+          <OverlayWithoutBackground />
           <div ref={burgerMenuRef}>
             <BurgerMenu />
           </div>
@@ -341,7 +351,6 @@ const Header = () => {
           <StyledTestWrapper>
             <StyledTest>
               <CartModal itemCount={cartItemCount} onClose={closeCartModal} />{" "}
-              {/* Pass the onClose prop */}
             </StyledTest>
           </StyledTestWrapper>
         </>
