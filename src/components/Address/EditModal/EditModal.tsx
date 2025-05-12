@@ -1,31 +1,3 @@
-// import React from "react";
-// import styled from "styled-components";
-// import ModalOption from "./ModalOption";
-// import DividerLine from "@/components/MainPage/HeroAndCategory/DividerLine";
-
-// const StyledContainer = styled.div`
-//     width: 160px;
-//     height: 83px;
-//     border-radius: 10px;
-//     background-color: #2A2A2A96;
-//     border: 1px solid #FFFFFF12;
-//     backdrop-filter: blur(114px);
-// `
-
-// type Props = {};
-
-// const EditModal = (props: Props) => {
-//   return (
-//     <StyledContainer>
-//         <ModalOption text="რედაქტირება" color="white"/>
-//         <DividerLine/>
-//         <ModalOption text="წაშლა" color="red"/>
-//     </StyledContainer>
-//   )
-// };
-
-// export default EditModal;
-
 import React from "react";
 import styled from "styled-components";
 import ModalOption from "./ModalOption";
@@ -46,14 +18,15 @@ const StyledContainer = styled.div`
 
 type Props = {
   onClose: () => void;
+  onEdit: () => void;
 };
 
-const EditModal = ({ onClose }: Props) => {
+const EditModal = ({ onClose, onEdit }: Props) => {
   return (
     <StyledContainer>
-      <ModalOption text="რედაქტირება" color="white" />
+      <ModalOption text="რედაქტირება" color="white" onClick={onEdit} />
       <DividerLine />
-      <ModalOption text="წაშლა" color="red" />
+      <ModalOption text="წაშლა" color="red" onClick={onClose} />
     </StyledContainer>
   );
 };

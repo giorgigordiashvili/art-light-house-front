@@ -50,18 +50,24 @@ const StyledButton = styled.div`
   }
 `;
 
-type Props = {};
+type Props = {
+  onClose: () => void;
+  onSave: (data: AddressData) => void;
+  initialData?: AddressData;
+};
 
 const AddressModal = ({
   onClose,
   onSave,
+  initialData,
 }: {
   onClose: () => void;
   onSave: (data: AddressData) => void;
+  initialData?: AddressData;
 }) => {
-  const [selectedPlace, setSelectedPlace] = useState("სახლი");
-  const [address, setAddress] = useState("");
-  const [additionalInfo, setAdditionalInfo] = useState("");
+  const [selectedPlace, setSelectedPlace] = useState(initialData?.place || "სახლი");
+  const [address, setAddress] = useState(initialData?.address || "");
+  const [additionalInfo, setAdditionalInfo] = useState(initialData?.additionalInfo || "");
 
   const handleSave = () => {
     onSave({ place: selectedPlace, address, additionalInfo });

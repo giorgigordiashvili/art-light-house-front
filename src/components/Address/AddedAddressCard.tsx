@@ -1,7 +1,8 @@
-// import React from "react";
+// import React, { useState } from "react";
 // import styled from "styled-components";
 // import EditIcon from "./EditIcon";
-// import AddedAddressIcon from "./AddedAddressIcon";
+// import EditModal from "./EditModal/EditModal";
+// import AddressModal from "./AddressModal/AddressModal";
 // import Image from "next/image";
 
 // const StyledContainer = styled.div`
@@ -12,9 +13,9 @@
 //   height: 100px;
 //   background-color: #2a2a2a96;
 //   border: 1px solid #ffffff12;
-//   backdrop-filter: blur(114px);
 //   border-radius: 10px;
 //   padding: 26px 23px 26px 26px;
+//   position: relative;
 //   @media (max-width: 1080px) {
 //     width: 100%;
 //     gap: 0;
@@ -22,24 +23,24 @@
 //   }
 // `;
 
+// const StyledContent = styled.div`
+//   display: flex;
+//   align-items: center;
+//   gap: 20px;
+// `;
+
 // const StyledPlace = styled.p`
 //   font-family: Helvetica;
 //   font-weight: 700;
 //   font-size: 13px;
-//   line-height: 159%;
-//   letter-spacing: 0px;
-//   vertical-align: middle;
 //   color: #ffffff;
 // `;
 
 // const StyledAddress = styled.p`
-//   color: #ffffff;
 //   font-family: Helvetica;
 //   font-weight: 400;
 //   font-size: 13px;
-//   line-height: 159%;
-//   letter-spacing: 0px;
-//   vertical-align: middle;
+//   color: #ffffff;
 // `;
 
 // const StyledTextWrapper = styled.div`
@@ -49,10 +50,26 @@
 //   max-width: 170px;
 // `;
 
-// const StyledContent = styled.div`
+// const Overlay = styled.div`
+//   position: fixed;
+//   top: 0;
+//   left: 0;
+//   width: 100vw;
+//   height: 100vh;
+//   background-color: #000000cc;
 //   display: flex;
-//   align-items: center;
-//   gap: 20px;
+//   justify-content: center;
+//   align-items: flex-start;
+//   padding-top: 140px;
+//   z-index: 9999;
+// `;
+
+// const StyledModal = styled.div`
+//   @media (max-width: 1080px) {
+//     position: fixed;
+//     bottom: 0;
+//     width: 100%;
+//   }
 // `;
 
 // type AddressData = {
@@ -68,16 +85,47 @@
 // };
 
 // const AddedAddressCard = ({ data }: { data: AddressData }) => {
+//   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+//   const [isAddressModalOpen, setIsAddressModalOpen] = useState(false);
+//   const [addressData, setAddressData] = useState<AddressData>(data);
+
+//   const handleEditClick = () => {
+//     setIsEditModalOpen(false);
+//     setIsAddressModalOpen(true);
+//   };
+
+//   const handleSave = (updatedData: AddressData) => {
+//     setAddressData(updatedData);
+//     setIsAddressModalOpen(false);
+//   };
+
 //   return (
 //     <StyledContainer>
 //       <StyledContent>
-//         <Image src={iconMap[data.place]} width={24} height={24} alt="icon" />
+//         <Image src={iconMap[addressData.place]} width={24} height={24} alt="icon" />
 //         <StyledTextWrapper>
-//           <StyledPlace>{data.place}</StyledPlace>
-//           <StyledAddress>{data.address}</StyledAddress>
+//           <StyledPlace>{addressData.place}</StyledPlace>
+//           <StyledAddress>{addressData.address}</StyledAddress>
 //         </StyledTextWrapper>
 //       </StyledContent>
-//       <EditIcon />
+
+//       <EditIcon onClick={() => setIsEditModalOpen(!isEditModalOpen)} />
+
+//       {isEditModalOpen && (
+//         <EditModal onClose={() => setIsEditModalOpen(false)} onEdit={handleEditClick} />
+//       )}
+
+//       {isAddressModalOpen && (
+//         <Overlay onClick={() => setIsAddressModalOpen(false)}>
+//           <StyledModal onClick={(e) => e.stopPropagation()}>
+//             <AddressModal
+//               onClose={() => setIsAddressModalOpen(false)}
+//               onSave={handleSave}
+//               initialData={addressData}
+//             />
+//           </StyledModal>
+//         </Overlay>
+//       )}
 //     </StyledContainer>
 //   );
 // };
@@ -87,8 +135,8 @@
 import React, { useState } from "react";
 import styled from "styled-components";
 import EditIcon from "./EditIcon";
-import EditModal from "./EditModal/EditModal";
 import Image from "next/image";
+import EditModal from "./EditModal/EditModal";
 
 const StyledContainer = styled.div`
   display: flex;
@@ -118,20 +166,14 @@ const StyledPlace = styled.p`
   font-family: Helvetica;
   font-weight: 700;
   font-size: 13px;
-  line-height: 159%;
-  letter-spacing: 0px;
-  vertical-align: middle;
   color: #ffffff;
 `;
 
 const StyledAddress = styled.p`
-  color: #ffffff;
   font-family: Helvetica;
   font-weight: 400;
   font-size: 13px;
-  line-height: 159%;
-  letter-spacing: 0px;
-  vertical-align: middle;
+  color: #ffffff;
 `;
 
 const StyledTextWrapper = styled.div`
@@ -153,7 +195,13 @@ const iconMap: Record<string, string> = {
   სხვა: "/assets/pin.svg",
 };
 
-const AddedAddressCard = ({ data }: { data: AddressData }) => {
+const AddedAddressCard = ({
+  data,
+  onEditAddress,
+}: {
+  data: AddressData;
+  onEditAddress: () => void;
+}) => {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
 
   return (
@@ -165,8 +213,18 @@ const AddedAddressCard = ({ data }: { data: AddressData }) => {
           <StyledAddress>{data.address}</StyledAddress>
         </StyledTextWrapper>
       </StyledContent>
+
       <EditIcon onClick={() => setIsEditModalOpen(!isEditModalOpen)} />
-      {isEditModalOpen && <EditModal onClose={() => setIsEditModalOpen(false)} />}
+
+      {isEditModalOpen && (
+        <EditModal
+          onClose={() => setIsEditModalOpen(false)}
+          onEdit={() => {
+            setIsEditModalOpen(false);
+            onEditAddress();
+          }}
+        />
+      )}
     </StyledContainer>
   );
 };
