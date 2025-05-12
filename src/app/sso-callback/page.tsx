@@ -46,6 +46,9 @@ export default function SSOCallback() {
         <Spinner />
         ავტორიზაცია...
       </LoadingText>
+      {/* Add a dedicated div for Clerk CAPTCHA */}
+      <div id="clerk-captcha" style={{ display: "none" }}></div>
+
       {/* The AuthenticateWithRedirectCallback component handles the OAuth callback automatically */}
       <AuthenticateWithRedirectCallback
         /* We don't need sign-in/sign-up URLs since we use modals everywhere */

@@ -19,6 +19,7 @@ We use a dedicated SSO callback page at `/sso-callback` that handles the OAuth r
 - Uses Clerk's `<AuthenticateWithRedirectCallback />` component to automatically handle authentication redirects
 - Routes the user back to the homepage after successful authentication
 - Works with our app's popup modal authentication approach, so it doesn't require specific sign-in/sign-up URLs
+- Contains a dedicated div with id="clerk-captcha" to support Clerk's bot protection CAPTCHA
 
 **File**: `/src/app/sso-callback/page.tsx`
 

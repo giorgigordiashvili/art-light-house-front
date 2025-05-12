@@ -42,18 +42,39 @@ Make sure to set the following environment variables in the Netlify dashboard:
 
 ## Troubleshooting
 
+### Prisma Issues
+
 If you encounter issues with Prisma during deployment:
 
 1. **Error: Prisma has detected that this project was built on Netlify CI**
-
    - This error should be resolved by our configuration changes
    - If it persists, ensure the `prisma generate` command is properly running during build
 
-2. **Database connectivity issues**
+### Image Loading Issues
+
+If you encounter image loading issues after deployment:
+
+1. **404 Errors for missing images**
+
+   - Check the browser console for specific paths causing 404 errors
+   - Ensure all referenced image paths in components match the actual file paths in `/public/assets`
+   - Verify that placeholder paths like `/path/to/image.png` have been replaced with actual image paths
+
+2. **Clerk Image 400 Bad Request Errors**
+
+   - Make sure all Clerk domains are properly configured in `next.config.ts`
+   - The configuration already includes: `img.clerk.com`, `images.clerk.dev`, `cdn.clerk.dev`, and `cdn.clerk.app`
+   - If you see 400 errors for other domains, add them to the configuration
+   - See `CLERK_IMAGE_FIX.md` for detailed information about fixing Clerk image issues
+
+3. **Database connectivity issues**
 
    - Ensure your database URL is correctly set in the environment variables
    - Check that your database is accessible from Netlify's servers
 
-3. **Prisma binary issues**
-   - The `@prisma/netlify-plugin` should handle this, but if you encounter errors about missing binaries,
-     check the Netlify deploy logs for more details
+4. **Prisma binary issues**
+   - Our custom post-build script should handle copying the necessary binaries to the build output
+   - If you encounter errors about missing binaries, check the Netlify deploy logs for more details
+5. **Clerk CAPTCHA errors**
+   - If you see errors about "Cannot initialize Smart CAPTCHA widget", make sure the `clerk-captcha` DOM element exists in the layout
+   - We've added this element in both the root layout and the SSO callback page to ensure proper CAPTCHA rendering
