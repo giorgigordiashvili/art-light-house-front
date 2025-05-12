@@ -5,7 +5,6 @@ import StyledComponentsRegistry from "../../lib/registry";
 import "./globals.css";
 import { usePathname } from "next/navigation";
 import { ClerkProvider } from "@clerk/nextjs";
-import Head from "next/head";
 
 export default function RootLayout({
   children,
