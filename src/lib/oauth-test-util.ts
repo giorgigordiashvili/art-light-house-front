@@ -1,6 +1,6 @@
 "use client";
 
-import { useSignIn, useSignUp } from "@clerk/nextjs";
+import { useSignIn } from "@clerk/nextjs";
 import { useCallback, useEffect, useState } from "react";
 
 /**
@@ -8,7 +8,6 @@ import { useCallback, useEffect, useState } from "react";
  */
 export const useOAuthTest = () => {
   const { signIn, isLoaded: isSignInLoaded } = useSignIn();
-  const { signUp, isLoaded: isSignUpLoaded } = useSignUp();
   const [result, setResult] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
