@@ -14,6 +14,7 @@ import RegistrationCodeModal from "./RegistrationCodeModal";
 import RegistrationSuccessModal from "./RegistrationSuccessModal";
 import EmptyCartModal from "./EmptyCartModal";
 import CartModal from "./CartModal";
+import { useUser } from "@clerk/nextjs";
 
 const StyledContainer = styled.div`
   position: fixed;
@@ -171,10 +172,12 @@ const Header = () => {
   }, [isBurgerMenuOpen, isUserMenuOpen]);
 
   const isCartEmpty = cartItemCount === 0;
-  const isUserAuthorized = false;
+  const { user, isSignedIn } = useUser();
+
+  const isUserAuthorized = isSignedIn;
   const currentUser = {
-    username: "Nikoloz Baratashvili",
-    userImage: "/assets/user.svg",
+    username: user?.firstName || user?.fullName || "User",
+    userImage: user?.imageUrl || "/assets/user.svg",
   };
 
   const closeEmptyCartModal = () => {
@@ -273,7 +276,7 @@ const Header = () => {
               <Overlay />
               <div ref={userMenuRef}>
                 {isUserAuthorized ? (
-                  <UserMenu />
+                  <UserMenu onClose={() => setIsUserMenuOpen(false)} />
                 ) : (
                   <AuthorizationModal
                     onClose={() => setIsUserMenuOpen(false)}

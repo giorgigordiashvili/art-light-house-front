@@ -1,6 +1,8 @@
 import React from "react";
 import UserMenuItem from "./UserMenuItem";
 import styled from "styled-components";
+import { useClerk } from "@clerk/nextjs";
+import { useRouter } from "next/navigation";
 
 const StyledContainer = styled.div`
   width: 304px;
@@ -60,28 +62,46 @@ const ModalLayout = styled.div`
   justify-content: flex-end;
 `;
 
-const UserMenu = () => {
+interface UserMenuProps {
+  onClose?: () => void;
+}
+
+const UserMenu = ({ onClose }: UserMenuProps) => {
+  const { signOut } = useClerk();
+  const router = useRouter();
+
+  const handleSignOut = async () => {
+    await signOut();
+    if (onClose) onClose();
+    router.push("/");
+  };
+
+  const handleMenuItemClick = (path: string) => {
+    router.push(path);
+    if (onClose) onClose();
+  };
+
   return (
     <ModalLayoutWrapper>
       <ModalLayout>
         <StyledContainer>
           <StyledUserMenuContent>
-            <StyledUserMenuItem>
+            <StyledUserMenuItem onClick={() => handleMenuItemClick("/profile")}>
               <UserMenuItem text="ჩემი დეტალები" icon="/assets/detailsIcon.svg" />
             </StyledUserMenuItem>
-            <StyledUserMenuItem>
+            <StyledUserMenuItem onClick={() => handleMenuItemClick("/profile/addresses")}>
               <UserMenuItem text="ჩემი მისამართები" icon="/assets/addressIcon.svg" />
             </StyledUserMenuItem>
-            <StyledUserMenuItem>
+            <StyledUserMenuItem onClick={() => handleMenuItemClick("/orders")}>
               <UserMenuItem text="ჩემი შეკვეთები" icon="/assets/orderIcon.svg" />
             </StyledUserMenuItem>
-            <StyledUserMenuItem>
+            <StyledUserMenuItem onClick={() => handleMenuItemClick("/profile/payment")}>
               <UserMenuItem text="გადახდის მეთოდები" icon="/assets/paymentIcon.svg" />
             </StyledUserMenuItem>
-            <StyledUserMenuItem>
+            <StyledUserMenuItem onClick={() => handleMenuItemClick("/profile/settings")}>
               <UserMenuItem text="პარამეტრები" icon="/assets/settingsIcon.svg" />
             </StyledUserMenuItem>
-            <StyledUserMenuItem>
+            <StyledUserMenuItem onClick={handleSignOut}>
               <UserMenuItem text="გასვლა" icon="/assets/exitIcon.svg" color="red" />
             </StyledUserMenuItem>
           </StyledUserMenuContent>

@@ -4,6 +4,7 @@ import Header from "@/components/Header/Header";
 import StyledComponentsRegistry from "../../lib/registry";
 import "./globals.css";
 import { usePathname } from "next/navigation";
+import { ClerkProvider } from "@clerk/nextjs";
 
 export default function RootLayout({
   children,
@@ -14,14 +15,16 @@ export default function RootLayout({
   const isAdminRoute = pathname?.startsWith("/admin");
 
   return (
-    <html lang="en">
-      <body>
-        <StyledComponentsRegistry>
-          {!isAdminRoute && <Header />}
-          {children}
-          {!isAdminRoute && <Footer />}
-        </StyledComponentsRegistry>
-      </body>
-    </html>
+    <ClerkProvider>
+      <html lang="en">
+        <body>
+          <StyledComponentsRegistry>
+            {!isAdminRoute && <Header />}
+            {children}
+            {!isAdminRoute && <Footer />}
+          </StyledComponentsRegistry>
+        </body>
+      </html>
+    </ClerkProvider>
   );
 }

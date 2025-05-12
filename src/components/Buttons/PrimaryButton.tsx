@@ -7,6 +7,7 @@ type Props = {
   height?: string;
   onClick?: () => void;
   media?: "yes" | "no" | "full";
+  disabled?: boolean;
 };
 
 const StyledContainer = styled.div<{ media?: "yes" | "no" | "full" }>`
@@ -23,13 +24,14 @@ const StyledButton = styled.button<{
   width?: string;
   height?: string;
   media?: "yes" | "no" | "full";
+  disabled?: boolean;
 }>`
   height: ${(props) => props.height || "50px"};
   width: ${(props) => props.width || "252px"};
   display: flex;
   align-items: center;
   justify-content: center;
-  background-color: #ffcb40;
+  background-color: ${(props) => (props.disabled ? "#999999" : "#ffcb40")};
   border: none;
   border-radius: 10px;
   font-family: HelRom;
@@ -37,12 +39,13 @@ const StyledButton = styled.button<{
   font-size: 16px;
   line-height: 100%;
   letter-spacing: 0%;
-  transition: color 0.2s ease;
-  cursor: pointer;
+  transition: all 0.2s ease;
+  cursor: ${(props) => (props.disabled ? "not-allowed" : "pointer")};
   color: #000;
+  opacity: ${(props) => (props.disabled ? 0.7 : 1)};
 
   &:hover {
-    color: #fff;
+    color: ${(props) => (props.disabled ? "#000" : "#fff")};
   }
 
   ${(props) =>
@@ -54,10 +57,16 @@ const StyledButton = styled.button<{
     `}
 `;
 
-const PrimaryButton = ({ text, width, height, onClick, media }: Props) => {
+const PrimaryButton = ({ text, width, height, onClick, media, disabled }: Props) => {
   return (
     <StyledContainer media={media}>
-      <StyledButton width={width} height={height} onClick={onClick} media={media}>
+      <StyledButton
+        width={width}
+        height={height}
+        onClick={onClick}
+        media={media}
+        disabled={disabled}
+      >
         {text}
       </StyledButton>
     </StyledContainer>

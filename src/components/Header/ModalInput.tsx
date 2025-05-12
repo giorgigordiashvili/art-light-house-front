@@ -49,14 +49,27 @@ type Props = {
   iconSrc?: string;
   iconAlt?: string;
   iconSize?: number;
+  type?: string;
+  onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  value?: string;
+  name?: string;
 };
 
-const ModalInput = ({ placeholder, iconSrc, iconAlt = "input icon", iconSize = 20 }: Props) => {
+const ModalInput = ({
+  placeholder,
+  iconSrc,
+  iconAlt = "input icon",
+  iconSize = 20,
+  type = "text",
+  onChange,
+  value,
+  name,
+}: Props) => {
   const hasIcon = Boolean(iconSrc);
 
   return (
     <StyledContainer $hasIcon={hasIcon}>
-      <input type="text" placeholder={placeholder} />
+      <input type={type} placeholder={placeholder} onChange={onChange} value={value} name={name} />
       {iconSrc && (
         <StyledIconWrapper>
           <Image src={iconSrc} alt={iconAlt} width={iconSize} height={iconSize} />
