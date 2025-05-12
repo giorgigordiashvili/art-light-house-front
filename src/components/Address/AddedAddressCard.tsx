@@ -98,11 +98,9 @@ const StyledContainer = styled.div`
   height: 100px;
   background-color: #2a2a2a96;
   border: 1px solid #ffffff12;
-  backdrop-filter: blur(114px);
   border-radius: 10px;
   padding: 26px 23px 26px 26px;
   position: relative;
-  z-index: 10;
   @media (max-width: 1080px) {
     width: 100%;
     gap: 0;

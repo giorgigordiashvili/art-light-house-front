@@ -33,7 +33,7 @@ import DividerLine from "@/components/MainPage/HeroAndCategory/DividerLine";
 
 const StyledContainer = styled.div`
   position: absolute;
-  top: 67px;
+  top: 75px;
   right: 22px;
   width: 160px;
   height: 83px;
@@ -41,7 +41,6 @@ const StyledContainer = styled.div`
   background-color: #242323;
   border: 1px solid #ffffff12;
   backdrop-filter: blur(114px);
-  margin-top: 8px;
   z-index: 999;
 `;
 
