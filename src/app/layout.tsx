@@ -5,6 +5,7 @@ import StyledComponentsRegistry from "../../lib/registry";
 import "./globals.css";
 import { usePathname } from "next/navigation";
 import { ClerkProvider } from "@clerk/nextjs";
+import { useEffect } from "react";
 
 export default function RootLayout({
   children,
@@ -13,6 +14,29 @@ export default function RootLayout({
 }>) {
   const pathname = usePathname();
   const isAdminRoute = pathname?.startsWith("/admin");
+
+  // Add error handling with a useEffect
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      // Listen for OAuth-related errors
+      const handleError = (event: ErrorEvent) => {
+        if (
+          event.error &&
+          (event.error.message?.includes("Clerk") ||
+            event.error.message?.includes("oauth") ||
+            event.error.message?.includes("authentication"))
+        ) {
+          console.error("Clerk/OAuth error:", event.error);
+          localStorage.setItem("oauth_error", event.error.message);
+        }
+      };
+
+      window.addEventListener("error", handleError);
+      console.log("Clerk provider initialized in", process.env.NODE_ENV, "mode");
+
+      return () => window.removeEventListener("error", handleError);
+    }
+  }, []);
 
   return (
     <ClerkProvider

@@ -1,9 +1,22 @@
-import { clerkMiddleware } from "@clerk/nextjs/server";
+import { authMiddleware } from "@clerk/nextjs";
 
-// This example protects all routes including api/trpc routes
-// Please edit this to allow other routes to be public as needed.
-// See https://clerk.com/docs/references/nextjs/auth-middleware for more information about configuring your middleware
-export default clerkMiddleware();
+// This middleware handles authentication for all routes
+// We specifically ensure that the SSO callback route is properly handled
+export default authMiddleware({
+  // Public routes that don't require authentication
+  publicRoutes: [
+    "/", // Homepage
+    "/products(.*)", // Product pages
+    "/details(.*)", // Product details
+    "/contact", // Contact page
+    "/sso-callback(.*)", // SSO callback route - important for OAuth!
+    "/api/webhooks/clerk(.*)", // Clerk webhooks
+    "/oauth-test", // OAuth test page
+    "/(icons|assets|images)/(.*)", // Public assets
+  ],
+  // Debug OAuth issues in development
+  debug: process.env.NODE_ENV === "development",
+});
 
 export const config = {
   matcher: [

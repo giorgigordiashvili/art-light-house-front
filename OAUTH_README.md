@@ -64,6 +64,36 @@ There's also a test page available at `/oauth-test` to verify the callback funct
 
 ## Troubleshooting
 
+### Common OAuth Errors
+
+#### Strategy Errors
+
+If you see an error message like:
+
+```
+"google does not match one of the allowed values for parameter strategy"
+```
+
+This indicates that the wrong strategy name is being used. Always use:
+
+- `oauth_google` for Google (not just "google")
+- `oauth_facebook` for Facebook (not just "facebook")
+
+The correct implementation is in `AuthorizationModal.tsx`:
+
+```typescript
+const strategy = provider === "google" ? "oauth_google" : "oauth_facebook";
+```
+
+#### OAuth Flow Getting Stuck
+
+If the OAuth flow gets stuck on authentication:
+
+1. Check browser console for errors
+2. Verify that the Clerk OAuth configuration is properly set up in the Clerk dashboard
+3. Ensure all redirect URLs are configured correctly
+4. Make sure you're using the latest Clerk SDK version
+
 If you encounter issues with OAuth authentication:
 
 1. Check the Clerk dashboard settings for the OAuth providers

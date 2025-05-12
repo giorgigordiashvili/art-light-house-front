@@ -37,8 +37,11 @@ const ResultBox = styled.div`
   word-break: break-all;
 `;
 
+import { useOAuthTest } from "@/lib/oauth-test-util";
+
 export default function OAuthTest() {
-  const [result, setResult] = useState<string>("");
+  const [manualResult, setManualResult] = useState<string>("");
+  const { testGoogleSignIn, testFacebookSignIn, result, error, isLoading } = useOAuthTest();
 
   const testSSOCallback = async () => {
     try {
@@ -46,20 +49,46 @@ export default function OAuthTest() {
       const response = await fetch("/sso-callback", { method: "GET" });
       const text = await response.text();
 
-      setResult(`Status: ${response.status}\n\nResponse:\n${text.slice(0, 500)}...`);
+      setManualResult(`Status: ${response.status}\n\nResponse:\n${text.slice(0, 500)}...`);
     } catch (error) {
-      setResult(`Error: ${error instanceof Error ? error.message : String(error)}`);
+      setManualResult(`Error: ${error instanceof Error ? error.message : String(error)}`);
     }
   };
 
   return (
     <TestContainer>
       <h1>OAuth Callback Test</h1>
-      <p>This page provides simple tools to test the OAuth callback implementation.</p>
+      <p>This page provides tools to test the OAuth implementation and diagnose issues.</p>
 
-      <Button onClick={testSSOCallback}>Test SSO Callback Route</Button>
+      <div style={{ display: "flex", flexDirection: "column", gap: "10px", marginBottom: "20px" }}>
+        <Button onClick={testGoogleSignIn} disabled={isLoading}>
+          {isLoading ? "Loading..." : "Test Google OAuth Sign-In"}
+        </Button>
+
+        <Button onClick={testFacebookSignIn} disabled={isLoading}>
+          {isLoading ? "Loading..." : "Test Facebook OAuth Sign-In"}
+        </Button>
+
+        <Button onClick={testSSOCallback} disabled={isLoading}>
+          Test SSO Callback Route
+        </Button>
+      </div>
+
+      {error && (
+        <ResultBox style={{ backgroundColor: "#522", border: "1px solid #800" }}>
+          <strong>Error:</strong> {error}
+        </ResultBox>
+      )}
 
       {result && <ResultBox>{result}</ResultBox>}
+
+      {manualResult && (
+        <ResultBox style={{ marginTop: "20px", backgroundColor: "#253525" }}>
+          <strong>Manual Test Result:</strong>
+          <br />
+          {manualResult}
+        </ResultBox>
+      )}
     </TestContainer>
   );
 }

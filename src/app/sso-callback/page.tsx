@@ -39,12 +39,46 @@ const Spinner = styled.div`
   }
 `;
 
+import { useEffect, useState } from "react";
+
 export default function SSOCallback() {
+  const [error, setError] = useState<string | null>(null);
+
+  // Add logging for debugging
+  useEffect(() => {
+    console.log("SSO Callback page mounted");
+
+    // Listen for Clerk errors
+    const handleError = (e: ErrorEvent) => {
+      if (e.error && e.error.message && e.error.message.includes("Clerk")) {
+        console.error("Clerk OAuth error:", e.error);
+        setError(`Authentication error: ${e.error.message}`);
+      }
+    };
+
+    window.addEventListener("error", handleError);
+    return () => window.removeEventListener("error", handleError);
+  }, []);
+
+  // Parse URL params for debugging
+  useEffect(() => {
+    try {
+      const params = new URLSearchParams(window.location.search);
+      if (params.has("error")) {
+        const errorDesc = params.get("error_description") || params.get("error");
+        console.error("OAuth error from URL params:", errorDesc);
+        setError(`Error: ${errorDesc}`);
+      }
+    } catch (err) {
+      console.error("Error parsing URL params:", err);
+    }
+  }, []);
+
   return (
     <LoadingContainer>
       <LoadingText>
         <Spinner />
-        ავტორიზაცია...
+        {error ? `Error: ${error}` : "ავტორიზაცია..."}
       </LoadingText>
       {/* Add a dedicated div for Clerk CAPTCHA */}
       <div id="clerk-captcha" style={{ display: "none" }}></div>
@@ -54,6 +88,8 @@ export default function SSOCallback() {
         /* We don't need sign-in/sign-up URLs since we use modals everywhere */
         redirectUrl="/sso-callback"
         /* The redirectUrlComplete is passed from the AuthorizationModal to preserve the user's location */
+        afterSignInUrl="/"
+        afterSignUpUrl="/"
       />
     </LoadingContainer>
   );

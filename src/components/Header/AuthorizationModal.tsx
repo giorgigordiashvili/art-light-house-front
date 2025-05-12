@@ -212,28 +212,40 @@ const AuthorizationModal: React.FC<AuthorizationModalProps> = ({
       // Map the provider to the correct Clerk strategy
       const strategy = provider === "google" ? "oauth_google" : "oauth_facebook";
 
+      console.log(`Using OAuth strategy: ${strategy} for provider: ${provider}`);
+
       // Get the current URL to return to after authentication
       const currentUrl = window.location.pathname + window.location.search;
 
       if (activeTab === "auth") {
         if (isSignInLoaded) {
+          console.log("Initiating sign-in with redirect...");
           await signIn?.authenticateWithRedirect({
             strategy,
             redirectUrl: "/sso-callback",
             redirectUrlComplete: currentUrl || "/", // Return to current page
           });
+        } else {
+          console.error("Sign-in component not loaded yet");
         }
       } else {
         if (isSignUpLoaded) {
+          console.log("Initiating sign-up with redirect...");
           await signUp?.authenticateWithRedirect({
             strategy,
             redirectUrl: "/sso-callback",
             redirectUrlComplete: currentUrl || "/", // Return to current page
           });
+        } else {
+          console.error("Sign-up component not loaded yet");
         }
       }
     } catch (error) {
-      console.error(`Failed to sign in with ${provider}:`, error);
+      console.error(`Failed to authenticate with ${provider}:`, error);
+      // Display more detailed error information in development
+      if (process.env.NODE_ENV === "development") {
+        console.error("Full error:", JSON.stringify(error, null, 2));
+      }
     }
   };
 
