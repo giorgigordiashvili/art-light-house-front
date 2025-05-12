@@ -283,7 +283,7 @@ const Header = () => {
               <Overlay />
               <div ref={userMenuRef}>
                 {isUserAuthorized ? (
-                  <UserMenu />
+                  <UserMenu closeModal={() => setIsUserMenuOpen(false)} />
                 ) : (
                   <AuthorizationModal
                     onClose={() => setIsUserMenuOpen(false)}

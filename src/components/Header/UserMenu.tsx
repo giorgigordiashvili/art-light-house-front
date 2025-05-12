@@ -60,29 +60,61 @@ const ModalLayout = styled.div`
   justify-content: flex-end;
 `;
 
-const UserMenu = () => {
+type UserMenuProps = {
+  closeModal: () => void;
+};
+
+const UserMenu = ({ closeModal }: UserMenuProps) => {
   return (
     <ModalLayoutWrapper>
       <ModalLayout>
         <StyledContainer>
           <StyledUserMenuContent>
             <StyledUserMenuItem>
-              <UserMenuItem text="ჩემი დეტალები" icon="/assets/detailsIcon.svg" />
+              <UserMenuItem
+                text="ჩემი დეტალები"
+                icon="/assets/detailsIcon.svg"
+                route="/profile"
+                onClick={closeModal}
+              />
             </StyledUserMenuItem>
             <StyledUserMenuItem>
-              <UserMenuItem text="ჩემი მისამართები" icon="/assets/addressIcon.svg" />
+              <UserMenuItem
+                text="ჩემი მისამართები"
+                icon="/assets/addressIcon.svg"
+                route="/address"
+                onClick={closeModal}
+              />
             </StyledUserMenuItem>
             <StyledUserMenuItem>
-              <UserMenuItem text="ჩემი შეკვეთები" icon="/assets/orderIcon.svg" />
+              <UserMenuItem
+                text="ჩემი შეკვეთები"
+                icon="/assets/orderIcon.svg"
+                route="/orders"
+                onClick={closeModal}
+              />
             </StyledUserMenuItem>
             <StyledUserMenuItem>
-              <UserMenuItem text="გადახდის მეთოდები" icon="/assets/paymentIcon.svg" />
+              <UserMenuItem
+                text="გადახდის მეთოდები"
+                icon="/assets/paymentIcon.svg"
+                onClick={closeModal}
+              />
             </StyledUserMenuItem>
             <StyledUserMenuItem>
-              <UserMenuItem text="პარამეტრები" icon="/assets/settingsIcon.svg" />
+              <UserMenuItem
+                text="პარამეტრები"
+                icon="/assets/settingsIcon.svg"
+                onClick={closeModal}
+              />
             </StyledUserMenuItem>
             <StyledUserMenuItem>
-              <UserMenuItem text="გასვლა" icon="/assets/exitIcon.svg" color="red" />
+              <UserMenuItem
+                text="გასვლა"
+                icon="/assets/exitIcon.svg"
+                color="red"
+                onClick={closeModal}
+              />
             </StyledUserMenuItem>
           </StyledUserMenuContent>
         </StyledContainer>
