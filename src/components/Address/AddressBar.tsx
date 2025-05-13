@@ -22,7 +22,7 @@ const StyledCardsWrapper = styled.div`
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 18px;
-  padding: 22px 24px 24px 24px;
+  padding: 22px 24px 59px 24px;
   max-height: 363px;
   width: 800px;
   scrollbar-width: none;
