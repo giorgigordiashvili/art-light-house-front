@@ -9,20 +9,20 @@ type Props = {
   onClick?: () => void;
 };
 
-const StyledText = styled.div<{ colorOption?: ColorOption }>`
+const StyledText = styled.div<{ $colorOption?: ColorOption }>`
   font-family: Helvetica;
   font-weight: 500;
   font-size: 12px;
   line-height: 159%;
   text-align: center;
-  color: ${({ colorOption }) => (colorOption === "red" ? "#FF2626" : "#FFFFFF")};
+  color: ${({ $colorOption }) => ($colorOption === "red" ? "#FF2626" : "#FFFFFF")};
   padding: 13px 36px 10px 40px;
   cursor: pointer;
 `;
 
 const ModalOption = ({ text, color = "white", onClick }: Props) => {
   return (
-    <StyledText colorOption={color} onClick={onClick}>
+    <StyledText $colorOption={color} onClick={onClick}>
       {text}
     </StyledText>
   );
