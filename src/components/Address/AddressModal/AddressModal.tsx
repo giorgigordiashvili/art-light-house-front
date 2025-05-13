@@ -56,15 +56,7 @@ type Props = {
   initialData?: AddressData;
 };
 
-const AddressModal = ({
-  onClose,
-  onSave,
-  initialData,
-}: {
-  onClose: () => void;
-  onSave: (data: AddressData) => void;
-  initialData?: AddressData;
-}) => {
+const AddressModal = ({ onClose, onSave, initialData }: Props) => {
   const [selectedPlace, setSelectedPlace] = useState(initialData?.place || "სახლი");
   const [address, setAddress] = useState(initialData?.address || "");
   const [additionalInfo, setAdditionalInfo] = useState(initialData?.additionalInfo || "");
