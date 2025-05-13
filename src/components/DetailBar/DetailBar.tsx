@@ -14,6 +14,9 @@ const Container = styled.div`
   display: flex;
   flex-direction: column;
   overflow: hidden;
+  @media (max-width: 1080px) {
+    display: none;
+  }
 `;
 
 const Item = styled.div<{ logout?: boolean }>`

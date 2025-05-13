@@ -156,13 +156,6 @@ const StyledBars = styled.div`
     margin-top: 41px;
   }
 `;
-const StyledDesktopDetail = styled.div`
-  display: flex;
-  flex-shrink: 0;
-  @media (max-width: 1080px) {
-    display: none;
-  }
-`;
 
 const StyledMobileDetail = styled.div`
   display: none;
@@ -204,9 +197,7 @@ const Address = () => {
           <ContactTitle text="ჩემი მისამართები" />
         </div>
         <StyledBars>
-          <StyledDesktopDetail>
-            <DetailBar />
-          </StyledDesktopDetail>
+          <DetailBar />
           <StyledMobileDetail>
             <MobileDetailDropdown />
           </StyledMobileDetail>
