@@ -16,6 +16,9 @@ const StyledText = styled.div`
   &:hover {
     opacity: 80%;
   }
+  @media (max-width: 1080px) {
+    font-size: 16px;
+  }
 `;
 
 type Props = {

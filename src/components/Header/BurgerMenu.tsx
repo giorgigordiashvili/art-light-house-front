@@ -3,15 +3,15 @@ import NavItem from "./NavItem";
 import styled from "styled-components";
 
 const StyledBurgeMenu = styled.div`
-  width: 100%;
   position: fixed;
-  bottom: 0;
+  top: 72px;
+  border-radius: 14px;
+  right: 12px;
   display: none;
   flex-direction: column;
   color: white;
   background-color: #1c1c1c;
-  padding: 20px 20px 72px 20px;
-  z-index: 1000;
+  z-index: 1001;
   @media (max-width: 1080px) {
     display: flex;
   }
@@ -20,10 +20,11 @@ const StyledBurgeMenu = styled.div`
 const StyledBurgerMenuContent = styled.div`
   border: 1px solid #2c2c2c;
   border-radius: 14px;
+  width: 219px;
 `;
 
 const StyledNavItem = styled.div`
-  padding: 20px 0 24px 24px;
+  padding: 24px 0 20px 24px;
   border-top: 1px solid #2c2c2c;
 
   &:first-child {

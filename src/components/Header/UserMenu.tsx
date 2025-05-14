@@ -63,22 +63,17 @@ const ModalLayout = styled.div`
 `;
 
 interface UserMenuProps {
-  onClose?: () => void;
+  closeModal?: () => void;
 }
 
-const UserMenu = ({ onClose }: UserMenuProps) => {
+const UserMenu = ({ closeModal }: UserMenuProps) => {
   const { signOut } = useClerk();
   const router = useRouter();
 
   const handleSignOut = async () => {
     await signOut();
-    if (onClose) onClose();
+    if (closeModal) closeModal();
     router.push("/");
-  };
-
-  const handleMenuItemClick = (path: string) => {
-    router.push(path);
-    if (onClose) onClose();
   };
 
   return (
@@ -86,20 +81,43 @@ const UserMenu = ({ onClose }: UserMenuProps) => {
       <ModalLayout>
         <StyledContainer>
           <StyledUserMenuContent>
-            <StyledUserMenuItem onClick={() => handleMenuItemClick("/profile")}>
-              <UserMenuItem text="ჩემი დეტალები" icon="/assets/detailsIcon.svg" />
+            <StyledUserMenuItem>
+              <UserMenuItem
+                text="ჩემი დეტალები"
+                icon="/assets/detailsIcon.svg"
+                route="/profile"
+                onClick={closeModal}
+              />
             </StyledUserMenuItem>
-            <StyledUserMenuItem onClick={() => handleMenuItemClick("/profile/addresses")}>
-              <UserMenuItem text="ჩემი მისამართები" icon="/assets/addressIcon.svg" />
+            <StyledUserMenuItem>
+              <UserMenuItem
+                text="ჩემი მისამართები"
+                icon="/assets/addressIcon.svg"
+                route="/address"
+                onClick={closeModal}
+              />
             </StyledUserMenuItem>
-            <StyledUserMenuItem onClick={() => handleMenuItemClick("/orders")}>
-              <UserMenuItem text="ჩემი შეკვეთები" icon="/assets/orderIcon.svg" />
+            <StyledUserMenuItem>
+              <UserMenuItem
+                text="ჩემი შეკვეთები"
+                icon="/assets/orderIcon.svg"
+                route="/orders"
+                onClick={closeModal}
+              />
             </StyledUserMenuItem>
-            <StyledUserMenuItem onClick={() => handleMenuItemClick("/profile/payment")}>
-              <UserMenuItem text="გადახდის მეთოდები" icon="/assets/paymentIcon.svg" />
+            <StyledUserMenuItem>
+              <UserMenuItem
+                text="გადახდის მეთოდები"
+                icon="/assets/paymentIcon.svg"
+                onClick={closeModal}
+              />
             </StyledUserMenuItem>
-            <StyledUserMenuItem onClick={() => handleMenuItemClick("/profile/settings")}>
-              <UserMenuItem text="პარამეტრები" icon="/assets/settingsIcon.svg" />
+            <StyledUserMenuItem>
+              <UserMenuItem
+                text="პარამეტრები"
+                icon="/assets/settingsIcon.svg"
+                onClick={closeModal}
+              />
             </StyledUserMenuItem>
             <StyledUserMenuItem onClick={handleSignOut}>
               <UserMenuItem text="გასვლა" icon="/assets/exitIcon.svg" color="red" />
