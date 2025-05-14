@@ -4,11 +4,26 @@ import styled from "styled-components";
 import ContactTitle from "./ContactTitle";
 import Container from "../ui/Container";
 import SectionTitle from "../MainPage/SectionTitle";
+import Circle from "../ui/Circle";
 
 const StyledContainer = styled.div`
+  position: relative;
   padding-inline: 20px;
   @media (max-width: 1080px) {
     padding-inline: 0;
+  }
+`;
+
+const StyledCircle = styled.div`
+  position: absolute;
+  left: 37%;
+  transform: translateX(-50%);
+  bottom: 120px;
+  @media (max-width: 1080px) {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    bottom: -50px;
   }
 `;
 
@@ -42,6 +57,9 @@ type ContactProps = {
 const Contact: React.FC<ContactProps> = ({ variant = "1" }) => {
   return (
     <StyledContainer>
+      <StyledCircle>
+        <Circle size="large" />
+      </StyledCircle>
       <Container>
         {variant === "1" && <ContactTitle text="კონტაქტი" />}
         {variant === "2" && (

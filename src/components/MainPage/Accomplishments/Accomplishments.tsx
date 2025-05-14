@@ -5,8 +5,10 @@ import AccomplishmentTitle from "./AccomplishmentTitle";
 import Counts from "./Counts";
 import CountLine from "./CountLine";
 import Container from "../../ui/Container";
+import Circle from "@/components/ui/Circle";
 
 const StyledComponent = styled.div`
+  position: relative;
   @media (max-width: 1332px) {
     padding-inline: 20px;
   }
@@ -14,6 +16,18 @@ const StyledComponent = styled.div`
   @media (max-width: 1080px) {
     padding-inline: 0;
   }
+`;
+
+const StyledLeftCircle = styled.div`
+  position: absolute;
+  bottom: 187px;
+  left: -185px;
+`;
+
+const StyledRightCircle = styled.div`
+  position: absolute;
+  top: -30px;
+  right: 284px;
 `;
 
 const BorderWrapper = styled.div`
@@ -90,6 +104,12 @@ const Accomplishments = () => {
   return (
     <Container>
       <StyledComponent>
+        <StyledLeftCircle>
+          <Circle size="large" />
+        </StyledLeftCircle>
+        <StyledRightCircle>
+          <Circle size="small" />
+        </StyledRightCircle>
         <BorderWrapper>
           <StyledContainer>
             <AccomplishmentTitle text="ჩვენი მიღწევები" />
