@@ -4,22 +4,28 @@
   "private": true,
   "scripts": {
     "dev": "next dev --turbopack",
-    "build": "next build",
+    "build": "prisma generate && next build && ./scripts/prisma-postbuild.sh",
     "start": "next start",
     "lint": "next lint",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
-    "prepare": "husky"
+    "prepare": "husky",
+    "postinstall": "prisma generate"
   },
   "dependencies": {
+    "@clerk/nextjs": "^6.19.2",
+    "@prisma/client": "^6.7.0",
     "@vis.gl/react-google-maps": "^1.5.2",
     "next": "15.3.0",
+    "prisma": "^6.7.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
-    "styled-components": "^6.1.17"
+    "styled-components": "^6.1.17",
+    "svix": "^1.65.0"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
+    "@netlify/plugin-nextjs": "^5.11.1",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",

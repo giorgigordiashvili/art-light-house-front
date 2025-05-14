@@ -187,7 +187,7 @@ const CategorySection = () => {
               >
                 <ProductTitle text="დეკორაციები" />
               </Card>
-              <Card width={374} height={222} $backgroundImage="/path/to/star.png">
+              <Card width={374} height={222} $backgroundImage="/assets/stars.svg">
                 <ProductTitle text="სარკე" />
               </Card>
             </Row>

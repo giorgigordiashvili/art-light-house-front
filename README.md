@@ -1,4 +1,21 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Art Light House
+
+This is the front-end repository for Art Light House, a modern e-commerce platform for premium lighting solutions built with Next.js and Clerk authentication.
+
+## Project Documentation
+
+- [OAuth Implementation](./OAUTH_README.md) - Details on social login integration
+- [Database Setup](./DATABASE_README.md) - PostgreSQL and Prisma configuration
+- [Netlify Deployment Guide](./NETLIFY_DEPLOY.md) - How to deploy to Netlify
+- [Clerk Troubleshooting](./CLERK_TROUBLESHOOTING.md) - Solving common Clerk issues
+- [Image Loading Fixes](./CLERK_IMAGE_FIX.md) - Solutions for image loading issues
+
+## Recent Updates
+
+- Fixed 404 errors for missing images in CategorySection
+- Resolved 400 Bad Request errors for Clerk images by adding additional domains to Next.js config
+- Updated OAuth implementation with better error handling
+- Enhanced deployment documentation
 
 ## Getting Started
 

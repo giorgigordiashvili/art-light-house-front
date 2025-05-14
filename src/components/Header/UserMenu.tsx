@@ -1,6 +1,8 @@
 import React from "react";
 import UserMenuItem from "./UserMenuItem";
 import styled from "styled-components";
+import { useClerk } from "@clerk/nextjs";
+import { useRouter } from "next/navigation";
 
 const StyledContainer = styled.div`
   width: 304px;
@@ -60,11 +62,20 @@ const ModalLayout = styled.div`
   justify-content: flex-end;
 `;
 
-type UserMenuProps = {
-  closeModal: () => void;
-};
+interface UserMenuProps {
+  closeModal?: () => void;
+}
 
 const UserMenu = ({ closeModal }: UserMenuProps) => {
+  const { signOut } = useClerk();
+  const router = useRouter();
+
+  const handleSignOut = async () => {
+    await signOut();
+    if (closeModal) closeModal();
+    router.push("/");
+  };
+
   return (
     <ModalLayoutWrapper>
       <ModalLayout>
@@ -108,13 +119,8 @@ const UserMenu = ({ closeModal }: UserMenuProps) => {
                 onClick={closeModal}
               />
             </StyledUserMenuItem>
-            <StyledUserMenuItem>
-              <UserMenuItem
-                text="გასვლა"
-                icon="/assets/exitIcon.svg"
-                color="red"
-                onClick={closeModal}
-              />
+            <StyledUserMenuItem onClick={handleSignOut}>
+              <UserMenuItem text="გასვლა" icon="/assets/exitIcon.svg" color="red" />
             </StyledUserMenuItem>
           </StyledUserMenuContent>
         </StyledContainer>

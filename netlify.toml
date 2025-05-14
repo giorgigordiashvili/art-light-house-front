@@ -1,0 +1,12 @@
+# Netlify configuration file
+[build]
+  command = "npm run build"
+  publish = ".next"
+
+# Environment variables needed for build
+[build.environment]
+  NEXT_TELEMETRY_DISABLED = "1"
+
+# Ensure Next.js is properly handled
+[[plugins]]
+  package = "@netlify/plugin-nextjs"

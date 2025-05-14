@@ -1,8 +1,7 @@
-import { useState } from "react";
 import styled from "styled-components";
 
 const Button = styled.button`
-  display: flex;
+  display: none;
   align-items: center;
   justify-content: center;
   gap: 11px;
@@ -17,9 +16,14 @@ const Button = styled.button`
   transition: background-color 0.2s ease;
   width: 129px;
   height: 52px;
+  z-index: 1000;
 
   &:hover {
     background-color: #2a3435;
+  }
+
+  @media (max-width: 1080px) {
+    display: flex;
   }
 `;
 
@@ -41,11 +45,10 @@ const FilterButton: React.FC<FilterButtonProps> = ({
   iconSrc = "/assets/icons/filter.svg",
   iconAlt = "icon",
 }) => {
-  const [isMobile] = useState(false);
   return (
     <Button onClick={onClick}>
       {iconSrc && <FilterIcon src={iconSrc} alt={iconAlt} />}
-      {!isMobile && label}
+      <span>{label}</span>
     </Button>
   );
 };
