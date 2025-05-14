@@ -1,4 +1,6 @@
+"use client";
 import styled from "styled-components";
+import { useRouter } from "next/navigation";
 
 const Card = styled.div`
   display: flex;
@@ -10,6 +12,7 @@ const Card = styled.div`
   width: 100%;
   position: relative;
   height: 79px;
+  cursor: pointer;
 `;
 
 const Id = styled.span`
@@ -25,7 +28,6 @@ const Divider = styled.div`
   height: 16px;
   background-color: #ffffff;
   opacity: 0.2;
-  transform: rotate(0deg);
 `;
 
 const Date = styled.span`
@@ -47,8 +49,14 @@ const Details = styled.span`
 `;
 
 const OrderCard = () => {
+  const router = useRouter();
+
+  const handleClick = () => {
+    router.push("/orderdetail");
+  };
+
   return (
-    <Card>
+    <Card onClick={handleClick}>
       <Id>#22435</Id>
       <Divider />
       <Date>22 დეკემბერი</Date>
