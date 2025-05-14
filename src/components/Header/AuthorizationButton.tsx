@@ -17,6 +17,7 @@ const StyledButton = styled.div`
   line-height: 100%;
   letter-spacing: 0%;
   cursor: pointer;
+  transition: 0.2s ease-in-out;
 
   &.authorized {
     justify-content: flex-start;
@@ -31,6 +32,10 @@ const StyledButton = styled.div`
     @media (max-width: 1080px) {
       margin: 0;
     }
+  }
+
+  &:hover {
+    box-shadow: 0px 14px 32.8px -8px #f7cb576e;
   }
 
   &.authorized span {

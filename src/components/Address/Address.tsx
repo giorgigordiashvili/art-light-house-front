@@ -25,8 +25,10 @@ const Overlay = styled.div`
   display: flex;
   justify-content: center;
   align-items: flex-start;
-  padding-top: 140px;
   z-index: 9999;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 `;
 
 const StyledModal = styled.div`
