@@ -1,11 +1,12 @@
 "use client";
+import React, { useState } from "react";
 import FilterSidebar from "@/components/FilterSidebar/FilterSidebar";
 import CardGrid from "@/components/ListProductCard/CardGrid";
 import styled from "styled-components";
-// import SortButton from "@/components/Sort/SortButtom";
 import FilterButton from "@/components/FilterSidebar/FilterButtom";
 import SortDropdown from "@/components/Sort/SortDropdown";
 import Container from "@/components/ui/Container";
+import MobileFilterDropdown from "../FilterDropdown/MobileFilterDropdown";
 
 const StyledComponent = styled.div`
   background: black;
@@ -62,6 +63,12 @@ const OnDesktop = styled.div`
 `;
 
 function ProductsMain() {
+  const [isMobileFilterDropdownVisible, setMobileFilterDropdownVisible] = useState(false);
+
+  const toggleMobileFilterDropdown = () => {
+    setMobileFilterDropdownVisible(!isMobileFilterDropdownVisible);
+  };
+
   return (
     <StyledComponent>
       <Container>
@@ -69,7 +76,7 @@ function ProductsMain() {
 
         <SortWrapper>
           <OnMobile>
-            <FilterButton />
+            <FilterButton onClick={toggleMobileFilterDropdown} />
           </OnMobile>
           <SortDropdown />
         </SortWrapper>
@@ -79,6 +86,10 @@ function ProductsMain() {
           </OnDesktop>
           <CardGrid />
         </ContentWrapper>
+
+        {isMobileFilterDropdownVisible && (
+          <MobileFilterDropdown onClose={toggleMobileFilterDropdown} />
+        )}
       </Container>
     </StyledComponent>
   );
