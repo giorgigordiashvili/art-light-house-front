@@ -15,6 +15,68 @@ const StyledContainer = styled.div`
   }
 `;
 
+const StyledCircle = styled.div`
+  width: 284px;
+  height: 284px;
+  opacity: 0.64;
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  background: radial-gradient(
+    circle,
+    rgba(255, 203, 64, 0.44) 0%,
+    rgba(255, 203, 64, 0.1) 80%,
+    rgba(255, 203, 64, 0) 100%
+  );
+  filter: blur(100px);
+  border-radius: 50%;
+  z-index: 1;
+  @media (max-width: 1080px) {
+    display: none;
+  }
+`;
+
+const StyledLeftCircle = styled.div`
+  width: 284px;
+  height: 284px;
+  opacity: 0.64;
+  position: absolute;
+  bottom: 35px;
+  background: radial-gradient(
+    circle,
+    rgba(255, 203, 64, 0.44) 0%,
+    rgba(255, 203, 64, 0.1) 80%,
+    rgba(255, 203, 64, 0) 100%
+  );
+  filter: blur(100px);
+  border-radius: 50%;
+  z-index: 1;
+  @media (max-width: 1080px) {
+    display: none;
+  }
+`;
+
+const StyledRightCircle = styled.div`
+  width: 284px;
+  height: 284px;
+  opacity: 0.64;
+  position: absolute;
+  bottom: -70px;
+  right: 0;
+  background: radial-gradient(
+    circle,
+    rgba(255, 203, 64, 0.44) 0%,
+    rgba(255, 203, 64, 0.1) 80%,
+    rgba(255, 203, 64, 0) 100%
+  );
+  filter: blur(100px);
+  border-radius: 50%;
+  z-index: 1;
+  @media (max-width: 1080px) {
+    display: none;
+  }
+`;
+
 const Overlay = styled.div`
   position: fixed;
   top: 0;
@@ -86,6 +148,9 @@ const Address = () => {
   return (
     <>
       <StyledContainer>
+        <StyledCircle />
+        <StyledLeftCircle />
+        <StyledRightCircle />
         <div>
           <ContactTitle text="ჩემი მისამართები" />
         </div>
