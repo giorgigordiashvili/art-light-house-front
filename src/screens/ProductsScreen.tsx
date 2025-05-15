@@ -15,7 +15,6 @@ const StyledComponent = styled.div`
 const StyledCircle = styled.div`
   width: 284px;
   height: 284px;
-  background-color: red;
   opacity: 0.64;
   position: absolute;
   top: 820px;

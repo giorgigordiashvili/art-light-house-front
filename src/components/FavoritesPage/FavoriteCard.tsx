@@ -95,6 +95,7 @@ const StyledRemoveIconWrapper = styled.div.withConfig({
   ${({ cardType }) =>
     cardType === "favorite" &&
     css`
+      cursor: pointer;
       @media (max-width: 1080px) {
         position: absolute;
         top: 18px;

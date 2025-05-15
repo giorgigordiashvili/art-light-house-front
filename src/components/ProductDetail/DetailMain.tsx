@@ -20,6 +20,81 @@ const StyledComponent = styled.div`
   }
 `;
 
+const StyledCircle = styled.div`
+  width: 284px;
+  height: 284px;
+  opacity: 0.64;
+  position: absolute;
+  top: 820px;
+  right: 0;
+  background: radial-gradient(
+    circle,
+    rgba(255, 203, 64, 0.44) 0%,
+    rgba(255, 203, 64, 0.1) 80%,
+    rgba(255, 203, 64, 0) 100%
+  );
+  filter: blur(100px);
+  border-radius: 50%;
+  z-index: 1;
+  @media (max-width: 1080px) {
+    display: none;
+  }
+`;
+
+const StyledSecondCircle = styled.div`
+  width: 284px;
+  height: 284px;
+  opacity: 0.64;
+  position: absolute;
+  top: 750px;
+  left: 0;
+  background: radial-gradient(
+    circle,
+    rgba(255, 203, 64, 0.44) 0%,
+    rgba(255, 203, 64, 0.1) 80%,
+    rgba(255, 203, 64, 0) 100%
+  );
+  filter: blur(100px);
+  border-radius: 50%;
+  z-index: 1;
+  @media (max-width: 1080px) {
+    display: none;
+  }
+`;
+
+const StyledBottomCircle = styled.div`
+  width: 372px;
+  height: 372px;
+  opacity: 0.64;
+  position: absolute;
+  bottom: -1140px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: radial-gradient(
+    circle,
+    rgba(255, 203, 64, 0.44) 0%,
+    rgba(255, 203, 64, 0.1) 80%,
+    rgba(255, 203, 64, 0) 100%
+  );
+  filter: blur(100px);
+  border-radius: 50%;
+  z-index: 1;
+  @media (max-width: 1080px) {
+    bottom: -1300px;
+    right: 0;
+    transform: none;
+    left: auto;
+    width: 328px;
+    height: 328px;
+    background: radial-gradient(
+      circle,
+      rgba(255, 203, 64, 0.18) 0%,
+      rgba(255, 203, 64, 0.1) 80%,
+      rgba(255, 203, 64, 0) 100%
+    );
+  }
+`;
+
 const FlexRow = styled.div`
   display: grid;
   grid-template-columns: 636px 563px;
@@ -97,6 +172,9 @@ const CardGrid = styled.div`
 function ProductsMain() {
   return (
     <StyledComponent>
+      <StyledCircle />
+      <StyledSecondCircle />
+      <StyledBottomCircle />
       <Container>
         <MenuBar />
         <FlexRow>

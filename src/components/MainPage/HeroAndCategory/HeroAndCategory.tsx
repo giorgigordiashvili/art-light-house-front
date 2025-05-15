@@ -127,14 +127,14 @@ const heroSlides = [
     text: "მყუდრო ატმოსფერო",
     description: "თანამედროვე დიზაინი და ტემპერატურა, რომელიც თქვენ გჭირდებათ.",
     buttonText: "მეტის ნახვა",
-    href: "/modern-lighting",
+    href: "/",
   },
   {
     lightText: "აირჩიე",
     text: "ხარისხიანი შუქი",
     description: "ჩვენი პროდუქცია აკმაყოფილებს ყველა სტანდარტს და სანდოა.",
     buttonText: "ახალი კოლექცია",
-    href: "/quality-lighting",
+    href: "/",
   },
 ];
 
