@@ -1,5 +1,10 @@
+"use client";
 import React from "react";
 import styled from "styled-components";
+import { Swiper, SwiperSlide } from "swiper/react";
+import { Navigation } from "swiper/modules";
+import "swiper/css";
+import "swiper/css/navigation";
 import HeroTitle from "./HeroTitle";
 import ViewPageButton from "../../Buttons/ViewPageButton";
 import HeroDescription from "./HeroDescription";
@@ -12,6 +17,19 @@ const StyledContainer = styled.div`
   position: relative;
   width: 100%;
   overflow: hidden;
+`;
+
+const SwiperWrapper = styled.div`
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+
+  .swiper-button-next,
+  .swiper-button-prev {
+    color: #ffcb40;
+    z-index: 3;
+    padding-inline: 80px;
+  }
 `;
 
 const StyledComponent = styled.div`
@@ -52,6 +70,8 @@ const ContentWrapper = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
+  box-sizing: border-box;
+  overflow: visible;
   @media (max-width: 1080px) {
     padding-top: 181px;
   }
@@ -59,6 +79,9 @@ const ContentWrapper = styled.div`
 
 const StyledDescription = styled.div`
   margin-top: 38px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   @media (max-width: 1080px) {
     padding-top: 14px;
   }
@@ -66,6 +89,10 @@ const StyledDescription = styled.div`
 
 const StyledButton = styled.div`
   margin-top: 70px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding-bottom: 40px;
   @media (max-width: 1080px) {
     padding-top: 43px;
   }
@@ -73,7 +100,7 @@ const StyledButton = styled.div`
 
 const StyledCategorySection = styled.div`
   width: 100%;
-  margin-top: 151px;
+  margin-top: 111px;
   @media (max-width: 1080px) {
     margin-top: 0;
   }
@@ -86,19 +113,52 @@ const StyledCategoryTitle = styled.div`
   }
 `;
 
+const heroSlides = [
+  {
+    lightText: "გაანათე",
+    text: "შენი სახლი",
+    description:
+      "ჩვენი განათება ქმნის განსაკუთრებულ გარემოს, რომელიც ვიზუალურად მიმზიდველია და ემოციურ გამოცდილებას ქმნის.",
+    buttonText: "ყველა პროდუქტი",
+    href: "/products",
+  },
+  {
+    lightText: "შექმენი",
+    text: "მყუდრო ატმოსფერო",
+    description: "თანამედროვე დიზაინი და ტემპერატურა, რომელიც თქვენ გჭირდებათ.",
+    buttonText: "მეტის ნახვა",
+    href: "/modern-lighting",
+  },
+  {
+    lightText: "აირჩიე",
+    text: "ხარისხიანი შუქი",
+    description: "ჩვენი პროდუქცია აკმაყოფილებს ყველა სტანდარტს და სანდოა.",
+    buttonText: "ახალი კოლექცია",
+    href: "/quality-lighting",
+  },
+];
+
 const HeroAndCategory = () => {
   return (
     <StyledContainer>
       <StyledLinearGradient />
       <StyledComponent />
       <ContentWrapper>
-        <HeroTitle lightText="გაანათე" text="შენი სახლი" />
-        <StyledDescription>
-          <HeroDescription text="ჩვენი განათება ქმნის განსაკუთრებულ გარემოს, რომელიც ვიზუალურად მიმზიდველია და ემოციურ გამოცდილებას ქმნის." />
-        </StyledDescription>
-        <StyledButton>
-          <ViewPageButton text="ყველა პროდუქტი" href="/products" />
-        </StyledButton>
+        <SwiperWrapper>
+          <Swiper modules={[Navigation]} navigation={true} loop className="hero-swiper">
+            {heroSlides.map((slide, index) => (
+              <SwiperSlide key={index}>
+                <HeroTitle lightText={slide.lightText} text={slide.text} />
+                <StyledDescription>
+                  <HeroDescription text={slide.description} />
+                </StyledDescription>
+                <StyledButton>
+                  <ViewPageButton text={slide.buttonText} href={slide.href} />
+                </StyledButton>
+              </SwiperSlide>
+            ))}
+          </Swiper>
+        </SwiperWrapper>
         <StyledCategorySection>
           <DividerLine />
           <Container>
