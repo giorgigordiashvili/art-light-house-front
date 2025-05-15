@@ -73,7 +73,6 @@ function ProductsMain() {
     <StyledComponent>
       <Container>
         <PageTitle>პროდუქტები</PageTitle>
-
         <SortWrapper>
           <OnMobile>
             <FilterButton onClick={toggleMobileFilterDropdown} />
