@@ -28,7 +28,6 @@ const StyledContainer = styled.div<StyledContainerProps>`
   filter: blur(100px);
   border-radius: 50%;
   z-index: 1;
-  pointer-events: none;
 `;
 
 interface Props {
