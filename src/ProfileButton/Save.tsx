@@ -16,7 +16,7 @@ const StyleSaveButton = styled.div`
   }
 `;
 const ButtonText = styled.p`
-  font-family: "Helvetica Neue LT GEO";
+  font-family: "Helvetica";
   font-weight: 700;
   font-size: 14px;
   line-height: 28px;

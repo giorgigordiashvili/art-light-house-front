@@ -20,7 +20,7 @@ const Copyright = styled.div`
   width: 189px;
   height: 24px;
   font-weight: 300;
-  font-family: Helvetica Neue LT GEO;
+  font-family: Helvetica;
   font-size: 16px;
   line-height: 24px;
   letter-spacing: 0%;

@@ -16,7 +16,7 @@ const StyleBuyButton = styled.div`
   }
 `;
 const ButtonText = styled.p`
-  font-family: "Helvetica Neue LT GEO";
+  font-family: "Helvetica";
   font-weight: 700;
   font-size: 16px;
   line-height: 24px;

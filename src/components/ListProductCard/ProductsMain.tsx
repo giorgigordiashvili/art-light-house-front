@@ -16,7 +16,7 @@ const StyledComponent = styled.div`
 `;
 
 const PageTitle = styled.h1`
-  font-family: "Helvetica Neue LT GEO";
+  font-family: "Helvetica";
   font-weight: 250;
   font-size: 64px;
   line-height: 33.8px;

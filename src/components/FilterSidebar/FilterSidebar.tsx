@@ -20,7 +20,7 @@ const SidebarWrapper = styled.div`
 `;
 
 const Title = styled.p`
-  font-family: "Helvetica Neue LT GEO", sans-serif;
+  font-family: "Helvetica", sans-serif;
   font-weight: 700;
   font-size: 22px;
   line-height: 24px;

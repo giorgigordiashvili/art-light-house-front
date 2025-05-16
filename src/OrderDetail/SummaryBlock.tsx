@@ -6,7 +6,7 @@ const SummaryContainer = styled.div`
   display: flex;
   flex-direction: column;
   color: white;
-  font-family: Helvetica Neue LT GEO;
+  font-family: Helvetica;
   margin-top: 44px;
 `;
 
