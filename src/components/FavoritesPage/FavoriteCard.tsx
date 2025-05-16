@@ -159,13 +159,23 @@ const FavoriteCard = ({ card }: Props) => {
               <PrimaryButton height="55px" width="179px" text="დეტალურად" media="no" card={true} />
             )}
             <StyledRemoveIconWrapper cardType={card}>
-              <Image src={"/assets/RemoveProduct.svg"} width={34} height={34} alt="remove-icon" />
+              <Image
+                src={isMobile ? "/assets/DeleteIcon.svg" : "/assets/RemoveProduct.svg"}
+                width={isMobile ? 18 : 34}
+                height={isMobile ? 18 : 34}
+                alt="remove-icon"
+              />
             </StyledRemoveIconWrapper>
           </>
         ) : (
           <>
             <QuantitySelector size="large" />
-            <Image src={"/assets/RemoveProduct.svg"} width={34} height={34} alt="remove-icon" />
+            <Image
+              src={isMobile ? "/assets/DeleteIcon.svg" : "/assets/RemoveProduct.svg"}
+              width={isMobile ? 18 : 34}
+              height={isMobile ? 18 : 34}
+              alt="remove-icon"
+            />
           </>
         )}
       </StyledActions>
