@@ -19,7 +19,7 @@ const StyledCards = styled.div`
     display: flex;
     flex-direction: column;
     width: 100%;
-    max-height: 258px;
+    max-height: none;
     gap: 10px;
     margin-top: 48px;
   }
