@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import Image from "next/image"; // Next.js-ის Image კომპონენტი
+import Image from "next/image";
 
 const AddressCard = styled.div`
   display: flex;
