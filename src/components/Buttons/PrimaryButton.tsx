@@ -8,6 +8,7 @@ type Props = {
   onClick?: () => void;
   media?: "yes" | "no" | "full";
   disabled?: boolean;
+  card?: boolean;
 };
 
 const StyledContainer = styled.div<{ media?: "yes" | "no" | "full" }>`
@@ -20,11 +21,14 @@ const StyledContainer = styled.div<{ media?: "yes" | "no" | "full" }>`
     `}
 `;
 
-const StyledButton = styled.button<{
+const StyledButton = styled.button.withConfig({
+  shouldForwardProp: (prop) => prop !== "card",
+})<{
   width?: string;
   height?: string;
   media?: "yes" | "no" | "full";
   disabled?: boolean;
+  card?: boolean;
 }>`
   height: ${(props) => props.height || "50px"};
   width: ${(props) => props.width || "252px"};
@@ -55,9 +59,18 @@ const StyledButton = styled.button<{
         width: 100%;
       }
     `}
+
+  ${(props) =>
+    props.card &&
+    css`
+      @media (max-width: 1080px) {
+        width: 130px !important;
+        height: 35px !important;
+      }
+    `}
 `;
 
-const PrimaryButton = ({ text, width, height, onClick, media, disabled }: Props) => {
+const PrimaryButton = ({ text, width, height, onClick, media, disabled, card }: Props) => {
   return (
     <StyledContainer media={media}>
       <StyledButton
@@ -66,6 +79,7 @@ const PrimaryButton = ({ text, width, height, onClick, media, disabled }: Props)
         onClick={onClick}
         media={media}
         disabled={disabled}
+        card={card}
       >
         {text}
       </StyledButton>
