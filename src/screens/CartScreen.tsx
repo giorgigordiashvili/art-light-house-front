@@ -3,6 +3,9 @@ import React from "react";
 import Cart from "@/components/CartPage/Cart";
 import styled from "styled-components";
 import Container from "@/components/ui/Container";
+import Circle from "@/components/ui/Circle";
+import LeftCircle from "@/components/ui/LeftCircle";
+import NewCircle from "@/components/ui/NewCircle";
 
 const StyledContainer = styled.div`
   background-color: #0b0b0b;
@@ -12,9 +15,32 @@ const StyledContainer = styled.div`
   }
 `;
 
+const StyledCircle = styled.div`
+  position: absolute;
+  left: 40%;
+  transform: translateX(-50%);
+  @media (max-width: 1080px) {
+    top: 240px;
+  }
+  @media (max-width: 505px) {
+    left: 30%;
+  }
+  @media (max-width: 409px) {
+    left: 20%;
+  }
+  @media (max-width: 355px) {
+    left: 10%;
+  }
+`;
+
 const CartScreen = () => {
   return (
     <StyledContainer>
+      <StyledCircle>
+        <Circle size="small" />
+      </StyledCircle>
+      <LeftCircle size="small" left="-140px" top="900px" media="yes" />
+      <NewCircle size="small" right="142px" top="1000px" media="yes" />
       <Container>
         <Cart />
       </Container>
