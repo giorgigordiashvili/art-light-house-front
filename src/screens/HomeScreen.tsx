@@ -1,6 +1,7 @@
 "use client";
 import styled from "styled-components";
 import MainPage from "@/components/MainPage/MainPage";
+import BigCircle from "@/components/ui/BigCircle";
 
 const StyledComponent = styled.div`
   background: #0b0b0b;
@@ -13,6 +14,7 @@ const StyledComponent = styled.div`
 const HomeScreen = () => {
   return (
     <StyledComponent>
+      <BigCircle variant={1} />
       <MainPage />
     </StyledComponent>
   );

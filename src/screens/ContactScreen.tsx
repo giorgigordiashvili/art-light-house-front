@@ -4,6 +4,7 @@ import Contact from "@/components/Contact/Contact";
 import NewCircle from "@/components/ui/NewCircle";
 import LeftCircle from "@/components/ui/LeftCircle";
 import Circle from "@/components/ui/Circle";
+import BigCircle from "@/components/ui/BigCircle";
 
 const StyledComponent = styled.div`
   background: black;
@@ -30,6 +31,7 @@ const ContactScreen = () => {
   return (
     <StyledComponent>
       <Contact variant="1" />
+      <BigCircle variant={2} />
       <NewCircle size="small" right="142px" top="1000px" />
       <LeftCircle size="small" left="-200px" top="900px" media="yes" />
       <StyledCircle>

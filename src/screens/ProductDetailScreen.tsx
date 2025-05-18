@@ -1,6 +1,7 @@
 "use client";
 import styled from "styled-components";
 import DetailMain from "@/components/ProductDetail/DetailMain";
+import BigCircle from "@/components/ui/BigCircle";
 
 const StyledComponent = styled.div`
   background: black;
@@ -14,6 +15,7 @@ const StyledComponent = styled.div`
 const ProductDetailScreen = () => {
   return (
     <StyledComponent>
+      <BigCircle variant={2} />
       <DetailMain></DetailMain>
     </StyledComponent>
   );

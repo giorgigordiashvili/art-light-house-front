@@ -7,6 +7,7 @@ const Wrapper = styled.div`
   width: 350px;
   max-width: 100%;
   background-color: transparent;
+  z-index: 1;
 
   @media (min-width: 1080px) {
     display: none;

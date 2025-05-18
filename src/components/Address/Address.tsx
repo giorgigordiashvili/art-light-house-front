@@ -14,6 +14,7 @@ import { AddressData } from "@/types";
 const StyledContainer = styled.div`
   position: relative;
   padding-inline: 20px;
+  z-index: 1;
   @media (max-width: 1080px) {
     padding-inline: 0;
   }

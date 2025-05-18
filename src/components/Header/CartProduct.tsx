@@ -11,6 +11,7 @@ const StyledContainer = styled.div`
   background-color: #1a1a1a96;
   border: 1px solid #ffffff12;
   backdrop-filter: blur(114px);
+  z-index: 1;
   @media (max-width: 1080px) {
     width: 100%;
   }

@@ -146,6 +146,8 @@ const PageTitle = styled.h1`
   color: white;
   margin-top: 106px;
   margin-bottom: 71px;
+  position: relative;
+  z-index: 1;
 
   @media (max-width: 1080px) {
     font-size: 34px;

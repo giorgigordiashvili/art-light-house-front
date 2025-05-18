@@ -6,6 +6,7 @@ import Container from "@/components/ui/Container";
 import Circle from "@/components/ui/Circle";
 import LeftCircle from "@/components/ui/LeftCircle";
 import NewCircle from "@/components/ui/NewCircle";
+import BigCircle from "@/components/ui/BigCircle";
 
 const StyledContainer = styled.div`
   background-color: #0b0b0b;
@@ -36,6 +37,7 @@ const StyledCircle = styled.div`
 const CartScreen = () => {
   return (
     <StyledContainer>
+      <BigCircle variant={2} />
       <StyledCircle>
         <Circle size="small" />
       </StyledCircle>

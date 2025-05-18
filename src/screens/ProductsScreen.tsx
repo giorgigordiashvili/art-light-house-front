@@ -4,6 +4,7 @@ import Main from "@/components/PagesButton/Main";
 import styled from "styled-components";
 import NewCircle from "@/components/ui/NewCircle";
 import Circle from "@/components/ui/Circle";
+import BigCircle from "@/components/ui/BigCircle";
 
 const StyledComponent = styled.div`
   background: black;
@@ -33,6 +34,7 @@ const ProductsScreen = () => {
       <StyledCircle>
         <Circle size="large" />
       </StyledCircle>
+      <BigCircle variant={2} />
     </StyledComponent>
   );
 };

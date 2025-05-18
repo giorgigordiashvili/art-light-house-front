@@ -2,6 +2,8 @@ import styled from "styled-components";
 import Link from "next/link";
 
 const StyledMenuBar = styled.ul`
+  position: relative;
+  z-index: 1;
   display: flex;
   align-items: center;
   list-style: none;

@@ -4,6 +4,7 @@ import OrderMain from "@/MyOrders/OrderMain";
 import Circle from "@/components/ui/Circle";
 import NewCircle from "@/components/ui/NewCircle";
 import LeftCircle from "@/components/ui/LeftCircle";
+import BigCircle from "@/components/ui/BigCircle";
 
 const StyledComponent = styled.div`
   background: black;
@@ -36,6 +37,7 @@ const StyledCircle = styled.div`
 const OrdersScreen = () => {
   return (
     <StyledComponent>
+      <BigCircle variant={2} />
       <StyledCircle>
         <Circle size="small" />
       </StyledCircle>

@@ -4,6 +4,7 @@ import ProfileMain from "@/components/Profile/ProfileMain";
 import NewCircle from "@/components/ui/NewCircle";
 import LeftCircle from "@/components/ui/LeftCircle";
 import Circle from "@/components/ui/Circle";
+import BigCircle from "@/components/ui/BigCircle";
 
 const StyledComponent = styled.div`
   background: black;
@@ -32,6 +33,7 @@ const StyledCircle = styled.div`
 const ProfileScreen = () => {
   return (
     <StyledComponent>
+      <BigCircle variant={2} />
       <NewCircle size="small" top="950px" right="142px" media="no" />
       <LeftCircle size="small" top="850px" left="-140px" />
       <StyledCircle>

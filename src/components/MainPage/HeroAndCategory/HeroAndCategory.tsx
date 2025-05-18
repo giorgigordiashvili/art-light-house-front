@@ -29,6 +29,9 @@ const SwiperWrapper = styled.div`
     color: #ffcb40;
     z-index: 3;
     padding-inline: 80px;
+    @media (max-width: 1080px) {
+      padding-inline: 20px;
+    }
   }
 `;
 
@@ -94,6 +97,7 @@ const StyledButton = styled.div`
   align-items: center;
   padding-bottom: 40px;
   @media (max-width: 1080px) {
+    margin-top: 0;
     padding-top: 43px;
   }
 `;

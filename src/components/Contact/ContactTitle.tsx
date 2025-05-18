@@ -3,6 +3,8 @@ import React from "react";
 import styled from "styled-components";
 
 const StyledContainer = styled.h1`
+  position: relative;
+  z-index: 2;
   font-family: Helvetica;
   font-weight: 250;
   font-size: 64px;

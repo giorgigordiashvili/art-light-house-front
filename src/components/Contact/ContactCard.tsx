@@ -7,6 +7,7 @@ import GoogleMapButton from "./GoogleMapButton";
 const OuterContainer = styled.div<{ side?: "left" | "right" }>`
   border-radius: 32px;
   width: 636px;
+  z-index: 2;
   background: ${({ side }) =>
     side === "right"
       ? `linear-gradient(
