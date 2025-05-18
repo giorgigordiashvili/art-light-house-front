@@ -2,7 +2,6 @@
 import styled from "styled-components";
 import Container from "@/OrderDetail/Container";
 import BigCircle from "@/components/ui/BigCircle";
-import Circle from "@/components/ui/Circle";
 import LeftCircle from "@/components/ui/LeftCircle";
 import NewCircle from "@/components/ui/NewCircle";
 
