@@ -5,10 +5,10 @@ import EmptyCartCard from "./EmptyCartCard";
 import Container from "../ui/Container";
 
 const StyledContainer = styled.div`
-  padding: 188px 0 132px 0;
-  padding-inline: 20px;
+  padding: 188px 20px 132px 20px;
+  z-index: 1;
   @media (max-width: 1080px) {
-    padding-inline: 0;
+    padding: 157px 0 222px 0;
   }
 `;
 
