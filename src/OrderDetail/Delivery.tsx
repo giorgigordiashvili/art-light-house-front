@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import Image from "next/image"; // Next.js-ის Image კომპონენტი
+import Image from "next/image";
 
 const DeliveryCard = styled.div`
   display: flex;
@@ -30,6 +30,7 @@ const InfoWrapper = styled.div`
   flex-direction: column;
   justify-content: center;
   flex-grow: 1;
+  margin-left: 13px;
 `;
 
 const Title = styled.span`

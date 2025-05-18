@@ -83,7 +83,6 @@ import styled from "styled-components";
 import { useState } from "react";
 import DetailBar from "@/components/DetailBar/DetailBar";
 import Personal from "@/components/Profile/PersonalInf";
-import Pass from "@/components/Profile/Pass";
 import MobileDetailDropdown from "@/components/DetailBar/MobileDetailDropdown";
 
 const StyledComponent = styled.div`
@@ -179,7 +178,6 @@ const MyDetails = () => {
             <DetailBar />
             <RightSection>
               <Personal />
-              <Pass />
             </RightSection>
           </ContentWrapper>
         </DesktopWrapper>
@@ -192,7 +190,6 @@ const MyDetails = () => {
           </DetailBarWrapper>
           <RightSection>
             <Personal />
-            <Pass />
           </RightSection>
         </MobileWrapper>
       </Container>

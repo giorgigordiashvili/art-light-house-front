@@ -20,7 +20,10 @@ const Container = styled.div`
   }
 `;
 
-const Item = styled.div<{ logout?: boolean }>`
+// არ გადაეცემა logout როგორც DOM prop
+const Item = styled.div.withConfig({
+  shouldForwardProp: (prop) => prop !== "logout",
+})<{ logout?: boolean }>`
   display: flex;
   align-items: center;
   gap: 18px;
@@ -34,28 +37,20 @@ const Item = styled.div<{ logout?: boolean }>`
     background: linear-gradient(90deg, #f7cb57 0%, #ffd700 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
-  }
-  &:hover {
     filter: brightness(0) saturate(100%) invert(67%) sepia(81%) saturate(360%) hue-rotate(5deg)
       brightness(104%) contrast(102%);
   }
-  ${({ logout }) =>
-    logout
-      ? `
-        margin-top: 24px;
-        margin-bottom: 24px;
-        color: #ff4d4f;
-      `
-      : `
-        margin-top: 24px;
-        margin-bottom: 24px;
-      `}
+  margin-top: 24px;
+  margin-bottom: 24px;
 `;
 
-const Divider = styled.div<{ last?: string }>`
+// არ გადაეცემა last როგორც DOM prop
+const Divider = styled.div.withConfig({
+  shouldForwardProp: (prop) => prop !== "last",
+})<{ last?: boolean }>`
   height: 1px;
   background-color: #242424;
-  margin-top: ${(props) => (props.last === "true" ? "105px" : "0")};
+  margin-top: ${({ last }) => (last ? "105px" : "0")};
 `;
 
 const IconWrapper = styled.div`
@@ -88,8 +83,8 @@ const DetailBar = () => {
           </Item>
         </div>
       ))}
-      <Divider last="true" />
-      <Item logout={true}>
+      <Divider last />
+      <Item logout>
         <IconWrapper>
           <Image src="/assets/icons/Logout.svg" alt="გასვლა" width={24} height={24} />
         </IconWrapper>
