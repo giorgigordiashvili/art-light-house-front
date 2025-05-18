@@ -2,7 +2,7 @@ import styled from "styled-components";
 
 const Wrapper = styled.div`
   color: white;
-  font-family: "Helvetica Neue LT GEO", sans-serif;
+  font-family: "Helvetica", sans-serif;
   max-width: 563px;
   @media (max-width: 1080px) {
     max-width: 100%;

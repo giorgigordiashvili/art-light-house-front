@@ -52,7 +52,7 @@ const StyledFirstData = styled.p.withConfig({
   ${({ isBold }) =>
     isBold
       ? css`
-          font-family: "Helvetica Neue LT GEO";
+          font-family: "Helvetica";
           font-weight: 700;
           line-height: 28px;
           letter-spacing: 0%;

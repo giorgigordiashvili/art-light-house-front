@@ -30,7 +30,7 @@ const MenuItem = styled.li`
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
-    font-family: "Helvetica Neue LT GEO";
+    font-family: "Helvetica";
     font-weight: 300;
     font-size: 14px;
     line-height: 20px;

@@ -6,12 +6,13 @@ interface InputWithLabelProps {
   label: string;
   placeholder?: string;
   icon?: string;
+  gap?: number; // ახალი prop
 }
 
-const Wrapper = styled.div`
+const Wrapper = styled.div<{ $gap?: number }>`
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: ${({ $gap }) => ($gap ? `${$gap}px` : "12px")};
   width: 364px;
 
   @media (max-width: 1080px) {
@@ -55,9 +56,9 @@ const StyledInput = styled.input`
   }
 `;
 
-const InputWithLabel = ({ label, placeholder, icon }: InputWithLabelProps) => {
+const InputWithLabel = ({ label, placeholder, icon, gap }: InputWithLabelProps) => {
   return (
-    <Wrapper>
+    <Wrapper $gap={gap}>
       <Label>{label}</Label>
       <InputWrapper>
         {icon && <StyledIcon src={icon} alt="icon" width={24} height={24} />}

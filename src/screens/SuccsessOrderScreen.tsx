@@ -1,22 +1,22 @@
 "use client";
 import styled from "styled-components";
-import ProfileMain from "@/components/Profile/ProfileMain";
+import Container from "@/components/SuccsessOrder/SuccessMain";
 
 const StyledComponent = styled.div`
   background: black;
   display: flex;
   min-height: 100dvh;
   flex-direction: column;
-  /* justify-content: center; */
+  justify-content: center;
   align-items: center;
 `;
 
-const ProfileScreen = () => {
+const SuccsessOrder = () => {
   return (
     <StyledComponent>
-      <ProfileMain></ProfileMain>
+      <Container></Container>
     </StyledComponent>
   );
 };
 
-export default ProfileScreen;
+export default SuccsessOrder;

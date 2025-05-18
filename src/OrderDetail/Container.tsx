@@ -33,7 +33,7 @@ const Title = styled.p`
 
 const SectionTitle = styled.p`
   color: white;
-  font-family: Helvetica Neue LT GEO;
+  font-family: Helvetica;
   font-weight: 400;
   font-size: 20px;
   line-height: 24px;
