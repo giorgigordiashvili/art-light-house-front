@@ -9,6 +9,7 @@ const StyledRectangle = styled.div`
   border-radius: 17px;
   border: 1px solid #ffffff12;
   background: #1a1a1a96;
+  z-index: 2;
   backdrop-filter: blur(114px);
   &:hover {
     &::before {
