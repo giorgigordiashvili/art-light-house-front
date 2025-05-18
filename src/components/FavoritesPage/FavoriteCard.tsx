@@ -26,7 +26,7 @@ const StyledContainer = styled.div.withConfig({
   backdrop-filter: blur(114px);
   padding: ${({ cardType }) => (cardType === "cart" ? "20px 46px 20px 20px" : "20px")};
   border-radius: 17px;
-
+  z-index: 1;
   @media (max-width: 1332px) {
     padding: ${({ cardType }) => (cardType === "cart" ? "20px 46px 20px 20px" : "14px")};
   }
