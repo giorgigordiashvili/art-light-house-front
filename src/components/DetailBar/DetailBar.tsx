@@ -14,6 +14,7 @@ const Container = styled.div`
   display: flex;
   flex-direction: column;
   overflow: hidden;
+  z-index: 1;
   @media (max-width: 1080px) {
     display: none;
   }

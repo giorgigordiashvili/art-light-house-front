@@ -41,7 +41,6 @@ const StyledContainer = styled.div`
   padding: 12px 12px 5px 12px;
   background-color: #111110;
   width: 100%;
-
   @media (max-width: 1080px) {
     padding: 8px;
     border-radius: 17px;

@@ -7,6 +7,8 @@ import AddressModal from "./AddressModal/AddressModal";
 import MobileDetailDropdown from "../DetailBar/MobileDetailDropdown";
 import ContactTitle from "../Contact/ContactTitle";
 import Circle from "../ui/Circle";
+import RightCircle from "../ui/RightCircle";
+import LeftCircle from "../ui/LeftCircle";
 import { AddressData } from "@/types";
 
 const StyledContainer = styled.div`
@@ -19,72 +21,12 @@ const StyledContainer = styled.div`
 
 const StyledCircle = styled.div`
   position: absolute;
-  right: 0;
+  left: 43%;
   top: 0;
+  @media (max-width: 1080px) {
+    display: none;
+  }
 `;
-
-// const StyledCircle = styled.div`
-//   width: 284px;
-//   height: 284px;
-//   opacity: 0.64;
-//   position: absolute;
-//   left: 50%;
-//   transform: translateX(-50%);
-//   background: radial-gradient(
-//     circle,
-//     rgba(255, 203, 64, 0.44) 0%,
-//     rgba(255, 203, 64, 0.1) 80%,
-//     rgba(255, 203, 64, 0) 100%
-//   );
-//   filter: blur(100px);
-//   border-radius: 50%;
-//   z-index: 1;
-//   @media (max-width: 1080px) {
-//     display: none;
-//   }
-// `;
-
-// const StyledLeftCircle = styled.div`
-//   width: 284px;
-//   height: 284px;
-//   opacity: 0.64;
-//   position: absolute;
-//   bottom: 35px;
-//   left: -80px;
-//   background: radial-gradient(
-//     circle,
-//     rgba(255, 203, 64, 0.44) 0%,
-//     rgba(255, 203, 64, 0.1) 80%,
-//     rgba(255, 203, 64, 0) 100%
-//   );
-//   filter: blur(100px);
-//   border-radius: 50%;
-//   z-index: 1;
-//   @media (max-width: 1080px) {
-//     display: none;
-//   }
-// `;
-
-// const StyledRightCircle = styled.div`
-//   width: 284px;
-//   height: 284px;
-//   opacity: 0.64;
-//   position: absolute;
-//   bottom: -70px;
-//   right: 0;
-//   background: radial-gradient(
-//     circle,
-//     rgba(255, 203, 64, 0.44) 0%,
-//     rgba(255, 203, 64, 0.1) 80%,
-//     rgba(255, 203, 64, 0) 100%
-//   );
-//   filter: blur(100px);
-//   border-radius: 50%;
-//   z-index: 1;
-//   @media (max-width: 1080px) {
-//     display: none;
-//   }
-// `;
 
 const Overlay = styled.div`
   position: fixed;
@@ -160,6 +102,8 @@ const Address = () => {
         <StyledCircle>
           <Circle size="small" />
         </StyledCircle>
+        <RightCircle size="small" top="830px" right="-150px" media="yes" />
+        <LeftCircle size="small" top="750px" left="-255px" media="yes" />
         <div>
           <ContactTitle text="ჩემი მისამართები" />
         </div>

@@ -13,6 +13,7 @@ const StyledContainer = styled.div`
   border-radius: 17px;
   width: 800px;
   height: 544px;
+  z-index: 1;
   @media (max-width: 1080px) {
     width: 100%;
   }

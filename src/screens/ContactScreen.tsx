@@ -1,6 +1,9 @@
 "use client";
 import styled from "styled-components";
 import Contact from "@/components/Contact/Contact";
+import NewCircle from "@/components/ui/NewCircle";
+import LeftCircle from "@/components/ui/LeftCircle";
+import Circle from "@/components/ui/Circle";
 
 const StyledComponent = styled.div`
   background: black;
@@ -12,10 +15,26 @@ const StyledComponent = styled.div`
   }
 `;
 
+const StyledCircle = styled.div`
+  position: absolute;
+  left: 44%;
+  top: 210px;
+  transform: translateX(-50%);
+  z-index: 1;
+  @media (max-width: 1080px) {
+    display: none;
+  }
+`;
+
 const ContactScreen = () => {
   return (
     <StyledComponent>
       <Contact variant="1" />
+      <NewCircle size="small" right="142px" top="1000px" />
+      <LeftCircle size="small" left="-200px" top="900px" media="yes" />
+      <StyledCircle>
+        <Circle size="small" />
+      </StyledCircle>
     </StyledComponent>
   );
 };
