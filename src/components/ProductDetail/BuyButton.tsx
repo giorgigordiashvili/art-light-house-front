@@ -1,7 +1,6 @@
 import styled from "styled-components";
 
 const StyleBuyButton = styled.div`
-  /* position: absolute; */
   width: 195px;
   height: 56px;
   background: #ffcb40;
@@ -15,6 +14,7 @@ const StyleBuyButton = styled.div`
     width: 100%;
   }
 `;
+
 const ButtonText = styled.p`
   font-family: "Helvetica";
   font-weight: 700;
@@ -23,7 +23,12 @@ const ButtonText = styled.p`
   letter-spacing: 0%;
   color: #000000;
   margin: 0;
+  transition: 0.2s ease-in-out;
+  ${StyleBuyButton}:hover & {
+    color: #ffffff;
+  }
 `;
+
 type Props = {
   onClick?: () => void;
 };

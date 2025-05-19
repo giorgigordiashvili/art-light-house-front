@@ -2,13 +2,21 @@ import React from "react";
 import styled from "styled-components";
 import Container from "../../ui/Container";
 import ProductTitle from "./ProductTitle";
+import Circle from "@/components/ui/Circle";
 
 const StyledContainer = styled.div`
+  position: relative;
   width: 100%;
   padding: 44px 0 0 0;
   @media (max-width: 1080px) {
     padding: 26px 0 0 0;
   }
+`;
+
+const StyledCircle = styled.div`
+  position: absolute;
+  top: 80px;
+  left: 272px;
 `;
 
 const ScrollableWrapper = styled.div`
@@ -146,6 +154,9 @@ const CategorySection = () => {
   return (
     <Container>
       <StyledContainer>
+        <StyledCircle>
+          <Circle size="medium" />
+        </StyledCircle>
         <ScrollableWrapper>
           <RowWrapper>
             <Row className="first-row">

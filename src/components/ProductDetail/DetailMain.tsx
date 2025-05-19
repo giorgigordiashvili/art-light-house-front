@@ -8,6 +8,9 @@ import BuyButton from "./BuyButton";
 import AddToCartButton from "./AddToCartButton";
 import Image from "next/image";
 import Card from "../ListProductCard/Card";
+import LeftCircle from "../ui/LeftCircle";
+import NewCircle from "../ui/NewCircle";
+import Circle from "../ui/Circle";
 
 const StyledComponent = styled.div`
   background: black;
@@ -17,6 +20,16 @@ const StyledComponent = styled.div`
     display: flex;
     align-items: center;
     flex-direction: column;
+  }
+`;
+
+const StyledCircle = styled.div`
+  position: absolute;
+  bottom: -750px;
+  left: 37%;
+  transform: translateX(-50%);
+  @media (max-width: 1080px) {
+    display: none;
   }
 `;
 
@@ -97,6 +110,11 @@ const CardGrid = styled.div`
 function ProductsMain() {
   return (
     <StyledComponent>
+      <NewCircle size="small" right="142px" top="1000px" media="yes" />
+      <LeftCircle size="small" left="-180px" top="900px" media="yes" />
+      <StyledCircle>
+        <Circle size="large" />
+      </StyledCircle>
       <Container>
         <MenuBar />
         <FlexRow>

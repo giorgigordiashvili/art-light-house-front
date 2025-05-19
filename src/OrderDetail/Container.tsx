@@ -17,7 +17,7 @@ const StyleContainer = styled.div`
   margin-bottom: 209px;
   border: 1px solid #ffffff12;
   backdrop-filter: blur(114px);
-
+  z-index: 1;
   @media (max-width: 1080px) {
     width: calc(100% - 32px);
     padding: 16px 16px;

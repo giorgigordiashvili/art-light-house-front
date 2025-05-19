@@ -20,15 +20,19 @@ const StyledContainer = styled.div.withConfig({
   height: 160px;
   display: flex;
   align-items: center;
-  gap: ${({ cardType }) => (cardType === "cart" ? "130px" : "101px")};
+  gap: ${({ cardType }) => (cardType === "cart" ? "130px" : "20px")};
   background-color: #1a1a1a96;
   border: 1px solid #ffffff12;
   backdrop-filter: blur(114px);
   padding: ${({ cardType }) => (cardType === "cart" ? "20px 46px 20px 20px" : "20px")};
   border-radius: 17px;
+  z-index: 1;
+  @media (max-width: 1332px) {
+    padding: ${({ cardType }) => (cardType === "cart" ? "20px 46px 20px 20px" : "14px")};
+  }
 
   @media (max-width: 1250px) {
-    gap: ${({ cardType }) => (cardType === "cart" ? "90px" : "101px")};
+    gap: ${({ cardType }) => (cardType === "cart" ? "90px" : "16px")};
   }
 
   @media (max-width: 1080px) {
@@ -53,6 +57,10 @@ const StyledContent = styled.div.withConfig({
   align-items: center;
   gap: 24px;
 
+  @media (max-width: 1332px) {
+    gap: 12px;
+  }
+
   @media (max-width: 1080px) {
     gap: 12px;
     ${({ cardType }) =>
@@ -72,10 +80,10 @@ const StyledActions = styled.div.withConfig({
   display: flex;
   align-items: center;
   justify-content: flex-end;
-  gap: ${({ cardType }) => (cardType === "cart" ? "99px" : "78px")};
+  gap: ${({ cardType }) => (cardType === "cart" ? "99px" : "20px")};
 
   @media (max-width: 1250px) {
-    gap: ${({ cardType }) => (cardType === "cart" ? "70px" : "78px")};
+    gap: ${({ cardType }) => (cardType === "cart" ? "70px" : "16px")};
   }
 `;
 
@@ -84,8 +92,17 @@ const StyledText = styled.div`
   flex-direction: column;
   gap: 17px;
 
+  @media (max-width: 1220px) {
+    max-width: 140px;
+  }
+
+  @media (max-width: 1140px) {
+    max-width: 120px;
+  }
+
   @media (max-width: 1080px) {
     gap: 6px;
+    max-width: 100%;
   }
 `;
 
@@ -95,6 +112,7 @@ const StyledRemoveIconWrapper = styled.div.withConfig({
   ${({ cardType }) =>
     cardType === "favorite" &&
     css`
+      cursor: pointer;
       @media (max-width: 1080px) {
         position: absolute;
         top: 18px;
@@ -138,16 +156,26 @@ const FavoriteCard = ({ card }: Props) => {
             {isMobile ? (
               <CompactButton text="დეტალურად" />
             ) : (
-              <PrimaryButton height="55px" width="179px" text="დეტალურად" media="no" />
+              <PrimaryButton height="55px" width="179px" text="დეტალურად" media="no" card={true} />
             )}
             <StyledRemoveIconWrapper cardType={card}>
-              <Image src={"/assets/RemoveProduct.svg"} width={34} height={34} alt="remove-icon" />
+              <Image
+                src={isMobile ? "/assets/DeleteIcon.svg" : "/assets/RemoveProduct.svg"}
+                width={isMobile ? 18 : 34}
+                height={isMobile ? 18 : 34}
+                alt="remove-icon"
+              />
             </StyledRemoveIconWrapper>
           </>
         ) : (
           <>
             <QuantitySelector size="large" />
-            <Image src={"/assets/RemoveProduct.svg"} width={34} height={34} alt="remove-icon" />
+            <Image
+              src={isMobile ? "/assets/DeleteIcon.svg" : "/assets/RemoveProduct.svg"}
+              width={isMobile ? 18 : 34}
+              height={isMobile ? 18 : 34}
+              alt="remove-icon"
+            />
           </>
         )}
       </StyledActions>

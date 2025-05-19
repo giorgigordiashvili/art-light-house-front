@@ -6,12 +6,26 @@ import AddressBar from "./AddressBar";
 import AddressModal from "./AddressModal/AddressModal";
 import MobileDetailDropdown from "../DetailBar/MobileDetailDropdown";
 import ContactTitle from "../Contact/ContactTitle";
+import Circle from "../ui/Circle";
+import RightCircle from "../ui/RightCircle";
+import LeftCircle from "../ui/LeftCircle";
 import { AddressData } from "@/types";
 
 const StyledContainer = styled.div`
+  position: relative;
   padding-inline: 20px;
+  z-index: 1;
   @media (max-width: 1080px) {
     padding-inline: 0;
+  }
+`;
+
+const StyledCircle = styled.div`
+  position: absolute;
+  left: 43%;
+  top: 0;
+  @media (max-width: 1080px) {
+    display: none;
   }
 `;
 
@@ -25,8 +39,10 @@ const Overlay = styled.div`
   display: flex;
   justify-content: center;
   align-items: flex-start;
-  padding-top: 140px;
   z-index: 9999;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 `;
 
 const StyledModal = styled.div`
@@ -84,6 +100,11 @@ const Address = () => {
   return (
     <>
       <StyledContainer>
+        <StyledCircle>
+          <Circle size="small" />
+        </StyledCircle>
+        <RightCircle size="small" top="830px" right="-150px" media="yes" />
+        <LeftCircle size="small" top="750px" left="-255px" media="yes" />
         <div>
           <ContactTitle text="ჩემი მისამართები" />
         </div>

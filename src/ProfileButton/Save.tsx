@@ -1,7 +1,6 @@
 import styled from "styled-components";
 
 const StyleSaveButton = styled.div`
-  /* position: absolute; */
   width: 143px;
   height: 48px;
   background: #ffcb40;
@@ -10,11 +9,20 @@ const StyleSaveButton = styled.div`
   align-items: center;
   justify-content: center;
   cursor: pointer;
+  transition: 0.2s ease-in-out;
+
   @media (max-width: 1080px) {
     max-width: 100%;
     width: 100%;
   }
+
+  &:hover {
+    p {
+      color: #fafafa;
+    }
+  }
 `;
+
 const ButtonText = styled.p`
   font-family: "Helvetica";
   font-weight: 700;
@@ -22,8 +30,10 @@ const ButtonText = styled.p`
   line-height: 28px;
   letter-spacing: 0%;
   color: #000000;
+  transition: color 0.2s ease-in-out;
   margin: 0;
 `;
+
 type Props = {
   onClick?: () => void;
 };

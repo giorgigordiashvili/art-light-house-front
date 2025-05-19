@@ -16,6 +16,8 @@ const StyledComponent = styled.div`
 `;
 
 const PageTitle = styled.h1`
+  position: relative;
+  z-index: 2;
   font-family: "Helvetica";
   font-weight: 250;
   font-size: 64px;
@@ -50,6 +52,7 @@ const SortWrapper = styled.div`
 
 const OnMobile = styled.div`
   display: none;
+  z-index: 2;
 
   @media (max-width: 1080px) {
     display: block;
@@ -73,7 +76,6 @@ function ProductsMain() {
     <StyledComponent>
       <Container>
         <PageTitle>პროდუქტები</PageTitle>
-
         <SortWrapper>
           <OnMobile>
             <FilterButton onClick={toggleMobileFilterDropdown} />

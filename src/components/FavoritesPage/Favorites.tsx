@@ -11,14 +11,15 @@ const StyledCards = styled.div`
   max-height: 508px;
   overflow: scroll;
   scrollbar-width: none;
-  width: 800px;
-  display: flex;
-  flex-direction: column;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
   gap: 14px;
   margin-top: 117px;
   @media (max-width: 1080px) {
+    display: flex;
+    flex-direction: column;
     width: 100%;
-    max-height: 258px;
+    max-height: none;
     gap: 10px;
     margin-top: 48px;
   }
@@ -31,6 +32,10 @@ const Favorites = () => {
         <ContactTitle text="შენახული პროდუქტები" />
       </StyledTitle>
       <StyledCards>
+        <FavoriteCard card="favorite" />
+        <FavoriteCard card="favorite" />
+        <FavoriteCard card="favorite" />
+        <FavoriteCard card="favorite" />
         <FavoriteCard card="favorite" />
         <FavoriteCard card="favorite" />
         <FavoriteCard card="favorite" />

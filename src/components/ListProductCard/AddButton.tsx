@@ -17,11 +17,16 @@ const StyledAddButton = styled.div`
   cursor: pointer;
   margin-top: 342px;
   margin-left: 20px;
+  transition: 0.2s ease-in-out;
   @media (max-width: 1080px) {
     width: 154px;
     height: 48px;
     margin-top: 218px;
     margin-left: 8px;
+  }
+  &:hover {
+    /* background-color: #090700; */
+    background-color: #030300;
   }
 `;
 

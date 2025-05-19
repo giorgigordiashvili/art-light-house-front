@@ -17,6 +17,8 @@ const StyledContainer = styled.div`
   @media (max-width: 1080px) {
     background-color: transparent;
     border: none;
+    height: auto;
+    margin-top: 124px;
   }
 `;
 
@@ -25,6 +27,9 @@ const StyledContent = styled.div`
   flex-direction: column;
   align-items: center;
   padding: 134px 0 136px 0;
+  @media (max-width: 1080px) {
+    padding: 0;
+  }
 `;
 
 const StyledTitle = styled.div`
