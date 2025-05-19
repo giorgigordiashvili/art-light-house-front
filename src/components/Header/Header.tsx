@@ -1,3 +1,4 @@
+"use client";
 import React, { useEffect, useRef, useState } from "react";
 import styled from "styled-components";
 import Container from "../ui/Container";
@@ -14,6 +15,8 @@ import RegistrationCodeModal from "./RegistrationCodeModal";
 import RegistrationSuccessModal from "./RegistrationSuccessModal";
 import EmptyCartModal from "./EmptyCartModal";
 import CartModal from "./CartModal";
+import LanguageSwitcher from "./LanguageSwitcher/LanguageSwitcher";
+import LanguageSwitcherModal from "./LanguageSwitcher/LanguageSwitcherModal";
 import { useUser } from "@clerk/nextjs";
 
 const StyledContainer = styled.div`
@@ -129,6 +132,8 @@ const Header = () => {
   const [isEmptyCartModalOpen, setIsEmptyCartModalOpen] = useState(false);
   const [isCartModalOpen, setIsCartModalOpen] = useState(false);
   const [cartIconColor, setCartIconColor] = useState("#fff");
+  const [isLanguageSwitcherModalOpen, setIsLanguageSwitcherModalOpen] = useState(false);
+  const [selectedLanguage, setSelectedLanguage] = useState<"ka" | "en">("ka");
 
   const burgerMenuRef = useRef<HTMLDivElement>(null);
   const burgerIconRef = useRef<HTMLDivElement>(null);
@@ -141,13 +146,23 @@ const Header = () => {
 
   useEffect(() => {
     document.body.style.overflow =
-      isBurgerMenuOpen || isUserMenuOpen || isEmptyCartModalOpen || isCartModalOpen
+      isBurgerMenuOpen ||
+      isUserMenuOpen ||
+      isEmptyCartModalOpen ||
+      isCartModalOpen ||
+      isLanguageSwitcherModalOpen
         ? "hidden"
         : "visible";
     return () => {
       document.body.style.overflow = "visible";
     };
-  }, [isBurgerMenuOpen, isUserMenuOpen, isEmptyCartModalOpen, isCartModalOpen]);
+  }, [
+    isBurgerMenuOpen,
+    isUserMenuOpen,
+    isEmptyCartModalOpen,
+    isCartModalOpen,
+    isLanguageSwitcherModalOpen,
+  ]);
 
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
@@ -169,16 +184,31 @@ const Header = () => {
       if (isUserMenuOpen && clickedOutsideUserMenu && clickedOutsideAuthButton) {
         setIsUserMenuOpen(false);
       }
+
+      const languageSwitcherElement = document.getElementById("languageSwitcher");
+      const languageSwitcherModalElement = document.getElementById("languageSwitcherModal");
+      const burgerMenuElement = burgerMenuRef.current;
+
+      if (
+        isLanguageSwitcherModalOpen &&
+        languageSwitcherElement &&
+        !languageSwitcherElement.contains(target) &&
+        languageSwitcherModalElement &&
+        !languageSwitcherModalElement.contains(target) &&
+        (!burgerMenuElement || !burgerMenuElement.contains(target))
+      ) {
+        setIsLanguageSwitcherModalOpen(false);
+      }
     };
 
-    if (isBurgerMenuOpen || isUserMenuOpen) {
+    if (isBurgerMenuOpen || isUserMenuOpen || isLanguageSwitcherModalOpen) {
       document.addEventListener("mousedown", handleClickOutside);
     }
 
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
-  }, [isBurgerMenuOpen, isUserMenuOpen]);
+  }, [isBurgerMenuOpen, isUserMenuOpen, isLanguageSwitcherModalOpen]);
 
   const isCartEmpty = cartItemCount === 0;
   const { user, isSignedIn } = useUser();
@@ -217,6 +247,21 @@ const Header = () => {
     }
   };
 
+  const closeLanguageSwitcherModal = () => {
+    setIsLanguageSwitcherModalOpen(false);
+  };
+
+  const handleLanguageSwitcherClick = () => {
+    setIsLanguageSwitcherModalOpen((prev) => !prev);
+    closeEmptyCartModal();
+    closeCartModal();
+  };
+
+  const handleLanguageChange = (language: "ka" | "en") => {
+    setSelectedLanguage(language);
+    closeLanguageSwitcherModal();
+  };
+
   return (
     <>
       <StyledContainer>
@@ -250,6 +295,7 @@ const Header = () => {
                         setIsUserMenuOpen(true);
                         closeEmptyCartModal();
                         closeCartModal();
+                        closeLanguageSwitcherModal();
                       }}
                     />
                   </div>
@@ -260,10 +306,14 @@ const Header = () => {
                         toggleBurgerMenu();
                         closeEmptyCartModal();
                         closeCartModal();
+                        closeLanguageSwitcherModal();
                       }}
                     />
                   </div>
                 </ResponsiveGapWrapper>
+                <div id="languageSwitcher" onClick={handleLanguageSwitcherClick}>
+                  <LanguageSwitcher language={selectedLanguage} display="none" />
+                </div>
               </StyledUserActions>
             </StyledActionsWrapper>
           </StyledContentWrapper>
@@ -274,7 +324,11 @@ const Header = () => {
         <>
           <OverlayWithoutBackground />
           <div ref={burgerMenuRef}>
-            <BurgerMenu />
+            <BurgerMenu
+              onLanguageChange={handleLanguageChange}
+              currentLanguage={selectedLanguage}
+              onLanguageSwitcherClick={handleLanguageSwitcherClick}
+            />
           </div>
         </>
       )}
@@ -354,6 +408,21 @@ const Header = () => {
           <StyledTestWrapper>
             <StyledTest>
               <CartModal itemCount={cartItemCount} onClose={closeCartModal} />{" "}
+            </StyledTest>
+          </StyledTestWrapper>
+        </>
+      )}
+
+      {isLanguageSwitcherModalOpen && (
+        <>
+          <OverlayWithoutBackground onClick={closeLanguageSwitcherModal} />
+          <StyledTestWrapper>
+            <StyledTest>
+              <LanguageSwitcherModal
+                id="languageSwitcherModal"
+                onLanguageChange={handleLanguageChange}
+                currentLanguage={selectedLanguage}
+              />
             </StyledTest>
           </StyledTestWrapper>
         </>
