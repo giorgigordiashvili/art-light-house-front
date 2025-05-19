@@ -97,7 +97,7 @@ const Personal = () => {
       <Title>პერსონალური ინფორმაცია</Title>
       <InputsWrapper>
         <LeftColumn>
-          <InputWithLabel label="სახელი" placeholder="სახელი" />
+          <InputWithLabel label="სახელი" placeholder="სახელი" gap={12} />
           <InputWithLabel
             icon="/assets/icons/Field Icon.svg"
             label="დაბადების თარითი"
@@ -111,7 +111,7 @@ const Personal = () => {
         </LeftColumn>
 
         <RightColumn>
-          <InputWithLabel label="გვარი" placeholder="გვარი" />
+          <InputWithLabel label="გვარი" placeholder="გვარი" gap={12} />
           <InputWithLabel
             icon="/assets/icons/phone icon.svg"
             label="ტელეფონის ნომერი"

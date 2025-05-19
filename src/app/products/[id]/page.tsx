@@ -1,5 +1,5 @@
 import ProductDetailScreen from "@/screens/ProductDetailScreen";
 
-export default function ProductsPage() {
+export default function ProductDetailsPage() {
   return <ProductDetailScreen />;
 }

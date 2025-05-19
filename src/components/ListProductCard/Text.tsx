@@ -15,7 +15,7 @@ const TextWrapper = styled.div`
 const PriceText = styled.div`
   width: auto;
   height: 24px;
-  font-family: "Helvetica Neue LT GEO", sans-serif;
+  font-family: "Helvetica", sans-serif;
   font-weight: 700;
   font-size: 20px;
   line-height: 24px;
@@ -31,7 +31,7 @@ const DescriptionText = styled.div`
   width: auto;
   height: 24px;
   margin-top: 5px;
-  font-family: "Helvetica Neue LT GEO", sans-serif;
+  font-family: "Helvetica", sans-serif;
   font-weight: 400;
   font-size: 16px;
   line-height: 24px;

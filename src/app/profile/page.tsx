@@ -1,5 +1,5 @@
 import ProfileScreen from "@/screens/ProfileScreen";
 
-export default function ProductsPage() {
+export default function ProfilePage() {
   return <ProfileScreen />;
 }

@@ -15,7 +15,7 @@ const GroupWrapper = styled.div`
 
 const Title = styled.p`
   color: white;
-  font-family: Helvetica Neue LT GEO;
+  font-family: Helvetica;
   font-weight: 700;
   font-size: 16px;
   line-height: 24px;
@@ -38,7 +38,7 @@ const OptionItem = styled.li`
     display: flex;
     align-items: center;
     gap: 13px;
-    font-family: Helvetica Neue LT GEO;
+    font-family: Helvetica;
     font-weight: 300;
     font-size: 16px;
     line-height: 24px;

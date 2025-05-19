@@ -24,7 +24,7 @@ const Column = styled.div`
 
   p {
     margin-bottom: 16px;
-    font-family: "Helvetica Neue LT GEO", sans-serif;
+    font-family: "Helvetica", sans-serif;
     font-weight: 700;
     font-size: 14px;
     line-height: 20px;
@@ -43,7 +43,7 @@ const Column1 = styled.div`
 
   p {
     margin-bottom: 16px;
-    font-family: "Helvetica Neue LT GEO", sans-serif;
+    font-family: "Helvetica", sans-serif;
     font-weight: 700;
     font-size: 14px;
     line-height: 20px;

@@ -4,7 +4,7 @@ import styled from "styled-components";
 
 const Title = styled.p`
   color: white;
-  font-family: Helvetica Neue LT GEO;
+  font-family: Helvetica;
   font-weight: 700;
   font-size: 16px;
   line-height: 24px;

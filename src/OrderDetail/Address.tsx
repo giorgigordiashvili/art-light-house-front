@@ -35,7 +35,7 @@ const InfoWrapper = styled.div`
 `;
 
 const Title = styled.span`
-  font-family: Helvetica Neue LT GEO;
+  font-family: Helvetica;
   font-weight: 300;
   font-size: 16px;
   color: #ffffff;
@@ -43,7 +43,7 @@ const Title = styled.span`
 `;
 
 const Add = styled.span`
-  font-family: Helvetica Neue LT GEO;
+  font-family: Helvetica;
   font-weight: 700;
   font-size: 16px;
   color: #ffffff;

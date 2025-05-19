@@ -41,7 +41,7 @@
 //   gap: 20px;
 // `;
 // const PageTitle = styled.h1`
-//   font-family: "Helvetica Neue LT GEO";
+//   font-family: "Helvetica";
 //   font-weight: 250;
 //   font-size: 64px;
 //   line-height: 33.8px;
@@ -86,9 +86,8 @@ import Personal from "@/components/Profile/PersonalInf";
 import MobileDetailDropdown from "@/components/DetailBar/MobileDetailDropdown";
 
 const StyledComponent = styled.div`
-  background: black;
   margin-top: 80px;
-  margin-bottom: 219px;
+  /* margin-bottom: 219px; */
   width: 100%;
   display: flex;
   justify-content: center;
@@ -138,7 +137,7 @@ const RightSection = styled.div`
 `;
 
 const PageTitle = styled.h1`
-  font-family: "Helvetica Neue LT GEO";
+  font-family: "Helvetica";
   font-weight: 250;
   font-size: 64px;
   line-height: 33.8px;
@@ -153,7 +152,7 @@ const PageTitle = styled.h1`
     line-height: 24px;
     margin-bottom: 20px;
     margin-top: 120px;
-    font-family: "Helvetica Neue LT GEO";
+    font-family: "Helvetica";
   }
 `;
 

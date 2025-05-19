@@ -11,7 +11,7 @@ const StyledComponent = styled.div`
   display: flex;
   min-height: 100dvh;
   flex-direction: column;
-  justify-content: center;
+  /* justify-content: center; */
   align-items: center;
 `;
 

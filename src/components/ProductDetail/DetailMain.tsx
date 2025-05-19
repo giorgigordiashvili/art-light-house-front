@@ -74,7 +74,7 @@ const ProductHeader = styled.div`
   color: #ffffff;
 
   p {
-    font-family: Helvetica Neue LT GEO;
+    font-family: Helvetica;
     font-weight: 250;
     font-size: 34px;
     line-height: 24px;
