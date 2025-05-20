@@ -1,0 +1,324 @@
+{
+  "header": {
+    "products": "Products",
+    "sale": "Sale",
+    "project": "Project",
+    "contact": "Contact",
+    "authorize": "Authorization",
+    "language": "Language",
+    "detailBar1": "My details",
+    "detailBar2": "My addresses",
+    "detailBar3": "My orders",
+    "detailBar4": "Payment methods",
+    "detailBar5": "Settings",
+    "detailBar6": "Logout",
+    "authorizationModal": {
+      "title": "Authorization",
+      "inputTitle1": "Email",
+      "inputTitle2": "Password",
+      "placeholder1": "Enter email",
+      "placeholder2": "Your password",
+      "button1": "Authorize",
+      "button2": "Register",
+      "button3": "Forgot password?",
+      "button4": "Login",
+      "button5": "Login with Google",
+      "button6": "Login with Facebook"
+    },
+    "registrationModal": {
+      "title": "Registration",
+      "inputTitle1": "Email",
+      "inputTitle2": "Password",
+      "inputTitle3": "Name",
+      "placeholder1": "Enter email",
+      "placeholder2": "Your password",
+      "placeholder3": "Enter name",
+      "button1": "Authorize",
+      "button2": "Register",
+      "button4": "Register",
+      "button5": "Register with Google",
+      "button6": "Register with Facebook"
+    },
+    "passwordRecoveryModal": {
+      "title": "Password Recovery",
+      "subTitle": "To recover your password, enter your registered email",
+      "inputTitle1": "Email",
+      "placeholder1": "Enter email",
+      "button1": "Send"
+    },
+    "registrationCodeModal": {
+      "title": "Registration",
+      "subTitle": "A one-time confirmation code has been sent to the specified email “gagi.murjikneli@gmail.com”. Please enter it.",
+      "inputTitle1": "One-time code",
+      "placeholder1": "Enter one-time code here",
+      "button1": "Resend",
+      "button2": "Confirm"
+    },
+    "registrationSuccessModal": {
+      "title": "Registration successful.",
+      "subTitle": "Now you can freely order products you choose for yourself",
+      "button": "Return to main"
+    }
+  },
+  "hero": {
+    "title": "Illuminate your home",
+    "description": "Our lighting creates a special atmosphere that is visually appealing and creates an emotional experience.",
+    "button": "All products"
+  },
+  "category": {
+    "title": "Choose with taste",
+    "light": "Lighting",
+    "gardenLight": "Garden lights",
+    "furniture": "Furniture",
+    "decorations": "Decorations",
+    "decorates": "Decorations",
+    "mirror": "Mirror"
+  },
+  "newProducts": {
+    "title": "New Products",
+    "light1": "Garden light",
+    "light2": "Garden light",
+    "light3": "Garden light",
+    "light4": "Garden light",
+    "light5": "Garden light"
+  },
+  "popularProducts": {
+    "title": "Select for the room",
+    "bedroom": "Bedroom",
+    "livingroom": "Living room",
+    "kitchen": "Kitchen"
+  },
+  "accomplihsments": {
+    "title1": "Our achievements",
+    "title2": "Contact",
+    "description": "Satisfied customers are the foundation of our success. Their positive experience and recommendations are our greatest rewards.",
+    "done": "Completed project",
+    "parthner": "Partner",
+    "shop": "Shop"
+  },
+  "contact": {
+    "title": "Addresses",
+    "address": "Address",
+    "city": "Tbilisi",
+    "physicalAddress": "Address number #22",
+    "phoneNumber": "Phone number",
+    "number": "(+995) 577 45 55 55",
+    "workHours": "Working hours",
+    "hours": "10:00 - 21:00",
+    "button": "Google Maps"
+  },
+  "footer": {
+    "description": "Our lighting creates a special atmosphere that is visually appealing and creates an emotional experience.",
+    "copyright": "© 2025. All rights reserved.",
+    "footerNav1": {
+      "products": "Products",
+      "kitchen": "Kitchen",
+      "livingroom": "Living room",
+      "bedroom": "Bedroom",
+      "childRoom": "Children's room"
+    },
+    "footerNav2": {
+      "socialMedia": "Social media",
+      "Twitter": "Twitter",
+      "Linkedin": "Linkedin",
+      "Facebook": "Facebook",
+      "GitHub": "GitHub"
+    }
+  },
+  "products": {
+    "title": "Products",
+    "sort": "Sort",
+    "sortOption1": "Price: Descending",
+    "sortOption2": "Price: Ascending",
+    "sortOption3": "Name: A-Z",
+    "sortOption4": "Name: Z-A",
+    "placeholder1": "From",
+    "placeholder2": "To",
+    "filter": {
+      "title": "Filter",
+      "subTitle1": "Category",
+      "filterOption1": "Chandelier",
+      "filterOption2": "Ceiling mounted",
+      "filterOption3": "Pendant",
+      "filterOption4": "Wall lamp",
+      "filterOption5": "Bathroom lighting",
+      "filterOption6": "Table lamp",
+      "filterOption7": "Work lighting",
+      "subTitle2": "Price",
+      "subTitle3": "Style",
+      "filterOption8": "Modern",
+      "filterOption9": "Classic",
+      "filterOption10": "Industrial",
+      "filterOption11": "Minimalist",
+      "filterOption12": "Boho",
+      "filterOption13": "Scandinavian",
+      "subTitle4": "Lighting type",
+      "filterOption14": "LED",
+      "filterOption15": "Halogen",
+      "filterOption16": "Edison",
+      "filterOption17": "Compact fluorescent",
+      "filterOption18": "RGB lighting"
+    },
+    "cardTitle": "Garden light"
+  },
+  "productDetails": {
+    "navigation": {
+      "nav1": "Home",
+      "nav2": "Products",
+      "nav3": "Home lights",
+      "nav4": "Lamp model"
+    },
+    "title": "Blue Star Chandelier",
+    "description": "This chandelier is designed with a modern aesthetic and perfectly suits any interior style. Its unique shape and blue elements create a special atmosphere in your home. The chandelier is equipped with energy-efficient LED bulbs, ensuring long service life and low energy consumption. Buy now on our website and enrich your space!",
+    "buy": "Buy",
+    "addToCart": "Add to cart",
+    "subTitle": "Similar products",
+    "cardTitle1": "Garden light",
+    "cardTitle2": "Garden light",
+    "cardTitle3": "Garden light",
+    "cardTitle4": "Garden light"
+  },
+  "checkout": {
+    "title": "Checkout",
+    "subTitle1": "Address",
+    "subTitle2": "Payment method",
+    "subTitle3": "Delivery",
+    "subTitle4": "Phone",
+    "subTitle5": "Additional information",
+    "cardTitle1": "Work",
+    "cardTitle2": "Card",
+    "cardTitle3": "Express delivery",
+    "cardTitle4": "Next day delivery",
+    "cardDescription1": "5 Petre Kavtaradze Street",
+    "cardDescription2": "After the transaction, your card details will be stored on the bank's secure server",
+    "cardDescription3": "40 minutes to 2 hours",
+    "cardDescription4": "10:00 - 13:00",
+    "placeholder1": "Enter phone number",
+    "placeholder2": "Additional information",
+    "summary": "Total",
+    "productPrice": "Product price",
+    "deliveryService": "Delivery service",
+    "serviceCommision": "Service commission",
+    "button1": "Change",
+    "button2": "Pay"
+  },
+  "succsessOrder": {
+    "title": "Order successfully placed",
+    "subTitle1": "Products",
+    "subTitle2": "Address",
+    "subTitle3": "Delivery",
+    "cardTitle1": "Blue Star Chandelier",
+    "cardTitle2": "Blue Star Chandelier",
+    "cardTitle3": "Work",
+    "cardTitle4": "Express delivery",
+    "cardDescription1": "5 Petre Kavtaradze Street",
+    "cardDescription2": "40 minutes to 2 hours",
+    "summary": "Total",
+    "productPrice": "Product price",
+    "deliveryService": "Delivery service",
+    "serviceCommision": "Service commission"
+  },
+  "address": {
+    "title": "My addresses",
+    "detailBar1": "My details",
+    "detailBar2": "My addresses",
+    "detailBar3": "My orders",
+    "detailBar4": "Payment methods",
+    "detailBar5": "Settings",
+    "detailBar6": "Logout",
+    "addressBarTitle": "My addresses",
+    "cardTitle1": "Add new address",
+    "cardTitle2": "Work",
+    "cardTitle3": "Work",
+    "cardTitle4": "Work",
+    "cardDescription1": "5 Petre Kavtaradze Street",
+    "cardDescription2": "5 Petre Kavtaradze Street",
+    "cardDescription3": "5 Petre Kavtaradze Street",
+    "modalText1": "Edit",
+    "modalText2": "Delete",
+    "modalTitle": "Add address",
+    "addressOption1": "Home",
+    "addressOption2": "Work",
+    "addressOption3": "Other",
+    "inputTitle1": "Enter address",
+    "inputTitle2": "Additional information",
+    "placeholder1": "Street and number",
+    "placeholder2": "E.g. Entrance 2, Floor 4, Apartment 17",
+    "button1": "Cancel",
+    "button2": "Save"
+  },
+  "profile": {
+    "title": "My Profile",
+    "detailBar1": "My details",
+    "detailBar2": "My addresses",
+    "detailBar3": "My orders",
+    "detailBar4": "Payment methods",
+    "detailBar5": "Settings",
+    "detailBar6": "Logout",
+    "profileBarTitle": "Personal information",
+    "inputTitle1": "Name",
+    "inputTitle2": "Last name",
+    "inputTitle3": "Date of birth",
+    "inputTitle4": "Phone number",
+    "inputTitle5": "Email",
+    "placeholder1": "Name",
+    "placeholder2": "Last name",
+    "placeholder3": "Enter date",
+    "placeholder4": "Enter phone number",
+    "placeholder5": "Yourmail@gmail.com",
+    "button1": "Cancel",
+    "button2": "Save"
+  },
+  "orders": {
+    "title": "My orders",
+    "detailBar1": "My details",
+    "detailBar2": "My addresses",
+    "detailBar3": "My orders",
+    "detailBar4": "Payment methods",
+    "detailBar5": "Settings",
+    "detailBar6": "Logout",
+    "orderBarTitle": "Orders",
+    "orderId": "#22435",
+    "orderDate": "December 22",
+    "daatils": "Details"
+  },
+  "cart": {
+    "emptyCartModal": {
+      "title": "Cart is empty",
+      "subTitle": "Add products to cart and checkout"
+    },
+    "cartModal": {
+      "itemCount": "3 Products",
+      "cardTitle1": "Blue Star Chandelier",
+      "cardTitle2": "Blue Star Chandelier",
+      "summary": "Total price",
+      "button": "Go to cart"
+    },
+    "emptyCart": {
+      "title": "My products",
+      "subTitle": "Cart is empty",
+      "description": "See products and add your choice to cart",
+      "button": "Products"
+    },
+    "emptyFavorites": {
+      "title": "3 Products",
+      "subTitle": "Nothing saved",
+      "description": "See products and add your choice to cart",
+      "button": "Products"
+    },
+    "cart": {
+      "title": "My products",
+      "cardTitle": "Blue Star Chandelier",
+      "summary": "Total",
+      "productPrice": "Product price",
+      "deliveryService": "Delivery service",
+      "serviceCommision": "Service commission",
+      "button": "Checkout"
+    },
+    "favorites": {
+      "title": "Saved products",
+      "cardTitle": "Blue Star Chandelier",
+      "button": "Details"
+    }
+  }
+}

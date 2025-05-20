@@ -1,0 +1,324 @@
+{
+  "header": {
+    "products": "პროდუქცია",
+    "sale": "ფასდაკლება",
+    "project": "პროექტი",
+    "contact": "კონტაქტი",
+    "authorize": "ავტორიზაცია",
+    "language": "ენა",
+    "detailBar1": "ჩემი დეტალები",
+    "detailBar2": "ჩემი მისამართები",
+    "detailBar3": "ჩემი შეკვეთები",
+    "detailBar4": "გადახდის მეთოდები",
+    "detailBar5": "პარამეტრები",
+    "detailBar6": "გასვლა",
+    "authorizationModal": {
+      "title": "ავტორიზაცია",
+      "inputTitle1": "ელ.ფოსტა",
+      "inputTitle2": "პაროლი",
+      "placeholder1": "შეიყვანეთ ელ.ფოსტა",
+      "placeholder2": "თქვენი პაროლი",
+      "button1": "ავტორიზაცია",
+      "button2": "რეგისტრაცია",
+      "button3": "დაგავიწყდა პაროლი?",
+      "button4": "შესვლა",
+      "button5": "Google-ით შესვლა",
+      "button6": "Facebook-ით შესვლა"
+    },
+    "registrationModal": {
+      "title": "რეგისტრაცია",
+      "inputTitle1": "ელ.ფოსტა",
+      "inputTitle2": "პაროლი",
+      "inputTitle3": "სახელი",
+      "placeholder1": "შეიყვანეთ ელ.ფოსტა",
+      "placeholder2": "თქვენი პაროლი",
+      "placeholder3": "შეიყვანეთ სახელი",
+      "button1": "ავტორიზაცია",
+      "button2": "რეგისტრაცია",
+      "button4": "რეგისტრაცია",
+      "button5": "Google-ით რეგისტრაცია",
+      "button6": "Facebook-ით რეგისტრაცია"
+    },
+    "passwordRecoveryModal": {
+      "title": "პაროლის აღდგენა",
+      "subTitle": "პაროლის აღსადგენად ჩაწერეთ რეგისტრირებული ელ.ფოსტა",
+      "inputTitle1": "ელ.ფოსტა",
+      "placeholder1": "შეიყვანეთ ელ.ფოსტა",
+      "button1": "გაგზავნა"
+    },
+    "registrationCodeModal": {
+      "title": "რეგისტრაცია",
+      "subTitle": "მითითებულ ელ.ფოსტაზე “gagi.murjikneli@gmail.com” გაიგზავნა ერთჯერადი დადასტურების კოდი. გთხოვთ შეიყვანოთ.",
+      "inputTitle1": "ერთჯერადი კოდი",
+      "placeholder1": "ჩაწერე ერთჯერადი კოდი აქ",
+      "button1": "თავიდან გაგზავნა",
+      "button2": "დადასტურება"
+    },
+    "registrationSuccessModal": {
+      "title": "რეგისტრაცია წარმატებით გაიარე.",
+      "subTitle": "ახლა უკვე შეგიძლია თავისუფლად შეუკვეთო პროდუქტები რომლებსაც შენთვის აარჩევ",
+      "button": "მთავარზე დაბრუნება"
+    }
+  },
+  "hero": {
+    "title": "გაანათე შენი სახლი",
+    "description": "ჩვენი განათება ქმნის განსაკუთრებულ გარემოს, რომელიც ვიზუალურად მიმზიდველია და ემოციურ გამოცდილებას ქმნის.",
+    "button": "ყველა პროდუქტი"
+  },
+  "category": {
+    "title": "აირჩიე გემოვნებით",
+    "light": "განათება",
+    "gardenLight": "ეზოს სანათები",
+    "furniture": "ავეჯი",
+    "decorations": "დეკორაციები",
+    "decorates": "დეკორაციები",
+    "mirror": "სარკე"
+  },
+  "newProducts": {
+    "title": "ახალი პროდუქტები",
+    "light1": "ეზოს სანათი",
+    "light2": "ეზოს სანათი",
+    "light3": "ეზოს სანათი",
+    "light4": "ეზოს სანათი",
+    "light5": "ეზოს სანათი"
+  },
+  "popularProducts": {
+    "title": "შეარჩიე ოთახისთვის",
+    "bedroom": "საძინებელი",
+    "livingroom": "მისაღები",
+    "kitchen": "სამზარეულო"
+  },
+  "accomplihsments": {
+    "title1": "ჩვენი მიღწევები",
+    "title2": "კონტაქტი",
+    "description": "კმაყოფილი მომხმარებლები ჩვენი წარმატების საფუძველია. მათი პოზიტიური გამოცდილება და რეკომენდაციები ჩვენთვის ყველაზე დიდი პრემიებია.",
+    "done": "შესრულებული პროექტი",
+    "parthner": "პარტნიორი",
+    "shop": "მაღაზია"
+  },
+  "contact": {
+    "title": "მისამართები",
+    "address": "მისამართი",
+    "city": "თბილისი",
+    "physicalAddress": "მისამართის ნომერი #22",
+    "phoneNumber": "ტელეფონის ნომერი",
+    "number": "(+995) 577 45 55 55",
+    "workHours": "სამუშაო საათები",
+    "hours": "10:00 - 21:00",
+    "button": "Google Maps"
+  },
+  "footer": {
+    "description": "ჩვენი განათება ქმნის განსაკუთრებულ გარემოს, რომელიც ვიზუალურად მიმზიდველია და ემოციურ გამოცდილებას ქმნის. ",
+    "copyright": "© 2025. All rights reserved.",
+    "footerNav1": {
+      "products": "პროდუქტები",
+      "kitchen": "სამზარეულო",
+      "livingroom": "მისაღები",
+      "bedroom": "საძინებელი",
+      "childRoom": "ბავშვის ოთახი"
+    },
+    "footerNav2": {
+      "socialMedia": "სოციალური ქსელები",
+      "Twitter": "Twitter",
+      "Linkedin": "Linkedin",
+      "Facebook": "Facebook",
+      "GitHub": "GitHub"
+    }
+  },
+  "products": {
+    "title": "პროდუქტები",
+    "sort": "სორტირება",
+    "sortOption1": "ფასი: კლებადობით",
+    "sortOption2": "ფასი: ზრდადობით",
+    "sortOption3": "დასახელება: A-Z",
+    "sortOption4": "დასახელება: Z-A",
+    "placeholder1": "დან",
+    "placeholder2": "მდე",
+    "filter": {
+      "title": "ფილტრი",
+      "subTitle1": "კატეგორია",
+      "filterOption1": "ჭაღი",
+      "filterOption2": "ჭერზე დასამაგრებელი",
+      "filterOption3": "ჩამოსაკიდი",
+      "filterOption4": "კედლის სანათი",
+      "filterOption5": "აბაზანის განათება",
+      "filterOption6": "სანათი მაგიდისთვის",
+      "filterOption7": "სამუშაო განათება",
+      "subTitle2": "ფასი",
+      "subTitle3": "სტილი",
+      "filterOption8": "მოდერნი",
+      "filterOption9": "კლასიკური",
+      "filterOption10": "ინდუსტრიული",
+      "filterOption11": "მინიმალისტური",
+      "filterOption12": "ბოჰო",
+      "filterOption13": "სკანდინავიური",
+      "subTitle4": "განათების ტიპი",
+      "filterOption14": "LED",
+      "filterOption15": "Halogen",
+      "filterOption16": "Edison",
+      "filterOption17": "კომპაქტური ფლუორესცენტური",
+      "filterOption18": "RGB განათება"
+    },
+    "cardTitle": "ეზოს სანათი"
+  },
+  "productDetails": {
+    "navigation": {
+      "nav1": "მთავარი",
+      "nav2": "პროდუქტები",
+      "nav3": "სახლის სანათები",
+      "nav4": "სანათის მოდელი"
+    },
+    "title": "ლურჯი ვარსკვლავის ჭაღი",
+    "description": "ეს ჭაღი შექმნილია თანამედროვე დიზაინის მიხედვით და იდეალურად შეესაბამება ნებისმიერი ინტერიერის სტილს. მისი უნიკალური ფორმა და ლურჯი ფერის ელემენტები ქმნიან განსაკუთრებულ ატმოსფეროს თქვენს სახლში. ჭაღი აღჭურვილია ენერგოეფექტური LED ნათურებით, რაც უზრუნველყოფს ხანგრძლივ მომსახურებას და დაბალ ენერგომოხმარებას. შეიძინეთ ახლა ჩვენს ვებსაიტზე და გაამდიდრეთ თქვენი სივრცე!",
+    "buy": "ყიდვა",
+    "addToCart": "დაამატე კალათაში",
+    "subTitle": "მსგავსი პროდუქტები",
+    "cardTitle1": "ეზოს სანათი",
+    "cardTitle2": "ეზოს სანათი",
+    "cardTitle3": "ეზოს სანათი",
+    "cardTitle4": "ეზოს სანათი"
+  },
+  "checkout": {
+    "title": "შეკვეთის გაფორმება",
+    "subTitle1": "მისამართი",
+    "subTitle2": "გადახდის მეთოდი",
+    "subTitle3": "მიწოდება",
+    "subTitle4": "ტელეფონი",
+    "subTitle5": "დამატებითი ინფორმაცია",
+    "cardTitle1": "სამსახური",
+    "cardTitle2": "ბარათი",
+    "cardTitle3": "ექსპრეს მოტანა",
+    "cardTitle4": "შემდეგ დღეს მოტანა",
+    "cardDescription1": "5 Petre Kavtaradze Street",
+    "cardDescription2": "ტრანზაქციის შემდეგ თქვენი ბარათის მონაცემები შეინახება ბანკის დაცულ სერვერზე",
+    "cardDescription3": "40 წუთიდან 2 საათამდე",
+    "cardDescription4": "10:00 - დან 13:00 საათამდე",
+    "placeholder1": "შეიყვანეთ ტელეფონის ნომერი",
+    "placeholder2": "დამატებითი ინფორმაცია",
+    "summary": "ჯამი",
+    "productPrice": "პროდუქტის ღირებულება",
+    "deliveryService": "მიტანის სერვისი",
+    "serviceCommision": "სერვისის საკომისიო",
+    "button1": "შეცვლა",
+    "button2": "გადახდა"
+  },
+  "succsessOrder": {
+    "title": "შეკვეთა წარმატებით გაფორმდა",
+    "subTitle1": "პროდუქტები",
+    "subTitle2": "მისამართი",
+    "subTitle3": "მიწოდება",
+    "cardTitle1": "ლურჯი ვარსკვლავის ჭაღი",
+    "cardTitle2": "ლურჯი ვარსკვლავის ჭაღი",
+    "cardTitle3": "სამსახური",
+    "cardTitle4": "ექსპრეს მოტანა",
+    "cardDescription1": "5 Petre Kavtaradze Street",
+    "cardDescription2": "40 წუთიდან 2 საათამდე",
+    "summary": "ჯამი",
+    "productPrice": "პროდუქტის ღირებულება",
+    "deliveryService": "მიტანის სერვისი",
+    "serviceCommision": "სერვისის საკომისიო"
+  },
+  "address": {
+    "title": "ჩემი მისამართები",
+    "detailBar1": "ჩემი დეტალები",
+    "detailBar2": "ჩემი მისამართები",
+    "detailBar3": "ჩემი შეკვეთები",
+    "detailBar4": "გადახდის მეთოდები",
+    "detailBar5": "პარამეტრები",
+    "detailBar6": "გასვლა",
+    "addressBarTitle": "ჩემი მისამართები",
+    "cardTitle1": "ახალი მისამართის დამატება",
+    "cardTitle2": "სამსახური",
+    "cardTitle3": "სამსახური",
+    "cardTitle4": "სამსახური",
+    "cardDescription1": "5 Petre Kavtaradze Street",
+    "cardDescription2": "5 Petre Kavtaradze Street",
+    "cardDescription3": "5 Petre Kavtaradze Street",
+    "modalText1": "რედაქტირება",
+    "modalText2": "წაშლა",
+    "modalTitle": "მისამართის დამატება",
+    "addressOption1": "სახლი",
+    "addressOption2": "სამსახური",
+    "addressOption3": "სხვა",
+    "inputTitle1": "შეიყვანეთ მისამართი",
+    "inputTitle2": "დაამატებითი ინფორმაცია",
+    "placeholder1": "ქუჩა და ნომერი",
+    "placeholder2": "მაგ: სადარბაზო 2, სართული 4, ბინა 17",
+    "button1": "გაუქმება",
+    "button2": "შენახვა"
+  },
+  "profile": {
+    "title": "ჩემი პროფილი",
+    "detailBar1": "ჩემი დეტალები",
+    "detailBar2": "ჩემი მისამართები",
+    "detailBar3": "ჩემი შეკვეთები",
+    "detailBar4": "გადახდის მეთოდები",
+    "detailBar5": "პარამეტრები",
+    "detailBar6": "გასვლა",
+    "profileBarTitle": "პერსონალური ინფორმაცია",
+    "inputTitle1": "სახელი",
+    "inputTitle2": "გვარი",
+    "inputTitle3": "დაბადების თარითი",
+    "inputTitle4": "ტელეფონის ნომერი",
+    "inputTitle5": "ელ.ფოსტა",
+    "placeholder1": "სახელი",
+    "placeholder2": "გვარი",
+    "placeholder3": "შეიყვანეთ თარიღი",
+    "placeholder4": "შეიყვანეთ ტელეფონის ნომერი",
+    "placeholder5": "Yourmail@gmail.com",
+    "button1": "გაუქმება",
+    "button2": "შენახვა"
+  },
+  "orders": {
+    "title": "ჩემი შეკვეთები",
+    "detailBar1": "ჩემი დეტალები",
+    "detailBar2": "ჩემი მისამართები",
+    "detailBar3": "ჩემი შეკვეთები",
+    "detailBar4": "გადახდის მეთოდები",
+    "detailBar5": "პარამეტრები",
+    "detailBar6": "გასვლა",
+    "orderBarTitle": "შეკვეთები",
+    "orderId": "#22435",
+    "orderDate": "22 დეკემბერი",
+    "daatils": "დეტალურად"
+  },
+  "cart": {
+    "emptyCartModal": {
+      "title": "კალათა ცარიელია",
+      "subTitle": "დაამატე პროდუქტები ქალათში და გააფორმე შეკვეთა"
+    },
+    "cartModal": {
+      "itemCount": "3 პროდუქტები",
+      "cardTitle1": "ლურჯი ვარსკვლავის ჭაღი",
+      "cardTitle2": "ლურჯი ვარსკვლავის ჭაღი",
+      "summary": "ჯამური ფასი",
+      "button": "კალათაში გაადსვლა"
+    },
+    "emptyCart": {
+      "title": "ჩემი პროდუქტები",
+      "subTitle": "კალათა ცარიელია",
+      "description": "ნახე პროდუქტები და შენი არჩევანი დაამატე კალათაში",
+      "button": "პროდუქტები"
+    },
+    "emptyFavorites": {
+      "title": "3 პროდუქტები",
+      "subTitle": "შენახული არაფერია",
+      "description": "ნახე პროდუქტები და შენი არჩევანი დაამატე კალათაში",
+      "button": "პროდუქტები"
+    },
+    "cart": {
+      "title": "ჩემი პროდუქტები",
+      "cardTitle": "ლურჯი ვარსკვლავის ჭაღი",
+      "summary": "ჯამი",
+      "productPrice": "პროდუქტის ღირებულება",
+      "deliveryService": "მიტანის სერვისი",
+      "serviceCommision": "სერვისის საკომისიო",
+      "button": "შეკვეთის გაფორმება"
+    },
+    "favorites": {
+      "title": "შენახული პროდუქტები",
+      "cardTitle": "ლურჯი ვარსკვლავის ჭაღი",
+      "button": "დეტალურად"
+    }
+  }
+}
