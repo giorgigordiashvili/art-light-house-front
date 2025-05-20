@@ -3,6 +3,7 @@ import styled from "styled-components";
 import Image from "next/image";
 import CartTitle from "./CartTitle";
 import CartDescription from "./CartDescription";
+import { useLanguage } from "@/context/LanguageContext";
 
 const StyledContainer = styled.div`
   width: 349px;
@@ -55,6 +56,7 @@ const ModalLayout = styled.div`
 `;
 
 const EmptyCartModal = () => {
+  const { dictionary } = useLanguage();
   return (
     <ModalLayoutWrapper>
       <ModalLayout>
@@ -62,8 +64,8 @@ const EmptyCartModal = () => {
           <StyledImage>
             <Image src="/assets/EmptyCartImage.svg" width={123} height={123} alt="cart-icon" />
           </StyledImage>
-          <CartTitle text="კალათა ცარიელია" />
-          <CartDescription text="დაამატე პროდუქტები ქალათში და გააფორმე შეკვეთა" />
+          <CartTitle text={dictionary.cart.emptyCartModal.title} />
+          <CartDescription text={dictionary.cart.emptyCartModal.subTitle} />
         </StyledContainer>
       </ModalLayout>
     </ModalLayoutWrapper>

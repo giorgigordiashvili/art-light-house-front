@@ -12,6 +12,7 @@ import DividerLine from "./DividerLine";
 import SectionTitle from "../SectionTitle";
 import Container from "../../ui/Container";
 import CategorySection from "./CategorySection";
+import { useLanguage } from "@/context/LanguageContext";
 
 const StyledContainer = styled.div`
   position: relative;
@@ -117,32 +118,31 @@ const StyledCategoryTitle = styled.div`
   }
 `;
 
-const heroSlides = [
-  {
-    lightText: "გაანათე",
-    text: "შენი სახლი",
-    description:
-      "ჩვენი განათება ქმნის განსაკუთრებულ გარემოს, რომელიც ვიზუალურად მიმზიდველია და ემოციურ გამოცდილებას ქმნის.",
-    buttonText: "ყველა პროდუქტი",
-    href: "/products",
-  },
-  {
-    lightText: "შექმენი",
-    text: "მყუდრო ატმოსფერო",
-    description: "თანამედროვე დიზაინი და ტემპერატურა, რომელიც თქვენ გჭირდებათ.",
-    buttonText: "მეტის ნახვა",
-    href: "/",
-  },
-  {
-    lightText: "აირჩიე",
-    text: "ხარისხიანი შუქი",
-    description: "ჩვენი პროდუქცია აკმაყოფილებს ყველა სტანდარტს და სანდოა.",
-    buttonText: "ახალი კოლექცია",
-    href: "/",
-  },
-];
-
 const HeroAndCategory = () => {
+  const { dictionary } = useLanguage();
+  const heroSlides = [
+    {
+      lightText: dictionary.hero.title,
+      text: dictionary.hero.titlePart2,
+      description: dictionary.hero.description,
+      buttonText: dictionary.hero.button,
+      href: "/products",
+    },
+    {
+      lightText: dictionary.hero.title2,
+      text: dictionary.hero.title2Part2,
+      description: dictionary.hero.description1,
+      buttonText: dictionary.hero.button2,
+      href: "/",
+    },
+    {
+      lightText: dictionary.hero.title3,
+      text: dictionary.hero.title3Part2,
+      description: dictionary.hero.description1,
+      buttonText: dictionary.hero.button3,
+      href: "/",
+    },
+  ];
   return (
     <StyledContainer>
       <StyledLinearGradient />
@@ -167,7 +167,7 @@ const HeroAndCategory = () => {
           <DividerLine />
           <Container>
             <StyledCategoryTitle>
-              <SectionTitle text="აირჩიე გემოვნებით" image="category" />
+              <SectionTitle text={dictionary.category.title} image="category" />
             </StyledCategoryTitle>
           </Container>
         </StyledCategorySection>

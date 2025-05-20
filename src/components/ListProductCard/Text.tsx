@@ -1,5 +1,6 @@
 import React from "react";
 import styled from "styled-components";
+import { useLanguage } from "@/context/LanguageContext";
 
 const TextWrapper = styled.div`
   position: absolute;
@@ -45,10 +46,11 @@ const DescriptionText = styled.div`
 `;
 
 const ProductText = () => {
+  const { dictionary } = useLanguage();
   return (
     <TextWrapper>
       <PriceText>199,99 ₾</PriceText>
-      <DescriptionText>ეზოს სანათი</DescriptionText>
+      <DescriptionText>{dictionary.products.cardTitle}</DescriptionText>
     </TextWrapper>
   );
 };

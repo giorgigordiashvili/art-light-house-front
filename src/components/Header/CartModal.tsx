@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import CartProduct from "./CartProduct";
 import PrimaryButton from "../Buttons/PrimaryButton";
 import SummaryPrice from "./SummaryPrice";
+import { useLanguage } from "@/context/LanguageContext";
 
 type Props = {
   itemCount: number;
@@ -100,19 +101,20 @@ const StyledButton = styled.div`
 `;
 
 const CartModal = ({ itemCount, onClose }: Props) => {
+  const { dictionary } = useLanguage();
   const router = useRouter();
-
   const handleRedirect = () => {
     router.push("/favorites");
     onClose();
   };
-
   return (
     <ModalLayoutWrapper>
       <ModalLayout>
         <StyledContainer>
           <StyledSpanContainer>
-            <StyledSpan>{itemCount} პროდუქტები</StyledSpan>
+            <StyledSpan>
+              {itemCount} {dictionary.cart.cartModal.itemCount.split(" ")[1]}
+            </StyledSpan>
           </StyledSpanContainer>
           <ProductList>
             {Array.from({ length: itemCount }).map((_, index) => (
@@ -124,7 +126,7 @@ const CartModal = ({ itemCount, onClose }: Props) => {
           <SummaryPrice />
           <StyledButton>
             <PrimaryButton
-              text="კალათაში გადასვლა"
+              text={dictionary.cart.cartModal.button}
               height="50px"
               width="317px"
               media="full"

@@ -7,6 +7,7 @@ import FilterButton from "@/components/FilterSidebar/FilterButtom";
 import SortDropdown from "@/components/Sort/SortDropdown";
 import Container from "@/components/ui/Container";
 import MobileFilterDropdown from "../FilterDropdown/MobileFilterDropdown";
+import { useLanguage } from "@/context/LanguageContext";
 
 const StyledComponent = styled.div`
   background: black;
@@ -67,6 +68,7 @@ const OnDesktop = styled.div`
 
 function ProductsMain() {
   const [isMobileFilterDropdownVisible, setMobileFilterDropdownVisible] = useState(false);
+  const { dictionary } = useLanguage();
 
   const toggleMobileFilterDropdown = () => {
     setMobileFilterDropdownVisible(!isMobileFilterDropdownVisible);
@@ -75,7 +77,7 @@ function ProductsMain() {
   return (
     <StyledComponent>
       <Container>
-        <PageTitle>პროდუქტები</PageTitle>
+        <PageTitle>{dictionary.products.title}</PageTitle>
         <SortWrapper>
           <OnMobile>
             <FilterButton onClick={toggleMobileFilterDropdown} />

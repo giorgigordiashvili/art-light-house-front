@@ -2,6 +2,7 @@ import React from "react";
 import NavItem from "./NavItem";
 import styled from "styled-components";
 import LanguageSwitcher from "./LanguageSwitcher/LanguageSwitcher";
+import { useLanguage } from "@/context/LanguageContext";
 
 const StyledBurgeMenu = styled.div`
   position: fixed;
@@ -61,23 +62,24 @@ type Props = {
 };
 
 const BurgerMenu = ({ currentLanguage, onLanguageSwitcherClick }: Props) => {
+  const { dictionary } = useLanguage();
   return (
     <StyledBurgeMenu>
       <StyledBurgerMenuContent>
         <StyledNavItem>
-          <NavItem text="პროდუქცია" href="/products" />
+          <NavItem text={dictionary.header.products} href="/products" />
         </StyledNavItem>
         <StyledNavItem>
-          <NavItem text="ფასდაკლება" href="/" />
+          <NavItem text={dictionary.header.sale} href="/" />
         </StyledNavItem>
         <StyledNavItem>
-          <NavItem text="პროექტი" href="/" />
+          <NavItem text={dictionary.header.project} href="/" />
         </StyledNavItem>
         <StyledNavItem>
-          <NavItem text="კონტაქტი" href="/contact" />
+          <NavItem text={dictionary.header.contact} href="/contact" />
         </StyledNavItem>
         <StyledLanguageSwitcher onClick={onLanguageSwitcherClick}>
-          <StyledLanguage>ენა</StyledLanguage>
+          <StyledLanguage>{dictionary.header.language}</StyledLanguage>
           <LanguageSwitcher language={currentLanguage} display="visible" />
         </StyledLanguageSwitcher>
       </StyledBurgerMenuContent>

@@ -1,5 +1,6 @@
 import React from "react";
 import styled from "styled-components";
+import { useLanguage } from "@/context/LanguageContext";
 
 const StyledContainer = styled.div`
   display: flex;
@@ -30,9 +31,10 @@ const StyledPrice = styled.p`
 `;
 
 const SummaryPrice = () => {
+  const { dictionary } = useLanguage();
   return (
     <StyledContainer>
-      <StyledText>ჯამური ფასი</StyledText>
+      <StyledText>{dictionary.cart.cartModal.summary || "ჯამური ფასი"}</StyledText>
       <StyledPrice>599,32</StyledPrice>
     </StyledContainer>
   );

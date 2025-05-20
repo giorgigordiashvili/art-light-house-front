@@ -3,6 +3,7 @@ import SectionTitle from "../SectionTitle";
 import Container from "../../ui/Container";
 import styled from "styled-components";
 import PopularProductCard from "./PopularProductCard";
+import { useLanguage } from "@/context/LanguageContext";
 
 const StyledContainer = styled.div`
   margin-top: 121px;
@@ -27,27 +28,28 @@ const StyledCards = styled.div`
 `;
 
 const PopularProducts = () => {
+  const { dictionary } = useLanguage();
   return (
     <Container>
       <StyledContainer>
-        <SectionTitle text="შეარჩიე ოთახისთვის" image="family" />
+        <SectionTitle text={dictionary.popularProducts.title} image="family" />
         <StyledCards>
           <PopularProductCard
             image="/assets/bedroom.svg"
-            label="საძინებელი"
+            label={dictionary.popularProducts.bedroom}
             width={511}
             isRightAligned
             changeHeightMobile
           />
           <PopularProductCard
             image="/assets/livingroom.svg"
-            label="მისაღები"
+            label={dictionary.popularProducts.livingroom}
             width={242}
             isMiddleCard
           />
           <PopularProductCard
             image="/assets/kitchen.svg"
-            label="სამზარეულო"
+            label={dictionary.popularProducts.kitchen}
             width={503}
             isRightAligned
             changeHeightMobile

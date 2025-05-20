@@ -6,6 +6,7 @@ import Line from "./Line";
 import StyleFilter from "./StyleFilter";
 import TypeFilter from "./TypeFilter";
 import PriceFilter from "./PriceFilter";
+import { useLanguage } from "@/context/LanguageContext";
 
 const SidebarWrapper = styled.div`
   width: 308px;
@@ -29,9 +30,10 @@ const Title = styled.p`
 `;
 
 function FilterSidebar() {
+  const { dictionary } = useLanguage();
   return (
     <SidebarWrapper>
-      <Title>ფილტრი</Title>
+      <Title>{dictionary.products.filter.title}</Title>
       <Line />
       <CategoryFilter />
       <Line />

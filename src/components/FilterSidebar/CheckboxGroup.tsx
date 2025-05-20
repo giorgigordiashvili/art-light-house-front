@@ -2,6 +2,7 @@
 import React from "react";
 import styled from "styled-components";
 import { CheckboxOption } from "./types";
+import { useLanguage } from "@/context/LanguageContext";
 
 interface Props {
   title: string;

@@ -9,6 +9,7 @@ import InputTitle from "./InputTitle";
 import AdditionalAction from "./AdditionalAction";
 import { useSignIn, useSignUp } from "@clerk/nextjs";
 import Image from "next/image";
+import { useLanguage } from "@/context/LanguageContext";
 
 interface AuthorizationModalProps {
   onClose: () => void;
@@ -128,6 +129,7 @@ const AuthorizationModal: React.FC<AuthorizationModalProps> = ({
 
   const { isLoaded: isSignInLoaded, signIn, setActive: setSignInActive } = useSignIn();
   const { isLoaded: isSignUpLoaded, signUp, setActive: setSignUpActive } = useSignUp();
+  const { dictionary } = useLanguage();
 
   const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setEmail(e.target.value);
@@ -146,7 +148,7 @@ const AuthorizationModal: React.FC<AuthorizationModalProps> = ({
 
   const handleSubmit = async () => {
     if (!email || !password) {
-      setError("გთხოვთ შეავსოთ ყველა ველი");
+      setError(dictionary.header.authorizationModal.alert3);
       return;
     }
 
@@ -170,7 +172,7 @@ const AuthorizationModal: React.FC<AuthorizationModalProps> = ({
       } else {
         // Sign Up with Email
         if (!firstName) {
-          setError("გთხოვთ შეიყვანოთ სახელი");
+          setError(dictionary.header.registrationModal?.alert);
           setIsLoading(false);
           return;
         }
@@ -199,8 +201,8 @@ const AuthorizationModal: React.FC<AuthorizationModalProps> = ({
       console.error(error);
       setError(
         activeTab === "auth"
-          ? "არასწორი მეილი ან პაროლი"
-          : "შეცდომა რეგისტრაციისას. გადაამოწმეთ მონაცემები და სცადეთ ხელახლა"
+          ? dictionary.header.authorizationModal?.alert1
+          : dictionary.header.authorizationModal?.alert2
       );
     } finally {
       setIsLoading(false);
@@ -255,49 +257,48 @@ const AuthorizationModal: React.FC<AuthorizationModalProps> = ({
         <StyledCloseIcon onClick={onClose}>
           <CloseIcon />
         </StyledCloseIcon>
-
         <StyledTitle>
-          <ModalTitle text={activeTab === "auth" ? "ავტორიზაცია" : "რეგისტრაცია"} />
+          <ModalTitle
+            text={
+              activeTab === "auth"
+                ? dictionary.header.authorizationModal.title
+                : dictionary.header.registrationModal.title
+            }
+          />
         </StyledTitle>
-
         <StyledAuthToggleButtons>
           <AuthToggleButtons activeTab={activeTab} setActiveTab={setActiveTab} />
         </StyledAuthToggleButtons>
-
         {activeTab === "register" && (
           <StyledModalInput>
-            <InputTitle text="სახელი" />
+            <InputTitle text={dictionary.header.registrationModal.inputTitle3} />
             <ModalInput
-              placeholder="შეიყვანეთ სახელი"
+              placeholder={dictionary.header.registrationModal.placeholder3}
               value={firstName}
               onChange={handleFirstNameChange}
             />
           </StyledModalInput>
         )}
-
         <StyledModalInput>
-          <InputTitle text="ელ.ფოსტა" />
+          <InputTitle text={dictionary.header.authorizationModal.inputTitle1} />
           <ModalInput
-            placeholder="შეიყვანეთ ელ.ფოსტა"
+            placeholder={dictionary.header.authorizationModal.placeholder1}
             type="email"
             value={email}
             onChange={handleEmailChange}
           />
         </StyledModalInput>
-
         <StyledModalInput>
-          <InputTitle text="პაროლი" />
+          <InputTitle text={dictionary.header.authorizationModal.inputTitle2} />
           <ModalInput
-            placeholder="თქვენი პაროლი"
+            placeholder={dictionary.header.authorizationModal.placeholder2}
             iconSrc="/assets/eye.svg"
             type="password"
             value={password}
             onChange={handlePasswordChange}
           />
         </StyledModalInput>
-
         {error && <ErrorMessage>{error}</ErrorMessage>}
-
         {activeTab === "auth" && (
           <StyledForgetPassword
             onClick={() => {
@@ -305,28 +306,34 @@ const AuthorizationModal: React.FC<AuthorizationModalProps> = ({
               onRecoverPasswordClick?.();
             }}
           >
-            <AdditionalAction text="დაგავიწყდა პაროლი?" />
+            <AdditionalAction text={dictionary.header.authorizationModal.button3} />
           </StyledForgetPassword>
         )}
-
         <StyledPrimaryButton $isRegister={activeTab === "register"}>
           <PrimaryButton
-            text={activeTab === "auth" ? "შესვლა" : "რეგისტრაცია"}
+            text={
+              activeTab === "auth"
+                ? dictionary.header.authorizationModal.button4
+                : dictionary.header.registrationModal.button2
+            }
             width="460px"
             height="50px"
             onClick={handleSubmit}
             disabled={isLoading}
           />
         </StyledPrimaryButton>
-
         <SocialButtons>
           <SocialButton onClick={() => handleSocialSignIn("google")}>
             <Image src="/assets/icons/google-icon.svg" width={20} height={20} alt="Google" />
-            Google-ით {activeTab === "auth" ? "შესვლა" : "რეგისტრაცია"}
+            {activeTab === "auth"
+              ? dictionary.header.authorizationModal.button5
+              : dictionary.header.registrationModal.button5}
           </SocialButton>
           <SocialButton onClick={() => handleSocialSignIn("facebook")}>
             <Image src="/assets/icons/facebook-icon.svg" width={20} height={20} alt="Facebook" />
-            Facebook-ით {activeTab === "auth" ? "შესვლა" : "რეგისტრაცია"}
+            {activeTab === "auth"
+              ? dictionary.header.authorizationModal.button6
+              : dictionary.header.registrationModal.button6}
           </SocialButton>
         </SocialButtons>
       </StyledModal>

@@ -6,6 +6,7 @@ import "./globals.css";
 import { usePathname } from "next/navigation";
 import { ClerkProvider } from "@clerk/nextjs";
 import { useEffect } from "react";
+import { LanguageProvider } from "@/context/LanguageContext";
 
 export default function RootLayout({
   children,
@@ -69,9 +70,11 @@ export default function RootLayout({
           {/* Add a hidden div for Clerk CAPTCHA at the root level */}
           <div id="clerk-captcha" style={{ display: "none" }}></div>
           <StyledComponentsRegistry>
-            {!isAdminRoute && <Header />}
-            {children}
-            {!isAdminRoute && <Footer />}
+            <LanguageProvider>
+              {!isAdminRoute && <Header />}
+              {children}
+              {!isAdminRoute && <Footer />}
+            </LanguageProvider>
           </StyledComponentsRegistry>
         </body>
       </html>

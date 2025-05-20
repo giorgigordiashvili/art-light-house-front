@@ -1,6 +1,7 @@
 "use client";
 import styled from "styled-components";
 import Logo from "../Logo/Logo";
+import { useLanguage } from "@/context/LanguageContext";
 
 const Description = styled.div`
   width: 479px;
@@ -24,13 +25,11 @@ const DescriptionText = styled.p`
   letter-spacing: 0%;
 `;
 function FooterDescription() {
+  const { dictionary } = useLanguage();
   return (
     <Description>
       <Logo size="large" href="/" />
-      <DescriptionText>
-        ჩვენი განათება ქმნის განსაკუთრებულ გარემოს, რომელიც ვიზუალურად მიმზიდველია და ემოციურ
-        გამოცდილებას ქმნის.
-      </DescriptionText>
+      <DescriptionText>{dictionary.footer.description}</DescriptionText>
     </Description>
   );
 }

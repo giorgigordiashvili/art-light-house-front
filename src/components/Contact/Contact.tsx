@@ -4,6 +4,7 @@ import styled from "styled-components";
 import ContactTitle from "./ContactTitle";
 import Container from "../ui/Container";
 import SectionTitle from "../MainPage/SectionTitle";
+import { useLanguage } from "@/context/LanguageContext";
 
 const StyledContainer = styled.div`
   padding-inline: 20px;
@@ -40,13 +41,14 @@ type ContactProps = {
 };
 
 const Contact: React.FC<ContactProps> = ({ variant = "1" }) => {
+  const { dictionary } = useLanguage();
   return (
     <StyledContainer>
       <Container>
-        {variant === "1" && <ContactTitle text="კონტაქტი" />}
+        {variant === "1" && <ContactTitle text={dictionary.header.contact} />}
         {variant === "2" && (
           <StyledSectionTitle>
-            <SectionTitle text="მისამართები" image="address" />
+            <SectionTitle text={dictionary.contact.title} image="address" />
           </StyledSectionTitle>
         )}
         <StyledContactCard $variant={variant}>

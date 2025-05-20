@@ -23,7 +23,10 @@
       "button3": "Forgot password?",
       "button4": "Login",
       "button5": "Login with Google",
-      "button6": "Login with Facebook"
+      "button6": "Login with Facebook",
+      "alert1": "incorrect email or password",
+      "alert2": "Error while registering. Please check your details and try again.",
+      "alert3": "Please fill in all fields."
     },
     "registrationModal": {
       "title": "Registration",
@@ -37,7 +40,8 @@
       "button2": "Register",
       "button4": "Register",
       "button5": "Register with Google",
-      "button6": "Register with Facebook"
+      "button6": "Register with Facebook",
+      "alert": "please enter name"
     },
     "passwordRecoveryModal": {
       "title": "Password Recovery",
@@ -61,9 +65,18 @@
     }
   },
   "hero": {
-    "title": "Illuminate your home",
+    "title": "Illuminate",
+    "titlePart2": "your home",
+    "title2": "Create",
+    "title2Part2": "a cozy atmosphere.",
+    "title3": "Choose",
+    "title3Part2": "quality light",
     "description": "Our lighting creates a special atmosphere that is visually appealing and creates an emotional experience.",
-    "button": "All products"
+    "description1": "Modern design and the temperature you need.",
+    "description2": "Our lighting creates a special environment that is visually appealing and creates an emotional experience.",
+    "button": "All products",
+    "button2": "See more",
+    "button3": "New collection"
   },
   "category": {
     "title": "Choose with taste",
@@ -98,6 +111,7 @@
   },
   "contact": {
     "title": "Addresses",
+    "title2": "contact",
     "address": "Address",
     "city": "Tbilisi",
     "physicalAddress": "Address number #22",

@@ -1,5 +1,6 @@
 import styled from "styled-components";
 import Link from "next/link";
+import { useLanguage } from "@/context/LanguageContext";
 
 const StyledMenuBar = styled.ul`
   position: relative;
@@ -55,22 +56,23 @@ const Divider = styled.div`
 `;
 
 const MenuBar = () => {
+  const { dictionary } = useLanguage();
   return (
     <StyledMenuBar>
       <MenuItem>
-        <Link href="#">მთავარი</Link>
+        <Link href="#">{dictionary.productDetails.navigation.nav1}</Link>
       </MenuItem>
       <Divider />
       <MenuItem>
-        <Link href="#">პროდუქტები</Link>
+        <Link href="#">{dictionary.productDetails.navigation.nav2}</Link>
       </MenuItem>
       <Divider />
       <MenuItem>
-        <Link href="#">სახლის სანათები</Link>
+        <Link href="#">{dictionary.productDetails.navigation.nav3}</Link>
       </MenuItem>
       <Divider />
       <MenuItem>
-        <Link href="#">სანათის მოდელი</Link>
+        <Link href="#">{dictionary.productDetails.navigation.nav4}</Link>
       </MenuItem>
     </StyledMenuBar>
   );

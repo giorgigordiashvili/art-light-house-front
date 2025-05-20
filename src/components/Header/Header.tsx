@@ -18,6 +18,7 @@ import CartModal from "./CartModal";
 import LanguageSwitcher from "./LanguageSwitcher/LanguageSwitcher";
 import LanguageSwitcherModal from "./LanguageSwitcher/LanguageSwitcherModal";
 import { useUser } from "@clerk/nextjs";
+import { useLanguage } from "@/context/LanguageContext";
 
 const StyledContainer = styled.div`
   position: fixed;
@@ -134,6 +135,8 @@ const Header = () => {
   const [cartIconColor, setCartIconColor] = useState("#fff");
   const [isLanguageSwitcherModalOpen, setIsLanguageSwitcherModalOpen] = useState(false);
   const [selectedLanguage, setSelectedLanguage] = useState<"ka" | "en">("ka");
+
+  const { language, setLanguage, dictionary } = useLanguage();
 
   const burgerMenuRef = useRef<HTMLDivElement>(null);
   const burgerIconRef = useRef<HTMLDivElement>(null);
@@ -258,7 +261,7 @@ const Header = () => {
   };
 
   const handleLanguageChange = (language: "ka" | "en") => {
-    setSelectedLanguage(language);
+    setLanguage(language);
     closeLanguageSwitcherModal();
   };
 
@@ -270,10 +273,10 @@ const Header = () => {
             <Logo size="small" href="/" />
             <StyledActionsWrapper>
               <StyledNavigation>
-                <NavItem text="პროდუქცია" href="/products" />
-                <NavItem text="ფასდაკლება" href="/" />
-                <NavItem text="პროექტი" href="/" />
-                <NavItem text="კონტაქტი" href="/contact" />
+                <NavItem text={dictionary.header.products || "პროდუქცია"} href="/products" />
+                <NavItem text={dictionary.header.sale || "ფასდაკლება"} href="/" />
+                <NavItem text={dictionary.header.project || "პროექტი"} href="/" />
+                <NavItem text={dictionary.header.contact || "კონტაქტი"} href="/contact" />
               </StyledNavigation>
               <StyledUserActions>
                 <StyledVerticalLine />
@@ -312,7 +315,7 @@ const Header = () => {
                   </div>
                 </ResponsiveGapWrapper>
                 <div id="languageSwitcher" onClick={handleLanguageSwitcherClick}>
-                  <LanguageSwitcher language={selectedLanguage} display="none" />
+                  <LanguageSwitcher language={language} display="none" />
                 </div>
               </StyledUserActions>
             </StyledActionsWrapper>
@@ -326,7 +329,7 @@ const Header = () => {
           <div ref={burgerMenuRef}>
             <BurgerMenu
               onLanguageChange={handleLanguageChange}
-              currentLanguage={selectedLanguage}
+              currentLanguage={language}
               onLanguageSwitcherClick={handleLanguageSwitcherClick}
             />
           </div>
@@ -421,7 +424,7 @@ const Header = () => {
               <LanguageSwitcherModal
                 id="languageSwitcherModal"
                 onLanguageChange={handleLanguageChange}
-                currentLanguage={selectedLanguage}
+                currentLanguage={language}
               />
             </StyledTest>
           </StyledTestWrapper>

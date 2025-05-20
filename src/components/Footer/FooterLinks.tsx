@@ -1,5 +1,6 @@
 "use client";
 import styled from "styled-components";
+import { useLanguage } from "@/context/LanguageContext";
 
 const Links = styled.div`
   width: 458px;
@@ -80,39 +81,39 @@ const LinkList = styled.ul`
 `;
 
 function FooterLinks() {
+  const { dictionary } = useLanguage();
   return (
     <Links>
       <Column>
-        <p>პროექტები</p>
+        <p>{dictionary.footer.footerNav1.products}</p>
         <LinkList>
-          <li>სატესტო</li>
-          <li>მისაღები</li>
-          <li>საინტერესო</li>
-          <li>ბავშვის თაობა</li>
+          <li>{dictionary.footer.footerNav1.kitchen}</li>
+          <li>{dictionary.footer.footerNav1.livingroom}</li>
+          <li>{dictionary.footer.footerNav1.bedroom}</li>
+          <li>{dictionary.footer.footerNav1.childRoom}</li>
         </LinkList>
       </Column>
-
       <Column1>
-        <p>სოციალური ქსელები</p>
+        <p>{dictionary.footer.footerNav2.socialMedia}</p>
         <LinkList>
           <li>
             <a href="#" target="_blank" rel="noopener noreferrer">
-              Twitter
+              {dictionary.footer.footerNav2.Twitter}
             </a>
           </li>
           <li>
             <a href="#" target="_blank" rel="noopener noreferrer">
-              LinkedIn
+              {dictionary.footer.footerNav2.Linkedin}
             </a>
           </li>
           <li>
             <a href="#" target="_blank" rel="noopener noreferrer">
-              Facebook
+              {dictionary.footer.footerNav2.Facebook}
             </a>
           </li>
           <li>
             <a href="#" target="_blank" rel="noopener noreferrer">
-              GitHub
+              {dictionary.footer.footerNav2.GitHub}
             </a>
           </li>
         </LinkList>

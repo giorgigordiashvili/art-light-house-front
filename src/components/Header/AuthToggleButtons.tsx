@@ -1,5 +1,6 @@
 import React from "react";
 import styled from "styled-components";
+import { useLanguage } from "@/context/LanguageContext";
 
 const StyledContainer = styled.div`
   display: flex;
@@ -44,13 +45,14 @@ type Props = {
 };
 
 const AuthToggleButtons = ({ activeTab, setActiveTab }: Props) => {
+  const { dictionary } = useLanguage();
   return (
     <StyledContainer>
       <ToggleButton $active={activeTab === "auth"} onClick={() => setActiveTab("auth")}>
-        ავტორიზაცია
+        {dictionary.header.authorizationModal.title}
       </ToggleButton>
       <ToggleButton $active={activeTab === "register"} onClick={() => setActiveTab("register")}>
-        რეგისტრაცია
+        {dictionary.header.registrationModal.title}
       </ToggleButton>
     </StyledContainer>
   );

@@ -5,6 +5,7 @@ import ReturnIcon from "../../Header/ReturnIcon";
 import RightSlide from "./RightSlide";
 import Container from "../../ui/Container";
 import NewProductCard from "./NewProductCard";
+import { useLanguage } from "@/context/LanguageContext";
 
 const StyledContainer = styled.div`
   margin-top: 120px;
@@ -58,11 +59,12 @@ const StyledCards = styled.div`
 `;
 
 const NewProducts = () => {
+  const { dictionary } = useLanguage();
   return (
     <Container>
       <StyledContainer>
         <StyledTitleAndActions>
-          <SectionTitle text="ახალი პროდუქტები" image="newProduct" />
+          <SectionTitle text={dictionary.newProducts.title} image="newProduct" />
           <StyledActions>
             <ReturnIcon />
             <RightSlide />

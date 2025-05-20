@@ -1,6 +1,7 @@
 import React from "react";
 import styled, { css } from "styled-components";
 import Image from "next/image";
+import { useLanguage } from "@/context/LanguageContext";
 
 const StyledContainer = styled.div<{ $displayMobile?: "none" | "visible" }>`
   border-radius: 31px;
@@ -36,11 +37,13 @@ const StyledCountryName = styled.p`
 `;
 
 type Props = {
-  language: "ka" | "en";
+  language?: "ka" | "en";
   display?: "none" | "visible";
 };
 
-const LanguageSwitcher = ({ language, display }: Props) => {
+const LanguageSwitcher = ({ language: propLanguage, display }: Props) => {
+  const { language: contextLanguage } = useLanguage();
+  const language = propLanguage || contextLanguage;
   const imageSource = language === "ka" ? "/assets/geo.svg" : "/assets/USA.png";
   const countryName = language === "ka" ? "GEO" : "ENG";
 

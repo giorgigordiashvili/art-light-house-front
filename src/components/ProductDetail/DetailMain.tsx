@@ -11,6 +11,7 @@ import Card from "../ListProductCard/Card";
 import LeftCircle from "../ui/LeftCircle";
 import NewCircle from "../ui/NewCircle";
 import Circle from "../ui/Circle";
+import { useLanguage } from "@/context/LanguageContext";
 
 const StyledComponent = styled.div`
   background: black;
@@ -108,6 +109,8 @@ const CardGrid = styled.div`
 `;
 
 function ProductsMain() {
+  const { dictionary } = useLanguage();
+
   return (
     <StyledComponent>
       <NewCircle size="small" right="142px" top="1000px" media="yes" />
@@ -127,7 +130,6 @@ function ProductsMain() {
             </ButtonRow>
           </RightColumn>
         </FlexRow>
-
         <ProductHeader>
           <Image
             src="/assets/icons/notification-text.svg"
@@ -136,7 +138,7 @@ function ProductsMain() {
             height={32}
             style={{ borderRadius: 8, objectFit: "cover" }}
           />
-          <p>მსგავსი პროდუქტები</p>
+          <p>{dictionary.productDetails.subTitle}</p>
         </ProductHeader>
         <CardGrid>
           <Card />

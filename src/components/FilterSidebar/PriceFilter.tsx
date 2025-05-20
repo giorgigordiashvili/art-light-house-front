@@ -1,6 +1,7 @@
 import React from "react";
 // import RangeSlider from "./RangeSlider";
 import styled from "styled-components";
+import { useLanguage } from "@/context/LanguageContext";
 
 const Title = styled.p`
   color: white;
@@ -14,10 +15,11 @@ const Title = styled.p`
 `;
 
 const PriceFilter: React.FC = () => {
+  const { dictionary } = useLanguage();
   return (
     <>
-      <Title>ფასი</Title>
-      {/* <RangeSlider minLabel="დან" maxLabel="მდე" /> */}
+      <Title>{dictionary.products.filter.subTitle2}</Title>
+      {/* <RangeSlider minLabel={dictionary.products.placeholder1} maxLabel={dictionary.products.placeholder2} /> */}
     </>
   );
 };

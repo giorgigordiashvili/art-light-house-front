@@ -3,6 +3,7 @@ import UserMenuItem from "./UserMenuItem";
 import styled from "styled-components";
 import { useClerk } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
+import { useLanguage } from "@/context/LanguageContext";
 
 const StyledContainer = styled.div`
   width: 304px;
@@ -69,6 +70,7 @@ interface UserMenuProps {
 const UserMenu = ({ closeModal }: UserMenuProps) => {
   const { signOut } = useClerk();
   const router = useRouter();
+  const { dictionary } = useLanguage();
 
   const handleSignOut = async () => {
     await signOut();
@@ -83,7 +85,7 @@ const UserMenu = ({ closeModal }: UserMenuProps) => {
           <StyledUserMenuContent>
             <StyledUserMenuItem>
               <UserMenuItem
-                text="ჩემი დეტალები"
+                text={dictionary.profile.detailBar1}
                 icon="/assets/detailsIcon.svg"
                 route="/profile"
                 onClick={closeModal}
@@ -91,7 +93,7 @@ const UserMenu = ({ closeModal }: UserMenuProps) => {
             </StyledUserMenuItem>
             <StyledUserMenuItem>
               <UserMenuItem
-                text="ჩემი მისამართები"
+                text={dictionary.profile.detailBar2}
                 icon="/assets/addressIcon.svg"
                 route="/address"
                 onClick={closeModal}
@@ -99,7 +101,7 @@ const UserMenu = ({ closeModal }: UserMenuProps) => {
             </StyledUserMenuItem>
             <StyledUserMenuItem>
               <UserMenuItem
-                text="ჩემი შეკვეთები"
+                text={dictionary.profile.detailBar3}
                 icon="/assets/orderIcon.svg"
                 route="/orders"
                 onClick={closeModal}
@@ -107,20 +109,24 @@ const UserMenu = ({ closeModal }: UserMenuProps) => {
             </StyledUserMenuItem>
             <StyledUserMenuItem>
               <UserMenuItem
-                text="გადახდის მეთოდები"
+                text={dictionary.profile.detailBar4}
                 icon="/assets/paymentIcon.svg"
                 onClick={closeModal}
               />
             </StyledUserMenuItem>
             <StyledUserMenuItem>
               <UserMenuItem
-                text="პარამეტრები"
+                text={dictionary.profile.detailBar5}
                 icon="/assets/settingsIcon.svg"
                 onClick={closeModal}
               />
             </StyledUserMenuItem>
             <StyledUserMenuItem onClick={handleSignOut}>
-              <UserMenuItem text="გასვლა" icon="/assets/exitIcon.svg" color="red" />
+              <UserMenuItem
+                text={dictionary.profile.detailBar6}
+                icon="/assets/exitIcon.svg"
+                color="red"
+              />
             </StyledUserMenuItem>
           </StyledUserMenuContent>
         </StyledContainer>

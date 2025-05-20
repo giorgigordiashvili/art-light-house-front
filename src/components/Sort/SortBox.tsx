@@ -1,6 +1,7 @@
 "use client";
 import styled from "styled-components";
 import { useState } from "react";
+import { useLanguage } from "@/context/LanguageContext";
 
 const Box = styled.div`
   background: #1a1a1a;
@@ -35,9 +36,14 @@ type Props = {
 };
 
 const SortBox = ({ onSortChange }: Props) => {
-  const [selected, setSelected] = useState("ფასი: ზრდადობით");
-
-  const options = ["ფასი: კლებადობით", "ფასი: ზრდადობით", "დასახელება: A-Z", "დასახელება: Z-A"];
+  const { dictionary } = useLanguage();
+  const [selected, setSelected] = useState(dictionary.products.sortOption2);
+  const options = [
+    dictionary.products.sortOption1,
+    dictionary.products.sortOption2,
+    dictionary.products.sortOption3,
+    dictionary.products.sortOption4,
+  ];
 
   const handleClick = (option: string) => {
     setSelected(option);

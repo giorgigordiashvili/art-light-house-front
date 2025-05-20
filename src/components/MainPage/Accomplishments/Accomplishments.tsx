@@ -6,6 +6,7 @@ import Counts from "./Counts";
 import CountLine from "./CountLine";
 import Container from "../../ui/Container";
 import Circle from "@/components/ui/Circle";
+import { useLanguage } from "@/context/LanguageContext";
 
 const StyledComponent = styled.div`
   position: relative;
@@ -101,6 +102,7 @@ const StyledLine = styled.div`
 `;
 
 const Accomplishments = () => {
+  const { dictionary } = useLanguage();
   return (
     <Container>
       <StyledComponent>
@@ -112,25 +114,25 @@ const Accomplishments = () => {
         </StyledRightCircle>
         <BorderWrapper>
           <StyledContainer>
-            <AccomplishmentTitle text="ჩვენი მიღწევები" />
+            <AccomplishmentTitle text={dictionary.accomplihsments.title1} />
             <StyledDescription>
-              <AccomplishmentDescription text="კმაყოფილი მომხმარებლები ჩვენი წარმატების საფუძველია. მათი პოზიტიური გამოცდილება და რეკომენდაციები ჩვენთვის ყველაზე დიდი პრემიებია." />
+              <AccomplishmentDescription text={dictionary.accomplihsments.description} />
             </StyledDescription>
             <StyledCountsWrapper>
               <StyledCounts>
-                <Counts count="140+" subTitle="შესრულებული პროექტი" />
+                <Counts count="140+" subTitle={dictionary.accomplihsments.done} />
               </StyledCounts>
               <StyledLine>
                 <CountLine />
               </StyledLine>
               <StyledCounts>
-                <Counts count="19" subTitle="პარტნიორი" />
+                <Counts count="19" subTitle={dictionary.accomplihsments.parthner} />
               </StyledCounts>
               <StyledLine>
                 <CountLine />
               </StyledLine>
               <StyledCounts>
-                <Counts count="7" subTitle="მაღაზია" />
+                <Counts count="7" subTitle={dictionary.accomplihsments.shop} />
               </StyledCounts>
             </StyledCountsWrapper>
           </StyledContainer>

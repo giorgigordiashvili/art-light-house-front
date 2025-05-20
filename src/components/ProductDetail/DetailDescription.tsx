@@ -1,3 +1,4 @@
+import { useLanguage } from "@/context/LanguageContext";
 import styled from "styled-components";
 
 const Wrapper = styled.div`
@@ -50,17 +51,12 @@ const Description = styled.p`
 `;
 
 const DetailDescription = () => {
+  const { dictionary } = useLanguage();
   return (
     <Wrapper>
-      <Title>ლურჯი ვარსკვლავის ჭაღი</Title>
+      <Title>{dictionary.productDetails.title}</Title>
       <Price>199,99 ₾</Price>
-      <Description>
-        ეს ჭაღი შექმნილია თანამედროვე დიზაინის მიხედვით და იდეალურად შეესაბამება ნებისმიერი
-        ინტერიერის სტილს. მისი უნიკალური ფორმა და ლურჯი ფერის ელემენტები ქმნიან განსაკუთრებულ
-        ატმოსფეროს თქვენს სახლში. ჭაღი აღჭურვილია ენერგოეფექტური LED ნათურებით, რაც უზრუნველყოფს
-        ხანგრძლივ მომსახურებას და დაბალ ენერგომოხმარებას. შეიძინეთ ახლა ჩვენს ვებსაიტზე და
-        გაამდიდრეთ თქვენი სივრცე!
-      </Description>
+      <Description>{dictionary.productDetails.description}</Description>
     </Wrapper>
   );
 };

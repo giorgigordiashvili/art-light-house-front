@@ -1,4 +1,5 @@
 import styled from "styled-components";
+import { useLanguage } from "@/context/LanguageContext";
 
 const StyleBuyButton = styled.div`
   width: 195px;
@@ -34,9 +35,10 @@ type Props = {
 };
 
 const BuyButton = ({ onClick }: Props) => {
+  const { dictionary } = useLanguage();
   return (
     <StyleBuyButton onClick={onClick}>
-      <ButtonText>ყიდვა</ButtonText>
+      <ButtonText>{dictionary.productDetails.buy}</ButtonText>
     </StyleBuyButton>
   );
 };

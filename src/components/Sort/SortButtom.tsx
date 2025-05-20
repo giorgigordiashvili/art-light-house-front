@@ -1,3 +1,4 @@
+import { useLanguage } from "@/context/LanguageContext";
 import styled from "styled-components";
 
 const Button = styled.button`
@@ -53,15 +54,16 @@ interface SortButtonProps {
 }
 
 const SortButton: React.FC<SortButtonProps> = ({
-  label = "სორტირება",
+  label,
   onClick,
   iconSrc = "/assets/icons/Sort Icon.svg",
   iconAlt = "icon",
 }) => {
+  const { dictionary } = useLanguage();
   return (
     <Button onClick={onClick}>
       {iconSrc && <SortIcon src={iconSrc} alt={iconAlt} />}
-      <Label>{label}</Label>
+      <Label>{label || dictionary.products.sort}</Label>
     </Button>
   );
 };

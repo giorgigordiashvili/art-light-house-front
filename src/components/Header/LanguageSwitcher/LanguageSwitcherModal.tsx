@@ -1,6 +1,7 @@
 import React from "react";
 import styled from "styled-components";
 import DividerLine from "@/components/MainPage/HeroAndCategory/DividerLine";
+import { useLanguage } from "@/context/LanguageContext";
 
 const ModalLayoutWrapper = styled.div`
   width: 100%;
@@ -56,6 +57,7 @@ type Props = {
 };
 
 const LanguageSwitcherModal = ({ id, onLanguageChange, currentLanguage }: Props) => {
+  const { dictionary } = useLanguage();
   const handleLanguageSelect = (language: "ka" | "en") => {
     onLanguageChange(language);
   };
@@ -68,14 +70,14 @@ const LanguageSwitcherModal = ({ id, onLanguageChange, currentLanguage }: Props)
             $isActive={currentLanguage === "ka"}
             onClick={() => handleLanguageSelect("ka")}
           >
-            ქართული
+            {dictionary.header.language === "ენა" ? "ქართული" : "Georgian"}
           </StyledText>
           <DividerLine variant="dark" />
           <StyledText
             $isActive={currentLanguage === "en"}
             onClick={() => handleLanguageSelect("en")}
           >
-            English
+            {dictionary.header.language === "ენა" ? "ინგლისური" : "English"}
           </StyledText>
         </StyledContainer>
       </ModalLayout>

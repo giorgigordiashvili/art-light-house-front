@@ -3,6 +3,7 @@ import styled from "styled-components";
 import GoogleMap from "./GoogleMap";
 import Data from "./Data";
 import GoogleMapButton from "./GoogleMapButton";
+import { useLanguage } from "@/context/LanguageContext";
 
 const OuterContainer = styled.div<{ side?: "left" | "right" }>`
   border-radius: 32px;
@@ -69,6 +70,7 @@ type Props = {
 };
 
 const ContactCard = ({ side = "left" }: Props) => {
+  const { dictionary } = useLanguage();
   return (
     <OuterContainer side={side}>
       <StyledContainer>
@@ -76,21 +78,25 @@ const ContactCard = ({ side = "left" }: Props) => {
         <StyledAction>
           <div style={{ flex: 1, minWidth: 0 }}>
             <Data
-              title="მისამართი"
-              data="თბილისი"
+              title={dictionary.contact.address}
+              data={dictionary.contact.city}
               image="address"
-              secondData="ბახტრიონის N23"
+              secondData={dictionary.contact.physicalAddress}
               withDivider
               boldData
             />
           </div>
-          <GoogleMapButton text="Google Maps" />
+          <GoogleMapButton text={dictionary.contact.button} />
         </StyledAction>
         <StyledData>
-          <Data title="ტელეფონის ნომერი" data="(+995) 577 45 55 55" image="phone" />
+          <Data
+            title={dictionary.contact.phoneNumber}
+            data={dictionary.contact.number}
+            image="phone"
+          />
         </StyledData>
         <StyledData>
-          <Data title="სამუშაო საათები" data="10:00 - 21:00" image="time" />
+          <Data title={dictionary.contact.workHours} data={dictionary.contact.hours} image="time" />
         </StyledData>
       </StyledContainer>
     </OuterContainer>

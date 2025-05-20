@@ -1,5 +1,6 @@
 import styled from "styled-components";
 import Image from "next/image";
+import { useLanguage } from "@/context/LanguageContext";
 
 const StyleAddButton = styled.div`
   /* position: absolute; */
@@ -37,10 +38,11 @@ type Props = {
 };
 
 const AddToCartButton = ({ onClick }: Props) => {
+  const { dictionary } = useLanguage();
   return (
     <StyleAddButton onClick={onClick}>
       <Image src="/assets/icons/addToCart.svg" alt="cart" width={24} height={24} />
-      <ButtonText>კალათაში დამატება</ButtonText>
+      <ButtonText>{dictionary.productDetails.addToCart}</ButtonText>
     </StyleAddButton>
   );
 };
