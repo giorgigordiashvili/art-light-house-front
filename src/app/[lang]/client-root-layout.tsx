@@ -1,24 +1,27 @@
 "use client";
+
 import Footer from "@/components/Footer/Footer";
 import Header from "@/components/Header/Header";
-import StyledComponentsRegistry from "../../lib/registry";
-import "./globals.css";
+import StyledComponentsRegistry from "../../../lib/registry";
+import "../globals.css"; // Global styles
 import { usePathname } from "next/navigation";
 import { ClerkProvider } from "@clerk/nextjs";
-import { useEffect } from "react";
+import { ReactNode, useEffect } from "react";
+import { Dictionary } from "@/config/get-dictionary";
 
-export default function RootLayout({
-  children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
+interface ClientRootLayoutProps {
+  children: ReactNode;
+  lang: string; // The locale passed from the server layout
+  dictionary: Dictionary; // The dictionary passed from the server layout
+}
+
+export default function ClientRootLayout({ children, lang, dictionary }: ClientRootLayoutProps) {
   const pathname = usePathname();
   const isAdminRoute = pathname?.startsWith("/admin");
 
-  // Add error handling with a useEffect
+  // Add error handling with a useEffect (your existing Clerk error handling)
   useEffect(() => {
     if (typeof window !== "undefined") {
-      // Listen for OAuth-related errors
       const handleError = (event: ErrorEvent) => {
         if (
           event.error &&
@@ -42,7 +45,6 @@ export default function RootLayout({
     <ClerkProvider
       appearance={{
         elements: {
-          // Ensure captcha elements have proper styling
           formButtonPrimary: "bg-yellow-500 hover:bg-yellow-600 text-black",
           captchaContainer: "w-full flex justify-center my-4",
           userButtonAvatarBox: "w-10 h-10 overflow-hidden",
@@ -59,19 +61,21 @@ export default function RootLayout({
         },
       }}
     >
-      <html lang="en">
+      <html lang={lang}>
         <head>
           <meta name="viewport" content="width=device-width, initial-scale=1" />
           <title>Art Light House</title>
           <meta name="description" content="Art Light House - Premium lighting solutions" />
         </head>
         <body>
-          {/* Add a hidden div for Clerk CAPTCHA at the root level */}
           <div id="clerk-captcha" style={{ display: "none" }}></div>
           <StyledComponentsRegistry>
-            {!isAdminRoute && <Header />}
+            {/* Pass only the relevant parts of the dictionary to Header and Footer */}
+            {!isAdminRoute && <Header header={dictionary.header} />}{" "}
+            {/* Assuming 'common' namespace for Header/Footer */}
             {children}
-            {!isAdminRoute && <Footer />}
+            {!isAdminRoute && <Footer footer={dictionary.footer} />}{" "}
+            {/* Pass common translations */}
           </StyledComponentsRegistry>
         </body>
       </html>

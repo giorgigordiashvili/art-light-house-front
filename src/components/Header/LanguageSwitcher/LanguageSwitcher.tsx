@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import styled, { css } from "styled-components";
 import Image from "next/image";
 
@@ -41,10 +41,14 @@ type Props = {
 };
 
 const LanguageSwitcher = ({ language, display }: Props) => {
-  const imageSource = language === "ka" ? "/assets/geo.svg" : "/assets/USA.png";
-  const countryName = language === "ka" ? "GEO" : "ENG";
+  const imageSource = language === "ge" ? "/assets/geo.svg" : "/assets/USA.png";
+  const countryName = language === "ge" ? "GEO" : "ENG";
 
   const displayMobile = display === "none" ? "none" : undefined;
+
+  useEffect(() => {
+    console.log(language);
+  }, []);
 
   return (
     <StyledContainer $displayMobile={displayMobile}>

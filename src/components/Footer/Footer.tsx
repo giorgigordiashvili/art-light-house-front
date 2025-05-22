@@ -13,7 +13,7 @@ const StyledFooter = styled.div`
   }
 `;
 
-function Footer() {
+function Footer({ footer }) {
   return (
     <StyledFooter>
       <Container>

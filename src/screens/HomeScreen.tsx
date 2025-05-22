@@ -11,11 +11,11 @@ const StyledComponent = styled.div`
   background-repeat: no-repeat;
 `;
 
-const HomeScreen = () => {
+const HomeScreen = ({ dictionary }) => {
   return (
     <StyledComponent>
       <BigCircle variant={1} />
-      <MainPage />
+      <MainPage dictionary={dictionary} />
     </StyledComponent>
   );
 };

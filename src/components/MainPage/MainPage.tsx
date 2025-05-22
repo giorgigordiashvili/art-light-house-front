@@ -5,10 +5,10 @@ import PopularProducts from "./PopularProducts/PopularProducts";
 import Accomplishments from "./Accomplishments/Accomplishments";
 import Contact from "../Contact/Contact";
 
-const MainPage = () => {
+const MainPage = ({ dictionary }) => {
   return (
     <>
-      <HeroAndCategory />
+      <HeroAndCategory dictionary={dictionary.hero} />
       <NewProducts />
       <PopularProducts />
       <Accomplishments />

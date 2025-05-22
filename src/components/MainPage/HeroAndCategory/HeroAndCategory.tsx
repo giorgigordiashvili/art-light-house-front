@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { useEffect } from "react";
 import styled from "styled-components";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation } from "swiper/modules";
@@ -117,32 +117,31 @@ const StyledCategoryTitle = styled.div`
   }
 `;
 
-const heroSlides = [
-  {
-    lightText: "გაანათე",
-    text: "შენი სახლი",
-    description:
-      "ჩვენი განათება ქმნის განსაკუთრებულ გარემოს, რომელიც ვიზუალურად მიმზიდველია და ემოციურ გამოცდილებას ქმნის.",
-    buttonText: "ყველა პროდუქტი",
-    href: "/products",
-  },
-  {
-    lightText: "შექმენი",
-    text: "მყუდრო ატმოსფერო",
-    description: "თანამედროვე დიზაინი და ტემპერატურა, რომელიც თქვენ გჭირდებათ.",
-    buttonText: "მეტის ნახვა",
-    href: "/",
-  },
-  {
-    lightText: "აირჩიე",
-    text: "ხარისხიანი შუქი",
-    description: "ჩვენი პროდუქცია აკმაყოფილებს ყველა სტანდარტს და სანდოა.",
-    buttonText: "ახალი კოლექცია",
-    href: "/",
-  },
-];
+const HeroAndCategory = ({ dictionary }) => {
+  const heroSlides = [
+    {
+      lightText: dictionary.title.split(" ")[0],
+      text: dictionary.title.split(" ")[1] + " " + dictionary.title.split(" ")[2],
+      description: dictionary.description,
+      buttonText: dictionary.button,
+      href: "/products",
+    },
+    {
+      lightText: "შექმენი",
+      text: "მყუდრო ატმოსფერო",
+      description: "თანამედროვე დიზაინი და ტემპერატურა, რომელიც თქვენ გჭირდებათ.",
+      buttonText: "მეტის ნახვა",
+      href: "/",
+    },
+    {
+      lightText: "აირჩიე",
+      text: "ხარისხიანი შუქი",
+      description: "ჩვენი პროდუქცია აკმაყოფილებს ყველა სტანდარტს და სანდოა.",
+      buttonText: "ახალი კოლექცია",
+      href: "/",
+    },
+  ];
 
-const HeroAndCategory = () => {
   return (
     <StyledContainer>
       <StyledLinearGradient />

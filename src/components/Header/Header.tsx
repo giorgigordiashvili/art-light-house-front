@@ -18,6 +18,9 @@ import CartModal from "./CartModal";
 import LanguageSwitcher from "./LanguageSwitcher/LanguageSwitcher";
 import LanguageSwitcherModal from "./LanguageSwitcher/LanguageSwitcherModal";
 import { useUser } from "@clerk/nextjs";
+import { i18n } from "@/config/i18n";
+import { usePathname } from "next/navigation";
+import { router } from "next/client";
 
 const StyledContainer = styled.div`
   position: fixed;
@@ -122,7 +125,9 @@ const StyledTest = styled.div`
   }
 `;
 
-const Header = () => {
+const Header = ({ header }) => {
+  const pathname = usePathname();
+
   const [cartItemCount] = useState<number>(4);
   const [isBurgerMenuOpen, setIsBurgerMenuOpen] = useState(false);
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
@@ -133,7 +138,7 @@ const Header = () => {
   const [isCartModalOpen, setIsCartModalOpen] = useState(false);
   const [cartIconColor, setCartIconColor] = useState("#fff");
   const [isLanguageSwitcherModalOpen, setIsLanguageSwitcherModalOpen] = useState(false);
-  const [selectedLanguage, setSelectedLanguage] = useState<"ka" | "en">("ka");
+  const [selectedLanguage, setSelectedLanguage] = useState<"ge" | "en">("ge");
 
   const burgerMenuRef = useRef<HTMLDivElement>(null);
   const burgerIconRef = useRef<HTMLDivElement>(null);
@@ -143,6 +148,10 @@ const Header = () => {
   const toggleBurgerMenu = () => {
     setIsBurgerMenuOpen((prev) => !prev);
   };
+
+  useEffect(() => {
+    // console.log(header);
+  }, []);
 
   useEffect(() => {
     document.body.style.overflow =
@@ -257,9 +266,14 @@ const Header = () => {
     closeCartModal();
   };
 
-  const handleLanguageChange = (language: "ka" | "en") => {
+  const handleLanguageChange = (language: "ge" | "en") => {
     setSelectedLanguage(language);
     closeLanguageSwitcherModal();
+
+    if (!pathname) return "/";
+    const segments = pathname.split("/");
+    segments[1] = language;
+    return segments.join("/");
   };
 
   return (
@@ -270,10 +284,10 @@ const Header = () => {
             <Logo size="small" href="/" />
             <StyledActionsWrapper>
               <StyledNavigation>
-                <NavItem text="პროდუქცია" href="/products" />
-                <NavItem text="ფასდაკლება" href="/" />
-                <NavItem text="პროექტი" href="/" />
-                <NavItem text="კონტაქტი" href="/contact" />
+                <NavItem text={header.products} href="/products" />
+                <NavItem text={header.sale} href="/" />
+                <NavItem text={header.project} href="/" />
+                <NavItem text={header.contact} href="/contact" />
               </StyledNavigation>
               <StyledUserActions>
                 <StyledVerticalLine />
@@ -312,7 +326,7 @@ const Header = () => {
                   </div>
                 </ResponsiveGapWrapper>
                 <div id="languageSwitcher" onClick={handleLanguageSwitcherClick}>
-                  <LanguageSwitcher language={selectedLanguage} display="none" />
+                  <LanguageSwitcher language={pathname.split("/")[1]} display="none" />
                 </div>
               </StyledUserActions>
             </StyledActionsWrapper>
@@ -421,7 +435,7 @@ const Header = () => {
               <LanguageSwitcherModal
                 id="languageSwitcherModal"
                 onLanguageChange={handleLanguageChange}
-                currentLanguage={selectedLanguage}
+                currentLanguage={pathname.split("/")[1]}
               />
             </StyledTest>
           </StyledTestWrapper>

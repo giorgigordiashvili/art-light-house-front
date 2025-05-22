@@ -1,6 +1,8 @@
 import React from "react";
 import styled from "styled-components";
 import DividerLine from "@/components/MainPage/HeroAndCategory/DividerLine";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 
 const ModalLayoutWrapper = styled.div`
   width: 100%;
@@ -51,32 +53,45 @@ const StyledText = styled.p<{ $isActive: boolean }>`
 
 type Props = {
   id?: string;
-  onLanguageChange: (language: "ka" | "en") => void;
+  onLanguageChange: (language: "ge" | "en") => void;
   currentLanguage: "ka" | "en";
 };
 
 const LanguageSwitcherModal = ({ id, onLanguageChange, currentLanguage }: Props) => {
-  const handleLanguageSelect = (language: "ka" | "en") => {
+  const pathname = usePathname();
+
+  const handleLanguageSelect = (language: "ge" | "en") => {
     onLanguageChange(language);
+  };
+
+  const redirectedPathname = (locale: string) => {
+    if (!pathname) return "/";
+    const segments = pathname.split("/");
+    segments[1] = locale;
+    return segments.join("/");
   };
 
   return (
     <ModalLayoutWrapper>
       <ModalLayout>
         <StyledContainer id={id}>
-          <StyledText
-            $isActive={currentLanguage === "ka"}
-            onClick={() => handleLanguageSelect("ka")}
-          >
-            ქართული
-          </StyledText>
+          <Link href={redirectedPathname("ge")}>
+            <StyledText
+              $isActive={currentLanguage === "ge"}
+              onClick={() => handleLanguageSelect("ge")}
+            >
+              ქართული
+            </StyledText>
+          </Link>
           <DividerLine variant="dark" />
-          <StyledText
-            $isActive={currentLanguage === "en"}
-            onClick={() => handleLanguageSelect("en")}
-          >
-            English
-          </StyledText>
+          <Link href={redirectedPathname("en")}>
+            <StyledText
+              $isActive={currentLanguage === "en"}
+              onClick={() => handleLanguageSelect("en")}
+            >
+              English
+            </StyledText>
+          </Link>
         </StyledContainer>
       </ModalLayout>
     </ModalLayoutWrapper>
