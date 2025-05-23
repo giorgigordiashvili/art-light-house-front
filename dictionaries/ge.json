@@ -107,12 +107,13 @@
     "title2": "კონტაქტი",
     "address": "მისამართი",
     "city": "თბილისი",
-    "physicalAddress": "მისამართის ნომერი #22",
+    "physicalAddress": "ბახტრიონის N23",
     "phoneNumber": "ტელეფონის ნომერი",
     "number": "(+995) 577 45 55 55",
     "workHours": "სამუშაო საათები",
     "hours": "10:00 - 21:00",
-    "button": "Google Maps"
+    "button": "Google Maps",
+    "googleMapClusterAddress": "ბახტრიონის N23"
   },
   "footer": {
     "description": "ჩვენი განათება ქმნის განსაკუთრებულ გარემოს, რომელიც ვიზუალურად მიმზიდველია და ემოციურ გამოცდილებას ქმნის. ",

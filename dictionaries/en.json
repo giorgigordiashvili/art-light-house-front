@@ -112,7 +112,8 @@
     "number": "(+995) 577 45 55 55",
     "workHours": "Working hours",
     "hours": "10:00 - 21:00",
-    "button": "Google Maps"
+    "button": "Google Maps",
+    "googleMapClusterAddress": "bakhtrioni N23"
   },
   "footer": {
     "description": "Our lighting creates a special atmosphere that is visually appealing and creates an emotional experience.",
