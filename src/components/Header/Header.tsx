@@ -19,7 +19,7 @@ import LanguageSwitcher from "./LanguageSwitcher/LanguageSwitcher";
 import LanguageSwitcherModal from "./LanguageSwitcher/LanguageSwitcherModal";
 import { useUser } from "@clerk/nextjs";
 import { i18n } from "@/config/i18n";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { router } from "next/client";
 
 const StyledContainer = styled.div`
@@ -132,6 +132,7 @@ interface HeaderProps {
 
 const Header = ({ header, dictionary }: HeaderProps) => {
   const pathname = usePathname();
+  const router = useRouter();
 
   const [cartItemCount] = useState<number>(4);
   const [isBurgerMenuOpen, setIsBurgerMenuOpen] = useState(false);
@@ -143,7 +144,9 @@ const Header = ({ header, dictionary }: HeaderProps) => {
   const [isCartModalOpen, setIsCartModalOpen] = useState(false);
   const [cartIconColor, setCartIconColor] = useState("#fff");
   const [isLanguageSwitcherModalOpen, setIsLanguageSwitcherModalOpen] = useState(false);
-  const [selectedLanguage, setSelectedLanguage] = useState<"ge" | "en">("ge");
+  const [selectedLanguage, setSelectedLanguage] = useState<"ge" | "en">(
+    (pathname?.split("/")[1] as "ge" | "en") || "ge"
+  );
 
   const burgerMenuRef = useRef<HTMLDivElement>(null);
   const burgerIconRef = useRef<HTMLDivElement>(null);
@@ -275,10 +278,11 @@ const Header = ({ header, dictionary }: HeaderProps) => {
     setSelectedLanguage(language);
     closeLanguageSwitcherModal();
 
-    if (!pathname) return "/";
+    if (!pathname) return;
     const segments = pathname.split("/");
     segments[1] = language;
-    return segments.join("/");
+    const newPath = segments.join("/");
+    router.push(newPath);
   };
 
   return (
@@ -383,7 +387,10 @@ const Header = ({ header, dictionary }: HeaderProps) => {
       {isRecoverPasswordOpen && (
         <>
           <Overlay onClick={() => setIsRecoverPasswordOpen(false)} />
-          <RecoverPasswordModal onClose={() => setIsRecoverPasswordOpen(false)} />
+          <RecoverPasswordModal
+            onClose={() => setIsRecoverPasswordOpen(false)}
+            dictionary={dictionary}
+          />
         </>
       )}
 
