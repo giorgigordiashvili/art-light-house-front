@@ -36,12 +36,12 @@ const Divider = styled.div`
   }
 `;
 
-function FooterContent() {
+function FooterContent({ footer }: any) {
   return (
     <>
       <TopSection>
-        <FooterDescription />
-        <FooterLinks />
+        <FooterDescription footer={footer} />
+        <FooterLinks footer={footer} />
       </TopSection>
 
       <MobileOnlyIcons>

@@ -61,9 +61,15 @@
     }
   },
   "hero": {
-    "title": "Illuminate your home",
-    "description": "Our lighting creates a special atmosphere that is visually appealing and creates an emotional experience.",
-    "button": "All products"
+    "title": "Illuminate Your Home",
+    "title2": "Create a Cozy Atmosphere",
+    "title3": "Choose Quality Lighting",
+    "description": "Our lighting creates a special environment that is visually appealing and forms an emotional experience.",
+    "description2": "Modern design and the temperature you need.",
+    "description3": "Our products meet all standards and are reliable.",
+    "button": "All Products",
+    "button2": "See More",
+    "button3": "New Collection"
   },
   "category": {
     "title": "Choose with taste",
@@ -98,6 +104,7 @@
   },
   "contact": {
     "title": "Addresses",
+    "title2": "Contact",
     "address": "Address",
     "city": "Tbilisi",
     "physicalAddress": "Address number #22",

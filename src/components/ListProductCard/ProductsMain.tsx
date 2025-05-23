@@ -65,7 +65,7 @@ const OnDesktop = styled.div`
   }
 `;
 
-function ProductsMain() {
+function ProductsMain({ dictionary }: any) {
   const [isMobileFilterDropdownVisible, setMobileFilterDropdownVisible] = useState(false);
 
   const toggleMobileFilterDropdown = () => {
@@ -75,7 +75,7 @@ function ProductsMain() {
   return (
     <StyledComponent>
       <Container>
-        <PageTitle>პროდუქტები</PageTitle>
+        <PageTitle>{dictionary.title}</PageTitle>
         <SortWrapper>
           <OnMobile>
             <FilterButton onClick={toggleMobileFilterDropdown} />
@@ -84,9 +84,9 @@ function ProductsMain() {
         </SortWrapper>
         <ContentWrapper>
           <OnDesktop>
-            <FilterSidebar />
+            <FilterSidebar dictionary={dictionary.filter} />
           </OnDesktop>
-          <CardGrid />
+          <CardGrid dictionary={dictionary} />
         </ContentWrapper>
 
         {isMobileFilterDropdownVisible && (

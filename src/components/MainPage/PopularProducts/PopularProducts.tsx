@@ -26,28 +26,28 @@ const StyledCards = styled.div`
   }
 `;
 
-const PopularProducts = () => {
+const PopularProducts = ({ dictionary }: any) => {
   return (
     <Container>
       <StyledContainer>
-        <SectionTitle text="შეარჩიე ოთახისთვის" image="family" />
+        <SectionTitle text={dictionary.title} image="family" />
         <StyledCards>
           <PopularProductCard
             image="/assets/bedroom.svg"
-            label="საძინებელი"
+            label={dictionary.bedroom}
             width={511}
             isRightAligned
             changeHeightMobile
           />
           <PopularProductCard
             image="/assets/livingroom.svg"
-            label="მისაღები"
+            label={dictionary.livingRoom}
             width={242}
             isMiddleCard
           />
           <PopularProductCard
             image="/assets/kitchen.svg"
-            label="სამზარეულო"
+            label={dictionary.kitchen}
             width={503}
             isRightAligned
             changeHeightMobile

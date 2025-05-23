@@ -13,10 +13,10 @@ const Title = styled.p`
   margin-bottom: 18px;
 `;
 
-const PriceFilter: React.FC = () => {
+const PriceFilter: React.FC = ({ dictionary }: any) => {
   return (
     <>
-      <Title>ფასი</Title>
+      <Title>{dictionary.subTitle2}</Title>
       {/* <RangeSlider minLabel="დან" maxLabel="მდე" /> */}
     </>
   );

@@ -28,18 +28,18 @@ const Title = styled.p`
   color: white;
 `;
 
-function FilterSidebar() {
+function FilterSidebar({ dictionary }: any) {
   return (
     <SidebarWrapper>
-      <Title>ფილტრი</Title>
+      <Title>{dictionary.title}</Title>
       <Line />
-      <CategoryFilter />
+      <CategoryFilter dictionary={dictionary} />
       <Line />
-      <PriceFilter />
+      <PriceFilter dictionary={dictionary} />
       <Line />
-      <StyleFilter />
+      <StyleFilter dictionary={dictionary} />
       <Line />
-      <TypeFilter />
+      <TypeFilter dictionary={dictionary} />
     </SidebarWrapper>
   );
 }

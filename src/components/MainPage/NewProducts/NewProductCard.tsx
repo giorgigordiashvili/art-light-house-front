@@ -165,7 +165,7 @@ const StyledActions = styled.div`
   }
 `;
 
-const NewProductCard = () => {
+const NewProductCard = ({ dictionary }: any) => {
   const isMobile = useIsMobile();
 
   return (
@@ -179,7 +179,7 @@ const NewProductCard = () => {
         />
       </StyledImageWrapper>
       <StyledActions>
-        <CardText name="ეზოს სანათი" price="199,99 ₾" />
+        <CardText name={dictionary.light1} price="199,99 ₾" />
         <PlusButton />
       </StyledActions>
     </StyledContainer>

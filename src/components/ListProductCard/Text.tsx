@@ -44,11 +44,11 @@ const DescriptionText = styled.div`
   }
 `;
 
-const ProductText = () => {
+const ProductText = ({ dictionary }: any) => {
   return (
     <TextWrapper>
       <PriceText>199,99 ₾</PriceText>
-      <DescriptionText>ეზოს სანათი</DescriptionText>
+      <DescriptionText>{dictionary?.cardTitle}</DescriptionText>
     </TextWrapper>
   );
 };

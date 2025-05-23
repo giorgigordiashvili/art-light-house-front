@@ -100,7 +100,7 @@ const StyledLine = styled.div`
   }
 `;
 
-const Accomplishments = () => {
+const Accomplishments = ({ dictionary }: any) => {
   return (
     <Container>
       <StyledComponent>
@@ -112,25 +112,25 @@ const Accomplishments = () => {
         </StyledRightCircle>
         <BorderWrapper>
           <StyledContainer>
-            <AccomplishmentTitle text="ჩვენი მიღწევები" />
+            <AccomplishmentTitle text={dictionary.title1} />
             <StyledDescription>
-              <AccomplishmentDescription text="კმაყოფილი მომხმარებლები ჩვენი წარმატების საფუძველია. მათი პოზიტიური გამოცდილება და რეკომენდაციები ჩვენთვის ყველაზე დიდი პრემიებია." />
+              <AccomplishmentDescription text={dictionary.description} />
             </StyledDescription>
             <StyledCountsWrapper>
               <StyledCounts>
-                <Counts count="140+" subTitle="შესრულებული პროექტი" />
+                <Counts count="140+" subTitle={dictionary.done} />
               </StyledCounts>
               <StyledLine>
                 <CountLine />
               </StyledLine>
               <StyledCounts>
-                <Counts count="19" subTitle="პარტნიორი" />
+                <Counts count="19" subTitle={dictionary.parthner} />
               </StyledCounts>
               <StyledLine>
                 <CountLine />
               </StyledLine>
               <StyledCounts>
-                <Counts count="7" subTitle="მაღაზია" />
+                <Counts count="7" subTitle={dictionary.shop} />
               </StyledCounts>
             </StyledCountsWrapper>
           </StyledContainer>

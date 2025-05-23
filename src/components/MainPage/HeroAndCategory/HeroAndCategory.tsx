@@ -127,17 +127,22 @@ const HeroAndCategory = ({ dictionary }) => {
       href: "/products",
     },
     {
-      lightText: "შექმენი",
-      text: "მყუდრო ატმოსფერო",
-      description: "თანამედროვე დიზაინი და ტემპერატურა, რომელიც თქვენ გჭირდებათ.",
-      buttonText: "მეტის ნახვა",
+      lightText: dictionary.title2.split(" ")[0],
+      text:
+        dictionary.title2.split(" ")[1] +
+        " " +
+        dictionary.title2.split(" ")[2] +
+        " " +
+        dictionary.title2.split(" ")[3],
+      description: dictionary.description2,
+      buttonText: dictionary.button2,
       href: "/",
     },
     {
-      lightText: "აირჩიე",
-      text: "ხარისხიანი შუქი",
-      description: "ჩვენი პროდუქცია აკმაყოფილებს ყველა სტანდარტს და სანდოა.",
-      buttonText: "ახალი კოლექცია",
+      lightText: dictionary.title3.split(" ")[0],
+      text: dictionary.title3.split(" ")[1] + " " + dictionary.title3.split(" ")[2],
+      description: dictionary.description3,
+      buttonText: dictionary.button3,
       href: "/",
     },
   ];

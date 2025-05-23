@@ -79,40 +79,40 @@ const LinkList = styled.ul`
   }
 `;
 
-function FooterLinks() {
+function FooterLinks({ footer }: any) {
   return (
     <Links>
       <Column>
-        <p>პროექტები</p>
+        <p>{footer?.footerNav1?.products || "Products"}</p>
         <LinkList>
-          <li>სატესტო</li>
-          <li>მისაღები</li>
-          <li>საინტერესო</li>
-          <li>ბავშვის თაობა</li>
+          <li>{footer?.footerNav1?.kitchen || "Kitchen"}</li>
+          <li>{footer?.footerNav1?.livingroom || "Living Room"}</li>
+          <li>{footer?.footerNav1?.bedroom || "Bedroom"}</li>
+          <li>{footer?.footerNav1?.childRoom || "Child's Room"}</li>
         </LinkList>
       </Column>
 
       <Column1>
-        <p>სოციალური ქსელები</p>
+        <p>{footer?.footerNav2?.socialMedia || "Social Networks"}</p>
         <LinkList>
           <li>
             <a href="#" target="_blank" rel="noopener noreferrer">
-              Twitter
+              {footer?.footerNav2?.Twitter || "Twitter"}
             </a>
           </li>
           <li>
             <a href="#" target="_blank" rel="noopener noreferrer">
-              LinkedIn
+              {footer?.footerNav2?.Linkedin || "LinkedIn"}
             </a>
           </li>
           <li>
             <a href="#" target="_blank" rel="noopener noreferrer">
-              Facebook
+              {footer?.footerNav2?.Facebook || "Facebook"}
             </a>
           </li>
           <li>
             <a href="#" target="_blank" rel="noopener noreferrer">
-              GitHub
+              {footer?.footerNav2?.GitHub || "GitHub"}
             </a>
           </li>
         </LinkList>
