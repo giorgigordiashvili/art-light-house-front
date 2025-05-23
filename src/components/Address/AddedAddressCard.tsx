@@ -61,12 +61,27 @@ const iconMap: Record<string, string> = {
   სხვა: "/assets/pin.svg",
 };
 
+const getTranslatedPlace = (place: string, dictionary: any) => {
+  switch (place) {
+    case "სახლი":
+      return dictionary.cardTitle2;
+    case "სამსახური":
+      return dictionary.cardTitle3;
+    case "სხვა":
+      return dictionary.cardTitle4;
+    default:
+      return place;
+  }
+};
+
 const AddedAddressCard = ({
   data,
   onEditAddress,
+  dictionary,
 }: {
   data: AddressData;
   onEditAddress: () => void;
+  dictionary: any;
 }) => {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
 
@@ -75,7 +90,7 @@ const AddedAddressCard = ({
       <StyledContent>
         <Image src={iconMap[data.place]} width={24} height={24} alt="icon" />
         <StyledTextWrapper>
-          <StyledPlace>{data.place}</StyledPlace>
+          <StyledPlace>{getTranslatedPlace(data.place, dictionary)}</StyledPlace>
           <StyledAddress>{data.address}</StyledAddress>
         </StyledTextWrapper>
       </StyledContent>
