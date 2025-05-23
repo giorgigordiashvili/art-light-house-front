@@ -63,11 +63,11 @@ const IconWrapper = styled.div`
 
 const DetailBar = ({ dictionary }: any) => {
   const menuItems = [
-    { label: dictionary.detailBar1, icon: "/assets/icons/Details.svg" },
-    { label: dictionary.detailBar2, icon: "/assets/icons/misamarti.svg" },
-    { label: dictionary.detailBar3, icon: "/assets/icons/Shekvetebi.svg" },
-    { label: dictionary.detailBar4, icon: "/assets/icons/gadaxda.svg" },
-    { label: dictionary.detailBar5, icon: "/assets/icons/settings.svg" },
+    { label: dictionary?.detailBar1 || "My details", icon: "/assets/icons/Details.svg" },
+    { label: dictionary?.detailBar2 || "My addresses", icon: "/assets/icons/misamarti.svg" },
+    { label: dictionary?.detailBar3 || "My orders", icon: "/assets/icons/Shekvetebi.svg" },
+    { label: dictionary?.detailBar4 || "Payment methods", icon: "/assets/icons/gadaxda.svg" },
+    { label: dictionary?.detailBar5 || "Settings", icon: "/assets/icons/settings.svg" },
   ];
 
   return (
@@ -88,12 +88,12 @@ const DetailBar = ({ dictionary }: any) => {
         <IconWrapper>
           <Image
             src="/assets/icons/Logout.svg"
-            alt={dictionary.detailBar6}
+            alt={dictionary?.detailBar6 || "Logout"}
             width={24}
             height={24}
           />
         </IconWrapper>
-        {dictionary.detailBar6}
+        {dictionary?.detailBar6 || "Logout"}
       </Item>
     </Container>
   );
