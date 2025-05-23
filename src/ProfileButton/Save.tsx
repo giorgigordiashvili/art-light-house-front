@@ -36,12 +36,13 @@ const ButtonText = styled.p`
 
 type Props = {
   onClick?: () => void;
+  dictionary?: any;
 };
 
-const SaveButton = ({ onClick }: Props) => {
+const SaveButton = ({ onClick, dictionary }: Props) => {
   return (
     <StyleSaveButton onClick={onClick}>
-      <ButtonText>შენახვა</ButtonText>
+      <ButtonText>{dictionary?.button2 || "Save"}</ButtonText>
     </StyleSaveButton>
   );
 };
