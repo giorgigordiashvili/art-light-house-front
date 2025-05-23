@@ -44,7 +44,8 @@
       "button4": "Register",
       "button5": "Register with Google",
       "button6": "Register with Facebook",
-      "alert": "please enter name"
+      "alert": "please enter name",
+      "alert2": "Error while registering. Please check your details and try again."
     },
     "passwordRecoveryModal": {
       "title": "Password Recovery",

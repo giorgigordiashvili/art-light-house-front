@@ -201,8 +201,9 @@ const AuthorizationModal: React.FC<AuthorizationModalProps> = ({
       console.error(error);
       setError(
         activeTab === "auth"
-          ? "არასწორი მეილი ან პაროლი"
-          : "შეცდომა რეგისტრაციისას. გადაამოწმეთ მონაცემები და სცადეთ ხელახლა"
+          ? dictionary?.authorizationModal?.invalidCredentials || "invalid email or password"
+          : dictionary?.registrationModal?.alert2 ||
+              "Error while registering. Please check your details and try again."
       );
     } finally {
       setIsLoading(false);
