@@ -125,7 +125,12 @@ const StyledTest = styled.div`
   }
 `;
 
-const Header = ({ header }) => {
+interface HeaderProps {
+  header: any;
+  dictionary: any;
+}
+
+const Header = ({ header, dictionary }: HeaderProps) => {
   const pathname = usePathname();
 
   const [cartItemCount] = useState<number>(4);
@@ -302,7 +307,7 @@ const Header = ({ header }) => {
                       isAuthorized={isUserAuthorized}
                       username={currentUser.username}
                       userImage={currentUser.userImage}
-                      text="ავტორიზაცია"
+                      text={header.authorize}
                       onClick={() => {
                         if (isRegistrationCodeOpen) setIsRegistrationCodeOpen(false);
                         if (isRegistrationSuccessOpen) setIsRegistrationSuccessOpen(false);
@@ -366,6 +371,7 @@ const Header = ({ header }) => {
                       setIsUserMenuOpen(false);
                       setIsRegistrationCodeOpen(true);
                     }}
+                    dictionary={header}
                   />
                 )}
               </div>

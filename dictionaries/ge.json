@@ -14,16 +14,22 @@
     "detailBar6": "გასვლა",
     "authorizationModal": {
       "title": "ავტორიზაცია",
-      "inputTitle1": "ელ.ფოსტა",
-      "inputTitle2": "პაროლი",
-      "placeholder1": "შეიყვანეთ ელ.ფოსტა",
-      "placeholder2": "თქვენი პაროლი",
-      "button1": "ავტორიზაცია",
-      "button2": "რეგისტრაცია",
-      "button3": "დაგავიწყდა პაროლი?",
-      "button4": "შესვლა",
-      "button5": "Google-ით შესვლა",
-      "button6": "Facebook-ით შესვლა"
+      "registerTitle": "რეგისტრაცია",
+      "email": "ელ.ფოსტა",
+      "emailPlaceholder": "შეიყვანეთ ელ.ფოსტა",
+      "password": "პაროლი",
+      "passwordPlaceholder": "თქვენი პაროლი",
+      "name": "სახელი",
+      "namePlaceholder": "შეიყვანეთ სახელი",
+      "forgotPassword": "დაგავიწყდა პაროლი?",
+      "loginButton": "შესვლა",
+      "registerButton": "რეგისტრაცია",
+      "loginWithGoogle": "Google-ით შესვლა",
+      "registerWithGoogle": "Google-ით რეგისტრაცია",
+      "loginWithFacebook": "Facebook-ით შესვლა",
+      "registerWithFacebook": "Facebook-ით რეგისტრაცია",
+      "alert3": "გთხოვთ შეავსოთ ყველა ველი",
+      "invalidCredentials": "არასწორი ელ.ფოსტა ან პაროლი"
     },
     "registrationModal": {
       "title": "რეგისტრაცია",
@@ -37,7 +43,8 @@
       "button2": "რეგისტრაცია",
       "button4": "რეგისტრაცია",
       "button5": "Google-ით რეგისტრაცია",
-      "button6": "Facebook-ით რეგისტრაცია"
+      "button6": "Facebook-ით რეგისტრაცია",
+      "alert": "გთხოვთ შეიყვანეთ სახელი"
     },
     "passwordRecoveryModal": {
       "title": "პაროლის აღდგენა",

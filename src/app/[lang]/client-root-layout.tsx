@@ -71,7 +71,7 @@ export default function ClientRootLayout({ children, lang, dictionary }: ClientR
           <div id="clerk-captcha" style={{ display: "none" }}></div>
           <StyledComponentsRegistry>
             {/* Pass only the relevant parts of the dictionary to Header and Footer */}
-            {!isAdminRoute && <Header header={dictionary.header} />}{" "}
+            {!isAdminRoute && <Header header={dictionary.header} dictionary={dictionary} />}{" "}
             {/* Assuming 'common' namespace for Header/Footer */}
             {children}
             {!isAdminRoute && <Footer footer={dictionary.footer} />}{" "}

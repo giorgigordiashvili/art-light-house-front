@@ -14,16 +14,22 @@
     "detailBar6": "Logout",
     "authorizationModal": {
       "title": "Authorization",
-      "inputTitle1": "Email",
-      "inputTitle2": "Password",
-      "placeholder1": "Enter email",
-      "placeholder2": "Your password",
-      "button1": "Authorize",
-      "button2": "Register",
-      "button3": "Forgot password?",
-      "button4": "Login",
-      "button5": "Login with Google",
-      "button6": "Login with Facebook"
+      "registerTitle": "Registration",
+      "email": "Email",
+      "emailPlaceholder": "Enter email",
+      "password": "Password",
+      "passwordPlaceholder": "Your password",
+      "name": "Name",
+      "namePlaceholder": "Enter name",
+      "forgotPassword": "Forgot password?",
+      "loginButton": "Login",
+      "registerButton": "Register",
+      "loginWithGoogle": "Login with Google",
+      "registerWithGoogle": "Register with Google",
+      "loginWithFacebook": "Login with Facebook",
+      "registerWithFacebook": "Register with Facebook",
+      "alert3": "Please fill in all fields",
+      "invalidCredentials": "Invalid email or password"
     },
     "registrationModal": {
       "title": "Registration",
@@ -37,7 +43,8 @@
       "button2": "Register",
       "button4": "Register",
       "button5": "Register with Google",
-      "button6": "Register with Facebook"
+      "button6": "Register with Facebook",
+      "alert": "please enter name"
     },
     "passwordRecoveryModal": {
       "title": "Password Recovery",

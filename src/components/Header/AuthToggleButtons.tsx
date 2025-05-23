@@ -41,16 +41,17 @@ const ToggleButton = styled.button<{ $active: boolean }>`
 type Props = {
   activeTab: "auth" | "register";
   setActiveTab: (tab: "auth" | "register") => void;
+  dictionary?: any;
 };
 
-const AuthToggleButtons = ({ activeTab, setActiveTab }: Props) => {
+const AuthToggleButtons = ({ activeTab, setActiveTab, dictionary }: Props) => {
   return (
     <StyledContainer>
       <ToggleButton $active={activeTab === "auth"} onClick={() => setActiveTab("auth")}>
-        ავტორიზაცია
+        {dictionary?.authorizationModal?.title || "Authorization"}
       </ToggleButton>
       <ToggleButton $active={activeTab === "register"} onClick={() => setActiveTab("register")}>
-        რეგისტრაცია
+        {dictionary?.authorizationModal?.registerTitle || "Registration"}
       </ToggleButton>
     </StyledContainer>
   );
