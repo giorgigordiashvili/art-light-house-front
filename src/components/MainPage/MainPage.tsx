@@ -8,7 +8,12 @@ import Contact from "../Contact/Contact";
 const MainPage = ({ dictionary }: any) => {
   return (
     <>
-      <HeroAndCategory dictionary={dictionary.hero} />
+      <HeroAndCategory
+        dictionary={{
+          ...dictionary.hero,
+          ...dictionary.category,
+        }}
+      />
       <NewProducts dictionary={dictionary.newProducts} />
       <PopularProducts dictionary={dictionary.popularProducts} />
       <Accomplishments dictionary={dictionary.accomplihsments} />

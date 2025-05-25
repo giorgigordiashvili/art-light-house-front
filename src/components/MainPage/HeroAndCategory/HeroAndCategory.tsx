@@ -166,11 +166,11 @@ const HeroAndCategory = ({ dictionary }: any) => {
           <DividerLine />
           <Container>
             <StyledCategoryTitle>
-              <SectionTitle text="აირჩიე გემოვნებით" image="category" />
+              <SectionTitle text={dictionary.CategoryTitle} image="category" />
             </StyledCategoryTitle>
           </Container>
         </StyledCategorySection>
-        <CategorySection />
+        <CategorySection dictionary={dictionary} />
       </ContentWrapper>
     </StyledContainer>
   );

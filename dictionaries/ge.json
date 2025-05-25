@@ -80,7 +80,7 @@
     "button3": "ახალი კოლექცია"
   },
   "category": {
-    "title": "აირჩიე გემოვნებით",
+    "CategoryTitle": "აირჩიე გემოვნებით",
     "light": "განათება",
     "gardenLight": "ეზოს სანათები",
     "furniture": "ავეჯი",

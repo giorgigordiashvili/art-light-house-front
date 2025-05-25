@@ -80,7 +80,7 @@
     "button3": "New Collection"
   },
   "category": {
-    "title": "Choose with taste",
+    "CategoryTitle": "Choose with taste",
     "light": "Lighting",
     "gardenLight": "Garden lights",
     "furniture": "Furniture",
