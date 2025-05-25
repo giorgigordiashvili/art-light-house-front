@@ -117,7 +117,7 @@ const StyledCategoryTitle = styled.div`
   }
 `;
 
-const HeroAndCategory = ({ dictionary }) => {
+const HeroAndCategory = ({ dictionary }: any) => {
   const heroSlides = [
     {
       lightText: dictionary.title.split(" ")[0],
@@ -128,12 +128,7 @@ const HeroAndCategory = ({ dictionary }) => {
     },
     {
       lightText: dictionary.title2.split(" ")[0],
-      text:
-        dictionary.title2.split(" ")[1] +
-        " " +
-        dictionary.title2.split(" ")[2] +
-        " " +
-        dictionary.title2.split(" ")[3],
+      text: dictionary.title2.split(" ")[1] + " " + dictionary.title2.split(" ")[2],
       description: dictionary.description2,
       buttonText: dictionary.button2,
       href: "/",
