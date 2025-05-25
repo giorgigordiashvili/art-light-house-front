@@ -54,7 +54,7 @@ const StyledText = styled.p<{ $isActive: boolean }>`
 type Props = {
   id?: string;
   onLanguageChange: (language: "ge" | "en") => void;
-  currentLanguage: "ka" | "en";
+  currentLanguage: "ge" | "en";
 };
 
 const LanguageSwitcherModal = ({ id, onLanguageChange, currentLanguage }: Props) => {

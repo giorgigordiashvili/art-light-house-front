@@ -36,7 +36,7 @@ const StyledCountryName = styled.p`
 `;
 
 type Props = {
-  language: "ka" | "en";
+  language: "ge" | "en";
   display?: "none" | "visible";
 };
 

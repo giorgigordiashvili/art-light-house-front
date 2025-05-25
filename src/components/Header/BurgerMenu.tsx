@@ -55,8 +55,8 @@ const StyledLanguage = styled.div`
 `;
 
 type Props = {
-  onLanguageChange: (language: "ka" | "en") => void;
-  currentLanguage: "ka" | "en";
+  onLanguageChange: (language: "ge" | "en") => void;
+  currentLanguage: "ge" | "en";
   onLanguageSwitcherClick: () => void;
 };
 

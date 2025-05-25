@@ -7,7 +7,30 @@ import { i18n } from "@/config/i18n";
 // See https://clerk.com/docs/references/nextjs/auth-middleware for more information about configuring your middleware
 export default clerkMiddleware();
 
-function getLocale(): string {
+function getLocale(request: NextRequest): string {
+  // Check if there's already a locale in the pathname
+  const pathname = request.nextUrl.pathname;
+  const pathnameLocale = i18n.locales.find(
+    (locale) => pathname.startsWith(`/${locale}/`) || pathname === `/${locale}`
+  );
+
+  if (pathnameLocale) {
+    return pathnameLocale;
+  }
+
+  // Get locale from referrer if it exists
+  const referrer = request.headers.get("referer");
+  if (referrer) {
+    const referrerUrl = new URL(referrer);
+    const referrerLocale = i18n.locales.find(
+      (locale) =>
+        referrerUrl.pathname.startsWith(`/${locale}/`) || referrerUrl.pathname === `/${locale}`
+    );
+    if (referrerLocale) {
+      return referrerLocale;
+    }
+  }
+
   return i18n.defaultLocale;
 }
 
@@ -40,7 +63,7 @@ export function middleware(request: NextRequest) {
 
   // Redirect if there is no locale
   if (pathnameIsMissingLocale) {
-    const locale = getLocale(); // Now always returns "ge"
+    const locale = getLocale(request);
 
     // e.g. incoming request is /products
     // The new URL is now /ge/products
