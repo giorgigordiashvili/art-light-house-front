@@ -11,10 +11,10 @@ const StyledComponent = styled.div`
   align-items: center;
 `;
 
-const SuccsessOrder = () => {
+const SuccsessOrder = ({ dictionary }: { dictionary: any }) => {
   return (
     <StyledComponent>
-      <Container></Container>
+      <Container dictionary={dictionary} />
     </StyledComponent>
   );
 };

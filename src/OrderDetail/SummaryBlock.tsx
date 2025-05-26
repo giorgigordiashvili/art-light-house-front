@@ -57,27 +57,31 @@ const DetailPrice = styled.span`
   vertical-align: middle;
 `;
 
-const SummaryBlock = () => {
+interface SummaryBlockProps {
+  dictionary: any;
+}
+
+const SummaryBlock = ({ dictionary }: SummaryBlockProps) => {
   return (
     <SummaryContainer>
       <TotalRow>
-        <TotalLabel>ჯამი</TotalLabel>
-        <TotalPrice>499,99 ₾</TotalPrice>
+        <TotalLabel>{dictionary?.succsessOrder?.summary || "Total"}</TotalLabel>
+        <TotalPrice>{dictionary?.succsessOrder?.totalAmount || "499,99 ₾"}</TotalPrice>
       </TotalRow>
 
       <Divider />
 
       <DetailRow>
-        <DetailLabel>პროდუქტის ღირებულება</DetailLabel>
-        <DetailPrice>499,99 ₾</DetailPrice>
+        <DetailLabel>{dictionary?.succsessOrder?.productCost || "Product price"}</DetailLabel>
+        <DetailPrice>{dictionary?.succsessOrder?.productPrice || "499,99 ₾"}</DetailPrice>
       </DetailRow>
       <DetailRow>
-        <DetailLabel>მიტანის სერვისი</DetailLabel>
-        <DetailPrice>14,99 ₾</DetailPrice>
+        <DetailLabel>{dictionary?.succsessOrder?.deliveryCost || "Delivery service"}</DetailLabel>
+        <DetailPrice>{dictionary?.succsessOrder?.deliveryAmount || "14,99 ₾"}</DetailPrice>
       </DetailRow>
       <DetailRow>
-        <DetailLabel>სერვისის საკომისიო</DetailLabel>
-        <DetailPrice>2,99 ₾</DetailPrice>
+        <DetailLabel>{dictionary?.succsessOrder?.serviceFee || "Service commission"}</DetailLabel>
+        <DetailPrice>{dictionary?.succsessOrder?.serviceFeeAmount || "2,99 ₾"}</DetailPrice>
       </DetailRow>
     </SummaryContainer>
   );

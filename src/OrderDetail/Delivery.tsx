@@ -48,15 +48,19 @@ const Time = styled.span`
   color: #ffffff;
 `;
 
-const Delivery = () => {
+interface DeliveryProps {
+  dictionary: any;
+}
+
+const Delivery = ({ dictionary }: DeliveryProps) => {
   return (
     <DeliveryCard>
       <IconWrapper>
         <Image src={"/assets/Delivery Icon.svg"} alt="icon" width={24} height={24} />
       </IconWrapper>
       <InfoWrapper>
-        <Title>ექსპრეს მოტანა</Title>
-        <Time>40 წუთიდან 2 საათამდე</Time>
+        <Title>{dictionary?.succsessOrder?.expressTitle || "Express delivery"}</Title>
+        <Time>{dictionary?.succsessOrder?.expressTime || "40 minutes to 2 hours"}</Time>
       </InfoWrapper>
     </DeliveryCard>
   );
