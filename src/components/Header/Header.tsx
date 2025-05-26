@@ -423,7 +423,7 @@ const Header = ({ header, dictionary }: HeaderProps) => {
           <Overlay onClick={closeEmptyCartModal} />
           <StyledTestWrapper>
             <StyledTest>
-              <EmptyCartModal />
+              <EmptyCartModal dictionary={dictionary} />
             </StyledTest>
           </StyledTestWrapper>
         </>
