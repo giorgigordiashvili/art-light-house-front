@@ -287,6 +287,7 @@
   },
   "orders": {
     "title": "My orders",
+    "title2": "My profile",
     "detailBar1": "My details",
     "detailBar2": "My addresses",
     "detailBar3": "My orders",
@@ -296,7 +297,7 @@
     "orderBarTitle": "Orders",
     "orderId": "#22435",
     "orderDate": "December 22",
-    "daatils": "Details"
+    "details": "Details"
   },
   "cart": {
     "emptyCartModal": {

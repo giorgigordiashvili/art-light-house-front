@@ -34,7 +34,7 @@ const StyledCircle = styled.div`
   }
 `;
 
-const OrdersScreen = () => {
+const OrdersScreen = ({ dictionary }: any) => {
   return (
     <StyledComponent>
       <BigCircle variant={2} />
@@ -43,7 +43,7 @@ const OrdersScreen = () => {
       </StyledCircle>
       <LeftCircle size="small" left="-140px" top="900px" media="yes" />
       <NewCircle size="small" right="142px" top="1000px" media="yes" />
-      <OrderMain></OrderMain>
+      <OrderMain dictionary={dictionary.orders} />
     </StyledComponent>
   );
 };

@@ -46,9 +46,13 @@ const Details = styled.span`
   line-height: 159%;
   color: #ffcb40;
   margin-right: 12px;
+  transition: 0.2s ease-in-out;
+  &:hover {
+    opacity: 0.8;
+  }
 `;
 
-const OrderCard = () => {
+const OrderCard = ({ dictionary }: any) => {
   const router = useRouter();
 
   const handleClick = () => {
@@ -57,10 +61,10 @@ const OrderCard = () => {
 
   return (
     <Card onClick={handleClick}>
-      <Id>#22435</Id>
+      <Id>{dictionary?.orderId || "#00000"}</Id>
       <Divider />
-      <Date>22 დეკემბერი</Date>
-      <Details>დეტალურად</Details>
+      <Date>{dictionary?.orderDate || "No date"}</Date>
+      <Details>{dictionary?.details || "Details"}</Details>
     </Card>
   );
 };
