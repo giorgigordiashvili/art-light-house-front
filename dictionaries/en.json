@@ -216,7 +216,8 @@
     "deliveryService": "Delivery service",
     "serviceCommision": "Service commission",
     "button1": "Change",
-    "button2": "Pay"
+    "button2": "Pay",
+    "price": "499,99 ₾"
   },
   "succsessOrder": {
     "title": "Order successfully placed",

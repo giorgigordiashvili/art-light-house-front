@@ -216,7 +216,8 @@
     "deliveryService": "მიტანის სერვისი",
     "serviceCommision": "სერვისის საკომისიო",
     "button1": "შეცვლა",
-    "button2": "გადახდა"
+    "button2": "გადახდა",
+    "price": "499,99 ₾"
   },
   "succsessOrder": {
     "title": "შეკვეთა გაფორმდა",
