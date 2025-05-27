@@ -335,7 +335,7 @@
       "productPrice": "Product price",
       "deliveryService": "Delivery service",
       "serviceCommision": "Service commission",
-      "button": "Checkout"
+      "button2": "Checkout"
     },
     "favorites": {
       "title": "Saved products",

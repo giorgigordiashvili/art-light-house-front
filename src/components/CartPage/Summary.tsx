@@ -67,7 +67,7 @@ const Summary = ({ dictionary }: any) => {
       </StyledPrices>
       <DividerLine variant="dark" />
       <StyledButton>
-        <PrimaryButton height="55px" width="432px" text={dictionary?.button2 || "გადახდა"} />
+        <PrimaryButton height="55px" width="432px" text={dictionary?.button2} />
       </StyledButton>
     </StyledContainer>
   );

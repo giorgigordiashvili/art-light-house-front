@@ -92,6 +92,7 @@ const StyledText = styled.div`
   display: flex;
   flex-direction: column;
   gap: 17px;
+  min-width: 197px;
 
   @media (max-width: 1220px) {
     max-width: 140px;
