@@ -14,14 +14,14 @@ const StyledComponent = styled.div`
   align-items: center;
 `;
 
-const OrderDetailScreen = () => {
+const OrderDetailScreen = ({ dictionary }: any) => {
   return (
     <StyledComponent>
       <BigCircle variant={2} />
       <NewCircle size="small" right="142px" top="200px" media="yes" />
       <LeftCircle size="small" left="-140px" top="900px" media="yes" />
       <NewCircle size="small" right="142px" top="1000px" media="yes" />
-      <Container></Container>
+      <Container dictionary={dictionary}></Container>
     </StyledComponent>
   );
 };
