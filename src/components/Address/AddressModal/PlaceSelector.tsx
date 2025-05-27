@@ -44,13 +44,14 @@ const StyledItemWrapper = styled.div<StyledItemWrapperProps>`
 type Props = {
   selectedPlace: string;
   onSelect: (place: string) => void;
+  dictionary: any;
 };
 
-const PlaceSelector = ({ selectedPlace, onSelect }: Props) => {
+const PlaceSelector = ({ selectedPlace, onSelect, dictionary }: Props) => {
   const items = [
-    { icon: "/assets/home.svg", label: "სახლი" },
-    { icon: "/assets/briefcase.svg", label: "სამსახური" },
-    { icon: "/assets/pin.svg", label: "სხვა" },
+    { icon: "/assets/home.svg", label: dictionary.addressOption1 },
+    { icon: "/assets/briefcase.svg", label: dictionary.addressOption2 },
+    { icon: "/assets/pin.svg", label: dictionary.addressOption3 },
   ];
 
   return (

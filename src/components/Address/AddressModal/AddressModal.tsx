@@ -8,6 +8,7 @@ import PlaceSelector from "./PlaceSelector";
 import ModalTitle from "./ModalTitle";
 import GoogleMap from "@/components/Contact/GoogleMap";
 import { AddressData } from "@/types";
+import { getDictionary } from "@/config/get-dictionary";
 
 const StyledContainer = styled.div`
   width: 508px;
@@ -54,10 +55,11 @@ type Props = {
   onClose: () => void;
   onSave: (data: AddressData) => void;
   initialData?: AddressData;
+  dictionary: any;
 };
 
-const AddressModal = ({ onClose, onSave, initialData }: Props) => {
-  const [selectedPlace, setSelectedPlace] = useState(initialData?.place || "სახლი");
+const AddressModal = ({ onClose, onSave, initialData, dictionary }: Props) => {
+  const [selectedPlace, setSelectedPlace] = useState(initialData?.place || dictionary.cardTitle2);
   const [address, setAddress] = useState(initialData?.address || "");
   const [additionalInfo, setAdditionalInfo] = useState(initialData?.additionalInfo || "");
 
@@ -68,22 +70,26 @@ const AddressModal = ({ onClose, onSave, initialData }: Props) => {
 
   return (
     <StyledContainer>
-      <ModalTitle text="მისამართის დამატება" />
+      <ModalTitle text={dictionary.modalTitle} />
       <StyledSelector>
-        <PlaceSelector selectedPlace={selectedPlace} onSelect={setSelectedPlace} />
+        <PlaceSelector
+          selectedPlace={selectedPlace}
+          onSelect={setSelectedPlace}
+          dictionary={dictionary}
+        />
       </StyledSelector>
       <StyledInputWrapper>
-        <InputTitle text="შეიყვანეთ მისამართი" />
+        <InputTitle text={dictionary.inputTitle1} />
         <ModalInput
-          placeholder="ქუჩა და ნომერი"
+          placeholder={dictionary.placeholder1}
           value={address}
           onChange={(e) => setAddress(e.target.value)}
         />
       </StyledInputWrapper>
       <StyledInputWrapper>
-        <InputTitle text="დამატებითი ინფორმაცია" />
+        <InputTitle text={dictionary.inputTitle2} />
         <ModalInput
-          placeholder="მაგ: სადარბაზო 2, სართული 4, ბინა 17"
+          placeholder={dictionary.placeholder2}
           value={additionalInfo}
           onChange={(e) => setAdditionalInfo(e.target.value)}
         />
@@ -92,8 +98,8 @@ const AddressModal = ({ onClose, onSave, initialData }: Props) => {
         <GoogleMap variant={2} />
       </StyledMap>
       <StyledButton>
-        <CancelButton onClick={onClose} />
-        <SaveButton onClick={handleSave} />
+        <CancelButton onClick={onClose} dictionary={dictionary} />
+        <SaveButton onClick={handleSave} dictionary={dictionary} />
       </StyledButton>
     </StyledContainer>
   );

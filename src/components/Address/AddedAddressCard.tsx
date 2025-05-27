@@ -55,22 +55,16 @@ type AddressData = {
   additionalInfo?: string;
 };
 
-const iconMap: Record<string, string> = {
-  სახლი: "/assets/home.svg",
-  სამსახური: "/assets/briefcase.svg",
-  სხვა: "/assets/pin.svg",
-};
-
 const getTranslatedPlace = (place: string, dictionary: any) => {
   switch (place) {
-    case "სახლი":
+    case dictionary.cardTitle2:
       return dictionary.cardTitle2;
-    case "სამსახური":
+    case dictionary.cardTitle3:
       return dictionary.cardTitle3;
-    case "სხვა":
+    case dictionary.cardTitle4:
       return dictionary.cardTitle4;
     default:
-      return place;
+      return dictionary.cardTitle2;
   }
 };
 
@@ -84,6 +78,12 @@ const AddedAddressCard = ({
   dictionary: any;
 }) => {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+
+  const iconMap: Record<string, string> = {
+    [dictionary.cardTitle2]: "/assets/home.svg",
+    [dictionary.cardTitle3]: "/assets/briefcase.svg",
+    [dictionary.cardTitle4]: "/assets/pin.svg",
+  };
 
   return (
     <StyledContainer>
@@ -104,6 +104,7 @@ const AddedAddressCard = ({
             setIsEditModalOpen(false);
             onEditAddress();
           }}
+          dictionary={dictionary}
         />
       )}
     </StyledContainer>

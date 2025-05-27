@@ -137,6 +137,7 @@ const Address = ({ dictionary }: any) => {
               }}
               onSave={editingAddress ? handleSaveEditedAddress : handleSaveAddress}
               initialData={editingAddress || undefined}
+              dictionary={dictionary}
             />
           </StyledModal>
         </Overlay>
