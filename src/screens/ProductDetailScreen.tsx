@@ -12,11 +12,11 @@ const StyledComponent = styled.div`
   align-items: center;
 `;
 
-const ProductDetailScreen = () => {
+const ProductDetailScreen = ({ dictionary }: { dictionary: any }) => {
   return (
     <StyledComponent>
       <BigCircle variant={2} />
-      <DetailMain></DetailMain>
+      <DetailMain dictionary={dictionary}></DetailMain>
     </StyledComponent>
   );
 };

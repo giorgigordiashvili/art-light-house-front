@@ -36,11 +36,11 @@ type Props = {
   onClick?: () => void;
 };
 
-const AddToCartButton = ({ onClick }: Props) => {
+const AddToCartButton = ({ onClick, dictionary }: Props & { dictionary: any }) => {
   return (
     <StyleAddButton onClick={onClick}>
       <Image src="/assets/icons/addToCart.svg" alt="cart" width={24} height={24} />
-      <ButtonText>კალათაში დამატება</ButtonText>
+      <ButtonText>{dictionary?.productDetails?.addToCart || "Add to cart"}</ButtonText>
     </StyleAddButton>
   );
 };

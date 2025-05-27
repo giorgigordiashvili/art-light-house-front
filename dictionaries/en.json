@@ -143,6 +143,7 @@
   },
   "products": {
     "title": "Products",
+    "addToCartAlt": "Add to cart",
     "sort": "Sort",
     "sortOption1": "Price: Descending",
     "sortOption2": "Price: Ascending",

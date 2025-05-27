@@ -58,7 +58,7 @@ function Card({ dictionary }: any) {
     <StyledRectangle>
       <LampaImage />
       <ProductText dictionary={dictionary} />
-      <AddButton />
+      <AddButton dictionary={dictionary} />
     </StyledRectangle>
   );
 }
