@@ -78,9 +78,9 @@ function ProductsMain({ dictionary }: any) {
         <PageTitle>{dictionary.title}</PageTitle>
         <SortWrapper>
           <OnMobile>
-            <FilterButton onClick={toggleMobileFilterDropdown} />
+            <FilterButton onClick={toggleMobileFilterDropdown} dictionary={dictionary} />
           </OnMobile>
-          <SortDropdown />
+          <SortDropdown dictionary={dictionary} />
         </SortWrapper>
         <ContentWrapper>
           <OnDesktop>
@@ -90,7 +90,7 @@ function ProductsMain({ dictionary }: any) {
         </ContentWrapper>
 
         {isMobileFilterDropdownVisible && (
-          <MobileFilterDropdown onClose={toggleMobileFilterDropdown} />
+          <MobileFilterDropdown onClose={toggleMobileFilterDropdown} dictionary={dictionary} />
         )}
       </Container>
     </StyledComponent>

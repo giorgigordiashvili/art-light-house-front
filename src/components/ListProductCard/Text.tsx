@@ -47,8 +47,8 @@ const DescriptionText = styled.div`
 const ProductText = ({ dictionary }: any) => {
   return (
     <TextWrapper>
-      <PriceText>{dictionary?.products?.price || "199,99 ₾"}</PriceText>
-      <DescriptionText>{dictionary?.products?.cardTitle || "მოდერნული სანათი"}</DescriptionText>
+      <PriceText>{dictionary?.price || "199,99 ₾"}</PriceText>
+      <DescriptionText>{dictionary?.cardTitle || "მოდერნული სანათი"}</DescriptionText>
     </TextWrapper>
   );
 };

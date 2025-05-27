@@ -16,7 +16,11 @@ const DropdownWrapper = styled.div`
   z-index: 10;
 `;
 
-const SortDropdown = () => {
+interface SortDropdownProps {
+  dictionary: any;
+}
+
+const SortDropdown: React.FC<SortDropdownProps> = ({ dictionary }) => {
   const [isOpen, setIsOpen] = useState(false);
 
   const toggleDropdown = () => {
@@ -30,10 +34,10 @@ const SortDropdown = () => {
 
   return (
     <Wrapper>
-      <SortButton onClick={toggleDropdown} />
+      <SortButton onClick={toggleDropdown} dictionary={dictionary} />
       {isOpen && (
         <DropdownWrapper>
-          <SortBox onSortChange={handleSortChange} />
+          <SortBox onSortChange={handleSortChange} dictionary={dictionary} />
         </DropdownWrapper>
       )}
     </Wrapper>

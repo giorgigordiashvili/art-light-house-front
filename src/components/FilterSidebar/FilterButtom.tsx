@@ -33,22 +33,20 @@ const FilterIcon = styled.img`
 `;
 
 interface FilterButtonProps {
-  label?: string;
   onClick?: () => void;
   iconSrc?: string;
-  iconAlt?: string;
+  dictionary: any;
 }
 
 const FilterButton: React.FC<FilterButtonProps> = ({
-  label = "ფილტრი",
   onClick,
   iconSrc = "/assets/icons/filter.svg",
-  iconAlt = "icon",
+  dictionary,
 }) => {
   return (
     <Button onClick={onClick}>
-      {iconSrc && <FilterIcon src={iconSrc} alt={iconAlt} />}
-      <span>{label}</span>
+      {iconSrc && <FilterIcon src={iconSrc} alt={dictionary.filter.iconAlt || "Filter icon"} />}
+      <span>{dictionary.filter.title}</span>
     </Button>
   );
 };

@@ -13,7 +13,11 @@ const Title = styled.p`
   margin-bottom: 18px;
 `;
 
-const PriceFilter: React.FC = ({ dictionary }: any) => {
+interface PriceFilterProps {
+  dictionary: any;
+}
+
+const PriceFilter: React.FC<PriceFilterProps> = ({ dictionary }) => {
   return (
     <>
       <Title>{dictionary.subTitle2}</Title>

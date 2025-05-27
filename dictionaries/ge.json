@@ -174,7 +174,10 @@
       "filterOption15": "Halogen",
       "filterOption16": "Edison",
       "filterOption17": "კომპაქტური ფლუორესცენტური",
-      "filterOption18": "RGB განათება"
+      "filterOption18": "RGB განათება",
+      "iconAlt": "ფილტრის ხატულა",
+      "clear": "გასუფთავება",
+      "filterButton": "გაფილტვრა"
     },
     "cardTitle": "ეზოს სანათი"
   },
