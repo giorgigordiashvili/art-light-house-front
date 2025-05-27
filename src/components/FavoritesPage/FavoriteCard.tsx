@@ -10,6 +10,7 @@ import CompactButton from "../Buttons/CompactButton";
 
 type Props = {
   card: "favorite" | "cart";
+  dictionary?: any;
 };
 
 const StyledContainer = styled.div.withConfig({
@@ -121,7 +122,7 @@ const StyledRemoveIconWrapper = styled.div.withConfig({
     `}
 `;
 
-const FavoriteCard = ({ card }: Props) => {
+const FavoriteCard = ({ card, dictionary }: Props) => {
   const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
@@ -142,11 +143,14 @@ const FavoriteCard = ({ card }: Props) => {
           src={"/assets/ProductImageContainer.svg"}
           width={120}
           height={120}
-          alt="product-image"
+          alt={dictionary?.cart?.favorites?.imageAlt || "პროდუქტის სურათი"}
         />
         <StyledText>
-          <ProductTitle text="ლურჯი ვარსკვლავის ჭაღი" size="large" />
-          <ProductPrice text="199,99 ₾" size="large" />
+          <ProductTitle
+            text={dictionary?.cart?.favorites?.cardTitle || "ლურჯი ვარსკვლავის ჭაღი"}
+            size="large"
+          />
+          <ProductPrice text={dictionary?.productDetails?.price || "199,99 ₾"} size="large" />
         </StyledText>
       </StyledContent>
 
@@ -154,16 +158,22 @@ const FavoriteCard = ({ card }: Props) => {
         {card === "favorite" ? (
           <>
             {isMobile ? (
-              <CompactButton text="დეტალურად" />
+              <CompactButton text={dictionary?.cart?.favorites?.button || "დეტალურად"} />
             ) : (
-              <PrimaryButton height="55px" width="179px" text="დეტალურად" media="no" card={true} />
+              <PrimaryButton
+                height="55px"
+                width="179px"
+                text={dictionary?.cart?.favorites?.button || "დეტალურად"}
+                media="no"
+                card={true}
+              />
             )}
             <StyledRemoveIconWrapper cardType={card}>
               <Image
                 src={isMobile ? "/assets/DeleteIcon.svg" : "/assets/RemoveProduct.svg"}
                 width={isMobile ? 18 : 34}
                 height={isMobile ? 18 : 34}
-                alt="remove-icon"
+                alt={dictionary?.cart?.favorites?.removeAlt || "წაშლა"}
               />
             </StyledRemoveIconWrapper>
           </>
