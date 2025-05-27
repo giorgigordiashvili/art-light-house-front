@@ -129,7 +129,7 @@ const Personal = ({ dictionary }: any) => {
       </InputsWrapper>
 
       <ButtonRow>
-        <Cancel dictionary={dictionary} />
+        <Cancel dictionary={dictionary.profile} />
         <SaveButton dictionary={dictionary} />
       </ButtonRow>
     </StylePersonal>

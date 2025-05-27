@@ -341,5 +341,23 @@
       "cardTitle": "Blue Star Chandelier",
       "button": "Details"
     }
+  },
+  "settings": {
+    "title1": "settings",
+    "title2": "Change Password",
+    "subTitle1": "Old Password",
+    "subTitle2": "Enter New Password",
+    "subTitle3": "Repeat New Password",
+    "placeHolder1": "Password",
+    "placeHolder2": "New Password",
+    "placeHolder3": "Repeat Password",
+    "button1": "cancel",
+    "button2": "save",
+    "detailBar1": "My details",
+    "detailBar2": "My addresses",
+    "detailBar3": "My orders",
+    "detailBar4": "Payment methods",
+    "detailBar5": "Settings",
+    "detailBar6": "Logout"
   }
 }
