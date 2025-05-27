@@ -23,4 +23,38 @@ model User {
   // orders Order[]
 }
 
+// Language model to define supported languages
+model Language {
+  id          String   @id @default(uuid())
+  code        String   @unique // e.g., "en", "ka" (Georgian)
+  name        String   // e.g., "English", "ქართული"
+  isDefault   Boolean  @default(false)
+  isActive    Boolean  @default(true)
+  created_at  DateTime @default(now())
+  updated_at  DateTime @updatedAt
+
+  // Relations
+  translations Translation[]
+
+  @@map("languages")
+}
+
+// Translation model to store key-value pairs for different languages
+model Translation {
+  id          String   @id @default(uuid())
+  key         String   // e.g., "common.welcome", "products.title"
+  value       String   // The translated text
+  languageId  String
+  namespace   String?  // Optional namespace for grouping (e.g., "common", "products")
+  created_at  DateTime @default(now())
+  updated_at  DateTime @updatedAt
+
+  // Relations
+  language    Language @relation(fields: [languageId], references: [id], onDelete: Cascade)
+
+  // Ensure unique key per language
+  @@unique([key, languageId])
+  @@map("translations")
+}
+
 // You can add additional models related to your application below

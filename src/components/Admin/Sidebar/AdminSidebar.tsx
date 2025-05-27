@@ -112,6 +112,7 @@ const AdminSidebar = ({ username = "Admin User", role = "Administrator" }: Admin
     { name: "Products", path: "/admin/products" },
     { name: "Orders", path: "/admin/orders" },
     { name: "Customers", path: "/admin/customers" },
+    { name: "Languages", path: "/admin/languages" },
     { name: "Settings", path: "/admin/settings" },
   ];
 

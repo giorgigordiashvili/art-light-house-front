@@ -10,7 +10,8 @@
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "prepare": "husky",
-    "postinstall": "prisma generate"
+    "postinstall": "prisma generate",
+    "seed:translations": "tsx prisma/seed/translations.ts"
   },
   "dependencies": {
     "@clerk/nextjs": "^6.19.2",
@@ -33,6 +34,7 @@
     "husky": "^9.1.7",
     "lint-staged": "^15.5.1",
     "prettier": "^3.5.3",
+    "tsx": "^4.19.4",
     "typescript": "^5"
   },
   "lint-staged": {
