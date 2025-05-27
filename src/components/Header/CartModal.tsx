@@ -9,6 +9,7 @@ import SummaryPrice from "./SummaryPrice";
 type Props = {
   itemCount: number;
   onClose: () => void;
+  dictionary: any;
 };
 
 const StyledContainer = styled.div`
@@ -99,7 +100,7 @@ const StyledButton = styled.div`
   }
 `;
 
-const CartModal = ({ itemCount, onClose }: Props) => {
+const CartModal = ({ itemCount, onClose, dictionary }: Props) => {
   const router = useRouter();
 
   const handleRedirect = () => {
@@ -112,19 +113,21 @@ const CartModal = ({ itemCount, onClose }: Props) => {
       <ModalLayout>
         <StyledContainer>
           <StyledSpanContainer>
-            <StyledSpan>{itemCount} პროდუქტები</StyledSpan>
+            <StyledSpan>
+              {itemCount} {dictionary?.cart?.cartModal.itemCount}
+            </StyledSpan>
           </StyledSpanContainer>
           <ProductList>
             {Array.from({ length: itemCount }).map((_, index) => (
               <ProductWrapper key={index}>
-                <CartProduct />
+                <CartProduct dictionary={dictionary} />
               </ProductWrapper>
             ))}
           </ProductList>
-          <SummaryPrice />
+          <SummaryPrice dictionary={dictionary} />
           <StyledButton>
             <PrimaryButton
-              text="კალათაში გადასვლა"
+              text={dictionary?.cart?.cartModal.button}
               height="50px"
               width="317px"
               media="full"

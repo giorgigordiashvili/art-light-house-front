@@ -307,11 +307,13 @@
       "subTitle": "Add products to cart and checkout"
     },
     "cartModal": {
-      "itemCount": "3 Products",
+      "itemCount": "Products",
       "cardTitle1": "Blue Star Chandelier",
       "cardTitle2": "Blue Star Chandelier",
       "summary": "Total price",
-      "button": "Go to cart"
+      "button": "Go to cart",
+      "price": "199,99 ₾",
+      "sumPrice": "499,99 ₾"
     },
     "emptyCart": {
       "title": "My products",

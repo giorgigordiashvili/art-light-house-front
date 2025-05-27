@@ -23,13 +23,13 @@ const StyledTrashButton = styled.div`
   right: 12px;
 `;
 
-const CartProduct = () => {
+const CartProduct = ({ dictionary }: any) => {
   return (
     <StyledContainer>
       <StyledTrashButton>
         <TrashIcon />
       </StyledTrashButton>
-      <ProductContent />
+      <ProductContent dictionary={dictionary} />
       <QuantitySelector />
     </StyledContainer>
   );

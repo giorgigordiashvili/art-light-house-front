@@ -351,6 +351,7 @@ const Header = ({ header, dictionary }: HeaderProps) => {
               onLanguageChange={handleLanguageChange}
               currentLanguage={selectedLanguage}
               onLanguageSwitcherClick={handleLanguageSwitcherClick}
+              dictionary={dictionary}
             />
           </div>
         </>
@@ -363,7 +364,7 @@ const Header = ({ header, dictionary }: HeaderProps) => {
               <Overlay />
               <div ref={userMenuRef}>
                 {isUserAuthorized ? (
-                  <UserMenu closeModal={() => setIsUserMenuOpen(false)} />
+                  <UserMenu closeModal={() => setIsUserMenuOpen(false)} dictionary={dictionary} />
                 ) : (
                   <AuthorizationModal
                     onClose={() => setIsUserMenuOpen(false)}
@@ -434,7 +435,11 @@ const Header = ({ header, dictionary }: HeaderProps) => {
           <Overlay onClick={closeCartModal} />
           <StyledTestWrapper>
             <StyledTest>
-              <CartModal itemCount={cartItemCount} onClose={closeCartModal} />{" "}
+              <CartModal
+                itemCount={cartItemCount}
+                onClose={closeCartModal}
+                dictionary={dictionary}
+              />{" "}
             </StyledTest>
           </StyledTestWrapper>
         </>
