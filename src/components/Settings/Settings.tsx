@@ -102,12 +102,12 @@ const Settings = ({ dictionary }: any) => {
 
         <MobileWrapper>
           <PageTitle>{dictionary?.title1}</PageTitle>
-          <MobileDetailDropdown />
+          <MobileDetailDropdown dictionary={dictionary} />
           <DetailBarWrapper $isOpen={isDropdownOpen}>
-            <DetailBar />
+            <DetailBar dictionary={dictionary} />
           </DetailBarWrapper>
           <RightSection>
-            <Pass />
+            <Pass dictionary={dictionary} />
           </RightSection>
         </MobileWrapper>
       </Container>
