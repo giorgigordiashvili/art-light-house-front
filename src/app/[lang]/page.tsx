@@ -1,5 +1,4 @@
 import HomeScreen from "@/screens/HomeScreen";
-import { i18n } from "@/config/i18n";
 import { getDictionary } from "@/config/get-dictionary";
 
 // export function generateStaticParams() {

@@ -8,7 +8,6 @@ import PlaceSelector from "./PlaceSelector";
 import ModalTitle from "./ModalTitle";
 import GoogleMap from "@/components/Contact/GoogleMap";
 import { AddressData } from "@/types";
-import { getDictionary } from "@/config/get-dictionary";
 
 const StyledContainer = styled.div`
   width: 508px;

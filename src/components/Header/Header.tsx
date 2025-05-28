@@ -18,9 +18,7 @@ import CartModal from "./CartModal";
 import LanguageSwitcher from "./LanguageSwitcher/LanguageSwitcher";
 import LanguageSwitcherModal from "./LanguageSwitcher/LanguageSwitcherModal";
 import { useUser } from "@clerk/nextjs";
-import { i18n } from "@/config/i18n";
 import { usePathname, useRouter } from "next/navigation";
-import { router } from "next/client";
 
 const StyledContainer = styled.div`
   position: fixed;
