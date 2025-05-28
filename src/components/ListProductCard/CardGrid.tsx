@@ -42,7 +42,7 @@ const CardGrid = ({ dictionary }: any) => {
       <MobileOnly>
         <GridWrapper>
           {Array.from({ length: 6 }).map((_, i) => (
-            <Card key={i} />
+            <Card key={i} dictionary={dictionary} />
           ))}
         </GridWrapper>
       </MobileOnly>

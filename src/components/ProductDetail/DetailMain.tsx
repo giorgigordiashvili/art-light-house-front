@@ -139,10 +139,10 @@ function DetailMain({ dictionary }: { dictionary: any }) {
           <p>{dictionary?.productDetails?.similarProducts || "Similar Products"}</p>
         </ProductHeader>
         <CardGrid>
-          <Card dictionary={dictionary} />
-          <Card dictionary={dictionary} />
-          <Card dictionary={dictionary} />
-          <Card dictionary={dictionary} />
+          <Card dictionary={dictionary.productDetails} />
+          <Card dictionary={dictionary.productDetails} />
+          <Card dictionary={dictionary.productDetails} />
+          <Card dictionary={dictionary.productDetails} />
         </CardGrid>
       </Container>
     </StyledComponent>

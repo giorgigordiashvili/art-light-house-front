@@ -193,10 +193,8 @@
     "buy": "Buy",
     "addToCart": "Add to cart",
     "subTitle": "Similar products",
-    "cardTitle1": "Garden light",
-    "cardTitle2": "Garden light",
-    "cardTitle3": "Garden light",
-    "cardTitle4": "Garden light"
+    "cardTitle": "Garden light",
+    "price": "199,99 ₾"
   },
   "checkout": {
     "title": "Checkout",

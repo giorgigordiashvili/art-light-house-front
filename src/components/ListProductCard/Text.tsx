@@ -48,7 +48,7 @@ const ProductText = ({ dictionary }: any) => {
   return (
     <TextWrapper>
       <PriceText>{dictionary?.price || "199,99 ₾"}</PriceText>
-      <DescriptionText>{dictionary?.cardTitle || "მოდერნული სანათი"}</DescriptionText>
+      <DescriptionText>{dictionary?.cardTitle || "მოდერნული სანათიs"}</DescriptionText>
     </TextWrapper>
   );
 };
