@@ -1,10 +1,15 @@
-"server only";
+"use server-only";
 import React from "react";
 import EmptyFavoritesScreen from "@/screens/EmptyFavoritesScreen";
 import { getDictionary } from "@/config/get-dictionary";
+import type { Locale } from "@/config/i18n";
+
+function isLocale(lang: string): lang is Locale {
+  return ["ge", "en"].includes(lang);
+}
 
 export default async function page(props: { params: { lang: string } }) {
   const { lang } = props.params;
-  const dictionary = await getDictionary(lang);
+  const dictionary = await getDictionary(isLocale(lang) ? lang : "ge");
   return <EmptyFavoritesScreen dictionary={dictionary} />;
 }
