@@ -1,14 +1,14 @@
 import { ReactNode } from "react";
-import { getDictionary } from "@/config/get-dictionary"; // Adjust path as needed
-import { i18n, Locale } from "@/config/i18n"; // Adjust path as needed
-import ClientRootLayout from "./client-root-layout"; // Import your client layout
+import { getDictionary, Dictionary } from "@/config/get-dictionary"; // Your updated path
+import { i18n, Locale } from "@/config/i18n";
+import ClientRootLayout from "./client-root-layout";
 
 interface ServerRootLayoutProps {
   children: ReactNode;
-  params: { lang: Locale }; // Use your Locale type
+  params: { lang: Locale };
 }
 
-// generateStaticParams MUST be in a Server Component layout/page
+// Static params for pre-rendering each locale
 export async function generateStaticParams() {
   return i18n.locales.map((locale) => ({ lang: locale }));
 }
@@ -17,12 +17,12 @@ export default async function ServerRootLayout({
   children,
   params: { lang },
 }: ServerRootLayoutProps) {
-  // Fetch the dictionary on the server
-  const dictionary = await getDictionary(lang);
+  // Make sure lang is a valid locale
+  const validLang = lang === "ge" || lang === "en" ? lang : "ge";
+  const dictionary: Dictionary = await getDictionary(validLang);
 
   return (
-    // Pass the dictionary and other necessary props to your client layout
-    <ClientRootLayout lang={lang} dictionary={dictionary}>
+    <ClientRootLayout lang={validLang} dictionary={dictionary}>
       {children}
     </ClientRootLayout>
   );

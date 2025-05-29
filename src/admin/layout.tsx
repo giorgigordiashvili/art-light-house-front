@@ -1,5 +1,5 @@
 "use client";
-import StyledComponentsRegistry from "../../../lib/registry";
+import StyledComponentsRegistry from "../../lib/registry";
 import "../globals.css";
 
 // In Next.js 13+, we need to configure this layout to not inherit the root layout

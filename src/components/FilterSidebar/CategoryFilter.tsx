@@ -2,7 +2,7 @@
 import React, { useState } from "react";
 import CheckboxGroup from "./CheckboxGroup";
 
-function CategoryFilter({ dictionary }) {
+function CategoryFilter({ dictionary }: any) {
   const [categories, setCategories] = useState([
     { label: dictionary.filterOption1, value: "Chandelier" },
     { label: dictionary.filterOption2, value: "Ceiling mount", checked: true },

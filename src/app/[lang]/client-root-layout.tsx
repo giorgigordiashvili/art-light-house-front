@@ -3,7 +3,7 @@
 import Footer from "@/components/Footer/Footer";
 import Header from "@/components/Header/Header";
 import StyledComponentsRegistry from "../../../lib/registry";
-import "../globals.css"; // Global styles
+import "../globals.css";
 import { usePathname } from "next/navigation";
 import { ClerkProvider } from "@clerk/nextjs";
 import { ReactNode, useEffect } from "react";
@@ -12,25 +12,24 @@ import { Dictionary } from "@/config/get-dictionary";
 interface ClientRootLayoutProps {
   children: ReactNode;
   lang: string; // The locale passed from the server layout
-  dictionary: Dictionary; // The dictionary passed from the server layout
+  dictionary: Dictionary;
 }
 
 export default function ClientRootLayout({ children, lang, dictionary }: ClientRootLayoutProps) {
   const pathname = usePathname();
   const isAdminRoute = pathname?.startsWith("/admin");
 
-  // Add error handling with a useEffect (your existing Clerk error handling)
   useEffect(() => {
     if (typeof window !== "undefined") {
       const handleError = (event: ErrorEvent) => {
+        const message = event.error?.message;
         if (
-          event.error &&
-          (event.error.message?.includes("Clerk") ||
-            event.error.message?.includes("oauth") ||
-            event.error.message?.includes("authentication"))
+          message?.includes("Clerk") ||
+          message?.includes("oauth") ||
+          message?.includes("authentication")
         ) {
-          console.error("Clerk/OAuth error:", event.error);
-          localStorage.setItem("oauth_error", event.error.message);
+          console.error("Clerk/OAuth error:", message);
+          localStorage.setItem("oauth_error", message);
         }
       };
 
@@ -70,12 +69,9 @@ export default function ClientRootLayout({ children, lang, dictionary }: ClientR
         <body>
           <div id="clerk-captcha" style={{ display: "none" }}></div>
           <StyledComponentsRegistry>
-            {/* Pass only the relevant parts of the dictionary to Header and Footer */}
-            {!isAdminRoute && <Header header={dictionary.header} dictionary={dictionary} />}{" "}
-            {/* Assuming 'common' namespace for Header/Footer */}
+            {!isAdminRoute && <Header header={dictionary.header} dictionary={dictionary} />}
             {children}
-            {!isAdminRoute && <Footer footer={dictionary.footer} />}{" "}
-            {/* Pass common translations */}
+            {!isAdminRoute && <Footer footer={dictionary.footer} />}
           </StyledComponentsRegistry>
         </body>
       </html>
