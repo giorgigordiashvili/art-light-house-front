@@ -41,7 +41,7 @@ const PopularProducts = ({ dictionary }: any) => {
           />
           <PopularProductCard
             image="/assets/livingroom.svg"
-            label={dictionary.livingRoom}
+            label={dictionary.livingroom}
             width={242}
             isMiddleCard
           />
