@@ -48,7 +48,7 @@ const LanguageSwitcher = ({ language, display }: Props) => {
 
   useEffect(() => {
     console.log(language);
-  }, []);
+  }, [language]);
 
   return (
     <StyledContainer $displayMobile={displayMobile}>
