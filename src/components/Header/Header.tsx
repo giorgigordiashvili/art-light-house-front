@@ -19,6 +19,11 @@ import LanguageSwitcher from "./LanguageSwitcher/LanguageSwitcher";
 import LanguageSwitcherModal from "./LanguageSwitcher/LanguageSwitcherModal";
 import { useUser } from "@clerk/nextjs";
 import { usePathname, useRouter } from "next/navigation";
+import { Locale, i18n } from "@/config/i18n";
+
+const ensureValidLanguage = (lang: string): Locale => {
+  return i18n.locales.includes(lang as Locale) ? (lang as Locale) : "ge";
+};
 
 const StyledContainer = styled.div`
   position: fixed;
@@ -333,7 +338,10 @@ const Header = ({ header, dictionary }: HeaderProps) => {
                   </div>
                 </ResponsiveGapWrapper>
                 <div id="languageSwitcher" onClick={handleLanguageSwitcherClick}>
-                  <LanguageSwitcher language={pathname.split("/")[1]} display="none" />
+                  <LanguageSwitcher
+                    language={ensureValidLanguage(pathname.split("/")[1])}
+                    display="none"
+                  />
                 </div>
               </StyledUserActions>
             </StyledActionsWrapper>
@@ -347,7 +355,7 @@ const Header = ({ header, dictionary }: HeaderProps) => {
           <div ref={burgerMenuRef}>
             <BurgerMenu
               onLanguageChange={handleLanguageChange}
-              currentLanguage={selectedLanguage}
+              currentLanguage={ensureValidLanguage(selectedLanguage)}
               onLanguageSwitcherClick={handleLanguageSwitcherClick}
               dictionary={dictionary}
             />
@@ -451,7 +459,7 @@ const Header = ({ header, dictionary }: HeaderProps) => {
               <LanguageSwitcherModal
                 id="languageSwitcherModal"
                 onLanguageChange={handleLanguageChange}
-                currentLanguage={pathname.split("/")[1]}
+                currentLanguage={ensureValidLanguage(pathname?.split("/")[1] || "ge")}
               />
             </StyledTest>
           </StyledTestWrapper>
