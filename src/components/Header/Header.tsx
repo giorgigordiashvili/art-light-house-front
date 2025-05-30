@@ -1,3 +1,4 @@
+"use client";
 import React, { useEffect, useRef, useState } from "react";
 import styled from "styled-components";
 import Container from "../ui/Container";
@@ -14,7 +15,15 @@ import RegistrationCodeModal from "./RegistrationCodeModal";
 import RegistrationSuccessModal from "./RegistrationSuccessModal";
 import EmptyCartModal from "./EmptyCartModal";
 import CartModal from "./CartModal";
+import LanguageSwitcher from "./LanguageSwitcher/LanguageSwitcher";
+import LanguageSwitcherModal from "./LanguageSwitcher/LanguageSwitcherModal";
 import { useUser } from "@clerk/nextjs";
+import { usePathname, useRouter } from "next/navigation";
+import { Locale, i18n } from "@/config/i18n";
+
+const ensureValidLanguage = (lang: string): Locale => {
+  return i18n.locales.includes(lang as Locale) ? (lang as Locale) : "ge";
+};
 
 const StyledContainer = styled.div`
   position: fixed;
@@ -119,7 +128,15 @@ const StyledTest = styled.div`
   }
 `;
 
-const Header = () => {
+interface HeaderProps {
+  header: any;
+  dictionary: any;
+}
+
+const Header = ({ header, dictionary }: HeaderProps) => {
+  const pathname = usePathname();
+  const router = useRouter();
+
   const [cartItemCount] = useState<number>(4);
   const [isBurgerMenuOpen, setIsBurgerMenuOpen] = useState(false);
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
@@ -129,6 +146,10 @@ const Header = () => {
   const [isEmptyCartModalOpen, setIsEmptyCartModalOpen] = useState(false);
   const [isCartModalOpen, setIsCartModalOpen] = useState(false);
   const [cartIconColor, setCartIconColor] = useState("#fff");
+  const [isLanguageSwitcherModalOpen, setIsLanguageSwitcherModalOpen] = useState(false);
+  const [selectedLanguage, setSelectedLanguage] = useState<"ge" | "en">(
+    (pathname?.split("/")[1] as "ge" | "en") || "ge"
+  );
 
   const burgerMenuRef = useRef<HTMLDivElement>(null);
   const burgerIconRef = useRef<HTMLDivElement>(null);
@@ -140,14 +161,28 @@ const Header = () => {
   };
 
   useEffect(() => {
+    // console.log(header);
+  }, []);
+
+  useEffect(() => {
     document.body.style.overflow =
-      isBurgerMenuOpen || isUserMenuOpen || isEmptyCartModalOpen || isCartModalOpen
+      isBurgerMenuOpen ||
+      isUserMenuOpen ||
+      isEmptyCartModalOpen ||
+      isCartModalOpen ||
+      isLanguageSwitcherModalOpen
         ? "hidden"
         : "visible";
     return () => {
       document.body.style.overflow = "visible";
     };
-  }, [isBurgerMenuOpen, isUserMenuOpen, isEmptyCartModalOpen, isCartModalOpen]);
+  }, [
+    isBurgerMenuOpen,
+    isUserMenuOpen,
+    isEmptyCartModalOpen,
+    isCartModalOpen,
+    isLanguageSwitcherModalOpen,
+  ]);
 
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
@@ -169,16 +204,31 @@ const Header = () => {
       if (isUserMenuOpen && clickedOutsideUserMenu && clickedOutsideAuthButton) {
         setIsUserMenuOpen(false);
       }
+
+      const languageSwitcherElement = document.getElementById("languageSwitcher");
+      const languageSwitcherModalElement = document.getElementById("languageSwitcherModal");
+      const burgerMenuElement = burgerMenuRef.current;
+
+      if (
+        isLanguageSwitcherModalOpen &&
+        languageSwitcherElement &&
+        !languageSwitcherElement.contains(target) &&
+        languageSwitcherModalElement &&
+        !languageSwitcherModalElement.contains(target) &&
+        (!burgerMenuElement || !burgerMenuElement.contains(target))
+      ) {
+        setIsLanguageSwitcherModalOpen(false);
+      }
     };
 
-    if (isBurgerMenuOpen || isUserMenuOpen) {
+    if (isBurgerMenuOpen || isUserMenuOpen || isLanguageSwitcherModalOpen) {
       document.addEventListener("mousedown", handleClickOutside);
     }
 
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
-  }, [isBurgerMenuOpen, isUserMenuOpen]);
+  }, [isBurgerMenuOpen, isUserMenuOpen, isLanguageSwitcherModalOpen]);
 
   const isCartEmpty = cartItemCount === 0;
   const { user, isSignedIn } = useUser();
@@ -217,6 +267,27 @@ const Header = () => {
     }
   };
 
+  const closeLanguageSwitcherModal = () => {
+    setIsLanguageSwitcherModalOpen(false);
+  };
+
+  const handleLanguageSwitcherClick = () => {
+    setIsLanguageSwitcherModalOpen((prev) => !prev);
+    closeEmptyCartModal();
+    closeCartModal();
+  };
+
+  const handleLanguageChange = (language: "ge" | "en") => {
+    setSelectedLanguage(language);
+    closeLanguageSwitcherModal();
+
+    if (!pathname) return;
+    const segments = pathname.split("/");
+    segments[1] = language;
+    const newPath = segments.join("/");
+    router.push(newPath);
+  };
+
   return (
     <>
       <StyledContainer>
@@ -225,10 +296,10 @@ const Header = () => {
             <Logo size="small" href="/" />
             <StyledActionsWrapper>
               <StyledNavigation>
-                <NavItem text="პროდუქცია" href="/products" />
-                <NavItem text="ფასდაკლება" href="/" />
-                <NavItem text="პროექტი" href="/" />
-                <NavItem text="კონტაქტი" href="/contact" />
+                <NavItem text={header.products} href="/products" />
+                <NavItem text={header.sale} href="/" />
+                <NavItem text={header.project} href="/" />
+                <NavItem text={header.contact} href="/contact" />
               </StyledNavigation>
               <StyledUserActions>
                 <StyledVerticalLine />
@@ -243,13 +314,14 @@ const Header = () => {
                       isAuthorized={isUserAuthorized}
                       username={currentUser.username}
                       userImage={currentUser.userImage}
-                      text="ავტორიზაცია"
+                      text={header.authorize}
                       onClick={() => {
                         if (isRegistrationCodeOpen) setIsRegistrationCodeOpen(false);
                         if (isRegistrationSuccessOpen) setIsRegistrationSuccessOpen(false);
                         setIsUserMenuOpen(true);
                         closeEmptyCartModal();
                         closeCartModal();
+                        closeLanguageSwitcherModal();
                       }}
                     />
                   </div>
@@ -260,10 +332,17 @@ const Header = () => {
                         toggleBurgerMenu();
                         closeEmptyCartModal();
                         closeCartModal();
+                        closeLanguageSwitcherModal();
                       }}
                     />
                   </div>
                 </ResponsiveGapWrapper>
+                <div id="languageSwitcher" onClick={handleLanguageSwitcherClick}>
+                  <LanguageSwitcher
+                    language={ensureValidLanguage(pathname.split("/")[1])}
+                    display="none"
+                  />
+                </div>
               </StyledUserActions>
             </StyledActionsWrapper>
           </StyledContentWrapper>
@@ -274,7 +353,12 @@ const Header = () => {
         <>
           <OverlayWithoutBackground />
           <div ref={burgerMenuRef}>
-            <BurgerMenu />
+            <BurgerMenu
+              onLanguageChange={handleLanguageChange}
+              currentLanguage={ensureValidLanguage(selectedLanguage)}
+              onLanguageSwitcherClick={handleLanguageSwitcherClick}
+              dictionary={dictionary}
+            />
           </div>
         </>
       )}
@@ -286,7 +370,7 @@ const Header = () => {
               <Overlay />
               <div ref={userMenuRef}>
                 {isUserAuthorized ? (
-                  <UserMenu closeModal={() => setIsUserMenuOpen(false)} />
+                  <UserMenu closeModal={() => setIsUserMenuOpen(false)} dictionary={dictionary} />
                 ) : (
                   <AuthorizationModal
                     onClose={() => setIsUserMenuOpen(false)}
@@ -298,6 +382,7 @@ const Header = () => {
                       setIsUserMenuOpen(false);
                       setIsRegistrationCodeOpen(true);
                     }}
+                    dictionary={header}
                   />
                 )}
               </div>
@@ -309,7 +394,10 @@ const Header = () => {
       {isRecoverPasswordOpen && (
         <>
           <Overlay onClick={() => setIsRecoverPasswordOpen(false)} />
-          <RecoverPasswordModal onClose={() => setIsRecoverPasswordOpen(false)} />
+          <RecoverPasswordModal
+            onClose={() => setIsRecoverPasswordOpen(false)}
+            dictionary={dictionary}
+          />
         </>
       )}
 
@@ -342,7 +430,7 @@ const Header = () => {
           <Overlay onClick={closeEmptyCartModal} />
           <StyledTestWrapper>
             <StyledTest>
-              <EmptyCartModal />
+              <EmptyCartModal dictionary={dictionary} />
             </StyledTest>
           </StyledTestWrapper>
         </>
@@ -353,7 +441,26 @@ const Header = () => {
           <Overlay onClick={closeCartModal} />
           <StyledTestWrapper>
             <StyledTest>
-              <CartModal itemCount={cartItemCount} onClose={closeCartModal} />{" "}
+              <CartModal
+                itemCount={cartItemCount}
+                onClose={closeCartModal}
+                dictionary={dictionary}
+              />{" "}
+            </StyledTest>
+          </StyledTestWrapper>
+        </>
+      )}
+
+      {isLanguageSwitcherModalOpen && (
+        <>
+          <OverlayWithoutBackground onClick={closeLanguageSwitcherModal} />
+          <StyledTestWrapper>
+            <StyledTest>
+              <LanguageSwitcherModal
+                id="languageSwitcherModal"
+                onLanguageChange={handleLanguageChange}
+                currentLanguage={ensureValidLanguage(pathname?.split("/")[1] || "ge")}
+              />
             </StyledTest>
           </StyledTestWrapper>
         </>

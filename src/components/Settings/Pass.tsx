@@ -84,33 +84,33 @@ const Title = styled.p`
   }
 `;
 
-const Pass = () => {
+const Pass = ({ dictionary }: any) => {
   return (
     <StylePass>
-      <Title>პაროლის ცვლილება</Title>
+      <Title>{dictionary?.title2}</Title>
       <InputsWrapper>
         <LeftColumn>
           <InputWithLabel
             icon="/assets/icons/pass1.svg"
-            label="ძველი პაროლი"
-            placeholder="პაროლი"
+            label={dictionary?.subTitle1}
+            placeholder={dictionary?.placeHolder1}
           />
           <InputWithLabel
             icon="/assets/icons/pass2.svg"
-            label="შეიყვანეთ ახალი პაროლი"
-            placeholder="ახალი პაროლი"
+            label={dictionary?.subTitle2}
+            placeholder={dictionary?.placeHolder2}
           />
           <InputWithLabel
             icon="/assets/icons/pass2.svg"
-            label="გაიმეორეთ ახალი პაროლი"
-            placeholder="გაიმეორეთ პაროლი"
+            label={dictionary?.subTitle3}
+            placeholder={dictionary?.placeHolder3}
           />
         </LeftColumn>
       </InputsWrapper>
 
       <ButtonRow>
-        <Cancel />
-        <SaveButton />
+        <Cancel dictionary={dictionary} />
+        <SaveButton dictionary={dictionary} />
       </ButtonRow>
     </StylePass>
   );

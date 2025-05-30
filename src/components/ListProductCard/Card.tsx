@@ -53,12 +53,12 @@ const StyledRectangle = styled.div`
   }
 `;
 
-function Card() {
+function Card({ dictionary }: any) {
   return (
     <StyledRectangle>
       <LampaImage />
-      <ProductText />
-      <AddButton />
+      <ProductText dictionary={dictionary} />
+      <AddButton dictionary={dictionary} />
     </StyledRectangle>
   );
 }

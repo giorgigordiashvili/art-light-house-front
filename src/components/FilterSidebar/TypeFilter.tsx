@@ -2,13 +2,13 @@
 import React, { useState } from "react";
 import CheckboxGroup from "./CheckboxGroup";
 
-function TypeFilter() {
+function TypeFilter({ dictionary }: any) {
   const [categories, setCategories] = useState([
-    { label: "LED", value: "LED" },
-    { label: "Halogen", value: "Halogen", checked: true },
-    { label: "Edison", value: "Edison" },
-    { label: "კომპაქტური ფლუორესცენტური", value: "Compact fluorescent" },
-    { label: "RGB განათება", value: "RGB lighting" },
+    { label: dictionary.filterOption14, value: "LED" },
+    { label: dictionary.filterOption15, value: "Halogen", checked: true },
+    { label: dictionary.filterOption16, value: "Edison" },
+    { label: dictionary.filterOption17, value: "Compact fluorescent" },
+    { label: dictionary.filterOption18, value: "RGB lighting" },
   ]);
 
   const handleCategoryChange = (val: string) => {
@@ -16,7 +16,11 @@ function TypeFilter() {
   };
 
   return (
-    <CheckboxGroup title="განათების ტიპი" options={categories} onChange={handleCategoryChange} />
+    <CheckboxGroup
+      title={dictionary.subTitle4}
+      options={categories}
+      onChange={handleCategoryChange}
+    />
   );
 }
 

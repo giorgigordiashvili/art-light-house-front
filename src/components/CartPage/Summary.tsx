@@ -43,31 +43,31 @@ const StyledButton = styled.div`
   padding: 20px;
 `;
 
-const Summary = () => {
+const Summary = ({ dictionary }: any) => {
   return (
     <StyledContainer>
       <StyledSummary>
-        <SummaryTitle text="ჯამი" />
-        <SummaryPrice text="499,99 ₾" />
+        <SummaryTitle text={dictionary?.summary || "შეჯამება"} />
+        <SummaryPrice text={dictionary?.price || "499,99 ₾"} />
       </StyledSummary>
       <DividerLine variant="dark" />
       <StyledPrices>
         <StyledPrice>
-          <ProductTitle text="პროდუქტის ღირებულება" size="large" />
+          <ProductTitle text={dictionary?.productPrice || "პროდუქტის ღირებულება"} size="large" />
           <ProductPrice text="499,99 ₾" size="normal" />
         </StyledPrice>
         <StyledPrice>
-          <ProductTitle text="მიტანის სერვისი" size="large" />
+          <ProductTitle text={dictionary?.deliveryService || "მიტანის სერვისი"} size="large" />
           <ProductPrice text="14,99 ₾" size="normal" />
         </StyledPrice>{" "}
         <StyledPrice>
-          <ProductTitle text="სერვისის საკომისიო" size="large" />
+          <ProductTitle text={dictionary?.serviceCommision || "სერვისის საკომისიო"} size="large" />
           <ProductPrice text="2,99 ₾" size="normal" />
         </StyledPrice>
       </StyledPrices>
       <DividerLine variant="dark" />
       <StyledButton>
-        <PrimaryButton height="55px" width="432px" text="შეკვეთის გაფორმება" />
+        <PrimaryButton height="55px" width="432px" text={dictionary?.button2} />
       </StyledButton>
     </StyledContainer>
   );

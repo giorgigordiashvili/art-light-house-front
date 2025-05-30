@@ -50,13 +50,17 @@ const Price = styled.span`
   color: #ffffff;
 `;
 
-const Product = () => {
+interface ProductProps {
+  dictionary: any;
+}
+
+const Product = ({ dictionary }: ProductProps) => {
   return (
     <ProductsCard>
       <ImagePlaceholder>Product image</ImagePlaceholder>
       <InfoWrapper>
-        <Title>ლურჯი ვარსკვლავის ჭაღი</Title>
-        <Price>199,99 ₾</Price>
+        <Title>{dictionary?.succsessOrder?.productTitle || "Product Title"}</Title>
+        <Price>{dictionary?.succsessOrder?.productPrice || "199.99 ₾"}</Price>
       </InfoWrapper>
     </ProductsCard>
   );

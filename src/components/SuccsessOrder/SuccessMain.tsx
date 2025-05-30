@@ -92,24 +92,24 @@ const Center = styled.div`
     flex-direction: column;
   }
 `;
-const Container = () => {
+const Container = ({ dictionary }: { dictionary: any }) => {
   return (
     <StyleContainer>
       <CheckIcon src="/assets/icons/checkmob.svg" alt="Checkmark" />
 
-      <Title>შეკვეთა წარმატებით გაფორმნდა</Title>
+      <Title>{dictionary?.succsessOrder?.title}</Title>
 
       <Center>
-        <SectionTitle>პროდუქტები</SectionTitle>
+        <SectionTitle>{dictionary?.succsessOrder?.products}</SectionTitle>
         <ProductsWrapper>
-          <Products />
-          <Products />
+          <Products dictionary={dictionary} />
+          <Products dictionary={dictionary} />
         </ProductsWrapper>
-        <SectionTitle>მისამართი</SectionTitle>
-        <Address />
-        <SectionTitle>მიწოდება</SectionTitle>
-        <Delivery></Delivery>
-        <SummaryBlock />
+        <SectionTitle>{dictionary?.succsessOrder?.address}</SectionTitle>
+        <Address dictionary={dictionary} />
+        <SectionTitle>{dictionary?.succsessOrder?.delivery}</SectionTitle>
+        <Delivery dictionary={dictionary} />
+        <SummaryBlock dictionary={dictionary} />
       </Center>
     </StyleContainer>
   );

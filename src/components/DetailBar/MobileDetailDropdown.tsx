@@ -107,13 +107,13 @@ const MenuItem = styled.div<{ selected: boolean }>`
   }
 `;
 
-const MobileDetailDropdown = () => {
+const MobileDetailDropdown = ({ dictionary }: any) => {
   const menuItems = [
-    { label: "ჩემი დეტალები", icon: "/assets/icons/Details.svg" },
-    { label: "ჩემი მისამართები", icon: "/assets/icons/misamarti.svg" },
-    { label: "ჩემი შეკვეთები", icon: "/assets/icons/Shekvetebi.svg" },
-    { label: "გადახდის მეთოდები", icon: "/assets/icons/gadaxda.svg" },
-    { label: "პარამეტრები", icon: "/assets/icons/settings.svg" },
+    { label: dictionary?.detailBar1 || "My details", icon: "/assets/icons/Details.svg" },
+    { label: dictionary?.detailBar2 || "My addresses", icon: "/assets/icons/misamarti.svg" },
+    { label: dictionary?.detailBar3 || "My orders", icon: "/assets/icons/Shekvetebi.svg" },
+    { label: dictionary?.detailBar4 || "Payment methods", icon: "/assets/icons/gadaxda.svg" },
+    { label: dictionary?.detailBar5 || "Settings", icon: "/assets/icons/settings.svg" },
   ];
 
   const [open, setOpen] = useState(false);

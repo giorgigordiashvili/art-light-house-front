@@ -80,24 +80,25 @@ const CloseButton = styled.button`
 
 interface MobileFilterDropdownProps {
   onClose: () => void;
+  dictionary: any;
 }
 
-const MobileFilterDropdown: React.FC<MobileFilterDropdownProps> = ({ onClose }) => {
+const MobileFilterDropdown: React.FC<MobileFilterDropdownProps> = ({ onClose, dictionary }) => {
   return (
     <>
       <Overlay onClick={onClose} />
       <DropdownWrapper>
         <ScrollArea>
-          <CloseButton onClick={onClose}>გასუფთავება</CloseButton>
-          <Title>ფილტრი</Title>
+          <CloseButton onClick={onClose}>{dictionary.filter.clear}</CloseButton>
+          <Title>{dictionary.filter.title}</Title>
           <Line />
-          <CategoryFilter />
+          <CategoryFilter dictionary={dictionary.filter} />
           <Line />
-          <PriceFilter />
+          <PriceFilter dictionary={dictionary.filter} />
           <Line />
-          <StyleFilter />
+          <StyleFilter dictionary={dictionary.filter} />
           <Line />
-          <TypeFilter />
+          <TypeFilter dictionary={dictionary.filter} />
         </ScrollArea>
 
         <BottomBar>
@@ -106,6 +107,7 @@ const MobileFilterDropdown: React.FC<MobileFilterDropdownProps> = ({ onClose }) 
               console.log("გაფილტვრა დააჭირეს");
               onClose(); // ღილაკზე დაჭერის შემდეგ dropdown იკეტება
             }}
+            dictionary={dictionary}
           />
         </BottomBar>
       </DropdownWrapper>

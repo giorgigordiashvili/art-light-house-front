@@ -44,19 +44,29 @@ const StyledButton = styled.div`
   margin-top: 59px;
 `;
 
-const EmptyFavoritesCard = () => {
+const EmptyFavoritesCard = ({ dictionary }: any) => {
   return (
     <StyledContainer>
       <StyledContent>
         <CartImage image="favorite" />
         <StyledTitle>
-          <CartTitle text="კალათა ცარიელია" />
+          <CartTitle text={dictionary?.cart?.emptyFavorites?.subTitle || "Nothing saved"} />
         </StyledTitle>
         <StyledSubTitle>
-          <CartSubTitle text="ნახე პროდუქტები და შენი არჩევანი დაამატე კალათაში" />
+          <CartSubTitle
+            text={
+              dictionary?.cart?.emptyFavorites?.description ||
+              "See products and add your choice to cart"
+            }
+          />
         </StyledSubTitle>
         <StyledButton>
-          <PrimaryButton text="პროდუქტები" width="205px" height="55px" media="no" />
+          <PrimaryButton
+            text={dictionary?.cart?.emptyFavorites?.button || "Products"}
+            width="205px"
+            height="55px"
+            media="no"
+          />
         </StyledButton>
       </StyledContent>
     </StyledContainer>

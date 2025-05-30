@@ -61,15 +61,15 @@ const IconWrapper = styled.div`
   transition: filter 0.3s ease;
 `;
 
-const menuItems = [
-  { label: "ჩემი დეტალები", icon: "/assets/icons/Details.svg" },
-  { label: "ჩემი მისამართები", icon: "/assets/icons/misamarti.svg" },
-  { label: "ჩემი შეკვეთები", icon: "/assets/icons/Shekvetebi.svg" },
-  { label: "გადახდის მეთოდები", icon: "/assets/icons/gadaxda.svg" },
-  { label: "პარამეტრები", icon: "/assets/icons/settings.svg" },
-];
+const DetailBar = ({ dictionary }: any) => {
+  const menuItems = [
+    { label: dictionary?.detailBar1 || "My details", icon: "/assets/icons/Details.svg" },
+    { label: dictionary?.detailBar2 || "My addresses", icon: "/assets/icons/misamarti.svg" },
+    { label: dictionary?.detailBar3 || "My orders", icon: "/assets/icons/Shekvetebi.svg" },
+    { label: dictionary?.detailBar4 || "Payment methods", icon: "/assets/icons/gadaxda.svg" },
+    { label: dictionary?.detailBar5 || "Settings", icon: "/assets/icons/settings.svg" },
+  ];
 
-const DetailBar = () => {
   return (
     <Container>
       {menuItems.map(({ label, icon }, index) => (
@@ -86,9 +86,14 @@ const DetailBar = () => {
       <Divider last />
       <Item logout>
         <IconWrapper>
-          <Image src="/assets/icons/Logout.svg" alt="გასვლა" width={24} height={24} />
+          <Image
+            src="/assets/icons/Logout.svg"
+            alt={dictionary?.detailBar6 || "Logout"}
+            width={24}
+            height={24}
+          />
         </IconWrapper>
-        გასვლა
+        {dictionary?.detailBar6 || "Logout"}
       </Item>
     </Container>
   );

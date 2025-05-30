@@ -24,13 +24,13 @@ const StyledTextContent = styled.div`
   }
 `;
 
-const ProductContent = () => {
+const ProductContent = ({ dictionary }: any) => {
   return (
     <StyledContainer>
       <ProductImage />
       <StyledTextContent>
-        <ProductTitle text="ლურჯი ვარსკვლავის ჭაღი" />
-        <ProductPrice text="199,99 ₾" />
+        <ProductTitle text={dictionary?.cart?.cartModal.cardTitle1} />
+        <ProductPrice text={dictionary?.cart?.cartModal.price} />
       </StyledTextContent>
     </StyledContainer>
   );

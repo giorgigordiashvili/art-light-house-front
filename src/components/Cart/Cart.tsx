@@ -12,12 +12,12 @@ const StyledContainer = styled.div`
   }
 `;
 
-const Cart = () => {
+const Cart = ({ dictionary }: any) => {
   return (
     <Container>
       <StyledContainer>
-        <ContactTitle text="ჩემი პროდუქტები" />
-        <EmptyCartCard />
+        <ContactTitle text={dictionary?.cart?.title} />
+        <EmptyCartCard dictionary={dictionary} />
       </StyledContainer>
     </Container>
   );

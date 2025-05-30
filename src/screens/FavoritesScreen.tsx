@@ -37,7 +37,7 @@ const StyledCircle = styled.div`
   }
 `;
 
-const FavoritesScreen = () => {
+const FavoritesScreen = ({ dictionary }: { dictionary: any }) => {
   return (
     <StyledContainer>
       <BigCircle variant={2} />
@@ -47,7 +47,7 @@ const FavoritesScreen = () => {
       <LeftCircle size="small" left="-140px" top="900px" media="yes" />
       <NewCircle size="small" right="142px" top="1000px" media="yes" />
       <Container>
-        <Favorites />
+        <Favorites dictionary={dictionary} />
       </Container>
     </StyledContainer>
   );

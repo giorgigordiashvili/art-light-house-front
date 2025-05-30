@@ -25,21 +25,21 @@ const StyledCards = styled.div`
   }
 `;
 
-const Favorites = () => {
+const Favorites = ({ dictionary }: { dictionary: any }) => {
   return (
     <StyledContainer>
       <StyledTitle>
-        <ContactTitle text="შენახული პროდუქტები" />
+        <ContactTitle text={dictionary?.cart?.favorites?.title || "შენახული პროდუქტები"} />
       </StyledTitle>
       <StyledCards>
-        <FavoriteCard card="favorite" />
-        <FavoriteCard card="favorite" />
-        <FavoriteCard card="favorite" />
-        <FavoriteCard card="favorite" />
-        <FavoriteCard card="favorite" />
-        <FavoriteCard card="favorite" />
-        <FavoriteCard card="favorite" />
-        <FavoriteCard card="favorite" />
+        <FavoriteCard card="favorite" dictionary={dictionary} />
+        <FavoriteCard card="favorite" dictionary={dictionary} />
+        <FavoriteCard card="favorite" dictionary={dictionary} />
+        <FavoriteCard card="favorite" dictionary={dictionary} />
+        <FavoriteCard card="favorite" dictionary={dictionary} />
+        <FavoriteCard card="favorite" dictionary={dictionary} />
+        <FavoriteCard card="favorite" dictionary={dictionary} />
+        <FavoriteCard card="favorite" dictionary={dictionary} />
       </StyledCards>
     </StyledContainer>
   );

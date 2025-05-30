@@ -54,23 +54,23 @@ const Divider = styled.div`
   flex-shrink: 0;
 `;
 
-const MenuBar = () => {
+const MenuBar = ({ dictionary }: { dictionary: any }) => {
   return (
     <StyledMenuBar>
       <MenuItem>
-        <Link href="#">მთავარი</Link>
+        <Link href="/">{dictionary?.productDetails?.navigation?.nav1 || "Home"}</Link>
       </MenuItem>
       <Divider />
       <MenuItem>
-        <Link href="#">პროდუქტები</Link>
+        <Link href="/products">{dictionary?.productDetails?.navigation?.nav2 || "Products"}</Link>
       </MenuItem>
       <Divider />
       <MenuItem>
-        <Link href="#">სახლის სანათები</Link>
+        <Link href="#">{dictionary?.productDetails?.navigation?.nav3 || "Home lights"}</Link>
       </MenuItem>
       <Divider />
       <MenuItem>
-        <Link href="#">სანათის მოდელი</Link>
+        <Link href="#">{dictionary?.productDetails?.navigation?.nav4 || "Lamp model"}</Link>
       </MenuItem>
     </StyledMenuBar>
   );

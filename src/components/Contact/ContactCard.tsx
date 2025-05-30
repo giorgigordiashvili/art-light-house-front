@@ -66,31 +66,32 @@ const StyledAction = styled.div`
 
 type Props = {
   side?: "left" | "right";
+  dictionary?: any;
 };
 
-const ContactCard = ({ side = "left" }: Props) => {
+const ContactCard = ({ side = "left", dictionary }: Props) => {
   return (
     <OuterContainer side={side}>
       <StyledContainer>
-        <GoogleMap />
+        <GoogleMap dictionary={dictionary} />
         <StyledAction>
           <div style={{ flex: 1, minWidth: 0 }}>
             <Data
-              title="მისამართი"
-              data="თბილისი"
+              title={dictionary.address}
+              data={dictionary.city}
               image="address"
-              secondData="ბახტრიონის N23"
+              secondData={dictionary.physicalAddress}
               withDivider
               boldData
             />
           </div>
-          <GoogleMapButton text="Google Maps" />
+          <GoogleMapButton text={dictionary.button} />
         </StyledAction>
         <StyledData>
-          <Data title="ტელეფონის ნომერი" data="(+995) 577 45 55 55" image="phone" />
+          <Data title={dictionary.phoneNumber} data={dictionary.number} image="phone" />
         </StyledData>
         <StyledData>
-          <Data title="სამუშაო საათები" data="10:00 - 21:00" image="time" />
+          <Data title={dictionary.workHours} data={dictionary.hours} image="time" />
         </StyledData>
       </StyledContainer>
     </OuterContainer>

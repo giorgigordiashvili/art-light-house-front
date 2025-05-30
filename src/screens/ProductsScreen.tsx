@@ -25,10 +25,10 @@ const StyledCircle = styled.div`
   }
 `;
 
-const ProductsScreen = () => {
+const ProductsScreen = ({ dictionary }: any) => {
   return (
     <StyledComponent>
-      <ProductsMain />
+      <ProductsMain dictionary={dictionary.products} />
       <Main />
       <NewCircle size="small" top="1000px" right="142px" media="no" />
       <StyledCircle>

@@ -16,12 +16,12 @@ const StyledContainer = styled.div`
 
 const StyledCheckout = styled.div``;
 
-const CheckoutScreen = () => {
+const CheckoutScreen = ({ dictionary }: { dictionary: any }) => {
   return (
     <StyledContainer>
       <Container>
         <StyledCheckout>
-          <Checkout />
+          <Checkout dictionary={dictionary} />
         </StyledCheckout>
       </Container>
     </StyledContainer>

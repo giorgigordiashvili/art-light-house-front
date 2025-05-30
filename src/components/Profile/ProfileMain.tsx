@@ -165,30 +165,30 @@ const DetailBarWrapper = styled.div<{ $isOpen: boolean }>`
   }
 `;
 
-const MyDetails = () => {
+const MyDetails = ({ dictionary }: any) => {
   const [isDropdownOpen] = useState(false);
 
   return (
     <StyledComponent>
       <Container>
         <DesktopWrapper>
-          <PageTitle>ჩემი პროფილი</PageTitle>
+          <PageTitle>{dictionary?.profile?.title || "ჩემი პროფილი"}</PageTitle>
           <ContentWrapper>
-            <DetailBar />
+            <DetailBar dictionary={dictionary?.profile} />
             <RightSection>
-              <Personal />
+              <Personal dictionary={dictionary?.profile} />
             </RightSection>
           </ContentWrapper>
         </DesktopWrapper>
 
         <MobileWrapper>
-          <PageTitle>ჩემი პროფილი</PageTitle>
-          <MobileDetailDropdown />
+          <PageTitle>{dictionary?.profile?.title || "ჩემი პროფილი"}</PageTitle>
+          <MobileDetailDropdown dictionary={dictionary?.profile} />
           <DetailBarWrapper $isOpen={isDropdownOpen}>
-            <DetailBar />
+            <DetailBar dictionary={dictionary?.profile} />
           </DetailBarWrapper>
           <RightSection>
-            <Personal />
+            <Personal dictionary={dictionary?.profile} />
           </RightSection>
         </MobileWrapper>
       </Container>

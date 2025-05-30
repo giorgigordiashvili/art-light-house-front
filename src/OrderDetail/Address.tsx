@@ -49,15 +49,34 @@ const Add = styled.span`
   color: #ffffff;
 `;
 
-const Address = () => {
+interface AddressProps {
+  dictionary: {
+    succsessOrder?: {
+      cardTitle1?: string;
+      cardDescription1?: string;
+    };
+    address?: {
+      cardTitle3?: string;
+      cardDescription1?: string;
+    };
+  };
+}
+
+const Address = ({ dictionary }: AddressProps) => {
   return (
     <AddressCard>
       <IconWrapper>
         <Image src={"/assets/addressIcon.svg"} alt="icon" width={24} height={24} />
       </IconWrapper>
       <InfoWrapper>
-        <Title>სამსახური</Title>
-        <Add>5 Petre Kavtaradze Street</Add>
+        <Title>
+          {dictionary?.succsessOrder?.cardTitle1 || dictionary?.address?.cardTitle3 || "Work"}
+        </Title>
+        <Add>
+          {dictionary?.succsessOrder?.cardDescription1 ||
+            dictionary?.address?.cardDescription1 ||
+            "5 Petre Kavtaradze Street"}
+        </Add>
       </InfoWrapper>
     </AddressCard>
   );

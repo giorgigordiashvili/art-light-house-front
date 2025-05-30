@@ -36,14 +36,15 @@ const StyledTitle = styled.p`
 
 type Props = {
   onOpenModal: () => void;
+  dictionary: any;
 };
 
-const AddressCard = ({ onOpenModal }: Props) => {
+const AddressCard = ({ onOpenModal, dictionary }: Props) => {
   return (
     <StyledContainer>
       <StyledIcon onClick={onOpenModal}>
         <AddIcon />
-        <StyledTitle>ახალი მისამართის დამატება</StyledTitle>
+        <StyledTitle>{dictionary.cardTitle1}</StyledTitle>
       </StyledIcon>
     </StyledContainer>
   );

@@ -40,16 +40,22 @@ type Props = {
   onOpenModal: () => void;
   addresses: AddressData[];
   onEditAddress: (address: AddressData) => void;
+  dictionary: any;
 };
 
-const AddressBar = ({ onOpenModal, addresses, onEditAddress }: Props) => (
+const AddressBar = ({ onOpenModal, addresses, onEditAddress, dictionary }: Props) => (
   <StyledContainer>
-    <AddressTitle text="ჩემი მისამართები" />
+    <AddressTitle text={dictionary.title} />
     <DividerLine />
     <StyledCardsWrapper>
-      <AddressCard onOpenModal={onOpenModal} />
+      <AddressCard onOpenModal={onOpenModal} dictionary={dictionary} />
       {addresses.map((item, index) => (
-        <AddedAddressCard key={index} data={item} onEditAddress={() => onEditAddress(item)} />
+        <AddedAddressCard
+          key={index}
+          data={item}
+          onEditAddress={() => onEditAddress(item)}
+          dictionary={dictionary}
+        />
       ))}
     </StyledCardsWrapper>
   </StyledContainer>

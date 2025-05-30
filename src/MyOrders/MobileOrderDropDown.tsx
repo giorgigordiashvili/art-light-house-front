@@ -55,15 +55,15 @@ const DropdownContent = styled.div`
   margin-top: 8px;
 `;
 
-const MobileOrderDropdown = () => {
+const MobileOrderDropdown = ({ dictionary }: any) => {
   const [open, setOpen] = useState(false);
 
   return (
     <Wrapper>
       <DropdownHeader onClick={() => setOpen(!open)}>
         <HeaderLeft>
-          <Image src="/assets/icons/Shekvetebi.svg" alt="ჩემი შეკვეთები" width={24} height={24} />
-          <span>ჩემი შეკვეთები</span>
+          <Image src="/assets/icons/Shekvetebi.svg" alt={dictionary.title} width={24} height={24} />
+          <span>{dictionary.title}</span>
         </HeaderLeft>
         <HeaderRight open={open}>
           <Image
@@ -77,7 +77,7 @@ const MobileOrderDropdown = () => {
 
       {open && (
         <DropdownContent>
-          <Order />
+          <Order dictionary={dictionary} />
         </DropdownContent>
       )}
     </Wrapper>

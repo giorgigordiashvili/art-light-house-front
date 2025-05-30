@@ -4,6 +4,10 @@ import Container from "../../ui/Container";
 import ProductTitle from "./ProductTitle";
 import Circle from "@/components/ui/Circle";
 
+interface Props {
+  dictionary: any;
+}
+
 const StyledContainer = styled.div`
   position: relative;
   width: 100%;
@@ -150,7 +154,7 @@ const Card = styled.div<{
   }
 `;
 
-const CategorySection = () => {
+const CategorySection = ({ dictionary }: Props) => {
   return (
     <Container>
       <StyledContainer>
@@ -166,7 +170,7 @@ const CategorySection = () => {
                 gradient="linear-gradient(116.95deg, rgba(255, 255, 255, 0.03) 3.48%, rgba(246, 202, 86, 0.45) 98.94%)"
                 $backgroundImage="/assets/light.png"
               >
-                <ProductTitle text="განათება" />
+                <ProductTitle text={dictionary.light} />
               </Card>
               <Card
                 width={374}
@@ -174,10 +178,10 @@ const CategorySection = () => {
                 gradient="linear-gradient(240.36deg, rgba(255, 255, 255, 0.03) 1.87%, rgba(246, 202, 86, 0.45) 93.88%)"
                 $backgroundImage="/assets/PillarLight.png"
               >
-                <ProductTitle text="ეზოს სანათები" />
+                <ProductTitle text={dictionary.gardenLight} />
               </Card>
               <Card width={505} height={222} $backgroundImage="/assets/furniture.png">
-                <ProductTitle text="ავეჯი" />
+                <ProductTitle text={dictionary.furniture} />
               </Card>
             </Row>
 
@@ -188,7 +192,7 @@ const CategorySection = () => {
                 gradient="linear-gradient(79.22deg, rgba(255, 255, 255, 0.03) 2.74%, rgba(246, 202, 86, 0.45) 81.45%)"
                 $backgroundImage="/assets/decorations.png"
               >
-                <ProductTitle text="დეკორაციები" />
+                <ProductTitle text={dictionary.decorations} />
               </Card>
               <Card
                 width={374}
@@ -196,10 +200,10 @@ const CategorySection = () => {
                 gradient="linear-gradient(330deg, rgba(255, 255, 255, 0.03) 3.22%, rgba(246, 202, 86, 0.45) 97.55%)"
                 $backgroundImage="/assets/moon.png"
               >
-                <ProductTitle text="დეკორაციები" />
+                <ProductTitle text={dictionary.decorates} />
               </Card>
               <Card width={374} height={222} $backgroundImage="/assets/stars.svg">
-                <ProductTitle text="სარკე" />
+                <ProductTitle text={dictionary.mirror} />
               </Card>
             </Row>
           </RowWrapper>

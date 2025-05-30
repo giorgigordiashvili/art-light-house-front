@@ -33,10 +33,10 @@ type Props = {
   onClick?: () => void;
 };
 
-const BuyButton = ({ onClick }: Props) => {
+const BuyButton = ({ onClick, dictionary }: Props & { dictionary: any }) => {
   return (
     <StyleBuyButton onClick={onClick}>
-      <ButtonText>ყიდვა</ButtonText>
+      <ButtonText>{dictionary?.productDetails?.buy || "Buy"}</ButtonText>
     </StyleBuyButton>
   );
 };

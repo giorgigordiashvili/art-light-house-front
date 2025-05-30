@@ -29,11 +29,11 @@ const StyledPrice = styled.p`
   color: #ffffff;
 `;
 
-const SummaryPrice = () => {
+const SummaryPrice = ({ dictionary }: any) => {
   return (
     <StyledContainer>
-      <StyledText>ჯამური ფასი</StyledText>
-      <StyledPrice>599,32</StyledPrice>
+      <StyledText>{dictionary?.cart?.cartModal.summary}</StyledText>
+      <StyledPrice>{dictionary?.cart?.cartModal.sumPrice}</StyledPrice>
     </StyledContainer>
   );
 };

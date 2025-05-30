@@ -67,18 +67,19 @@ const Title = styled.p`
   } */
 `;
 
-const Order = () => {
+const Order = ({ dictionary }: any) => {
   return (
     <StylePass>
-      <Title>შეკვეთები</Title>
+      <Title>{dictionary?.orderBarTitle || "Orders"}</Title>
       <InputsWrapper>
-        <OrderCard />
-        <OrderCard />
-        <OrderCard /> <OrderCard />
-        <OrderCard />
-        <OrderCard /> <OrderCard />
-        <OrderCard />
-        <OrderCard />
+        <OrderCard dictionary={dictionary} />
+        <OrderCard dictionary={dictionary} />
+        <OrderCard dictionary={dictionary} />
+        <OrderCard dictionary={dictionary} />
+        <OrderCard dictionary={dictionary} />
+        <OrderCard dictionary={dictionary} />
+        <OrderCard dictionary={dictionary} />
+        <OrderCard dictionary={dictionary} />
       </InputsWrapper>
     </StylePass>
   );

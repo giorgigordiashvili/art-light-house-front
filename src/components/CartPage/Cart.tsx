@@ -39,7 +39,7 @@ const StyledSummary = styled.div`
   }
 `;
 
-const Cart = () => {
+const Cart = ({ dictionary }: any) => {
   const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
@@ -54,28 +54,28 @@ const Cart = () => {
 
   return (
     <StyledContainer>
-      <ContactTitle text="ჩემი პროდუქტები" />
+      <ContactTitle text={dictionary?.cart?.cart?.title} />
       <StyledWrapper>
         <StyledCards>
           {!isMobile && (
             <>
-              <FavoriteCard card="cart" />
-              <FavoriteCard card="cart" />
-              <FavoriteCard card="cart" />
-              <FavoriteCard card="cart" />
+              <FavoriteCard card="cart" dictionary={dictionary} />
+              <FavoriteCard card="cart" dictionary={dictionary} />
+              <FavoriteCard card="cart" dictionary={dictionary} />
+              <FavoriteCard card="cart" dictionary={dictionary} />
             </>
           )}
           {isMobile && (
             <>
-              <CartProduct />
-              <CartProduct />
-              <CartProduct />
-              <CartProduct />
+              <CartProduct dictionary={dictionary} />
+              <CartProduct dictionary={dictionary} />
+              <CartProduct dictionary={dictionary} />
+              <CartProduct dictionary={dictionary} />
             </>
           )}
         </StyledCards>
         <StyledSummary>
-          <Summary />
+          <Summary dictionary={dictionary.cart.cart} />
         </StyledSummary>
       </StyledWrapper>
     </StyledContainer>

@@ -11,10 +11,10 @@ const StyledComponent = styled.div`
   align-items: center;
 `;
 
-const MyDetails = () => {
+const MyDetails = ({ dictionary }: { dictionary: any }) => {
   return (
     <StyledComponent>
-      <DetailMain></DetailMain>
+      <DetailMain dictionary={dictionary}></DetailMain>
     </StyledComponent>
   );
 };

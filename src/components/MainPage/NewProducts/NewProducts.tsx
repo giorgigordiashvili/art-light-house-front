@@ -57,23 +57,23 @@ const StyledCards = styled.div`
   }
 `;
 
-const NewProducts = () => {
+const NewProducts = ({ dictionary }: any) => {
   return (
     <Container>
       <StyledContainer>
         <StyledTitleAndActions>
-          <SectionTitle text="ახალი პროდუქტები" image="newProduct" />
+          <SectionTitle text={dictionary.title} image="newProduct" />
           <StyledActions>
             <ReturnIcon />
             <RightSlide />
           </StyledActions>
         </StyledTitleAndActions>
         <StyledCards>
-          <NewProductCard />
-          <NewProductCard />
-          <NewProductCard />
-          <NewProductCard />
-          <NewProductCard />
+          <NewProductCard dictionary={dictionary} />
+          <NewProductCard dictionary={dictionary} />
+          <NewProductCard dictionary={dictionary} />
+          <NewProductCard dictionary={dictionary} />
+          <NewProductCard dictionary={dictionary} />
         </StyledCards>
       </StyledContainer>
     </Container>

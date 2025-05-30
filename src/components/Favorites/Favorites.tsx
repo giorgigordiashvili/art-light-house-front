@@ -11,12 +11,12 @@ const StyledContainer = styled.div`
   }
 `;
 
-const Favorites = () => {
+const Favorites = ({ dictionary }: any) => {
   return (
     <Container>
       <StyledContainer>
-        <ContactTitle text="ჩემი პროდუქტები" />
-        <EmptyFavoritesCard />
+        <ContactTitle text={dictionary?.cart?.favorites?.title || "Saved products"} />
+        <EmptyFavoritesCard dictionary={dictionary} />
       </StyledContainer>
     </Container>
   );

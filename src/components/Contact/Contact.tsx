@@ -37,21 +37,22 @@ const StyledSectionTitle = styled.div`
 
 type ContactProps = {
   variant?: "1" | "2";
+  dictionary?: any;
 };
 
-const Contact: React.FC<ContactProps> = ({ variant = "1" }) => {
+const Contact: React.FC<ContactProps> = ({ variant = "1", dictionary }) => {
   return (
     <StyledContainer>
       <Container>
-        {variant === "1" && <ContactTitle text="კონტაქტი" />}
+        {variant === "1" && <ContactTitle text={dictionary.title2} />}
         {variant === "2" && (
           <StyledSectionTitle>
-            <SectionTitle text="მისამართები" image="address" />
+            <SectionTitle text={dictionary.title} image="address" />
           </StyledSectionTitle>
         )}
         <StyledContactCard $variant={variant}>
-          <ContactCard side="left" />
-          <ContactCard side="right" />
+          <ContactCard side="left" dictionary={dictionary} />
+          <ContactCard side="right" dictionary={dictionary} />
         </StyledContactCard>
       </Container>
     </StyledContainer>

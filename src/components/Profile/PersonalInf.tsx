@@ -91,38 +91,46 @@ const Title = styled.p`
   }
 `;
 
-const Personal = () => {
+const Personal = ({ dictionary }: any) => {
   return (
     <StylePersonal>
-      <Title>პერსონალური ინფორმაცია</Title>
+      <Title>{dictionary?.profileBarTitle || "Personal information"}</Title>
       <InputsWrapper>
         <LeftColumn>
-          <InputWithLabel label="სახელი" placeholder="სახელი" gap={12} />
+          <InputWithLabel
+            label={dictionary?.inputTitle1 || "Name"}
+            placeholder={dictionary?.placeholder1 || "Name"}
+            gap={12}
+          />
           <InputWithLabel
             icon="/assets/icons/Field Icon.svg"
-            label="დაბადების თარითი"
-            placeholder="შეირჩეთ თარიღი"
+            label={dictionary?.inputTitle3 || "Date of birth"}
+            placeholder={dictionary?.placeholder3 || "Enter date"}
           />
           <InputWithLabel
             icon="/assets/icons/gmail.svg"
-            label="ელ.ფოსტა"
-            placeholder="yourmail@gmail.com"
+            label={dictionary?.inputTitle5 || "Email"}
+            placeholder={dictionary?.placeholder5 || "yourmail@gmail.com"}
           />
         </LeftColumn>
 
         <RightColumn>
-          <InputWithLabel label="გვარი" placeholder="გვარი" gap={12} />
+          <InputWithLabel
+            label={dictionary?.inputTitle2 || "Last name"}
+            placeholder={dictionary?.placeholder2 || "Last name"}
+            gap={12}
+          />
           <InputWithLabel
             icon="/assets/icons/phone icon.svg"
-            label="ტელეფონის ნომერი"
-            placeholder="შეიყვანეთ ტელეფონის ნომერი"
+            label={dictionary?.inputTitle4 || "Phone number"}
+            placeholder={dictionary?.placeholder4 || "Enter phone number"}
           />
         </RightColumn>
       </InputsWrapper>
 
       <ButtonRow>
-        <Cancel />
-        <SaveButton />
+        <Cancel dictionary={dictionary.profile} />
+        <SaveButton dictionary={dictionary} />
       </ButtonRow>
     </StylePersonal>
   );

@@ -11,10 +11,10 @@ const StyledComponent = styled.div`
   align-items: center;
 `;
 
-const SettingsScreen = () => {
+const SettingsScreen = ({ dictionary }: any) => {
   return (
     <StyledComponent>
-      <Settings></Settings>
+      <Settings dictionary={dictionary.settings}></Settings>
     </StyledComponent>
   );
 };

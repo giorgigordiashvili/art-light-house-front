@@ -74,12 +74,13 @@ const ButtonText = styled.p`
 
 type Props = {
   onClick?: () => void;
+  dictionary?: any;
 };
 
-const CancelButton = ({ onClick }: Props) => {
+const CancelButton = ({ onClick, dictionary }: Props) => {
   return (
     <StyleCancelButton onClick={onClick}>
-      <ButtonText>გაუქმება</ButtonText>
+      <ButtonText>{dictionary?.button1 || "Cancel"}</ButtonText>
     </StyleCancelButton>
   );
 };

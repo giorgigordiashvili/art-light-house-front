@@ -107,7 +107,7 @@ const CardGrid = styled.div`
   }
 `;
 
-function ProductsMain() {
+function DetailMain({ dictionary }: { dictionary: any }) {
   return (
     <StyledComponent>
       <NewCircle size="small" right="142px" top="1000px" media="yes" />
@@ -116,14 +116,14 @@ function ProductsMain() {
         <Circle size="large" />
       </StyledCircle>
       <Container>
-        <MenuBar />
+        <MenuBar dictionary={dictionary} />
         <FlexRow>
           <BigCard />
           <RightColumn>
-            <DetailDescription />
+            <DetailDescription dictionary={dictionary} />
             <ButtonRow>
-              <BuyButton />
-              <AddToCartButton />
+              <BuyButton dictionary={dictionary} />
+              <AddToCartButton dictionary={dictionary} />
             </ButtonRow>
           </RightColumn>
         </FlexRow>
@@ -131,22 +131,22 @@ function ProductsMain() {
         <ProductHeader>
           <Image
             src="/assets/icons/notification-text.svg"
-            alt="Product"
+            alt={dictionary?.productDetails?.similarProducts || "Similar Products"}
             width={32}
             height={32}
             style={{ borderRadius: 8, objectFit: "cover" }}
           />
-          <p>მსგავსი პროდუქტები</p>
+          <p>{dictionary?.productDetails?.similarProducts || "Similar Products"}</p>
         </ProductHeader>
         <CardGrid>
-          <Card />
-          <Card />
-          <Card />
-          <Card />
+          <Card dictionary={dictionary.productDetails} />
+          <Card dictionary={dictionary.productDetails} />
+          <Card dictionary={dictionary.productDetails} />
+          <Card dictionary={dictionary.productDetails} />
         </CardGrid>
       </Container>
     </StyledComponent>
   );
 }
 
-export default ProductsMain;
+export default DetailMain;

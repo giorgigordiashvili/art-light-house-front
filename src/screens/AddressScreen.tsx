@@ -18,13 +18,13 @@ const StyledContainer = styled.div`
 
 const StyledAddress = styled.div``;
 
-const AddressScreen = () => {
+const AddressScreen = ({ dictionary }: any) => {
   return (
     <StyledContainer>
       <BigCircle variant={2} />
       <Container>
         <StyledAddress>
-          <Address />
+          <Address dictionary={dictionary.address} />
         </StyledAddress>
       </Container>
     </StyledContainer>

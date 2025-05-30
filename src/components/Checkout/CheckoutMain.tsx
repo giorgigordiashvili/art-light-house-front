@@ -99,125 +99,158 @@ const RightSection = styled.div`
   }
 `;
 
-const Checkout = () => {
+interface CheckoutProps {
+  dictionary?: {
+    checkout?: {
+      title?: string;
+      subTitle1?: string;
+      subTitle2?: string;
+      subTitle3?: string;
+      subTitle4?: string;
+      subTitle5?: string;
+      cardTitle1?: string;
+      cardTitle2?: string;
+      cardTitle3?: string;
+      cardTitle4?: string;
+      cardDescription1?: string;
+      cardDescription2?: string;
+      cardDescription3?: string;
+      cardDescription4?: string;
+      placeholder1?: string;
+      placeholder2?: string;
+    };
+  };
+}
+
+const Checkout: React.FC<CheckoutProps> = ({ dictionary }) => {
   const [selectedDelivery, setSelectedDelivery] = useState<string | null>(null);
 
   const toggleDelivery = (method: string) => {
-    if (selectedDelivery === method) {
-      setSelectedDelivery(null);
-    } else {
-      setSelectedDelivery(method);
-    }
+    setSelectedDelivery(selectedDelivery === method ? null : method);
   };
+
+  const getDeliverySelected = (method?: string) => selectedDelivery === method;
+  const getDeliveryDisabled = (method?: string) =>
+    selectedDelivery !== null && selectedDelivery !== method;
 
   return (
     <Container>
       <DesktopWrapper>
-        <PageTitle>შეკვეთის გაფორმება</PageTitle>
+        <PageTitle>{dictionary?.checkout?.title || "შეკვეთის გაფორმება"}</PageTitle>
 
         <CheckoutContent>
           <LeftSection>
             <CheckoutCard
-              label="მისამართი"
-              method="სამსახური"
-              desc="5 Petre Kavtaradze Street"
+              label={dictionary?.checkout?.subTitle1 || "მისამართი"}
+              method={dictionary?.checkout?.cardTitle1 || "სამსახური"}
+              desc={dictionary?.checkout?.cardDescription1 || "5 Petre Kavtaradze Street"}
               imageSrc="/assets/icons/job.svg"
             />
 
             <CheckoutCard
-              label="გადახდის მეთოდი"
-              method="ბარათი"
-              desc="ტრანზაქციის შემდეგ თქვენი ბარათის მონაცემები შეინახება ბანკის დაცულ სერვერზე"
+              label={dictionary?.checkout?.subTitle2 || "გადახდის მეთოდი"}
+              method={dictionary?.checkout?.cardTitle2 || "ბარათი"}
+              desc={
+                dictionary?.checkout?.cardDescription2 ||
+                "ტრანზაქციის შემდეგ თქვენი ბარათის მონაცემები შეინახება ბანკის დაცულ სერვერზე"
+              }
               imageSrc="/assets/icons/gadaxda.svg"
             />
           </LeftSection>
 
           <RightSection>
-            <Summery />
+            <Summery dictionary={dictionary?.checkout} />
           </RightSection>
         </CheckoutContent>
 
-        <Label>მიწოდება</Label>
+        <Label>{dictionary?.checkout?.subTitle3 || "მიწოდება"}</Label>
         <CardsWrapper>
           <DeliveryOptionCard
-            method="ექსპრეს მოტანა"
-            desc="40 წუთიდან 2 საათამდე"
+            method={dictionary?.checkout?.cardTitle3 || "ექსპრეს მოტანა"}
+            desc={dictionary?.checkout?.cardDescription3 || "40 წუთიდან 2 საათამდე"}
             imageSrc="/assets/Delivery Icon.svg"
-            selected={selectedDelivery === "ექსპრეს მოტანა"}
-            disabled={selectedDelivery !== null && selectedDelivery !== "ექსპრეს მოტანა"}
-            onSelect={() => toggleDelivery("ექსპრეს მოტანა")}
+            selected={getDeliverySelected(dictionary?.checkout?.cardTitle3)}
+            disabled={getDeliveryDisabled(dictionary?.checkout?.cardTitle3)}
+            onSelect={() => toggleDelivery(dictionary?.checkout?.cardTitle3 || "")}
           />
           <DeliveryOptionCard
-            method="შემდეგ დღეს მოტანა"
-            desc="10:00 - დან 13:00 საათამდე"
+            method={dictionary?.checkout?.cardTitle4 || "შემდეგ დღეს მოტანა"}
+            desc={dictionary?.checkout?.cardDescription4 || "10:00 - დან 13:00 საათამდე"}
             imageSrc="/assets/icons/IconDate.svg"
-            selected={selectedDelivery === "შემდეგ დღეს მოტანა"}
-            disabled={selectedDelivery !== null && selectedDelivery !== "შემდეგ დღეს მოტანა"}
-            onSelect={() => toggleDelivery("შემდეგ დღეს მოტანა")}
+            selected={getDeliverySelected(dictionary?.checkout?.cardTitle4)}
+            disabled={getDeliveryDisabled(dictionary?.checkout?.cardTitle4)}
+            onSelect={() => toggleDelivery(dictionary?.checkout?.cardTitle4 || "")}
           />
         </CardsWrapper>
 
         <InputWithLabel
           icon="/assets/icons/phone icon.svg"
-          label="ტელეფონი"
-          placeholder="შეიყვანეთ ტელეფონის ნომერი"
+          label={dictionary?.checkout?.subTitle4 || "ტელეფონი"}
+          placeholder={dictionary?.checkout?.placeholder1 || "შეიყვანეთ ტელეფონის ნომერი"}
           gap={18}
         />
 
-        <Label>დამატებითი ინფორმაცია</Label>
-        <TextContainer placeholder="დამატებითი ინფორმაცია" />
+        <Label>{dictionary?.checkout?.subTitle5 || "დამატებითი ინფორმაცია"}</Label>
+        <TextContainer
+          placeholder={dictionary?.checkout?.placeholder2 || "დამატებითი ინფორმაცია"}
+        />
       </DesktopWrapper>
 
       <MobileWrapper>
-        <PageTitle>შეკვეთის გაფორმება</PageTitle>
+        <PageTitle>{dictionary?.checkout?.title || "შეკვეთის გაფორმება"}</PageTitle>
 
         <CheckoutCard
-          label="მისამართი"
-          method="სამსახური"
-          desc="5 Petre Kavtaradze Street"
+          label={dictionary?.checkout?.subTitle1 || "მისამართი"}
+          method={dictionary?.checkout?.cardTitle1 || "სამსახური"}
+          desc={dictionary?.checkout?.cardDescription1 || "5 Petre Kavtaradze Street"}
           imageSrc="/assets/icons/job.svg"
         />
 
         <CheckoutCard
-          label="გადახდის მეთოდი"
-          method="ბარათი"
-          desc="ტრანზაქციის შემდეგ თქვენი ბარათის მონაცემები შეინახება ბანკის დაცულ სერვერზე"
+          label={dictionary?.checkout?.subTitle2 || "გადახდის მეთოდი"}
+          method={dictionary?.checkout?.cardTitle2 || "ბარათი"}
+          desc={
+            dictionary?.checkout?.cardDescription2 ||
+            "ტრანზაქციის შემდეგ თქვენი ბარათის მონაცემები შეინახება ბანკის დაცულ სერვერზე"
+          }
           imageSrc="/assets/icons/gadaxda.svg"
         />
 
         <RightSection>
-          <Summery />
+          <Summery dictionary={dictionary?.checkout} />
         </RightSection>
 
-        <Label>მიწოდება</Label>
+        <Label>{dictionary?.checkout?.subTitle3 || "მიწოდება"}</Label>
         <CardsWrapper>
           <DeliveryOptionCard
-            method="ექსპრეს მოტანა"
-            desc="40 წუთიდან 2 საათამდე"
+            method={dictionary?.checkout?.cardTitle3 || "ექსპრეს მოტანა"}
+            desc={dictionary?.checkout?.cardDescription3 || "40 წუთიდან 2 საათამდე"}
             imageSrc="/assets/Delivery Icon.svg"
-            selected={selectedDelivery === "ექსპრეს მოტანა"}
-            disabled={selectedDelivery !== null && selectedDelivery !== "ექსპრეს მოტანა"}
-            onSelect={() => toggleDelivery("ექსპრეს მოტანა")}
+            selected={getDeliverySelected(dictionary?.checkout?.cardTitle3)}
+            disabled={getDeliveryDisabled(dictionary?.checkout?.cardTitle3)}
+            onSelect={() => toggleDelivery(dictionary?.checkout?.cardTitle3 || "")}
           />
           <DeliveryOptionCard
-            method="შემდეგ დღეს მოტანა"
-            desc="10:00 - დან 13:00 საათამდე"
+            method={dictionary?.checkout?.cardTitle4 || "შემდეგ დღეს მოტანა"}
+            desc={dictionary?.checkout?.cardDescription4 || "10:00 - დან 13:00 საათამდე"}
             imageSrc="/assets/icons/IconDate.svg"
-            selected={selectedDelivery === "შემდეგ დღეს მოტანა"}
-            disabled={selectedDelivery !== null && selectedDelivery !== "შემდეგ დღეს მოტანა"}
-            onSelect={() => toggleDelivery("შემდეგ დღეს მოტანა")}
+            selected={getDeliverySelected(dictionary?.checkout?.cardTitle4)}
+            disabled={getDeliveryDisabled(dictionary?.checkout?.cardTitle4)}
+            onSelect={() => toggleDelivery(dictionary?.checkout?.cardTitle4 || "")}
           />
         </CardsWrapper>
 
         <InputWithLabel
           icon="/assets/icons/phone icon.svg"
-          label="ტელეფონი"
-          placeholder="შეიყვანეთ ტელეფონის ნომერი"
+          label={dictionary?.checkout?.subTitle4 || "ტელეფონი"}
+          placeholder={dictionary?.checkout?.placeholder1 || "შეიყვანეთ ტელეფონის ნომერი"}
           gap={18}
         />
 
-        <Label>დამატებითი ინფორმაცია</Label>
-        <TextContainer placeholder="დამატებითი ინფორმაცია" />
+        <Label>{dictionary?.checkout?.subTitle5 || "დამატებითი ინფორმაცია"}</Label>
+        <TextContainer
+          placeholder={dictionary?.checkout?.placeholder2 || "დამატებითი ინფორმაცია"}
+        />
       </MobileWrapper>
     </Container>
   );

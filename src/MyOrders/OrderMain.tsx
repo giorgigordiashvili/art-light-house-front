@@ -86,7 +86,7 @@ const DetailBarWrapper = styled.div<{ $isOpen: boolean }>`
   }
 `;
 
-const MyOrder = () => {
+const MyOrder = ({ dictionary }: any) => {
   const [isDropdownOpen] = useState(false);
 
   return (
@@ -94,22 +94,22 @@ const MyOrder = () => {
       <Container>
         {/* Desktop */}
         <DesktopWrapper>
-          <PageTitle>ჩემი პროფილი</PageTitle>
+          <PageTitle>{dictionary?.title || "My Orders"}</PageTitle>
           <ContentWrapper>
-            <DetailBar />
+            <DetailBar dictionary={dictionary} />
             <RightSection>
-              <Order />
+              <Order dictionary={dictionary} />
             </RightSection>
           </ContentWrapper>
         </DesktopWrapper>
 
         {/* Mobile */}
         <MobileWrapper>
-          <PageTitle>ჩემი პროფილი</PageTitle>
-          <MobileDetailDropdown />
-          <MobileOrderDropdown />
+          <PageTitle>{dictionary?.title || "My Orders"}</PageTitle>
+          <MobileDetailDropdown dictionary={dictionary} />
+          <MobileOrderDropdown dictionary={dictionary} />
           <DetailBarWrapper $isOpen={isDropdownOpen}>
-            <DetailBar />
+            <DetailBar dictionary={dictionary} />
           </DetailBarWrapper>
         </MobileWrapper>
       </Container>

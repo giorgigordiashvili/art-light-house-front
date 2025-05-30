@@ -23,13 +23,13 @@ const DescriptionText = styled.p`
   line-height: 24px;
   letter-spacing: 0%;
 `;
-function FooterDescription() {
+function FooterDescription({ footer }: any) {
   return (
     <Description>
       <Logo size="large" href="/" />
       <DescriptionText>
-        ჩვენი განათება ქმნის განსაკუთრებულ გარემოს, რომელიც ვიზუალურად მიმზიდველია და ემოციურ
-        გამოცდილებას ქმნის.
+        {footer?.description ||
+          "Our lighting creates a special environment that is visually appealing and creates an emotional experience."}
       </DescriptionText>
     </Description>
   );

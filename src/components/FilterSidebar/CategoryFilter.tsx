@@ -2,22 +2,28 @@
 import React, { useState } from "react";
 import CheckboxGroup from "./CheckboxGroup";
 
-function CategoryFilter() {
+function CategoryFilter({ dictionary }: any) {
   const [categories, setCategories] = useState([
-    { label: "ჭაღი", value: "Chandelier" },
-    { label: "ჭერზე დასამაგრებელი", value: "Ceiling mount", checked: true },
-    { label: "ჩამოსაკიდი", value: "Hanging" },
-    { label: "კედლის სანათი", value: "wall-light" },
-    { label: "აბაზანის განათება", value: "Bathroom lighting" },
-    { label: "სანათი მაგიდისთვის", value: "Table lamp" },
-    { label: "სამუშაო განათება", value: "Work lighting" },
+    { label: dictionary.filterOption1, value: "Chandelier" },
+    { label: dictionary.filterOption2, value: "Ceiling mount", checked: true },
+    { label: dictionary.filterOption3, value: "Hanging" },
+    { label: dictionary.filterOption4, value: "wall-light" },
+    { label: dictionary.filterOption5, value: "Bathroom lighting" },
+    { label: dictionary.filterOption6, value: "Table lamp" },
+    { label: dictionary.filterOption7, value: "Work lighting" },
   ]);
 
   const handleCategoryChange = (val: string) => {
     setCategories((prev) => prev.map((c) => (c.value === val ? { ...c, checked: !c.checked } : c)));
   };
 
-  return <CheckboxGroup title="კატეგორია" options={categories} onChange={handleCategoryChange} />;
+  return (
+    <CheckboxGroup
+      title={dictionary.subTitle1}
+      options={categories}
+      onChange={handleCategoryChange}
+    />
+  );
 }
 
 export default CategoryFilter;
