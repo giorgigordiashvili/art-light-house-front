@@ -15,7 +15,7 @@ interface ClientRootLayoutProps {
   dictionary: Dictionary;
 }
 
-export default function ClientRootLayout({ children, lang, dictionary }: ClientRootLayoutProps) {
+export default function ClientRootLayout({ children, dictionary }: ClientRootLayoutProps) {
   const pathname = usePathname();
   const isAdminRoute = pathname?.startsWith("/admin");
 
