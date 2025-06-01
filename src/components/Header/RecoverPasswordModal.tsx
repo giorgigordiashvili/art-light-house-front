@@ -70,7 +70,12 @@ const StyledInput = styled.div`
   margin-top: 48px;
 `;
 
-const RecoverPasswordModal = ({ onClose }: { onClose: () => void }) => {
+interface RecoverPasswordModalProps {
+  onClose: () => void;
+  dictionary: any;
+}
+
+const RecoverPasswordModal = ({ onClose, dictionary }: RecoverPasswordModalProps) => {
   const handleClickInside = (e: React.MouseEvent) => {
     e.stopPropagation();
   };
@@ -82,17 +87,30 @@ const RecoverPasswordModal = ({ onClose }: { onClose: () => void }) => {
           <CloseIcon />
         </StyledCloseIcon>
         <StyledTitle>
-          <ModalTitle text="პაროლის აღდგენა" />
+          <ModalTitle
+            text={dictionary?.header?.passwordRecoveryModal?.title || "Password Recovery"}
+          />
         </StyledTitle>
         <StyledDescription>
-          <ModalDescription text="პაროლის აღსადგენად ჩაწერეთ რეგისტრირებული ელ.ფოსტა" />
+          <ModalDescription
+            text={
+              dictionary?.header?.passwordRecoveryModal?.subTitle ||
+              "To recover your password, enter your registered email"
+            }
+          />
         </StyledDescription>
         <StyledInput>
-          <InputTitle text="ელ.ფოსტა" />
-          <ModalInput placeholder="შეიყვანეთ ელ.ფოსტა" />
+          <InputTitle text={dictionary?.header?.passwordRecoveryModal?.inputTitle1 || "Email"} />
+          <ModalInput
+            placeholder={dictionary?.header?.passwordRecoveryModal?.placeholder1 || "Enter email"}
+          />
         </StyledInput>
         <StyledPrimaryButton>
-          <PrimaryButton text="გაგზავნა" width="460px" height="50px" />
+          <PrimaryButton
+            text={dictionary?.header?.passwordRecoveryModal?.button1 || "Send"}
+            width="460px"
+            height="50px"
+          />
         </StyledPrimaryButton>
       </StyledContainer>
     </StyledOverlayWrapper>

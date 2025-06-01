@@ -32,12 +32,18 @@ const Option = styled.div<{ active?: boolean }>`
 
 type Props = {
   onSortChange: (sortType: string) => void;
+  dictionary: any;
 };
 
-const SortBox = ({ onSortChange }: Props) => {
-  const [selected, setSelected] = useState("ფასი: ზრდადობით");
+const SortBox = ({ onSortChange, dictionary }: Props) => {
+  const [selected, setSelected] = useState(dictionary.sortOption2);
 
-  const options = ["ფასი: კლებადობით", "ფასი: ზრდადობით", "დასახელება: A-Z", "დასახელება: Z-A"];
+  const options = [
+    dictionary.sortOption1,
+    dictionary.sortOption2,
+    dictionary.sortOption3,
+    dictionary.sortOption4,
+  ];
 
   const handleClick = (option: string) => {
     setSelected(option);

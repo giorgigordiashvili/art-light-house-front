@@ -34,7 +34,7 @@ const StyledCircle = styled.div`
   }
 `;
 
-const CartScreen = () => {
+const CartScreen = ({ dictionary }: any) => {
   return (
     <StyledContainer>
       <BigCircle variant={2} />
@@ -44,7 +44,7 @@ const CartScreen = () => {
       <LeftCircle size="small" left="-140px" top="900px" media="yes" />
       <NewCircle size="small" right="142px" top="1000px" media="yes" />
       <Container>
-        <Cart />
+        <Cart dictionary={dictionary} />
       </Container>
     </StyledContainer>
   );

@@ -46,22 +46,22 @@ const Label = styled.span`
 `;
 
 interface SortButtonProps {
-  label?: string;
   onClick?: () => void;
   iconSrc?: string;
+  dictionary: any;
   iconAlt?: string;
 }
 
 const SortButton: React.FC<SortButtonProps> = ({
-  label = "სორტირება",
+  dictionary,
   onClick,
   iconSrc = "/assets/icons/Sort Icon.svg",
-  iconAlt = "icon",
+  iconAlt = "sort icon",
 }) => {
   return (
     <Button onClick={onClick}>
       {iconSrc && <SortIcon src={iconSrc} alt={iconAlt} />}
-      <Label>{label}</Label>
+      <Label>{dictionary.sort}</Label>
     </Button>
   );
 };

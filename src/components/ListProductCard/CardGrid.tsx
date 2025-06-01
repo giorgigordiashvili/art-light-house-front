@@ -28,13 +28,13 @@ const MobileOnly = styled.div`
   }
 `;
 
-const CardGrid = () => {
+const CardGrid = ({ dictionary }: any) => {
   return (
     <>
       <DesktopOnly>
         <GridWrapper>
           {Array.from({ length: 11 }).map((_, i) => (
-            <Card key={i} />
+            <Card key={i} dictionary={dictionary} />
           ))}
         </GridWrapper>
       </DesktopOnly>
@@ -42,7 +42,7 @@ const CardGrid = () => {
       <MobileOnly>
         <GridWrapper>
           {Array.from({ length: 6 }).map((_, i) => (
-            <Card key={i} />
+            <Card key={i} dictionary={dictionary} />
           ))}
         </GridWrapper>
       </MobileOnly>

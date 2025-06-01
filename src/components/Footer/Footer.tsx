@@ -13,11 +13,11 @@ const StyledFooter = styled.div`
   }
 `;
 
-function Footer() {
+function Footer({ footer }: any) {
   return (
     <StyledFooter>
       <Container>
-        <FooterContent />
+        <FooterContent footer={footer} />
       </Container>
     </StyledFooter>
   );

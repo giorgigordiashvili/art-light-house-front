@@ -117,32 +117,31 @@ const StyledCategoryTitle = styled.div`
   }
 `;
 
-const heroSlides = [
-  {
-    lightText: "გაანათე",
-    text: "შენი სახლი",
-    description:
-      "ჩვენი განათება ქმნის განსაკუთრებულ გარემოს, რომელიც ვიზუალურად მიმზიდველია და ემოციურ გამოცდილებას ქმნის.",
-    buttonText: "ყველა პროდუქტი",
-    href: "/products",
-  },
-  {
-    lightText: "შექმენი",
-    text: "მყუდრო ატმოსფერო",
-    description: "თანამედროვე დიზაინი და ტემპერატურა, რომელიც თქვენ გჭირდებათ.",
-    buttonText: "მეტის ნახვა",
-    href: "/",
-  },
-  {
-    lightText: "აირჩიე",
-    text: "ხარისხიანი შუქი",
-    description: "ჩვენი პროდუქცია აკმაყოფილებს ყველა სტანდარტს და სანდოა.",
-    buttonText: "ახალი კოლექცია",
-    href: "/",
-  },
-];
+const HeroAndCategory = ({ dictionary }: any) => {
+  const heroSlides = [
+    {
+      lightText: dictionary.title.split(" ")[0],
+      text: dictionary.title.split(" ")[1] + " " + dictionary.title.split(" ")[2],
+      description: dictionary.description,
+      buttonText: dictionary.button,
+      href: "/products",
+    },
+    {
+      lightText: dictionary.title2.split(" ")[0],
+      text: dictionary.title2.split(" ")[1] + " " + dictionary.title2.split(" ")[2],
+      description: dictionary.description2,
+      buttonText: dictionary.button2,
+      href: "/",
+    },
+    {
+      lightText: dictionary.title3.split(" ")[0],
+      text: dictionary.title3.split(" ")[1] + " " + dictionary.title3.split(" ")[2],
+      description: dictionary.description3,
+      buttonText: dictionary.button3,
+      href: "/",
+    },
+  ];
 
-const HeroAndCategory = () => {
   return (
     <StyledContainer>
       <StyledLinearGradient />
@@ -167,11 +166,11 @@ const HeroAndCategory = () => {
           <DividerLine />
           <Container>
             <StyledCategoryTitle>
-              <SectionTitle text="აირჩიე გემოვნებით" image="category" />
+              <SectionTitle text={dictionary.CategoryTitle} image="category" />
             </StyledCategoryTitle>
           </Container>
         </StyledCategorySection>
-        <CategorySection />
+        <CategorySection dictionary={dictionary} />
       </ContentWrapper>
     </StyledContainer>
   );

@@ -17,10 +17,11 @@ const Button = styled.button`
 
 interface ButtonFilterProps {
   onClick: () => void;
+  dictionary: any;
 }
 
-const ButtonFilter: React.FC<ButtonFilterProps> = ({ onClick }) => {
-  return <Button onClick={onClick}>გაფილტვრა</Button>;
+const ButtonFilter: React.FC<ButtonFilterProps> = ({ onClick, dictionary }) => {
+  return <Button onClick={onClick}>{dictionary.filter.filterButton}</Button>;
 };
 
 export default ButtonFilter;

@@ -54,7 +54,7 @@ const ModalLayout = styled.div`
   justify-content: flex-end;
 `;
 
-const EmptyCartModal = () => {
+const EmptyCartModal = ({ dictionary }: any) => {
   return (
     <ModalLayoutWrapper>
       <ModalLayout>
@@ -62,8 +62,12 @@ const EmptyCartModal = () => {
           <StyledImage>
             <Image src="/assets/EmptyCartImage.svg" width={123} height={123} alt="cart-icon" />
           </StyledImage>
-          <CartTitle text="კალათა ცარიელია" />
-          <CartDescription text="დაამატე პროდუქტები ქალათში და გააფორმე შეკვეთა" />
+          <CartTitle text={dictionary?.cart?.emptyCart?.subTitle || "Cart is empty"} />
+          <CartDescription
+            text={
+              dictionary?.cart?.emptyCart?.description || "See products and add your choice to cart"
+            }
+          />
         </StyledContainer>
       </ModalLayout>
     </ModalLayoutWrapper>

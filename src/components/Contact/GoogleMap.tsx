@@ -31,9 +31,10 @@ const StyledMap = styled.div<{ $variant: 1 | 2 }>`
 
 type Props = {
   variant?: 1 | 2;
+  dictionary?: any;
 };
 
-export default function GoogleMap({ variant = 1 }: Props) {
+export default function GoogleMap({ variant = 1, dictionary }: Props) {
   const position = { lat: 41.720542, lng: 44.764789 };
   const [open, setOpen] = useState(false);
 
@@ -59,7 +60,7 @@ export default function GoogleMap({ variant = 1 }: Props) {
 
               {open && (
                 <InfoWindow position={position} onCloseClick={() => setOpen(false)}>
-                  <p>ბახტრიონის N23</p>
+                  <p>{dictionary?.googleMapClusterAddress || "ბახტრიონის N23"}</p>
                 </InfoWindow>
               )}
             </>

@@ -19,14 +19,15 @@ const StyledContainer = styled.div`
 type Props = {
   onClose: () => void;
   onEdit: () => void;
+  dictionary: any;
 };
 
-const EditModal = ({ onClose, onEdit }: Props) => {
+const EditModal = ({ onClose, onEdit, dictionary }: Props) => {
   return (
     <StyledContainer>
-      <ModalOption text="რედაქტირება" color="white" onClick={onEdit} />
+      <ModalOption text={dictionary.modalText1} color="white" onClick={onEdit} />
       <DividerLine />
-      <ModalOption text="წაშლა" color="red" onClick={onClose} />
+      <ModalOption text={dictionary.modalText2} color="red" onClick={onClose} />
     </StyledContainer>
   );
 };

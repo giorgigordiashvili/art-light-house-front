@@ -54,22 +54,26 @@ const ProductsWrapper = styled.div`
   }
 `;
 
-const Container = () => {
+interface ContainerProps {
+  dictionary: any;
+}
+
+const Container = ({ dictionary }: ContainerProps) => {
   return (
     <StyleContainer>
-      <Title>შეკვეთა #22432</Title>
+      <Title>{dictionary?.succsessOrder?.title}</Title>
 
-      <SectionTitle>პროდუქტები</SectionTitle>
+      <SectionTitle>{dictionary?.succsessOrder?.products}</SectionTitle>
       <ProductsWrapper>
-        <Products />
-        <Products />
+        <Products dictionary={dictionary} />
+        <Products dictionary={dictionary} />
       </ProductsWrapper>
-      <SectionTitle>მისამართი</SectionTitle>
-      <Address />
-      <SectionTitle>მიწოდება</SectionTitle>
+      <SectionTitle>{dictionary?.succsessOrder?.address}</SectionTitle>
+      <Address dictionary={dictionary} />
+      <SectionTitle>{dictionary?.succsessOrder?.delivery}</SectionTitle>
 
-      <Delivery></Delivery>
-      <SummaryBlock />
+      <Delivery dictionary={dictionary}></Delivery>
+      <SummaryBlock dictionary={dictionary} />
     </StyleContainer>
   );
 };

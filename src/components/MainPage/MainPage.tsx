@@ -5,14 +5,19 @@ import PopularProducts from "./PopularProducts/PopularProducts";
 import Accomplishments from "./Accomplishments/Accomplishments";
 import Contact from "../Contact/Contact";
 
-const MainPage = () => {
+const MainPage = ({ dictionary }: any) => {
   return (
     <>
-      <HeroAndCategory />
-      <NewProducts />
-      <PopularProducts />
-      <Accomplishments />
-      <Contact variant="2" />
+      <HeroAndCategory
+        dictionary={{
+          ...dictionary.hero,
+          ...dictionary.category,
+        }}
+      />
+      <NewProducts dictionary={dictionary.newProducts} />
+      <PopularProducts dictionary={dictionary.popularProducts} />
+      <Accomplishments dictionary={dictionary.accomplihsments} />
+      <Contact variant="2" dictionary={dictionary.contact} />
     </>
   );
 };

@@ -71,7 +71,7 @@ const StyledMobileDetail = styled.div`
   }
 `;
 
-const Address = () => {
+const Address = ({ dictionary }: any) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [addresses, setAddresses] = useState<AddressData[]>([]);
   const [editingAddress, setEditingAddress] = useState<AddressData | null>(null);
@@ -106,17 +106,18 @@ const Address = () => {
         <RightCircle size="small" top="830px" right="-150px" media="yes" />
         <LeftCircle size="small" top="750px" left="-255px" media="yes" />
         <div>
-          <ContactTitle text="ჩემი მისამართები" />
+          <ContactTitle text={dictionary.title} />
         </div>
         <StyledBars>
-          <DetailBar />
+          <DetailBar dictionary={dictionary} />
           <StyledMobileDetail>
-            <MobileDetailDropdown />
+            <MobileDetailDropdown dictionary={dictionary} />
           </StyledMobileDetail>
           <AddressBar
             onOpenModal={() => setIsModalOpen(true)}
             addresses={addresses}
             onEditAddress={handleEditAddress}
+            dictionary={dictionary}
           />
         </StyledBars>
       </StyledContainer>
@@ -136,6 +137,7 @@ const Address = () => {
               }}
               onSave={editingAddress ? handleSaveEditedAddress : handleSaveAddress}
               initialData={editingAddress || undefined}
+              dictionary={dictionary}
             />
           </StyledModal>
         </Overlay>

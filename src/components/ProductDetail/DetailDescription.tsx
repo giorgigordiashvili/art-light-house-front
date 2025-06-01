@@ -49,17 +49,14 @@ const Description = styled.p`
   }
 `;
 
-const DetailDescription = () => {
+const DetailDescription = ({ dictionary }: { dictionary: any }) => {
   return (
     <Wrapper>
-      <Title>ლურჯი ვარსკვლავის ჭაღი</Title>
-      <Price>199,99 ₾</Price>
+      <Title>{dictionary?.productDetails?.title || "Blue Star Chandelier"}</Title>
+      <Price>{dictionary?.productDetails?.price || "199,99 ₾"}</Price>
       <Description>
-        ეს ჭაღი შექმნილია თანამედროვე დიზაინის მიხედვით და იდეალურად შეესაბამება ნებისმიერი
-        ინტერიერის სტილს. მისი უნიკალური ფორმა და ლურჯი ფერის ელემენტები ქმნიან განსაკუთრებულ
-        ატმოსფეროს თქვენს სახლში. ჭაღი აღჭურვილია ენერგოეფექტური LED ნათურებით, რაც უზრუნველყოფს
-        ხანგრძლივ მომსახურებას და დაბალ ენერგომოხმარებას. შეიძინეთ ახლა ჩვენს ვებსაიტზე და
-        გაამდიდრეთ თქვენი სივრცე!
+        {dictionary?.productDetails?.description ||
+          "This chandelier is designed with a modern aesthetic and perfectly suits any interior style. Its unique shape and blue elements create a special atmosphere in your home. The chandelier is equipped with energy-efficient LED bulbs, ensuring long service life and low energy consumption. Buy now on our website and enrich your space!"}
       </Description>
     </Wrapper>
   );

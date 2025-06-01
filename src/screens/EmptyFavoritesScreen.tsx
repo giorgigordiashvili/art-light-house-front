@@ -1,3 +1,4 @@
+"use client";
 import React from "react";
 import styled from "styled-components";
 import Favorites from "@/components/Favorites/Favorites";
@@ -29,7 +30,7 @@ const StyledCircle = styled.div`
   }
 `;
 
-const EmptyFavoritesScreen = () => {
+const EmptyFavoritesScreen = ({ dictionary }: any) => {
   return (
     <StyledContainer>
       <BigCircle variant={2} />
@@ -38,7 +39,7 @@ const EmptyFavoritesScreen = () => {
       </StyledCircle>
       <LeftCircle size="small" left="-140px" top="900px" media="yes" />
       <NewCircle size="small" right="142px" top="1000px" media="yes" />
-      <Favorites />
+      <Favorites dictionary={dictionary} />
     </StyledContainer>
   );
 };

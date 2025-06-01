@@ -27,10 +27,10 @@ const StyledCircle = styled.div`
   }
 `;
 
-const ContactScreen = () => {
+const ContactScreen = ({ dictionary }: any) => {
   return (
     <StyledComponent>
-      <Contact variant="1" />
+      <Contact variant="1" dictionary={dictionary.contact} />
       <BigCircle variant={2} />
       <NewCircle size="small" right="142px" top="1000px" />
       <LeftCircle size="small" left="-200px" top="900px" media="yes" />

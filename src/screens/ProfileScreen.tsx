@@ -30,7 +30,7 @@ const StyledCircle = styled.div`
   }
 `;
 
-const ProfileScreen = () => {
+const ProfileScreen = ({ dictionary }: any) => {
   return (
     <StyledComponent>
       <BigCircle variant={2} />
@@ -39,7 +39,7 @@ const ProfileScreen = () => {
       <StyledCircle>
         <Circle size="small" />
       </StyledCircle>
-      <ProfileMain></ProfileMain>
+      <ProfileMain dictionary={dictionary}></ProfileMain>
     </StyledComponent>
   );
 };
