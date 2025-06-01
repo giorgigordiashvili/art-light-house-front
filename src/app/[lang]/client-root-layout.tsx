@@ -60,21 +60,12 @@ export default function ClientRootLayout({ children, lang, dictionary }: ClientR
         },
       }}
     >
-      <html lang={lang}>
-        <head>
-          <meta name="viewport" content="width=device-width, initial-scale=1" />
-          <title>Art Light House</title>
-          <meta name="description" content="Art Light House - Premium lighting solutions" />
-        </head>
-        <body>
-          <div id="clerk-captcha" style={{ display: "none" }}></div>
-          <StyledComponentsRegistry>
-            {!isAdminRoute && <Header header={dictionary.header} dictionary={dictionary} />}
-            {children}
-            {!isAdminRoute && <Footer footer={dictionary.footer} />}
-          </StyledComponentsRegistry>
-        </body>
-      </html>
+      <div id="clerk-captcha" style={{ display: "none" }}></div>
+      <StyledComponentsRegistry>
+        {!isAdminRoute && <Header header={dictionary.header} dictionary={dictionary} />}
+        {children}
+        {!isAdminRoute && <Footer footer={dictionary.footer} />}
+      </StyledComponentsRegistry>
     </ClerkProvider>
   );
 }

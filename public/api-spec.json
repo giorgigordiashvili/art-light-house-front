@@ -1,0 +1,1061 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Art Light House API",
+    "description": "API documentation for the Art Light House application, providing endpoints for managing languages, translations, and user data.",
+    "version": "1.0.0",
+    "contact": {
+      "name": "API Support",
+      "email": "support@artlighthouse.com"
+    }
+  },
+  "servers": [
+    {
+      "url": "/api",
+      "description": "Local development server"
+    }
+  ],
+  "paths": {
+    "/languages": {
+      "get": {
+        "summary": "Get all languages",
+        "description": "Retrieve all active languages ordered by default language first, then alphabetically",
+        "tags": ["Languages"],
+        "responses": {
+          "200": {
+            "description": "List of languages retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "languages": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/Language"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Create a new language",
+        "description": "Create a new language entry. If marked as default, it will unset other default languages",
+        "tags": ["Languages"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateLanguageRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Language created successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "language": {
+                      "$ref": "#/components/schemas/Language"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request - missing required fields",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/languages/{id}": {
+      "get": {
+        "summary": "Get a specific language",
+        "description": "Retrieve a language by ID, including its translations",
+        "tags": ["Languages"],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Language ID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Language retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "language": {
+                      "$ref": "#/components/schemas/LanguageWithTranslations"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Language not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "summary": "Update a language",
+        "description": "Update an existing language. If marked as default, it will unset other default languages",
+        "tags": ["Languages"],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Language ID"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateLanguageRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Language updated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "language": {
+                      "$ref": "#/components/schemas/Language"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Language not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "summary": "Delete a language",
+        "description": "Delete a language and all its translations",
+        "tags": ["Languages"],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Language ID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Language deleted successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "Language deleted successfully"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Language not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/translations": {
+      "get": {
+        "summary": "Get translations",
+        "description": "Retrieve translations with optional filtering by language, namespace, or key",
+        "tags": ["Translations"],
+        "parameters": [
+          {
+            "name": "language",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            },
+            "description": "Filter by language code"
+          },
+          {
+            "name": "namespace",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            },
+            "description": "Filter by namespace"
+          },
+          {
+            "name": "key",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            },
+            "description": "Search by key (case-insensitive partial match)"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Translations retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "translations": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/TranslationWithLanguage"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Create a new translation",
+        "description": "Create a new translation entry",
+        "tags": ["Translations"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateTranslationRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Translation created successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "translation": {
+                      "$ref": "#/components/schemas/TranslationWithLanguage"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request - missing required fields",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/translations/{id}": {
+      "get": {
+        "summary": "Get a specific translation",
+        "description": "Retrieve a translation by ID",
+        "tags": ["Translations"],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Translation ID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Translation retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "translation": {
+                      "$ref": "#/components/schemas/TranslationWithLanguage"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Translation not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "summary": "Update a translation",
+        "description": "Update an existing translation",
+        "tags": ["Translations"],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Translation ID"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateTranslationRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Translation updated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "translation": {
+                      "$ref": "#/components/schemas/TranslationWithLanguage"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Translation not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "summary": "Delete a translation",
+        "description": "Delete a translation by ID",
+        "tags": ["Translations"],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Translation ID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Translation deleted successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "Translation deleted successfully"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Translation not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/translations/bulk": {
+      "post": {
+        "summary": "Bulk create translations",
+        "description": "Create multiple translations at once",
+        "tags": ["Translations"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BulkCreateTranslationsRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Translations created successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "translations": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/Translation"
+                      }
+                    },
+                    "count": {
+                      "type": "number",
+                      "description": "Number of translations created"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request - invalid data",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/translations/dictionary/{languageCode}": {
+      "get": {
+        "summary": "Get dictionary for a language",
+        "description": "Retrieve all translations for a specific language as a flat dictionary",
+        "tags": ["Translations"],
+        "parameters": [
+          {
+            "name": "languageCode",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Language code (e.g., 'en', 'ka')"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Dictionary retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "dictionary": {
+                      "type": "object",
+                      "additionalProperties": {
+                        "type": "string"
+                      },
+                      "description": "Key-value pairs of translations"
+                    },
+                    "language": {
+                      "$ref": "#/components/schemas/Language"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Language not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/user": {
+      "get": {
+        "summary": "Get current user",
+        "description": "Retrieve the current authenticated user's database information",
+        "tags": ["Users"],
+        "security": [
+          {
+            "ClerkAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "User retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "Success"
+                    },
+                    "user": {
+                      "$ref": "#/components/schemas/User"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - user not authenticated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "User not found in database",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/webhooks/clerk": {
+      "post": {
+        "summary": "Clerk webhook handler",
+        "description": "Handle webhooks from Clerk authentication service",
+        "tags": ["Webhooks"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "description": "Clerk webhook payload"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Webhook processed successfully"
+          },
+          "400": {
+            "description": "Bad request - invalid webhook data"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Language": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique identifier for the language"
+          },
+          "code": {
+            "type": "string",
+            "description": "Language code (e.g., 'en', 'ka')"
+          },
+          "name": {
+            "type": "string",
+            "description": "Display name of the language"
+          },
+          "isDefault": {
+            "type": "boolean",
+            "description": "Whether this is the default language"
+          },
+          "isActive": {
+            "type": "boolean",
+            "description": "Whether this language is active"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Creation timestamp"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Last update timestamp"
+          }
+        },
+        "required": ["id", "code", "name", "isDefault", "isActive", "created_at", "updated_at"]
+      },
+      "LanguageWithTranslations": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/Language"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "translations": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/Translation"
+                }
+              }
+            }
+          }
+        ]
+      },
+      "Translation": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique identifier for the translation"
+          },
+          "key": {
+            "type": "string",
+            "description": "Translation key (e.g., 'common.welcome')"
+          },
+          "value": {
+            "type": "string",
+            "description": "Translated text"
+          },
+          "languageId": {
+            "type": "string",
+            "description": "ID of the associated language"
+          },
+          "namespace": {
+            "type": "string",
+            "nullable": true,
+            "description": "Optional namespace for grouping translations"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Creation timestamp"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Last update timestamp"
+          }
+        },
+        "required": ["id", "key", "value", "languageId", "created_at", "updated_at"]
+      },
+      "TranslationWithLanguage": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/Translation"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "language": {
+                "$ref": "#/components/schemas/Language"
+              }
+            }
+          }
+        ]
+      },
+      "User": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique identifier for the user"
+          },
+          "clerkId": {
+            "type": "string",
+            "description": "Clerk authentication ID"
+          },
+          "email": {
+            "type": "string",
+            "format": "email",
+            "nullable": true,
+            "description": "User's email address"
+          },
+          "name": {
+            "type": "string",
+            "nullable": true,
+            "description": "User's display name"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Creation timestamp"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Last update timestamp"
+          }
+        },
+        "required": ["id", "clerkId", "createdAt", "updatedAt"]
+      },
+      "CreateLanguageRequest": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string",
+            "description": "Language code (e.g., 'en', 'ka')"
+          },
+          "name": {
+            "type": "string",
+            "description": "Display name of the language"
+          },
+          "isDefault": {
+            "type": "boolean",
+            "description": "Whether this should be the default language",
+            "default": false
+          },
+          "isActive": {
+            "type": "boolean",
+            "description": "Whether this language should be active",
+            "default": true
+          }
+        },
+        "required": ["code", "name"]
+      },
+      "UpdateLanguageRequest": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string",
+            "description": "Language code (e.g., 'en', 'ka')"
+          },
+          "name": {
+            "type": "string",
+            "description": "Display name of the language"
+          },
+          "isDefault": {
+            "type": "boolean",
+            "description": "Whether this should be the default language"
+          },
+          "isActive": {
+            "type": "boolean",
+            "description": "Whether this language should be active"
+          }
+        }
+      },
+      "CreateTranslationRequest": {
+        "type": "object",
+        "properties": {
+          "key": {
+            "type": "string",
+            "description": "Translation key (e.g., 'common.welcome')"
+          },
+          "value": {
+            "type": "string",
+            "description": "Translated text"
+          },
+          "languageId": {
+            "type": "string",
+            "description": "ID of the associated language"
+          },
+          "namespace": {
+            "type": "string",
+            "description": "Optional namespace for grouping translations"
+          }
+        },
+        "required": ["key", "value", "languageId"]
+      },
+      "UpdateTranslationRequest": {
+        "type": "object",
+        "properties": {
+          "key": {
+            "type": "string",
+            "description": "Translation key (e.g., 'common.welcome')"
+          },
+          "value": {
+            "type": "string",
+            "description": "Translated text"
+          },
+          "namespace": {
+            "type": "string",
+            "description": "Optional namespace for grouping translations"
+          }
+        }
+      },
+      "BulkCreateTranslationsRequest": {
+        "type": "object",
+        "properties": {
+          "translations": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CreateTranslationRequest"
+            },
+            "description": "Array of translations to create"
+          }
+        },
+        "required": ["translations"]
+      },
+      "Error": {
+        "type": "object",
+        "properties": {
+          "error": {
+            "type": "string",
+            "description": "Error message"
+          }
+        },
+        "required": ["error"]
+      }
+    },
+    "securitySchemes": {
+      "ClerkAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT",
+        "description": "Clerk JWT token for authentication"
+      }
+    }
+  },
+  "tags": [
+    {
+      "name": "Languages",
+      "description": "Operations related to language management"
+    },
+    {
+      "name": "Translations",
+      "description": "Operations related to translation management"
+    },
+    {
+      "name": "Users",
+      "description": "Operations related to user management"
+    },
+    {
+      "name": "Webhooks",
+      "description": "Webhook endpoints for external integrations"
+    }
+  ]
+}

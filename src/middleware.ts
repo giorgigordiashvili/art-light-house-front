@@ -44,14 +44,17 @@ export function middleware(request: NextRequest) {
       "/robots.txt",
       "/sitemap.xml",
       "/admin", // Add admin to the exempted paths
+      "/api-spec.json", // Add API spec file
       // Add other files in `public` as needed
     ].includes(pathname) ||
     pathname.startsWith("/images/") ||
     pathname.startsWith("/fonts/") ||
     pathname.startsWith("/assets/") ||
     pathname.startsWith("/admin/") || // Also exempt all paths under /admin/
+    pathname.startsWith("/api/") || // Exempt all API routes
     pathname.startsWith("/.netlify/") || // Exempt Netlify functionality paths
-    pathname.startsWith("/dictionaries/") // Exempt dictionaries folder
+    pathname.startsWith("/dictionaries/") || // Exempt dictionaries folder
+    pathname.includes("/api-docs") // Exempt API documentation pages
   ) {
     return;
   }
