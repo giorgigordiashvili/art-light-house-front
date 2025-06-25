@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import styled, { css } from "styled-components";
 import {
   APIProvider,
