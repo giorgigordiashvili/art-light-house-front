@@ -94,7 +94,13 @@ const AddressModal = ({ onClose, onSave, initialData, dictionary }: Props) => {
         />
       </StyledInputWrapper>
       <StyledMap>
-        <GoogleMap variant={2} />
+        <GoogleMap
+          variant={2}
+          searchedAddress={address}
+          onLocationSelect={(locationName) => {
+            setAddress(locationName);
+          }}
+        />
       </StyledMap>
       <StyledButton>
         <CancelButton onClick={onClose} dictionary={dictionary} />
