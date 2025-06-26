@@ -11,7 +11,9 @@
     "format:check": "prettier --check .",
     "prepare": "husky",
     "postinstall": "prisma generate",
-    "seed:translations": "tsx prisma/seed/translations.ts"
+    "seed:translations": "tsx prisma/seed/translations.ts",
+    "seed:attributes": "tsx prisma/seed/attributes.ts",
+    "seed:all": "tsx prisma/seed/index.ts"
   },
   "dependencies": {
     "@clerk/nextjs": "^6.20.1",

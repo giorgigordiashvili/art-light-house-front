@@ -36,6 +36,9 @@ model Language {
 
   // Relations
   translations Translation[]
+  attributeTypeTranslations AttributeTypeTranslation[]
+  attributeTranslations AttributeTranslation[]
+  categoryTranslations CategoryTranslation[]
 
   @@map("languages")
 }
@@ -59,3 +62,191 @@ model Translation {
 }
 
 // You can add additional models related to your application below
+
+// Dynamic Attribute Types (e.g., Color, Size, Material, etc.)
+model AttributeType {
+  id            String   @id @default(uuid())
+  name          String   @unique // e.g., "color", "size", "material" (internal identifier)
+  inputType     String   // "text", "number", "select", "color", "boolean"
+  isRequired    Boolean  @default(false)
+  isActive      Boolean  @default(true)
+  sortOrder     Int      @default(0)
+  created_at    DateTime @default(now())
+  updated_at    DateTime @updatedAt
+
+  // Relations
+  attributes    Attribute[]
+  categoryAttributes CategoryAttribute[]
+  productAttributes  ProductAttribute[]
+  translations  AttributeTypeTranslation[]
+
+  @@map("attribute_types")
+}
+
+// Translations for attribute types
+model AttributeTypeTranslation {
+  id              String   @id @default(uuid())
+  attributeTypeId String
+  languageId      String
+  displayName     String   // Localized display name
+  description     String?  // Optional description
+  created_at      DateTime @default(now())
+  updated_at      DateTime @updatedAt
+
+  // Relations
+  attributeType   AttributeType @relation(fields: [attributeTypeId], references: [id], onDelete: Cascade)
+  language        Language      @relation(fields: [languageId], references: [id], onDelete: Cascade)
+
+  @@unique([attributeTypeId, languageId])
+  @@map("attribute_type_translations")
+}
+
+// Predefined attribute values for select-type attributes
+model Attribute {
+  id            String   @id @default(uuid())
+  attributeTypeId String
+  value         String   // The actual value (e.g., "red", "blue", "large") - internal identifier
+  hexColor      String?  // For color attributes
+  sortOrder     Int      @default(0)
+  isActive      Boolean  @default(true)
+  created_at    DateTime @default(now())
+  updated_at    DateTime @updatedAt
+
+  // Relations
+  attributeType AttributeType @relation(fields: [attributeTypeId], references: [id], onDelete: Cascade)
+  productAttributes ProductAttribute[]
+  translations  AttributeTranslation[]
+
+  @@unique([attributeTypeId, value])
+  @@map("attributes")
+}
+
+// Translations for attribute values
+model AttributeTranslation {
+  id          String   @id @default(uuid())
+  attributeId String
+  languageId  String
+  displayValue String  // Localized display value
+  created_at  DateTime @default(now())
+  updated_at  DateTime @updatedAt
+
+  // Relations
+  attribute   Attribute @relation(fields: [attributeId], references: [id], onDelete: Cascade)
+  language    Language  @relation(fields: [languageId], references: [id], onDelete: Cascade)
+
+  @@unique([attributeId, languageId])
+  @@map("attribute_translations")
+}
+
+// Categories for products (optional grouping)
+model Category {
+  id          String   @id @default(uuid())
+  name        String   @unique // Internal identifier
+  description String?
+  parentId    String?  // For hierarchical categories
+  isActive    Boolean  @default(true)
+  sortOrder   Int      @default(0)
+  created_at  DateTime @default(now())
+  updated_at  DateTime @updatedAt
+
+  // Relations
+  parent      Category? @relation("CategoryHierarchy", fields: [parentId], references: [id])
+  children    Category[] @relation("CategoryHierarchy")
+  categoryAttributes CategoryAttribute[]
+  products    Product[]
+  translations CategoryTranslation[]
+
+  @@map("categories")
+}
+
+// Translations for categories
+model CategoryTranslation {
+  id          String   @id @default(uuid())
+  categoryId  String
+  languageId  String
+  displayName String   // Localized display name
+  description String?  // Localized description
+  created_at  DateTime @default(now())
+  updated_at  DateTime @updatedAt
+
+  // Relations
+  category    Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  language    Language @relation(fields: [languageId], references: [id], onDelete: Cascade)
+
+  @@unique([categoryId, languageId])
+  @@map("category_translations")
+}
+
+// Link categories to their required/optional attributes
+model CategoryAttribute {
+  id            String   @id @default(uuid())
+  categoryId    String
+  attributeTypeId String
+  isRequired    Boolean  @default(false)
+  sortOrder     Int      @default(0)
+  created_at    DateTime @default(now())
+
+  // Relations
+  category      Category      @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  attributeType AttributeType @relation(fields: [attributeTypeId], references: [id], onDelete: Cascade)
+
+  @@unique([categoryId, attributeTypeId])
+  @@map("category_attributes")
+}
+
+// Main products table
+model Product {
+  id          String   @id @default(uuid())
+  name        String
+  description String?
+  price       Decimal  @db.Decimal(10, 2)
+  sku         String?  @unique
+  categoryId  String?
+  isActive    Boolean  @default(true)
+  isFeatured  Boolean  @default(false)
+  stockQuantity Int    @default(0)
+  created_at  DateTime @default(now())
+  updated_at  DateTime @updatedAt
+
+  // Relations
+  category      Category? @relation(fields: [categoryId], references: [id])
+  productAttributes ProductAttribute[]
+  productImages ProductImage[]
+
+  @@map("products")
+}
+
+// Dynamic attributes for products
+model ProductAttribute {
+  id            String   @id @default(uuid())
+  productId     String
+  attributeTypeId String
+  attributeId   String?  // For predefined values
+  customValue   String?  // For free-text values
+  created_at    DateTime @default(now())
+  updated_at    DateTime @updatedAt
+
+  // Relations
+  product       Product       @relation(fields: [productId], references: [id], onDelete: Cascade)
+  attributeType AttributeType @relation(fields: [attributeTypeId], references: [id], onDelete: Cascade)
+  attribute     Attribute?    @relation(fields: [attributeId], references: [id])
+
+  @@unique([productId, attributeTypeId])
+  @@map("product_attributes")
+}
+
+// Product images
+model ProductImage {
+  id        String   @id @default(uuid())
+  productId String
+  imageUrl  String
+  altText   String?
+  isPrimary Boolean  @default(false)
+  sortOrder Int      @default(0)
+  created_at DateTime @default(now())
+
+  // Relations
+  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@map("product_images")
+}

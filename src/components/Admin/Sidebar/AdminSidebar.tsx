@@ -110,6 +110,7 @@ const AdminSidebar = ({ username = "Admin User", role = "Administrator" }: Admin
   const navItems = [
     { name: "Dashboard", path: "/admin" },
     { name: "Products", path: "/admin/products" },
+    { name: "Attributes", path: "/admin/attributes" },
     { name: "Orders", path: "/admin/orders" },
     { name: "Customers", path: "/admin/customers" },
     { name: "Languages", path: "/admin/languages" },
