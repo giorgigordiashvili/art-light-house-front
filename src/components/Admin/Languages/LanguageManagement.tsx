@@ -72,13 +72,13 @@ const Td = styled.td`
   vertical-align: middle;
 `;
 
-const Badge = styled.span<{ variant: string }>`
+const Badge = styled.span<{ $variant: string }>`
   padding: 0.25rem 0.75rem;
   border-radius: 12px;
   font-size: 0.75rem;
   font-weight: 500;
   background: ${(props) => {
-    switch (props.variant) {
+    switch (props.$variant) {
       case "default":
         return "#e8f5e8";
       case "active":
@@ -90,7 +90,7 @@ const Badge = styled.span<{ variant: string }>`
     }
   }};
   color: ${(props) => {
-    switch (props.variant) {
+    switch (props.$variant) {
       case "default":
         return "#2d8f2d";
       case "active":
@@ -402,7 +402,7 @@ const LanguageManagement = () => {
               <tr key={language.id}>
                 <Td>
                   <strong>{language.name}</strong>
-                  {language.isDefault && <Badge variant="default">Default</Badge>}
+                  {language.isDefault && <Badge $variant="default">Default</Badge>}
                 </Td>
                 <Td>
                   <code
@@ -417,7 +417,7 @@ const LanguageManagement = () => {
                   </code>
                 </Td>
                 <Td>
-                  <Badge variant={language.isActive ? "active" : "inactive"}>
+                  <Badge $variant={language.isActive ? "active" : "inactive"}>
                     {language.isActive ? "Active" : "Inactive"}
                   </Badge>
                 </Td>

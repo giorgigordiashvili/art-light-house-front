@@ -32,21 +32,21 @@ const NavList = styled.ul`
   flex: 1;
 `;
 
-const NavItem = styled.li<{ isActive: boolean }>`
+const NavItem = styled.li<{ $isActive: boolean }>`
   padding: 0;
   margin: 0;
 `;
 
-const NavLink = styled(Link)<{ isActive: boolean }>`
+const NavLink = styled(Link)<{ $isActive: boolean }>`
   display: flex;
   align-items: center;
   padding: 0.8rem 1.5rem;
-  color: ${(props) => (props.isActive ? "#2B3445" : "#7D879C")};
-  font-weight: ${(props) => (props.isActive ? "600" : "400")};
+  color: ${(props) => (props.$isActive ? "#2B3445" : "#7D879C")};
+  font-weight: ${(props) => (props.$isActive ? "600" : "400")};
   text-decoration: none;
   transition: all 0.2s;
-  border-left: 4px solid ${(props) => (props.isActive ? "#2B3445" : "transparent")};
-  background-color: ${(props) => (props.isActive ? "#F3F5F9" : "transparent")};
+  border-left: 4px solid ${(props) => (props.$isActive ? "#2B3445" : "transparent")};
+  background-color: ${(props) => (props.$isActive ? "#F3F5F9" : "transparent")};
 
   &:hover {
     background-color: #f3f5f9;
@@ -127,8 +127,8 @@ const AdminSidebar = ({ username = "Admin User", role = "Administrator" }: Admin
 
       <NavList>
         {navItems.map((item) => (
-          <NavItem key={item.path} isActive={pathname === item.path}>
-            <NavLink href={item.path} isActive={pathname === item.path}>
+          <NavItem key={item.path} $isActive={pathname === item.path}>
+            <NavLink href={item.path} $isActive={pathname === item.path}>
               {item.name}
             </NavLink>
           </NavItem>

@@ -1,10 +1,10 @@
 import AdminDashboardLayout from "@/components/Admin/Layout/AdminDashboardLayout";
-import AdminDashboard from "@/components/Admin/Dashboard/AdminDashboard";
+import ProductManagement from "@/components/Admin/Products/ProductManagement";
 
-export default function AdminDashboardPage() {
+export default function AdminProductsPage() {
   return (
     <AdminDashboardLayout>
-      <AdminDashboard />
+      <ProductManagement />
     </AdminDashboardLayout>
   );
 }
