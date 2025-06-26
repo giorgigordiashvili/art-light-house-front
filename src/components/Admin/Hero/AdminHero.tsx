@@ -86,6 +86,7 @@ interface AdminHeroProps {
   customerCount?: number;
   languageCount?: number;
   attributeTypeCount?: number;
+  categoryCount?: number;
 }
 
 const AdminHero = ({
@@ -95,6 +96,7 @@ const AdminHero = ({
   customerCount = 0,
   languageCount = 0,
   attributeTypeCount = 0,
+  categoryCount = 0,
 }: AdminHeroProps) => {
   return (
     <HeroContainer>
@@ -121,6 +123,10 @@ const AdminHero = ({
           <StatItem>
             <StatValue>{languageCount}</StatValue>
             <StatLabel>Languages</StatLabel>
+          </StatItem>
+          <StatItem>
+            <StatValue>{categoryCount}</StatValue>
+            <StatLabel>Categories</StatLabel>
           </StatItem>
           <StatItem>
             <StatValue>{attributeTypeCount}</StatValue>

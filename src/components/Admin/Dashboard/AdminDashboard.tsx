@@ -70,6 +70,7 @@ const AdminDashboard = () => {
       customerCount={stats.customerCount}
       languageCount={stats.languageCount}
       attributeTypeCount={stats.attributeTypeCount}
+      categoryCount={stats.categoryCount}
     />
   );
 };
