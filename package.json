@@ -20,6 +20,8 @@
     "@formatjs/intl-localematcher": "^0.6.1",
     "@prisma/client": "^6.8.2",
     "@vis.gl/react-google-maps": "^1.5.2",
+    "imagekit": "^6.0.0",
+    "imagekitio-react": "^4.3.0",
     "negotiator": "^1.0.0",
     "next": "15.3.0",
     "next-intl": "^4.1.0",

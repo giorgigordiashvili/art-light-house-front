@@ -129,6 +129,26 @@ export async function POST(request: NextRequest) {
       }
     }
 
+    // Validate attributes
+    const validAttributes = attributes || [];
+
+    // Validate attribute IDs if they exist
+    if (validAttributes.length > 0) {
+      for (const attr of validAttributes) {
+        if (attr.attributeId) {
+          const existingAttribute = await prisma.attribute.findUnique({
+            where: { id: attr.attributeId },
+          });
+          if (!existingAttribute) {
+            return NextResponse.json(
+              { error: `Invalid attribute ID: ${attr.attributeId}` },
+              { status: 400 }
+            );
+          }
+        }
+      }
+    }
+
     // Create product with attributes and images
     const product = await prisma.product.create({
       data: {
@@ -140,13 +160,13 @@ export async function POST(request: NextRequest) {
         isActive: isActive !== undefined ? isActive : true,
         isFeatured: isFeatured !== undefined ? isFeatured : false,
         stockQuantity: stockQuantity !== undefined ? stockQuantity : 0,
-        ...(attributes &&
-          attributes.length > 0 && {
+        ...(validAttributes &&
+          validAttributes.length > 0 && {
             productAttributes: {
-              create: attributes.map((attr: any) => ({
+              create: validAttributes.map((attr: any) => ({
                 attributeTypeId: attr.attributeTypeId,
-                attributeId: attr.attributeId,
-                customValue: attr.customValue,
+                attributeId: attr.attributeId || null,
+                customValue: attr.customValue || null,
               })),
             },
           }),

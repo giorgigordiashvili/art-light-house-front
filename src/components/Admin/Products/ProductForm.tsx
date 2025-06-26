@@ -1,6 +1,7 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import styled from "styled-components";
+import ImageUpload from "@/components/shared/ImageUpload";
 
 const FormContainer = styled.div`
   background: white;
@@ -194,56 +195,6 @@ const ColorInput = styled.input`
   height: 40px;
 `;
 
-const ImageSection = styled.div`
-  border: 1px solid #e5e5e5;
-  border-radius: 6px;
-  padding: 1rem;
-`;
-
-const ImagePreview = styled.div`
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-  gap: 1rem;
-  margin-top: 1rem;
-`;
-
-const ImageItem = styled.div`
-  position: relative;
-  border: 1px solid #e5e5e5;
-  border-radius: 6px;
-  overflow: hidden;
-`;
-
-const ImagePreviewImg = styled.img`
-  width: 100%;
-  height: 120px;
-  object-fit: cover;
-`;
-
-const ImageControls = styled.div`
-  padding: 0.5rem;
-  background: #f8f9fa;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-`;
-
-const PrimaryBadge = styled.span`
-  background: #4caf50;
-  color: white;
-  padding: 0.2rem 0.4rem;
-  border-radius: 3px;
-  font-size: 0.7rem;
-`;
-
-const ImageInput = styled.input`
-  padding: 0.8rem;
-  border: 1px solid #e5e5e5;
-  border-radius: 6px;
-  font-size: 0.9rem;
-  margin-bottom: 1rem;
-`;
-
 const ErrorMessage = styled.div`
   color: #d23f57;
   font-size: 0.9rem;
@@ -369,10 +320,18 @@ interface ProductAttribute {
 }
 
 interface ProductImage {
+  fileId?: string;
   imageUrl: string;
   altText?: string;
   isPrimary: boolean;
   sortOrder: number;
+}
+
+interface UploadedImage {
+  fileId: string;
+  url: string;
+  name: string;
+  size: number;
 }
 
 interface ProductFormProps {
@@ -491,16 +450,15 @@ const ProductForm: React.FC<ProductFormProps> = ({ product, onSubmit, onCancel }
     setAttributes((prev) => prev.filter((_, i) => i !== index));
   };
 
-  const addImage = () => {
-    setImages((prev) => [
-      ...prev,
-      {
-        imageUrl: "",
-        altText: "",
-        isPrimary: prev.length === 0,
-        sortOrder: prev.length,
-      },
-    ]);
+  const handleImagesChange = (uploadedImages: UploadedImage[]) => {
+    const productImages: ProductImage[] = uploadedImages.map((img, index) => ({
+      fileId: img.fileId,
+      imageUrl: img.url,
+      altText: img.name,
+      isPrimary: index === 0, // First image is primary by default
+      sortOrder: index,
+    }));
+    setImages(productImages);
   };
 
   const updateImage = (index: number, field: keyof ProductImage, value: any) => {
@@ -523,17 +481,6 @@ const ProductForm: React.FC<ProductFormProps> = ({ product, onSubmit, onCancel }
     );
   };
 
-  const removeImage = (index: number) => {
-    setImages((prev) => {
-      const filtered = prev.filter((_, i) => i !== index);
-      // If we removed the primary image, make the first one primary
-      if (prev[index]?.isPrimary && filtered.length > 0) {
-        filtered[0].isPrimary = true;
-      }
-      return filtered;
-    });
-  };
-
   const getDisplayName = (translations: any[], fallback: string) => {
     const englishTranslation = translations.find((t) => t.language.code === "en");
     return englishTranslation?.displayName || englishTranslation?.displayValue || fallback;
@@ -551,10 +498,14 @@ const ProductForm: React.FC<ProductFormProps> = ({ product, onSubmit, onCancel }
         throw new Error("Name and price are required");
       }
 
-      // Filter out empty attributes
-      const validAttributes = attributes.filter(
-        (attr) => attr.attributeTypeId && (attr.attributeId || attr.customValue)
-      );
+      // Filter out empty attributes and clean them up
+      const validAttributes = attributes
+        .filter((attr) => attr.attributeTypeId && (attr.attributeId || attr.customValue))
+        .map((attr) => ({
+          attributeTypeId: attr.attributeTypeId,
+          attributeId: attr.attributeId || null,
+          customValue: attr.customValue || null,
+        }));
 
       // Filter out empty images
       const validImages = images.filter((img) => img.imageUrl);
@@ -781,89 +732,61 @@ const ProductForm: React.FC<ProductFormProps> = ({ product, onSubmit, onCancel }
 
           {/* Images */}
           <FormSection>
-            <ImageSection>
-              <AttributeHeader>
-                <AttributeTitle>Product Images</AttributeTitle>
-                <AddAttributeButton type="button" onClick={addImage}>
-                  Add Image
-                </AddAttributeButton>
-              </AttributeHeader>
+            <SectionTitle>Product Images</SectionTitle>
+            <ImageUpload
+              onImagesChange={handleImagesChange}
+              initialImages={images.map((img) => ({
+                fileId: img.fileId || "",
+                url: img.imageUrl,
+                name: img.altText || "Product image",
+                size: 0, // Size not available for existing images
+              }))}
+              maxFiles={10}
+              folder="products"
+              disabled={loading}
+            />
 
-              {images.map((img, index) => (
-                <div key={index} style={{ marginBottom: "1rem" }}>
-                  <FormRow>
-                    <FormGroup>
-                      <Label>Image URL</Label>
-                      <ImageInput
-                        type="url"
-                        value={img.imageUrl}
-                        onChange={(e) => updateImage(index, "imageUrl", e.target.value)}
-                        placeholder="https://example.com/image.jpg"
-                      />
-                    </FormGroup>
-                    <FormGroup>
-                      <Label>Alt Text</Label>
-                      <Input
-                        type="text"
-                        value={img.altText || ""}
-                        onChange={(e) => updateImage(index, "altText", e.target.value)}
-                        placeholder="Describe the image"
-                      />
-                    </FormGroup>
-                  </FormRow>
-
+            {images.length > 0 && (
+              <div style={{ marginTop: "1rem" }}>
+                <Label style={{ marginBottom: "0.5rem", display: "block" }}>Image Settings</Label>
+                {images.map((img, index) => (
                   <div
+                    key={index}
                     style={{
-                      display: "flex",
-                      justifyContent: "space-between",
-                      alignItems: "center",
+                      marginBottom: "1rem",
+                      padding: "1rem",
+                      border: "1px solid #e5e5e5",
+                      borderRadius: "6px",
                     }}
                   >
-                    <CheckboxLabel>
-                      <Checkbox
-                        type="checkbox"
-                        checked={img.isPrimary}
-                        onChange={(e) => updateImage(index, "isPrimary", e.target.checked)}
-                      />
-                      Primary Image
-                    </CheckboxLabel>
-                    <RemoveButton type="button" onClick={() => removeImage(index)}>
-                      Remove Image
-                    </RemoveButton>
-                  </div>
-                </div>
-              ))}
-
-              {images.length > 0 && (
-                <ImagePreview>
-                  {images.map((img, index) => (
-                    <ImageItem key={index}>
-                      {img.imageUrl && (
-                        <ImagePreviewImg
-                          src={img.imageUrl}
-                          alt={img.altText || "Product image"}
-                          onError={(e) => {
-                            (e.target as HTMLImageElement).src = "/assets/emptyImage.svg";
-                          }}
+                    <FormRow>
+                      <FormGroup>
+                        <Label>Alt Text</Label>
+                        <Input
+                          type="text"
+                          value={img.altText || ""}
+                          onChange={(e) => updateImage(index, "altText", e.target.value)}
+                          placeholder="Describe the image"
                         />
-                      )}
-                      <ImageControls>
-                        {img.isPrimary && <PrimaryBadge>Primary</PrimaryBadge>}
-                        <span style={{ fontSize: "0.8rem", color: "#7d879c" }}>
-                          Image {index + 1}
-                        </span>
-                      </ImageControls>
-                    </ImageItem>
-                  ))}
-                </ImagePreview>
-              )}
-
-              {images.length === 0 && (
-                <div style={{ textAlign: "center", color: "#7d879c", padding: "2rem" }}>
-                  No images added. Click &quot;Add Image&quot; to start.
-                </div>
-              )}
-            </ImageSection>
+                      </FormGroup>
+                      <FormGroup style={{ display: "flex", alignItems: "end" }}>
+                        <CheckboxLabel>
+                          <Checkbox
+                            type="checkbox"
+                            checked={img.isPrimary}
+                            onChange={(e) => updateImage(index, "isPrimary", e.target.checked)}
+                          />
+                          Primary Image
+                        </CheckboxLabel>
+                      </FormGroup>
+                    </FormRow>
+                    <div style={{ fontSize: "0.8rem", color: "#7d879c", marginTop: "0.5rem" }}>
+                      Image {index + 1}: {img.imageUrl}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
           </FormSection>
         </FormContent>
 

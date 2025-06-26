@@ -116,8 +116,8 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
             data: attributes.map((attr: any) => ({
               productId: id,
               attributeTypeId: attr.attributeTypeId,
-              attributeId: attr.attributeId,
-              customValue: attr.customValue,
+              attributeId: attr.attributeId || null,
+              customValue: attr.customValue || null,
             })),
           });
         }
