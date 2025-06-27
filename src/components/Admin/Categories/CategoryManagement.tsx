@@ -5,6 +5,29 @@ import CategoryTable from "./CategoryTable";
 import CategoryForm from "./CategoryForm";
 import CategoryFilters from "./CategoryFilters";
 
+const PageContainer = styled.div`
+  padding: 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+`;
+
+const PageHeader = styled.header`
+  margin-bottom: 2rem;
+`;
+
+const PageTitle = styled.h1`
+  font-size: 2rem;
+  font-weight: 600;
+  color: #2b3445;
+  margin: 0;
+`;
+
+const PageDescription = styled.p`
+  color: #7d879c;
+  margin: 0.5rem 0 0 0;
+  font-size: 1rem;
+`;
+
 const Container = styled.div`
   background: white;
   border-radius: 8px;
@@ -235,53 +258,63 @@ const CategoryManagement: React.FC = () => {
     setFilters(newFilters);
   };
 
-  if (showForm) {
-    return (
-      <Container>
-        <Header>
-          <Title>{editingCategory ? "Edit Category" : "Create New Category"}</Title>
-        </Header>
-        <Content>
-          <CategoryForm
-            category={editingCategory}
-            categories={categories}
-            onSubmit={handleFormSubmit}
-            onCancel={handleFormCancel}
-          />
-        </Content>
-      </Container>
-    );
-  }
-
-  if (loading) {
-    return (
-      <Container>
-        <Content>
-          <LoadingState>Loading categories...</LoadingState>
-        </Content>
-      </Container>
-    );
-  }
-
   return (
-    <Container>
-      <Header>
-        <Title>Categories ({filteredCategories.length})</Title>
-        <CreateButton onClick={handleCreate}>Create Category</CreateButton>
-      </Header>
+    <PageContainer>
+      <PageHeader>
+        <PageTitle>Category Management</PageTitle>
+        <PageDescription>
+          Manage product categories, create hierarchical structures, and organize your product
+          catalog.
+        </PageDescription>
+      </PageHeader>
 
-      <Content>
-        {error && <ErrorMessage>{error}</ErrorMessage>}
+      {showForm && (
+        <Container>
+          <Header>
+            <Title>{editingCategory ? "Edit Category" : "Create New Category"}</Title>
+          </Header>
+          <Content>
+            <CategoryForm
+              category={editingCategory}
+              categories={categories}
+              onSubmit={handleFormSubmit}
+              onCancel={handleFormCancel}
+            />
+          </Content>
+        </Container>
+      )}
 
-        <CategoryFilters filters={filters} categories={categories} onChange={handleFiltersChange} />
+      {loading ? (
+        <Container>
+          <Content>
+            <LoadingState>Loading categories...</LoadingState>
+          </Content>
+        </Container>
+      ) : (
+        <Container>
+          <Header>
+            <Title>Categories ({filteredCategories.length})</Title>
+            <CreateButton onClick={handleCreate}>Create Category</CreateButton>
+          </Header>
 
-        <CategoryTable
-          categories={filteredCategories}
-          onEdit={handleEdit}
-          onDelete={handleDelete}
-        />
-      </Content>
-    </Container>
+          <Content>
+            {error && <ErrorMessage>{error}</ErrorMessage>}
+
+            <CategoryFilters
+              filters={filters}
+              categories={categories}
+              onChange={handleFiltersChange}
+            />
+
+            <CategoryTable
+              categories={filteredCategories}
+              onEdit={handleEdit}
+              onDelete={handleDelete}
+            />
+          </Content>
+        </Container>
+      )}
+    </PageContainer>
   );
 };
 

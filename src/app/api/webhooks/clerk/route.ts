@@ -46,53 +46,120 @@ export async function POST(request: Request) {
 
   // Handle the different webhook events
   const eventType = event.type;
+  console.log(`Received Clerk webhook event: ${eventType}`, {
+    data: event.data,
+  });
 
   // Process user.created event
   if (eventType === "user.created") {
-    const { id, email_addresses, first_name, last_name } = event.data;
-    const email = email_addresses?.[0]?.email_address;
-    const name = `${first_name || ""} ${last_name || ""}`.trim();
+    try {
+      const { id, email_addresses, first_name, last_name } = event.data;
+      const email = email_addresses?.[0]?.email_address;
+      const name = `${first_name || ""} ${last_name || ""}`.trim();
 
-    // Create the user in the database
-    await prisma.user.create({
-      data: {
-        clerk_id: id,
-        email: email || "",
-        name: name || "",
-      },
-    });
+      console.log(`Creating user with Clerk ID: ${id}, Email: ${email}, Name: ${name}`);
 
-    return new Response("User created", { status: 200 });
+      // Check if user already exists to prevent duplicate creation
+      const existingUser = await prisma.user.findUnique({
+        where: { clerk_id: id },
+      });
+
+      if (existingUser) {
+        console.log(`User with Clerk ID ${id} already exists, skipping creation`);
+        return new Response("User already exists", { status: 200 });
+      }
+
+      // Create the user in the database
+      const newUser = await prisma.user.create({
+        data: {
+          clerk_id: id,
+          email: email || "",
+          name: name || "",
+        },
+      });
+
+      console.log(`Successfully created user:`, newUser);
+      return new Response("User created", { status: 200 });
+    } catch (error) {
+      console.error("Error creating user:", error);
+      return new Response("Error creating user", { status: 500 });
+    }
   }
 
   // Process user.updated event
   if (eventType === "user.updated") {
-    const { id, email_addresses, first_name, last_name } = event.data;
-    const email = email_addresses?.[0]?.email_address;
-    const name = `${first_name || ""} ${last_name || ""}`.trim();
+    try {
+      const { id, email_addresses, first_name, last_name } = event.data;
+      const email = email_addresses?.[0]?.email_address;
+      const name = `${first_name || ""} ${last_name || ""}`.trim();
 
-    // Update the user in the database
-    await prisma.user.update({
-      where: { clerk_id: id },
-      data: {
-        email: email || "",
-        name: name || "",
-      },
-    });
+      console.log(`Updating user with Clerk ID: ${id}, Email: ${email}, Name: ${name}`);
 
-    return new Response("User updated", { status: 200 });
+      // Update the user in the database
+      const updatedUser = await prisma.user.update({
+        where: { clerk_id: id },
+        data: {
+          email: email || "",
+          name: name || "",
+        },
+      });
+
+      console.log(`Successfully updated user:`, updatedUser);
+      return new Response("User updated", { status: 200 });
+    } catch (error) {
+      console.error("Error updating user:", error);
+      // If user doesn't exist, we might want to create them instead
+      if (error instanceof Error && error.message.includes("Record to update not found")) {
+        console.log(`User with Clerk ID ${event.data.id} not found, creating new user`);
+        // Redirect to user creation logic
+        const { id, email_addresses, first_name, last_name } = event.data;
+        const email = email_addresses?.[0]?.email_address;
+        const name = `${first_name || ""} ${last_name || ""}`.trim();
+
+        try {
+          const newUser = await prisma.user.create({
+            data: {
+              clerk_id: id,
+              email: email || "",
+              name: name || "",
+            },
+          });
+          console.log(`Successfully created user during update:`, newUser);
+          return new Response("User created during update", { status: 200 });
+        } catch (createError) {
+          console.error("Error creating user during update:", createError);
+          return new Response("Error creating user during update", { status: 500 });
+        }
+      }
+      return new Response("Error updating user", { status: 500 });
+    }
   }
 
   // Process user.deleted event
   if (eventType === "user.deleted") {
-    const { id } = event.data;
+    try {
+      const { id } = event.data;
 
-    // Delete the user from the database
-    await prisma.user.delete({
-      where: { clerk_id: id },
-    });
+      console.log(`Deleting user with Clerk ID: ${id}`);
 
-    return new Response("User deleted", { status: 200 });
+      // Delete the user from the database
+      const deletedUser = await prisma.user.delete({
+        where: { clerk_id: id },
+      });
+
+      console.log(`Successfully deleted user:`, deletedUser);
+      return new Response("User deleted", { status: 200 });
+    } catch (error) {
+      console.error("Error deleting user:", error);
+      // If user doesn't exist, consider it successful
+      if (error instanceof Error && error.message.includes("Record to delete does not exist")) {
+        console.log(
+          `User with Clerk ID ${event.data.id} not found, considering deletion successful`
+        );
+        return new Response("User not found, deletion considered successful", { status: 200 });
+      }
+      return new Response("Error deleting user", { status: 500 });
+    }
   }
 
   // Return 200 for events we don't handle
