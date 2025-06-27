@@ -5,11 +5,24 @@ import prisma from "@/lib/prisma";
 
 // This is the Clerk webhook handler
 export async function POST(request: Request) {
+  // Log environment status for debugging
+  console.log("Environment check:", {
+    NODE_ENV: process.env.NODE_ENV,
+    DATABASE_URL: process.env.DATABASE_URL ? "SET" : "NOT SET",
+    CLERK_WEBHOOK_SECRET: process.env.CLERK_WEBHOOK_SECRET ? "SET" : "NOT SET",
+  });
+
   // Get the Clerk webhook secret from environment variables
   const WEBHOOK_SECRET = process.env.CLERK_WEBHOOK_SECRET;
 
   if (!WEBHOOK_SECRET) {
     throw new Error("Missing CLERK_WEBHOOK_SECRET");
+  }
+
+  // Check DATABASE_URL availability
+  if (!process.env.DATABASE_URL) {
+    console.error("DATABASE_URL is not set in environment variables");
+    return new Response("Database configuration error", { status: 500 });
   }
 
   // Get the headers
@@ -52,6 +65,10 @@ export async function POST(request: Request) {
   // Process user.created event
   if (eventType === "user.created") {
     try {
+      // Test database connection first
+      await prisma.$connect();
+      console.log("Database connection test passed");
+
       const { id, email_addresses, first_name, last_name } = event.data;
       const email = email_addresses?.[0]?.email_address;
       const name = `${first_name || ""} ${last_name || ""}`.trim();
@@ -108,6 +125,17 @@ export async function POST(request: Request) {
           name: error.name,
         });
 
+        // Check for database connection issues
+        if (
+          error.message.includes("connect") ||
+          error.message.includes("ECONNREFUSED") ||
+          error.message.includes("timeout") ||
+          error.message.includes("ENOTFOUND")
+        ) {
+          console.error("Database connection error detected:", error.message);
+          return new Response("Database connection error", { status: 500 });
+        }
+
         // Check for specific Prisma errors
         if (error.message.includes("P2002")) {
           console.error("Unique constraint violation - user might already exist");
@@ -119,9 +147,10 @@ export async function POST(request: Request) {
           return new Response("Database constraint error", { status: 500 });
         }
 
-        if (error.message.includes("database")) {
-          console.error("Database connection error");
-          return new Response("Database connection error", { status: 500 });
+        // Check for environment variable issues
+        if (error.message.includes("DATABASE_URL")) {
+          console.error("DATABASE_URL environment variable issue");
+          return new Response("Database configuration error", { status: 500 });
         }
       }
 
