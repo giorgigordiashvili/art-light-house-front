@@ -25,21 +25,27 @@ const AdminDashboard = () => {
   useEffect(() => {
     const fetchStats = async () => {
       try {
-        const [products, languages, attributeTypes, categories] = await Promise.all([
+        const [products, languages, attributeTypes, categories, customers] = await Promise.all([
           fetch("/api/admin/products?page=1&limit=1"),
           fetch("/api/admin/languages"),
           fetch("/api/admin/attribute-types"),
           fetch("/api/admin/categories"),
+          fetch("/api/admin/customers?page=1&limit=1"),
         ]);
 
-        const [productsData, languagesData, attributeTypesData, categoriesData] = await Promise.all(
-          [products.json(), languages.json(), attributeTypes.json(), categories.json()]
-        );
+        const [productsData, languagesData, attributeTypesData, categoriesData, customersData] =
+          await Promise.all([
+            products.json(),
+            languages.json(),
+            attributeTypes.json(),
+            categories.json(),
+            customers.json(),
+          ]);
 
         setStats({
           productCount: productsData.pagination?.total || 0,
           orderCount: 0, // TODO: Implement when orders API is ready
-          customerCount: 0, // TODO: Implement when customers API is ready
+          customerCount: customersData.pagination?.total || 0,
           languageCount: languagesData.length || 0,
           attributeTypeCount: attributeTypesData.length || 0,
           categoryCount: categoriesData.length || 0,

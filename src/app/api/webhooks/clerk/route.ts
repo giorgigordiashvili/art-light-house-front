@@ -46,9 +46,8 @@ export async function POST(request: Request) {
 
   // Handle the different webhook events
   const eventType = event.type;
-  console.log(`Received Clerk webhook event: ${eventType}`, {
-    data: event.data,
-  });
+  console.log(`Received Clerk webhook event: ${eventType}`);
+  console.log("Full event data:", JSON.stringify(event.data, null, 2));
 
   // Process user.created event
   if (eventType === "user.created") {
@@ -57,32 +56,79 @@ export async function POST(request: Request) {
       const email = email_addresses?.[0]?.email_address;
       const name = `${first_name || ""} ${last_name || ""}`.trim();
 
-      console.log(`Creating user with Clerk ID: ${id}, Email: ${email}, Name: ${name}`);
+      console.log(`Processing user creation:`, {
+        clerk_id: id,
+        email: email,
+        name: name,
+        email_addresses: email_addresses,
+        first_name: first_name,
+        last_name: last_name,
+      });
+
+      // Validate required fields
+      if (!id) {
+        console.error("Missing required field: clerk_id");
+        return new Response("Missing required field: clerk_id", { status: 400 });
+      }
 
       // Check if user already exists to prevent duplicate creation
+      console.log(`Checking if user with clerk_id ${id} already exists...`);
       const existingUser = await prisma.user.findUnique({
         where: { clerk_id: id },
       });
 
       if (existingUser) {
-        console.log(`User with Clerk ID ${id} already exists, skipping creation`);
+        console.log(`User with Clerk ID ${id} already exists:`, existingUser);
         return new Response("User already exists", { status: 200 });
       }
 
-      // Create the user in the database
+      // Create the user in the database with explicit field mapping
+      const userData = {
+        clerk_id: id,
+        email: email || null, // Use null instead of empty string for nullable fields
+        name: name || null, // Use null instead of empty string for nullable fields
+      };
+
+      console.log(`Creating user with data:`, userData);
+
       const newUser = await prisma.user.create({
-        data: {
-          clerk_id: id,
-          email: email || "",
-          name: name || "",
-        },
+        data: userData,
       });
 
       console.log(`Successfully created user:`, newUser);
       return new Response("User created", { status: 200 });
     } catch (error) {
       console.error("Error creating user:", error);
-      return new Response("Error creating user", { status: 500 });
+
+      // Provide more detailed error information
+      if (error instanceof Error) {
+        console.error("Error details:", {
+          message: error.message,
+          stack: error.stack,
+          name: error.name,
+        });
+
+        // Check for specific Prisma errors
+        if (error.message.includes("P2002")) {
+          console.error("Unique constraint violation - user might already exist");
+          return new Response("User already exists (unique constraint)", { status: 409 });
+        }
+
+        if (error.message.includes("P2003")) {
+          console.error("Foreign key constraint failed");
+          return new Response("Database constraint error", { status: 500 });
+        }
+
+        if (error.message.includes("database")) {
+          console.error("Database connection error");
+          return new Response("Database connection error", { status: 500 });
+        }
+      }
+
+      return new Response(
+        `Error creating user: ${error instanceof Error ? error.message : "Unknown error"}`,
+        { status: 500 }
+      );
     }
   }
 
