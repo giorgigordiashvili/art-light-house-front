@@ -17,9 +17,9 @@ const Description = styled.div`
 const DescriptionText = styled.p`
   color: #ffffff;
   margin-top: 21.18px;
-  font-family: Helvetica;
+  font-family: "HelveticaNeueGeo";
   font-weight: 300;
-  font-size: 16px;
+  font-size: 12px;
   line-height: 24px;
   letter-spacing: 0%;
 `;
