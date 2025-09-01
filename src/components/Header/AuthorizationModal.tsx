@@ -9,6 +9,8 @@ import InputTitle from "./InputTitle";
 import AdditionalAction from "./AdditionalAction";
 import { useSignIn, useSignUp } from "@clerk/nextjs";
 import Image from "next/image";
+import { AuthService } from "@/lib/authService";
+import "@/utils/registrationDebugger"; // Enable debugging
 
 interface AuthorizationModalProps {
   onClose: () => void;
@@ -124,12 +126,13 @@ const AuthorizationModal: React.FC<AuthorizationModalProps> = ({
   const [activeTab, setActiveTab] = useState<"auth" | "register">("auth");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [passwordConfirmation, setPasswordConfirmation] = useState("");
   const [firstName, setFirstName] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
 
   const { isLoaded: isSignInLoaded, signIn, setActive: setSignInActive } = useSignIn();
-  const { isLoaded: isSignUpLoaded, signUp, setActive: setSignUpActive } = useSignUp();
+  const { isLoaded: isSignUpLoaded, signUp } = useSignUp();
 
   const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setEmail(e.target.value);
@@ -143,6 +146,11 @@ const AuthorizationModal: React.FC<AuthorizationModalProps> = ({
 
   const handleFirstNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFirstName(e.target.value);
+    setError("");
+  };
+
+  const handlePasswordConfirmationChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setPasswordConfirmation(e.target.value);
     setError("");
   };
 
@@ -170,31 +178,63 @@ const AuthorizationModal: React.FC<AuthorizationModalProps> = ({
           onClose();
         }
       } else {
-        // Sign Up with Email
+        // Registration - use both API and Clerk
         if (!firstName) {
           setError(dictionary?.registrationModal?.alert || "Please enter name");
           setIsLoading(false);
           return;
         }
 
-        const result = await signUp?.create({
-          emailAddress: email,
-          password,
-          firstName,
-        });
+        if (password !== passwordConfirmation) {
+          setError(dictionary?.registrationModal?.passwordMismatch || "Passwords do not match");
+          setIsLoading(false);
+          return;
+        }
 
-        if (result?.status === "complete") {
-          if (setSignUpActive) {
-            await setSignUpActive({ session: result.createdSessionId });
-          }
+        try {
+          // First, register with backend API
+          const apiRegistrationData = {
+            first_name: firstName,
+            email: email,
+            password: password,
+            password_confirmation: passwordConfirmation,
+          };
+
+          console.log("Attempting API registration...");
+          const apiResult = await AuthService.register(apiRegistrationData);
+
+          console.log("API Registration successful:", apiResult);
+
+          // After successful API registration, just show success
+          // Remove Clerk registration to avoid conflicts
+          console.log("Registration completed successfully");
           onRegisterSuccess?.();
           onClose();
-        } else {
-          // Handle email verification if needed
-          if (result?.status === "missing_requirements") {
-            onRegisterSuccess?.();
-            onClose();
+        } catch (apiError: any) {
+          console.error("Registration failed:", apiError);
+
+          // Handle API registration errors
+          if (apiError.errors) {
+            // Handle field-specific errors from API
+            const errorMessages = Object.entries(apiError.errors)
+              .map(([, messages]: [string, any]) => {
+                if (Array.isArray(messages)) {
+                  return messages.join(", ");
+                }
+                return messages;
+              })
+              .filter(Boolean);
+
+            setError(errorMessages.join(", ") || apiError.message);
+          } else if (apiError.status === 422) {
+            setError("Validation failed. Please check your input and try again.");
+          } else if (apiError.status === 409) {
+            setError("User already exists with this email address.");
+          } else {
+            setError(apiError.message || "Registration failed. Please try again.");
           }
+          setIsLoading(false);
+          return;
         }
       }
     } catch (error: any) {
@@ -308,6 +348,24 @@ const AuthorizationModal: React.FC<AuthorizationModalProps> = ({
             onChange={handlePasswordChange}
           />
         </StyledModalInput>
+
+        {activeTab === "register" && (
+          <StyledModalInput>
+            <InputTitle
+              text={dictionary?.authorizationModal?.confirmPassword || "Confirm Password"}
+            />
+            <ModalInput
+              placeholder={
+                dictionary?.authorizationModal?.confirmPasswordPlaceholder ||
+                "Confirm your password"
+              }
+              iconSrc="/assets/eye.svg"
+              type="password"
+              value={passwordConfirmation}
+              onChange={handlePasswordConfirmationChange}
+            />
+          </StyledModalInput>
+        )}
 
         {error && <ErrorMessage>{error}</ErrorMessage>}
 
