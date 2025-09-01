@@ -92,14 +92,30 @@ type Props = {
   userImage?: string;
   isAuthorized?: boolean;
   onClick?: () => void;
+  isClerkUser?: boolean; // Add flag to distinguish between Clerk and API users
 };
 
-const AuthorizationButton = ({ text, username, isAuthorized, onClick }: Props) => {
+const AuthorizationButton = ({
+  text,
+  username,
+  userImage,
+  isAuthorized,
+  onClick,
+  isClerkUser,
+}: Props) => {
   return (
     <StyledButton className={isAuthorized ? "authorized" : "unauthorized"} onClick={onClick}>
-      {/* {isAuthorized && userImage && (
-        <Image src={userImage} alt="User Profile" width={30} height={30} />
-      )} */}
+      {isAuthorized && (
+        <>
+          {isClerkUser && userImage ? (
+            // For Clerk users: show their actual profile image
+            <Image src={userImage} alt="User Profile" width={30} height={30} />
+          ) : (
+            // For API users: show default user.svg icon
+            <Image src="/assets/user.svg" alt="User Profile" width={30} height={30} />
+          )}
+        </>
+      )}
       {!isAuthorized && (
         <Image
           src="/assets/user.svg"

@@ -341,6 +341,7 @@ const Header = ({ header, dictionary }: HeaderProps) => {
                       isAuthorized={isUserAuthorized}
                       username={currentUser.username}
                       userImage={currentUser.userImage}
+                      isClerkUser={isSignedIn} // True if authenticated via Clerk, false if via API
                       text={header.authorize}
                       onClick={() => {
                         if (isRegistrationCodeOpen) setIsRegistrationCodeOpen(false);
