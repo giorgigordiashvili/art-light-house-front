@@ -91,10 +91,50 @@ export const debugRegistration = {
       return { success: false, error };
     }
   },
+
+  /**
+   * Test the login API directly
+   */
+  testLoginDirectly: async (testData?: any) => {
+    const defaultTestData = {
+      email: "test@example.com",
+      password: "testpassword123",
+      password_confirmation: "testpassword123",
+    };
+
+    const data = testData || defaultTestData;
+
+    try {
+      console.log("🧪 Testing login API directly:", data);
+
+      const response = await fetch("https://api.artlighthouse.ge/en/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+        body: JSON.stringify(data),
+      });
+
+      console.log(`📊 Login response status: ${response.status}`);
+      const responseData = await response.json();
+      console.log("📊 Login response data:", responseData);
+
+      return { success: response.ok, data: responseData, status: response.status };
+    } catch (error) {
+      console.error("🚨 Direct login API test failed:", error);
+      return { success: false, error };
+    }
+  },
 };
 
 // Auto-enable debugging in development
 if (typeof window !== "undefined" && process.env.NODE_ENV === "development") {
-  (window as any).registrationDebugger = debugRegistration;
-  console.log("🔧 Registration debugger available as window.registrationDebugger");
+  (window as any).authDebugger = debugRegistration;
+  console.log("🔧 Auth debugger available as window.authDebugger");
+  console.log("🔧 Available methods:");
+  console.log("  - window.authDebugger.testApiDirectly() // Test registration");
+  console.log("  - window.authDebugger.testLoginDirectly() // Test login");
+  console.log("  - window.authDebugger.logNetworkActivity() // Monitor requests");
+  console.log("  - window.authDebugger.monitorCloudflare() // Monitor CF challenges");
 }

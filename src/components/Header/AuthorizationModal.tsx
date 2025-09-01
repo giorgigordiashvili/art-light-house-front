@@ -10,6 +10,7 @@ import AdditionalAction from "./AdditionalAction";
 import { useSignIn, useSignUp } from "@clerk/nextjs";
 import Image from "next/image";
 import { AuthService } from "@/lib/authService";
+import { ApiAuthManager } from "@/lib/apiAuthManager";
 import "@/utils/registrationDebugger"; // Enable debugging
 
 interface AuthorizationModalProps {
@@ -131,7 +132,7 @@ const AuthorizationModal: React.FC<AuthorizationModalProps> = ({
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
 
-  const { isLoaded: isSignInLoaded, signIn, setActive: setSignInActive } = useSignIn();
+  const { isLoaded: isSignInLoaded, signIn } = useSignIn();
   const { isLoaded: isSignUpLoaded, signUp } = useSignUp();
 
   const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -165,18 +166,29 @@ const AuthorizationModal: React.FC<AuthorizationModalProps> = ({
 
     try {
       if (activeTab === "auth") {
-        // Sign In with Email
-        const result = await signIn?.create({
-          identifier: email,
-          password,
-        });
+        // Login with API only
+        const apiLoginData = {
+          email: email,
+          password: password,
+          password_confirmation: password, // API requires this field
+        };
 
-        if (result?.status === "complete") {
-          if (setSignInActive) {
-            await setSignInActive({ session: result.createdSessionId });
-          }
-          onClose();
+        console.log("Attempting API login...");
+        const apiResult = await AuthService.login(apiLoginData);
+
+        console.log("API Login successful:", apiResult);
+
+        // Store authentication data using ApiAuthManager
+        if (apiResult.token) {
+          ApiAuthManager.setToken(apiResult.token);
         }
+
+        if (apiResult.user) {
+          ApiAuthManager.setUser(apiResult.user);
+        }
+
+        console.log("Login completed successfully");
+        onClose();
       } else {
         // Registration - use both API and Clerk
         if (!firstName) {
@@ -205,8 +217,16 @@ const AuthorizationModal: React.FC<AuthorizationModalProps> = ({
 
           console.log("API Registration successful:", apiResult);
 
+          // Store authentication data if provided
+          if (apiResult.token) {
+            ApiAuthManager.setToken(apiResult.token);
+          }
+
+          if (apiResult.user) {
+            ApiAuthManager.setUser(apiResult.user);
+          }
+
           // After successful API registration, just show success
-          // Remove Clerk registration to avoid conflicts
           console.log("Registration completed successfully");
           onRegisterSuccess?.();
           onClose();

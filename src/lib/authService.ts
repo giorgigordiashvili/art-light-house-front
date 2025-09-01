@@ -7,7 +7,25 @@ export interface RegisterRequest {
   password_confirmation: string;
 }
 
+export interface LoginRequest {
+  email: string;
+  password: string;
+  password_confirmation: string;
+}
+
 export interface RegisterResponse {
+  success: boolean;
+  message: string;
+  user?: {
+    id: string;
+    first_name: string;
+    email: string;
+    created_at: string;
+  };
+  token?: string;
+}
+
+export interface LoginResponse {
   success: boolean;
   message: string;
   user?: {
@@ -86,13 +104,40 @@ export class AuthService {
   }
 
   /**
-   * Login user
+   * Login user with retry logic for Cloudflare challenges
    */
-  static async login(credentials: { email: string; password: string }) {
+  static async login(credentials: LoginRequest, retryCount: number = 0): Promise<LoginResponse> {
     try {
+      console.log(`Login attempt ${retryCount + 1}:`, {
+        email: credentials.email,
+        // Don't log passwords
+      });
+
       const response = await apiClient.post("/en/login", credentials);
+
+      console.log("Login successful:", {
+        status: response.status,
+        data: response.data,
+      });
+
       return response.data;
     } catch (error: any) {
+      console.error(`Login attempt ${retryCount + 1} failed:`, error);
+
+      // Retry logic for Cloudflare challenges (403, 429) or network issues
+      if (
+        retryCount < 2 &&
+        (error.response?.status === 403 ||
+          error.response?.status === 429 ||
+          error.code === "ECONNABORTED" ||
+          error.code === "NETWORK_ERROR")
+      ) {
+        console.log(`Retrying login in ${(retryCount + 1) * 1000}ms...`);
+        await new Promise((resolve) => setTimeout(resolve, (retryCount + 1) * 1000));
+        return this.login(credentials, retryCount + 1);
+      }
+
+      // Handle axios error
       if (error.response?.data) {
         throw {
           message: error.response.data.message || "Login failed",
@@ -101,7 +146,7 @@ export class AuthService {
         } as ApiError;
       } else if (error.request) {
         throw {
-          message: "Network error. Please check your internet connection.",
+          message: "Network error. Please check your internet connection and try again.",
           status: 0,
         } as ApiError;
       } else {

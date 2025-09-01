@@ -17,11 +17,13 @@ const apiClient = axios.create({
 // Request interceptor for adding auth tokens if needed
 apiClient.interceptors.request.use(
   (config) => {
-    // Add auth token here if needed
-    // const token = localStorage.getItem('token');
-    // if (token) {
-    //   config.headers.Authorization = `Bearer ${token}`;
-    // }
+    // Add auth token if available
+    if (typeof window !== "undefined") {
+      const token = localStorage.getItem("api_token");
+      if (token) {
+        config.headers.Authorization = `Bearer ${token}`;
+      }
+    }
 
     console.log(`Making ${config.method?.toUpperCase()} request to:`, config.url);
     return config;
@@ -30,9 +32,7 @@ apiClient.interceptors.request.use(
     console.error("Request interceptor error:", error);
     return Promise.reject(error);
   }
-);
-
-// Response interceptor for handling errors and Cloudflare challenges
+); // Response interceptor for handling errors and Cloudflare challenges
 apiClient.interceptors.response.use(
   (response) => {
     console.log(`Response ${response.status} from:`, response.config.url);
