@@ -20,6 +20,7 @@ import LanguageSwitcherModal from "./LanguageSwitcher/LanguageSwitcherModal";
 import { useUser } from "@clerk/nextjs";
 import { usePathname, useRouter } from "next/navigation";
 import { Locale, i18n } from "@/config/i18n";
+import { useApiAuth } from "@/hooks/useApiAuth";
 
 const ensureValidLanguage = (lang: string): Locale => {
   return i18n.locales.includes(lang as Locale) ? (lang as Locale) : "ge";
@@ -232,11 +233,37 @@ const Header = ({ header, dictionary }: HeaderProps) => {
 
   const isCartEmpty = cartItemCount === 0;
   const { user, isSignedIn } = useUser();
+  const { isAuthenticated: isApiAuthenticated, user: apiUser, updateAuthState } = useApiAuth();
 
-  const isUserAuthorized = isSignedIn;
+  // Debug logging
+  useEffect(() => {
+    console.log("🔍 Header Auth Debug:", {
+      isSignedIn,
+      isApiAuthenticated,
+      clerkUser: user,
+      apiUser,
+      combinedAuth: isSignedIn || isApiAuthenticated,
+    });
+  }, [isSignedIn, isApiAuthenticated, user, apiUser]);
+
+  // Combine both authentication states
+  const isUserAuthorized = isSignedIn || isApiAuthenticated;
+
+  // Generate avatar URL for API users
+  const generateAvatarUrl = (name: string): string => {
+    return `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=FFCB40&color=000&size=64&font-size=0.6`;
+  };
+
   const currentUser = {
-    username: user?.firstName || user?.fullName || "User",
-    userImage: user?.imageUrl || "/assets/user.svg",
+    username:
+      user?.firstName ||
+      user?.fullName ||
+      apiUser?.first_name ||
+      apiUser?.email?.split("@")[0] ||
+      "User",
+    userImage:
+      user?.imageUrl ||
+      (apiUser?.first_name ? generateAvatarUrl(apiUser.first_name) : "/assets/user.svg"),
   };
 
   const closeEmptyCartModal = () => {
@@ -382,6 +409,7 @@ const Header = ({ header, dictionary }: HeaderProps) => {
                       setIsUserMenuOpen(false);
                       setIsRegistrationCodeOpen(true);
                     }}
+                    updateAuthState={updateAuthState}
                     dictionary={header}
                   />
                 )}

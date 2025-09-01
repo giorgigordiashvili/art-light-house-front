@@ -94,12 +94,12 @@ type Props = {
   onClick?: () => void;
 };
 
-const AuthorizationButton = ({ text, username, userImage, isAuthorized, onClick }: Props) => {
+const AuthorizationButton = ({ text, username, isAuthorized, onClick }: Props) => {
   return (
     <StyledButton className={isAuthorized ? "authorized" : "unauthorized"} onClick={onClick}>
-      {isAuthorized && userImage && (
+      {/* {isAuthorized && userImage && (
         <Image src={userImage} alt="User Profile" width={30} height={30} />
-      )}
+      )} */}
       {!isAuthorized && (
         <Image
           src="/assets/user.svg"

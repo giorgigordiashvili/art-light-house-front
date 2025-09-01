@@ -18,6 +18,7 @@ interface AuthorizationModalProps {
   onRecoverPasswordClick?: () => void;
   onRegisterSuccess?: () => void;
   dictionary?: any;
+  updateAuthState?: () => void;
 }
 
 const StyledContainer = styled.div`
@@ -123,6 +124,7 @@ const AuthorizationModal: React.FC<AuthorizationModalProps> = ({
   onRecoverPasswordClick,
   onRegisterSuccess,
   dictionary,
+  updateAuthState,
 }) => {
   const [activeTab, setActiveTab] = useState<"auth" | "register">("auth");
   const [email, setEmail] = useState("");
@@ -170,7 +172,6 @@ const AuthorizationModal: React.FC<AuthorizationModalProps> = ({
         const apiLoginData = {
           email: email,
           password: password,
-          password_confirmation: password, // API requires this field
         };
 
         console.log("Attempting API login...");
@@ -179,12 +180,31 @@ const AuthorizationModal: React.FC<AuthorizationModalProps> = ({
         console.log("API Login successful:", apiResult);
 
         // Store authentication data using ApiAuthManager
-        if (apiResult.token) {
-          ApiAuthManager.setToken(apiResult.token);
+        console.log("🔍 About to store login data:", {
+          access_token: apiResult.access_token,
+          user: apiResult.user,
+        });
+
+        // Generate a session token if API doesn't provide one
+        let tokenToStore = apiResult.access_token;
+        if (!tokenToStore && apiResult.success) {
+          // Generate a simple session token since API doesn't provide one
+          tokenToStore = `session_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+          console.log("🔐 Generated session token:", tokenToStore);
+        }
+
+        if (tokenToStore) {
+          ApiAuthManager.setToken(tokenToStore);
         }
 
         if (apiResult.user) {
           ApiAuthManager.setUser(apiResult.user);
+        }
+
+        // Update the authentication state in the hook
+        console.log("🔄 Updating auth state after login...");
+        if (updateAuthState) {
+          updateAuthState();
         }
 
         console.log("Login completed successfully");
@@ -218,12 +238,31 @@ const AuthorizationModal: React.FC<AuthorizationModalProps> = ({
           console.log("API Registration successful:", apiResult);
 
           // Store authentication data if provided
-          if (apiResult.token) {
-            ApiAuthManager.setToken(apiResult.token);
+          console.log("🔍 About to store registration data:", {
+            access_token: apiResult.access_token,
+            user: apiResult.user,
+          });
+
+          // Generate a session token if API doesn't provide one
+          let tokenToStore = apiResult.access_token;
+          if (!tokenToStore && apiResult.success) {
+            // Generate a simple session token since API doesn't provide one
+            tokenToStore = `session_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+            console.log("🔐 Generated session token:", tokenToStore);
+          }
+
+          if (tokenToStore) {
+            ApiAuthManager.setToken(tokenToStore);
           }
 
           if (apiResult.user) {
             ApiAuthManager.setUser(apiResult.user);
+          }
+
+          // Update the authentication state in the hook
+          console.log("🔄 Updating auth state after registration...");
+          if (updateAuthState) {
+            updateAuthState();
           }
 
           // After successful API registration, just show success

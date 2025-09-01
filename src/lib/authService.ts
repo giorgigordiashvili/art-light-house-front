@@ -10,31 +10,36 @@ export interface RegisterRequest {
 export interface LoginRequest {
   email: string;
   password: string;
-  password_confirmation: string;
 }
 
 export interface RegisterResponse {
   success: boolean;
   message: string;
-  user?: {
-    id: string;
+  user: {
+    id: number;
     first_name: string;
     email: string;
+    email_verified_at: string | null;
     created_at: string;
+    updated_at: string;
   };
-  token?: string;
+  access_token?: string;
+  token_type?: string;
 }
 
 export interface LoginResponse {
   success: boolean;
   message: string;
-  user?: {
-    id: string;
+  user: {
+    id: number;
     first_name: string;
     email: string;
+    email_verified_at: string | null;
     created_at: string;
+    updated_at: string;
   };
-  token?: string;
+  access_token?: string;
+  token_type?: string;
 }
 
 export interface ApiError {

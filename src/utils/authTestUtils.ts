@@ -36,7 +36,6 @@ export const authTestUtils = {
       const testData = customData || {
         email: "test@example.com",
         password: "testpassword123",
-        password_confirmation: "testpassword123",
       };
 
       console.log("🧪 Testing API login:", testData);
@@ -45,8 +44,15 @@ export const authTestUtils = {
       console.log("✅ Login successful:", result);
 
       // Store auth data
-      if (result.token) {
-        ApiAuthManager.setToken(result.token);
+      // Generate a session token if API doesn't provide one
+      let tokenToStore = result.access_token;
+      if (!tokenToStore && result.success) {
+        tokenToStore = `session_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+        console.log("🔐 Generated session token for test:", tokenToStore);
+      }
+
+      if (tokenToStore) {
+        ApiAuthManager.setToken(tokenToStore);
       }
       if (result.user) {
         ApiAuthManager.setUser(result.user);
@@ -106,7 +112,6 @@ export const authTestUtils = {
       await authTestUtils.testLogin({
         email: email,
         password: password,
-        password_confirmation: password,
       });
 
       console.log("✅ Quick test completed successfully!");

@@ -6,11 +6,13 @@ import ModalTitle from "./ModalTitle";
 import ModalInput from "./ModalInput";
 import InputTitle from "./InputTitle";
 import { AuthService } from "@/lib/authService";
+import { ApiAuthManager } from "@/lib/apiAuthManager";
 
 interface ApiLoginModalProps {
   onClose: () => void;
   onSuccess?: (userData: any) => void;
   dictionary?: any;
+  updateAuthState?: () => void;
 }
 
 const StyledContainer = styled.div`
@@ -82,7 +84,7 @@ const SuccessMessage = styled.div`
   text-align: center;
 `;
 
-const ApiLoginModal: React.FC<ApiLoginModalProps> = ({ onClose, onSuccess }) => {
+const ApiLoginModal: React.FC<ApiLoginModalProps> = ({ onClose, onSuccess, updateAuthState }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -115,7 +117,6 @@ const ApiLoginModal: React.FC<ApiLoginModalProps> = ({ onClose, onSuccess }) => 
       const loginData = {
         email: email,
         password: password,
-        password_confirmation: password, // API requires this field
       };
 
       console.log("Attempting API login...");
@@ -123,10 +124,32 @@ const ApiLoginModal: React.FC<ApiLoginModalProps> = ({ onClose, onSuccess }) => 
 
       console.log("Login successful:", result);
 
-      // Store token if provided
-      if (result.token) {
-        localStorage.setItem("api_token", result.token);
-        console.log("Token stored in localStorage");
+      // Store authentication data using ApiAuthManager
+      console.log("🔍 About to store login data:", {
+        access_token: result.access_token,
+        user: result.user,
+      });
+
+      // Generate a session token if API doesn't provide one
+      let tokenToStore = result.access_token;
+      if (!tokenToStore && result.success) {
+        // Generate a simple session token since API doesn't provide one
+        tokenToStore = `session_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+        console.log("🔐 Generated session token:", tokenToStore);
+      }
+
+      if (tokenToStore) {
+        ApiAuthManager.setToken(tokenToStore);
+      }
+
+      if (result.user) {
+        ApiAuthManager.setUser(result.user);
+      }
+
+      // Update the authentication state in the hook
+      console.log("🔄 Updating auth state after login...");
+      if (updateAuthState) {
+        updateAuthState();
       }
 
       setSuccess("Login successful!");
