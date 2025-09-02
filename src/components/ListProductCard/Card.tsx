@@ -1,9 +1,11 @@
+"use client";
 import React from "react";
 import styled from "styled-components";
 import AddButton from "./AddButton";
 import ProductText from "./Text";
 import Image from "next/image";
 import { Product } from "@/lib/productService";
+import { useRouter, useParams } from "next/navigation";
 const StyledRectangle = styled.div`
   width: 308px;
   height: 417px;
@@ -12,6 +14,7 @@ const StyledRectangle = styled.div`
   background: #1a1a1a96;
   z-index: 2;
   backdrop-filter: blur(114px);
+  cursor: pointer;
   &:hover {
     &::before {
       content: "";
@@ -66,10 +69,21 @@ interface CardProps {
 }
 
 function Card({ dictionary, product }: CardProps) {
+  const router = useRouter();
+  const params = useParams();
+  const langParam = (params as any)?.lang;
+  const locale = ["ge", "en"].includes(langParam) ? langParam : "ge";
+
   // Safely access first image only if product exists
   const firstImage = product?.images?.[0];
+
+  const handleNavigate = () => {
+    if (!product?.id) return; // ignore placeholder cards
+    router.push(`/${locale}/products/${product.id}`);
+  };
+
   return (
-    <StyledRectangle>
+    <StyledRectangle onClick={handleNavigate} role={product?.id ? "button" : undefined}>
       {firstImage && (
         <div style={{ position: "absolute", top: 30, left: 0, width: 308, height: 218 }}>
           <Image
@@ -83,7 +97,12 @@ function Card({ dictionary, product }: CardProps) {
         </div>
       )}
       {product && <ProductText product={product} />}
-      <AddButton dictionary={dictionary} />
+      <AddButton
+        dictionary={dictionary}
+        onClick={() => {
+          /* future add-to-cart: stopPropagation not needed because wrapper not inside clickable? Card handles click so we keep button clickable without navigation by stopping at AddButton level via pointer events if required */
+        }}
+      />
     </StyledRectangle>
   );
 }
