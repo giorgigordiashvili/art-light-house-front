@@ -62,18 +62,19 @@ const StyledRectangle = styled.div`
 
 interface CardProps {
   dictionary: any;
-  product: Product;
+  product?: Product; // optional to allow placeholder usage without data
 }
 
 function Card({ dictionary, product }: CardProps) {
-  const firstImage = product.images?.[0];
+  // Safely access first image only if product exists
+  const firstImage = product?.images?.[0];
   return (
     <StyledRectangle>
       {firstImage && (
         <div style={{ position: "absolute", top: 30, left: 0, width: 308, height: 218 }}>
           <Image
             src={firstImage.url}
-            alt={firstImage.alt || product.title}
+            alt={firstImage.alt || product?.title || "Product image"}
             fill
             style={{ objectFit: "contain" }}
             sizes="(max-width:1080px) 170px, 308px"
@@ -81,7 +82,7 @@ function Card({ dictionary, product }: CardProps) {
           />
         </div>
       )}
-      <ProductText product={product} />
+      {product && <ProductText product={product} />}
       <AddButton dictionary={dictionary} />
     </StyledRectangle>
   );
