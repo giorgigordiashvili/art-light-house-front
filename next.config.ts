@@ -26,6 +26,12 @@ const nextConfig: NextConfig = {
         hostname: "cdn.clerk.app",
         pathname: "**",
       },
+      // Allow product images served from backend API storage
+      {
+        protocol: "https",
+        hostname: "api.artlighthouse.ge",
+        pathname: "/storage/**",
+      },
     ],
   },
 };

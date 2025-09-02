@@ -1,8 +1,9 @@
 import React from "react";
 import styled from "styled-components";
 import AddButton from "./AddButton";
-import LampaImage from "./Image";
 import ProductText from "./Text";
+import Image from "next/image";
+import { Product } from "@/lib/productService";
 const StyledRectangle = styled.div`
   width: 308px;
   height: 417px;
@@ -19,6 +20,9 @@ const StyledRectangle = styled.div`
       padding: 1px; /* სიგანე ბორდერის */
       border-radius: 17px;
       background: linear-gradient(180deg, #f2c754 0%, rgba(242, 199, 84, 0) 100%);
+      mask:
+        linear-gradient(#fff 0 0) content-box,
+        linear-gradient(#fff 0 0);
       -webkit-mask:
         linear-gradient(#fff 0 0) content-box,
         linear-gradient(#fff 0 0);
@@ -41,6 +45,9 @@ const StyledRectangle = styled.div`
         padding: 1px; /* სიგანე ბორდერის */
         border-radius: 17px;
         background: linear-gradient(180deg, #f2c754 0%, rgba(242, 199, 84, 0) 100%);
+        mask:
+          linear-gradient(#fff 0 0) content-box,
+          linear-gradient(#fff 0 0);
         -webkit-mask:
           linear-gradient(#fff 0 0) content-box,
           linear-gradient(#fff 0 0);
@@ -53,11 +60,28 @@ const StyledRectangle = styled.div`
   }
 `;
 
-function Card({ dictionary }: any) {
+interface CardProps {
+  dictionary: any;
+  product: Product;
+}
+
+function Card({ dictionary, product }: CardProps) {
+  const firstImage = product.images?.[0];
   return (
     <StyledRectangle>
-      <LampaImage />
-      <ProductText dictionary={dictionary} />
+      {firstImage && (
+        <div style={{ position: "absolute", top: 30, left: 0, width: 308, height: 218 }}>
+          <Image
+            src={firstImage.url}
+            alt={firstImage.alt || product.title}
+            fill
+            style={{ objectFit: "contain" }}
+            sizes="(max-width:1080px) 170px, 308px"
+            priority
+          />
+        </div>
+      )}
+      <ProductText product={product} />
       <AddButton dictionary={dictionary} />
     </StyledRectangle>
   );

@@ -1,5 +1,6 @@
 import styled from "styled-components";
 import Card from "./Card";
+import { useProducts } from "@/hooks/useProducts";
 
 const GridWrapper = styled.div`
   display: grid;
@@ -29,22 +30,22 @@ const MobileOnly = styled.div`
 `;
 
 const CardGrid = ({ dictionary }: any) => {
+  const { products, isLoading, error } = useProducts();
+
+  const content = () => {
+    if (isLoading) return <p style={{ color: "white" }}>Loading products...</p>;
+    if (error) return <p style={{ color: "red" }}>{error}</p>;
+    if (!products.length) return <p style={{ color: "white" }}>No products found.</p>;
+    return products.map((p) => <Card key={p.id} dictionary={dictionary} product={p} />);
+  };
+
   return (
     <>
       <DesktopOnly>
-        <GridWrapper>
-          {Array.from({ length: 11 }).map((_, i) => (
-            <Card key={i} dictionary={dictionary} />
-          ))}
-        </GridWrapper>
+        <GridWrapper>{content()}</GridWrapper>
       </DesktopOnly>
-
       <MobileOnly>
-        <GridWrapper>
-          {Array.from({ length: 6 }).map((_, i) => (
-            <Card key={i} dictionary={dictionary} />
-          ))}
-        </GridWrapper>
+        <GridWrapper>{content()}</GridWrapper>
       </MobileOnly>
     </>
   );
