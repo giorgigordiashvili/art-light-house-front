@@ -98,4 +98,24 @@ export const ProductService = {
       throw new Error(err?.response?.data?.message || "Unable to load paginated products");
     }
   },
+  async getProductById({
+    id,
+    language = "en",
+  }: {
+    id: number | string;
+    language?: "en" | "ka" | "ge";
+  }): Promise<Product | null> {
+    const apiLang = language === "ge" ? "ka" : language;
+    try {
+      const response = await apiClient.get(`/${apiLang}/products/${id}`);
+      const raw = response.data;
+      if (raw && raw.data) return raw.data as Product; // wrapped
+      if (raw && raw.id) return raw as Product; // direct
+      console.warn("Unexpected product detail response", raw);
+      return null;
+    } catch (e: any) {
+      console.error("Failed to load product", e?.response?.data || e);
+      throw new Error(e?.response?.data?.message || "Unable to load product");
+    }
+  },
 };

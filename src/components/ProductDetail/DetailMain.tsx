@@ -107,7 +107,9 @@ const CardGrid = styled.div`
   }
 `;
 
-function DetailMain({ dictionary }: { dictionary: any }) {
+import { Product } from "@/lib/productService";
+
+function DetailMain({ dictionary, product }: { dictionary: any; product: Product | null }) {
   return (
     <StyledComponent>
       <NewCircle size="small" right="142px" top="1000px" media="yes" />
@@ -120,7 +122,7 @@ function DetailMain({ dictionary }: { dictionary: any }) {
         <FlexRow>
           <BigCard />
           <RightColumn>
-            <DetailDescription dictionary={dictionary} />
+            <DetailDescription dictionary={dictionary} product={product} />
             <ButtonRow>
               <BuyButton dictionary={dictionary} />
               <AddToCartButton dictionary={dictionary} />

@@ -1,6 +1,7 @@
 "use client";
 import styled from "styled-components";
 import DetailMain from "@/components/ProductDetail/DetailMain";
+import { Product } from "@/lib/productService";
 import BigCircle from "@/components/ui/BigCircle";
 
 const StyledComponent = styled.div`
@@ -12,11 +13,17 @@ const StyledComponent = styled.div`
   align-items: center;
 `;
 
-const ProductDetailScreen = ({ dictionary }: { dictionary: any }) => {
+const ProductDetailScreen = ({
+  dictionary,
+  product,
+}: {
+  dictionary: any;
+  product: Product | null;
+}) => {
   return (
     <StyledComponent>
       <BigCircle variant={2} />
-      <DetailMain dictionary={dictionary}></DetailMain>
+      <DetailMain dictionary={dictionary} product={product} />
     </StyledComponent>
   );
 };

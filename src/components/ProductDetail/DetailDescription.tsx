@@ -49,15 +49,27 @@ const Description = styled.p`
   }
 `;
 
-const DetailDescription = ({ dictionary }: { dictionary: any }) => {
+import { Product } from "@/lib/productService";
+
+interface DetailDescriptionProps {
+  dictionary: any;
+  product: Product | null;
+}
+
+const DetailDescription = ({ dictionary, product }: DetailDescriptionProps) => {
+  const title = product?.title || dictionary?.productDetails?.title || "Blue Star Chandelier";
+  const price = product?.price
+    ? `${product.price} ₾`
+    : dictionary?.productDetails?.price || "199,99 ₾";
+  const description =
+    product?.description ||
+    dictionary?.productDetails?.description ||
+    "This chandelier is designed with a modern aesthetic and perfectly suits any interior style. Its unique shape and blue elements create a special atmosphere in your home. The chandelier is equipped with energy-efficient LED bulbs, ensuring long service life and low energy consumption. Buy now on our website and enrich your space!";
   return (
     <Wrapper>
-      <Title>{dictionary?.productDetails?.title || "Blue Star Chandelier"}</Title>
-      <Price>{dictionary?.productDetails?.price || "199,99 ₾"}</Price>
-      <Description>
-        {dictionary?.productDetails?.description ||
-          "This chandelier is designed with a modern aesthetic and perfectly suits any interior style. Its unique shape and blue elements create a special atmosphere in your home. The chandelier is equipped with energy-efficient LED bulbs, ensuring long service life and low energy consumption. Buy now on our website and enrich your space!"}
-      </Description>
+      <Title>{title}</Title>
+      <Price>{price}</Price>
+      <Description>{description}</Description>
     </Wrapper>
   );
 };
