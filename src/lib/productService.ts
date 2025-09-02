@@ -29,11 +29,12 @@ export interface ProductsApiResponse {
  * Service for product related API calls
  */
 export const ProductService = {
-  async getProducts(): Promise<Product[]> {
+  async getProducts(language: "en" | "ka" | "ge" = "en"): Promise<Product[]> {
     try {
-      // NOTE: documentation shows endpoint includes language prefix /en/products
-      // Earlier 401s came from using /products (missing /en).
-      const response = await apiClient.get("/en/products");
+      // Normalize 'ge' from route to backend expected 'ka'
+      const apiLang = language === "ge" ? "ka" : language;
+      // Language-aware endpoint. Backend expects /{lang}/products where lang is en|ka
+      const response = await apiClient.get(`/${apiLang}/products`);
       const raw = response.data;
 
       if (Array.isArray(raw)) return raw as Product[];

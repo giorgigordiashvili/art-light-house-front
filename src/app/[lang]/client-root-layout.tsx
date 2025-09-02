@@ -8,16 +8,20 @@ import { usePathname } from "next/navigation";
 import { ClerkProvider } from "@clerk/nextjs";
 import { ReactNode, useEffect } from "react";
 import { Dictionary } from "@/config/get-dictionary";
+import { TranslationProvider } from "@/hooks/useTranslations";
 
 interface ClientRootLayoutProps {
   children: ReactNode;
-  lang: string; // The locale passed from the server layout
+  lang: string; // The locale passed from the server layout (can be 'en' | 'ge')
   dictionary: Dictionary;
 }
 
-export default function ClientRootLayout({ children, dictionary }: ClientRootLayoutProps) {
+export default function ClientRootLayout({ children, dictionary, lang }: ClientRootLayoutProps) {
   const pathname = usePathname();
   const isAdminRoute = pathname?.startsWith("/admin");
+
+  // Normalize legacy 'ge' to 'ka' for API + translation hooks
+  const normalizedLang = lang === "ge" ? "ka" : lang;
 
   useEffect(() => {
     if (typeof window !== "undefined") {
@@ -62,9 +66,11 @@ export default function ClientRootLayout({ children, dictionary }: ClientRootLay
     >
       <div id="clerk-captcha" style={{ display: "none" }}></div>
       <StyledComponentsRegistry>
-        {!isAdminRoute && <Header header={dictionary.header} dictionary={dictionary} />}
-        {children}
-        {!isAdminRoute && <Footer footer={dictionary.footer} />}
+        <TranslationProvider defaultLanguage={normalizedLang as any}>
+          {!isAdminRoute && <Header header={dictionary.header} dictionary={dictionary} />}
+          {children}
+          {!isAdminRoute && <Footer footer={dictionary.footer} />}
+        </TranslationProvider>
       </StyledComponentsRegistry>
     </ClerkProvider>
   );

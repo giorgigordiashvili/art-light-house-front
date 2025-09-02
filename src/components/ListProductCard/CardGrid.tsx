@@ -30,6 +30,7 @@ const MobileOnly = styled.div`
 `;
 
 const CardGrid = ({ dictionary }: any) => {
+  // Products auto-refetch when language changes via TranslationProvider
   const { products, isLoading, error } = useProducts();
 
   const content = () => {
