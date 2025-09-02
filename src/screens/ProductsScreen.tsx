@@ -1,6 +1,7 @@
 "use client";
 import ProductsMain from "@/components/ListProductCard/ProductsMain";
 import Main from "@/components/PagesButton/Main";
+import { ProductsPaginationProvider } from "@/contexts/ProductsPaginationContext";
 import styled from "styled-components";
 import NewCircle from "@/components/ui/NewCircle";
 import Circle from "@/components/ui/Circle";
@@ -28,8 +29,10 @@ const StyledCircle = styled.div`
 const ProductsScreen = ({ dictionary }: any) => {
   return (
     <StyledComponent>
-      <ProductsMain dictionary={dictionary.products} />
-      <Main />
+      <ProductsPaginationProvider perPage={12}>
+        <ProductsMain dictionary={dictionary.products} />
+        <Main />
+      </ProductsPaginationProvider>
       <NewCircle size="small" top="1000px" right="142px" media="no" />
       <StyledCircle>
         <Circle size="large" />

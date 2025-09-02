@@ -1,7 +1,8 @@
 "use client";
-import React, { useState } from "react";
+import React from "react";
 import styled from "styled-components";
 import { LeftArrow, RightArrow } from "./ArrowButtons";
+import { useProductsPagination } from "@/contexts/ProductsPaginationContext";
 
 const PaginationWrapper = styled.div`
   display: flex;
@@ -29,15 +30,14 @@ const PageNumber = styled.button<{ active?: boolean }>`
 `;
 
 const PaginationWithArrows = () => {
-  const [currentPage, setCurrentPage] = useState(1);
-  const totalPages = 4;
+  const { page, lastPage, goToPage, isLoading } = useProductsPagination();
 
   const handlePrev = () => {
-    if (currentPage > 1) setCurrentPage(currentPage - 1);
+    if (page > 1) goToPage(page - 1);
   };
 
   const handleNext = () => {
-    if (currentPage < totalPages) setCurrentPage(currentPage + 1);
+    if (page < lastPage) goToPage(page + 1);
   };
 
   return (
@@ -45,15 +45,19 @@ const PaginationWithArrows = () => {
       <div onClick={handlePrev}>
         <LeftArrow />
       </div>
-      {Array.from({ length: totalPages }, (_, i) => (
-        <PageNumber
-          key={i + 1}
-          active={i + 1 === currentPage}
-          onClick={() => setCurrentPage(i + 1)}
-        >
-          {i + 1}
-        </PageNumber>
-      ))}
+      {Array.from({ length: lastPage }, (_, i) => {
+        const pageNum = i + 1;
+        return (
+          <PageNumber
+            key={pageNum}
+            active={pageNum === page}
+            onClick={() => goToPage(pageNum)}
+            disabled={isLoading && pageNum === page}
+          >
+            {pageNum}
+          </PageNumber>
+        );
+      })}
       <div onClick={handleNext}>
         <RightArrow />
       </div>

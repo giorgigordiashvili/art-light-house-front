@@ -1,6 +1,6 @@
 import styled from "styled-components";
 import Card from "./Card";
-import { useProducts } from "@/hooks/useProducts";
+import { useProductsPagination } from "@/contexts/ProductsPaginationContext";
 
 const GridWrapper = styled.div`
   display: grid;
@@ -30,8 +30,8 @@ const MobileOnly = styled.div`
 `;
 
 const CardGrid = ({ dictionary }: any) => {
-  // Products auto-refetch when language changes via TranslationProvider
-  const { products, isLoading, error } = useProducts();
+  // Paginated products (12 per page)
+  const { products, isLoading, error } = useProductsPagination();
 
   const content = () => {
     if (isLoading) return <p style={{ color: "white" }}>Loading products...</p>;
