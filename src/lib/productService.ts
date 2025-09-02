@@ -17,6 +17,11 @@ export interface Product {
   images: ProductImage[];
   created_at?: string;
   updated_at?: string;
+  // Category data (shape guessed; backend may provide one of these)
+  category_id?: number;
+  categoryId?: number;
+  category?: { id: number; name?: string } | null;
+  categories?: { id: number; name?: string }[]; // in case of many-to-many
 }
 
 export interface ProductsApiResponse {
