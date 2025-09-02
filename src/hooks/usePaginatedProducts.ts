@@ -1,5 +1,6 @@
 "use client";
 import { useCallback, useEffect, useState } from "react";
+import { usePathname, useSearchParams, useRouter } from "next/navigation";
 import { ProductService, Product, PaginationMeta } from "@/lib/productService";
 import { useTranslations } from "./useTranslations";
 
@@ -18,7 +19,17 @@ export function usePaginatedProducts({
   const rawLang = (languageOverride || (currentLanguage as any) || "en") as "en" | "ka" | "ge";
   const lang = (rawLang === "ge" ? "ka" : rawLang) as "en" | "ka" | "ge";
 
-  const [page, setPage] = useState(initialPage);
+  const searchParams = useSearchParams();
+  const pathname = usePathname();
+  const router = useRouter();
+
+  const initialFromQuery = (() => {
+    const p = searchParams?.get("page");
+    const n = p ? parseInt(p, 10) : NaN;
+    return !isNaN(n) && n > 0 ? n : initialPage;
+  })();
+
+  const [page, setPage] = useState(initialFromQuery);
   const [products, setProducts] = useState<Product[]>([]);
   const [pagination, setPagination] = useState<PaginationMeta | null>(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -49,8 +60,28 @@ export function usePaginatedProducts({
 
   // Initial + language change
   useEffect(() => {
-    fetchPage(1, true);
-  }, [lang, fetchPage]);
+    // If language changes, reset to page from query (or 1 if absent)
+    fetchPage(initialFromQuery, true);
+  }, [lang, fetchPage, initialFromQuery]);
+
+  // Keep URL in sync with current page (shallow push to avoid full reload)
+  useEffect(() => {
+    if (!pathname) return;
+    const params = new URLSearchParams(searchParams?.toString() || "");
+    if (page === 1) {
+      params.delete("page");
+    } else {
+      params.set("page", String(page));
+    }
+    const newUrl = `${pathname}${params.toString() ? `?${params.toString()}` : ""}`;
+    // Avoid unnecessary push
+    if (
+      typeof window !== "undefined" &&
+      newUrl !== window.location.pathname + window.location.search
+    ) {
+      router.replace(newUrl, { scroll: true });
+    }
+  }, [page, pathname, searchParams, router]);
 
   const goToPage = (p: number) => {
     const max = pagination?.last_page || 1;
