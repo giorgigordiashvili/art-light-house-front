@@ -6,6 +6,7 @@ import ProductText from "./Text";
 import Image from "next/image";
 import { Product } from "@/lib/productService";
 import { useRouter, useParams } from "next/navigation";
+import axios from "axios";
 const StyledRectangle = styled.div`
   width: 308px;
   height: 417px;
@@ -82,6 +83,14 @@ function Card({ dictionary, product }: CardProps) {
     router.push(`/${locale}/products/${product.id}`);
   };
 
+  const addToCartHandler = async () => {
+    await axios.post(
+      "https://api.artlighthouse.ge/en/add-to-cart",
+      { productId: 5 },
+      { withCredentials: true }
+    );
+  };
+
   return (
     <StyledRectangle onClick={handleNavigate} role={product?.id ? "button" : undefined}>
       {firstImage && (
@@ -100,6 +109,7 @@ function Card({ dictionary, product }: CardProps) {
       <AddButton
         dictionary={dictionary}
         onClick={() => {
+          addToCartHandler();
           /* future add-to-cart: stopPropagation not needed because wrapper not inside clickable? Card handles click so we keep button clickable without navigation by stopping at AddButton level via pointer events if required */
         }}
       />

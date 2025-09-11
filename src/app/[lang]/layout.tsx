@@ -13,10 +13,8 @@ export async function generateStaticParams() {
   return i18n.locales.map((locale) => ({ lang: locale }));
 }
 
-export default async function ServerRootLayout({
-  children,
-  params: { lang },
-}: ServerRootLayoutProps) {
+export default async function ServerRootLayout({ children, params }: ServerRootLayoutProps) {
+  const { lang } = await params;
   // Make sure lang is a valid locale
   const validLang = lang === "ge" || lang === "en" ? lang : "ge";
   const dictionary: Dictionary = await getDictionary(validLang);

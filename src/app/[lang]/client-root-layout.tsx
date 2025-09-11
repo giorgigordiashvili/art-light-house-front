@@ -9,6 +9,7 @@ import { ClerkProvider } from "@clerk/nextjs";
 import { ReactNode, useEffect } from "react";
 import { Dictionary } from "@/config/get-dictionary";
 import { TranslationProvider } from "@/hooks/useTranslations";
+import { CartProvider } from "../../contexts/CartContext";
 
 interface ClientRootLayoutProps {
   children: ReactNode;
@@ -67,9 +68,11 @@ export default function ClientRootLayout({ children, dictionary, lang }: ClientR
       <div id="clerk-captcha" style={{ display: "none" }}></div>
       <StyledComponentsRegistry>
         <TranslationProvider defaultLanguage={normalizedLang as any}>
-          {!isAdminRoute && <Header header={dictionary.header} dictionary={dictionary} />}
-          {children}
-          {!isAdminRoute && <Footer footer={dictionary.footer} />}
+          <CartProvider>
+            {!isAdminRoute && <Header header={dictionary.header} dictionary={dictionary} />}
+            {children}
+            {!isAdminRoute && <Footer footer={dictionary.footer} />}
+          </CartProvider>
         </TranslationProvider>
       </StyledComponentsRegistry>
     </ClerkProvider>

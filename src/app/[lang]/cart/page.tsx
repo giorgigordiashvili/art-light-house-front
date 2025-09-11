@@ -1,5 +1,5 @@
 import React from "react";
-import CartScreen from "@/screens/CartScreen";
+import UnifiedCart from "../../../components/CartPage/UnifiedCart";
 import { getDictionary } from "@/config/get-dictionary";
 import type { Locale } from "@/config/i18n";
 import { PageProps } from "@/models/lang.model";
@@ -12,5 +12,5 @@ export default async function Page({ params }: PageProps) {
   const { lang } = await params;
   const dictionary = await getDictionary(isLocale(lang) ? lang : "ge");
 
-  return <CartScreen dictionary={dictionary} />;
+  return <UnifiedCart dictionary={dictionary} />;
 }
