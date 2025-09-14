@@ -1,4 +1,8 @@
 "use client";
+<<<<<<< Updated upstream
+=======
+<<<<<<< HEAD
+>>>>>>> Stashed changes
 import React, {
   createContext,
   useContext,
@@ -118,13 +122,54 @@ function cartReducer(state: CartState, action: CartAction): CartState {
     default:
       return state;
   }
+<<<<<<< Updated upstream
+=======
+=======
+
+import React, { createContext, useContext, useState, ReactNode } from "react";
+
+// Cart item interface
+export interface CartItem {
+  id: number;
+  productId: number;
+  name: string;
+  price: number;
+  quantity: number;
+  image?: string;
+  attributes?: Record<string, any>;
+}
+
+// Cart context interface
+interface CartContextType {
+  items: CartItem[];
+  cart: CartItem[]; // Alias for compatibility
+  itemCount: number;
+  totalPrice: number;
+  loading: boolean;
+  addItem: (item: Omit<CartItem, "id">) => void;
+  removeItem: (id: number) => void;
+  updateQuantity: (id: number, quantity: number) => void;
+  clearCart: () => void;
+  isOpen: boolean;
+  openCart: () => void;
+  closeCart: () => void;
+>>>>>>> 696d478 (Delete clerk implementation from the project, Add login/registration using next-auth library)
+>>>>>>> Stashed changes
 }
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
 
 export const useCart = () => {
   const context = useContext(CartContext);
+<<<<<<< Updated upstream
   if (!context) {
+=======
+<<<<<<< HEAD
+  if (!context) {
+=======
+  if (context === undefined) {
+>>>>>>> 696d478 (Delete clerk implementation from the project, Add login/registration using next-auth library)
+>>>>>>> Stashed changes
     throw new Error("useCart must be used within a CartProvider");
   }
   return context;
@@ -135,6 +180,10 @@ interface CartProviderProps {
 }
 
 export const CartProvider: React.FC<CartProviderProps> = ({ children }) => {
+<<<<<<< Updated upstream
+=======
+<<<<<<< HEAD
+>>>>>>> Stashed changes
   const [cart, dispatch] = useReducer(cartReducer, initialState);
   const [loading, setLoading] = React.useState(false);
   const [error, setError] = React.useState<string | null>(null);
@@ -245,6 +294,70 @@ export const CartProvider: React.FC<CartProviderProps> = ({ children }) => {
     removeFromCart,
     fetchCart,
     clearError,
+<<<<<<< Updated upstream
+=======
+=======
+  const [items, setItems] = useState<CartItem[]>([]);
+  const [isOpen, setIsOpen] = useState(false);
+
+  const addItem = (newItem: Omit<CartItem, "id">) => {
+    setItems((prev) => {
+      const existingItem = prev.find(
+        (item) =>
+          item.productId === newItem.productId &&
+          JSON.stringify(item.attributes) === JSON.stringify(newItem.attributes)
+      );
+
+      if (existingItem) {
+        return prev.map((item) =>
+          item.id === existingItem.id
+            ? { ...item, quantity: item.quantity + newItem.quantity }
+            : item
+        );
+      }
+
+      return [...prev, { ...newItem, id: Date.now() + Math.random() }];
+    });
+  };
+
+  const removeItem = (id: number) => {
+    setItems((prev) => prev.filter((item) => item.id !== id));
+  };
+
+  const updateQuantity = (id: number, quantity: number) => {
+    if (quantity <= 0) {
+      removeItem(id);
+      return;
+    }
+
+    setItems((prev) => prev.map((item) => (item.id === id ? { ...item, quantity } : item)));
+  };
+
+  const clearCart = () => {
+    setItems([]);
+  };
+
+  const openCart = () => setIsOpen(true);
+  const closeCart = () => setIsOpen(false);
+
+  const itemCount = items.reduce((total, item) => total + item.quantity, 0);
+  const totalPrice = items.reduce((total, item) => total + item.price * item.quantity, 0);
+
+  const contextValue: CartContextType = {
+    items,
+    cart: items, // Alias for compatibility
+    itemCount,
+    totalPrice,
+    loading: false, // Cart is always loaded immediately
+    addItem,
+    removeItem,
+    updateQuantity,
+    clearCart,
+    isOpen,
+    openCart,
+    closeCart,
+>>>>>>> 696d478 (Delete clerk implementation from the project, Add login/registration using next-auth library)
+>>>>>>> Stashed changes
   };
 
   return <CartContext.Provider value={contextValue}>{children}</CartContext.Provider>;

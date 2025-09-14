@@ -6,6 +6,7 @@ const nextConfig: NextConfig = {
   },
   images: {
     remotePatterns: [
+<<<<<<< Updated upstream
       {
         protocol: "https",
         hostname: "img.clerk.com",
@@ -25,6 +26,19 @@ const nextConfig: NextConfig = {
         protocol: "https",
         hostname: "cdn.clerk.app",
         pathname: "**",
+=======
+      // Allow product images served from backend API storage
+      {
+        protocol: "https",
+        hostname: "api.artlighthouse.ge",
+        pathname: "/storage/**",
+      },
+      // Allow UI Avatars service for user avatars
+      {
+        protocol: "https",
+        hostname: "ui-avatars.com",
+        pathname: "/api/**",
+>>>>>>> Stashed changes
       },
       // Allow product images served from backend API storage
       {

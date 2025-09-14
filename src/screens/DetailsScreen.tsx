@@ -14,7 +14,7 @@ const StyledComponent = styled.div`
 const MyDetails = ({ dictionary }: { dictionary: any }) => {
   return (
     <StyledComponent>
-      <DetailMain dictionary={dictionary}></DetailMain>
+      <DetailMain dictionary={dictionary} product={null}></DetailMain>
     </StyledComponent>
   );
 };

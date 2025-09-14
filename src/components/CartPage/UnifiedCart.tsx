@@ -1,7 +1,15 @@
 "use client";
 import React from "react";
 import styled from "styled-components";
+<<<<<<< Updated upstream
 import { useCart } from "../../contexts/CartContext";
+=======
+<<<<<<< HEAD
+import { useCart } from "../../contexts/CartContext";
+=======
+import { useCart } from "@/contexts/CartContext";
+>>>>>>> 696d478 (Delete clerk implementation from the project, Add login/registration using next-auth library)
+>>>>>>> Stashed changes
 import Cart from "./Cart";
 import EmptyCartCard from "../Cart/EmptyCartCard";
 import ContactTitle from "../Contact/ContactTitle";
@@ -85,7 +93,15 @@ const UnifiedCart: React.FC<UnifiedCartProps> = ({ dictionary }) => {
       <LeftCircle size="small" left="-140px" top="900px" media="yes" />
       <NewCircle size="small" right="142px" top="1000px" media="yes" />
       <Container>
+<<<<<<< Updated upstream
         {cart.isEmpty ? (
+=======
+<<<<<<< HEAD
+        {cart.isEmpty ? (
+=======
+        {cart.length === 0 ? (
+>>>>>>> 696d478 (Delete clerk implementation from the project, Add login/registration using next-auth library)
+>>>>>>> Stashed changes
           <StyledEmptyCartContainer>
             <ContactTitle text={dictionary?.cart?.title || "Cart"} />
             <EmptyCartCard dictionary={dictionary} />

@@ -1,12 +1,18 @@
 /**
+<<<<<<< Updated upstream
  * Simple API authentication state manager
  * Handles local storage of API tokens and user data
+=======
+ * API authentication state manager for next-auth integration
+ * Uses backend tokens stored in localStorage
+>>>>>>> Stashed changes
  */
 
 export interface ApiUser {
   id: number;
   first_name: string;
   email: string;
+<<<<<<< Updated upstream
   email_verified_at: string | null;
   created_at: string;
   updated_at: string;
@@ -23,6 +29,26 @@ export class ApiAuthManager {
     if (typeof window !== "undefined") {
       localStorage.setItem(this.TOKEN_KEY, token);
       console.log("🔐 API token stored");
+=======
+  email_verified?: boolean;
+  created_at?: string;
+  updated_at?: string;
+}
+
+export class ApiAuthManager {
+  private static readonly TOKEN_KEY = "access_token";
+  private static readonly TOKEN_TYPE_KEY = "token_type";
+  private static readonly USER_KEY = "api_user";
+
+  /**
+   * Store authentication token (backend provided)
+   */
+  static setToken(token: string, tokenType: string = "Bearer"): void {
+    if (typeof window !== "undefined") {
+      localStorage.setItem(this.TOKEN_KEY, token);
+      localStorage.setItem(this.TOKEN_TYPE_KEY, tokenType);
+      console.log("🔐 Backend API token stored");
+>>>>>>> Stashed changes
     }
   }
 
@@ -37,12 +63,35 @@ export class ApiAuthManager {
   }
 
   /**
+<<<<<<< Updated upstream
    * Remove authentication token
+=======
+   * Get token type
+   */
+  static getTokenType(): string | null {
+    if (typeof window !== "undefined") {
+      return localStorage.getItem(this.TOKEN_TYPE_KEY) || "Bearer";
+    }
+    return "Bearer";
+  }
+
+  /**
+   * Remove authentication tokens
+>>>>>>> Stashed changes
    */
   static removeToken(): void {
     if (typeof window !== "undefined") {
       localStorage.removeItem(this.TOKEN_KEY);
+<<<<<<< Updated upstream
       console.log("🔐 API token removed");
+=======
+      localStorage.removeItem(this.TOKEN_TYPE_KEY);
+      // Also clean up old custom tokens
+      localStorage.removeItem("api_token");
+      localStorage.removeItem("custom_session_token");
+      localStorage.removeItem("session_token");
+      console.log("🔐 All API tokens removed");
+>>>>>>> Stashed changes
     }
   }
 

@@ -1,7 +1,7 @@
 import React from "react";
 import UserMenuItem from "./UserMenuItem";
 import styled from "styled-components";
-import { useClerk } from "@clerk/nextjs";
+import { signOut } from "next-auth/react";
 import { useRouter } from "next/navigation";
 
 const StyledContainer = styled.div`
@@ -68,11 +68,10 @@ interface UserMenuProps {
 }
 
 const UserMenu = ({ closeModal, dictionary }: UserMenuProps) => {
-  const { signOut } = useClerk();
   const router = useRouter();
 
   const handleSignOut = async () => {
-    await signOut();
+    await signOut({ redirect: false });
     if (closeModal) closeModal();
     router.push("/");
   };

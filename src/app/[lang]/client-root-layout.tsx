@@ -5,11 +5,24 @@ import Header from "@/components/Header/Header";
 import StyledComponentsRegistry from "../../../lib/registry";
 import "../globals.css";
 import { usePathname } from "next/navigation";
-import { ClerkProvider } from "@clerk/nextjs";
+import { SessionProvider } from "next-auth/react";
 import { ReactNode, useEffect } from "react";
 import { Dictionary } from "@/config/get-dictionary";
+<<<<<<< Updated upstream
 import { TranslationProvider } from "@/hooks/useTranslations";
 import { CartProvider } from "../../contexts/CartContext";
+=======
+<<<<<<< Updated upstream
+=======
+import { TranslationProvider } from "@/hooks/useTranslations";
+<<<<<<< HEAD
+import { CartProvider } from "../../contexts/CartContext";
+=======
+import { CartProvider } from "@/contexts/CartContext";
+import SessionRestore from "@/components/SessionRestore";
+>>>>>>> 696d478 (Delete clerk implementation from the project, Add login/registration using next-auth library)
+>>>>>>> Stashed changes
+>>>>>>> Stashed changes
 
 interface ClientRootLayoutProps {
   children: ReactNode;
@@ -26,26 +39,24 @@ export default function ClientRootLayout({ children, dictionary, lang }: ClientR
 
   useEffect(() => {
     if (typeof window !== "undefined") {
-      const handleError = (event: ErrorEvent) => {
-        const message = event.error?.message;
-        if (
-          message?.includes("Clerk") ||
-          message?.includes("oauth") ||
-          message?.includes("authentication")
-        ) {
-          console.error("Clerk/OAuth error:", message);
-          localStorage.setItem("oauth_error", message);
-        }
-      };
+      // Clean up any old authentication tokens/errors
+      const oauthError = localStorage.getItem("oauth_error");
+      if (oauthError) {
+        console.log("Cleaning up old OAuth errors");
+        localStorage.removeItem("oauth_error");
+      }
 
-      window.addEventListener("error", handleError);
-      console.log("Clerk provider initialized in", process.env.NODE_ENV, "mode");
-
-      return () => window.removeEventListener("error", handleError);
+      // Clean up any old custom session tokens
+      const customToken = localStorage.getItem("custom_session_token");
+      if (customToken) {
+        console.log("Cleaning up old custom session tokens");
+        localStorage.removeItem("custom_session_token");
+      }
     }
   }, []);
 
   return (
+<<<<<<< HEAD
     <ClerkProvider
       appearance={{
         elements: {
@@ -76,5 +87,20 @@ export default function ClientRootLayout({ children, dictionary, lang }: ClientR
         </TranslationProvider>
       </StyledComponentsRegistry>
     </ClerkProvider>
+=======
+    <SessionProvider>
+      <SessionRestore>
+        <StyledComponentsRegistry>
+          <TranslationProvider defaultLanguage={normalizedLang as any}>
+            <CartProvider>
+              {!isAdminRoute && <Header header={dictionary.header} dictionary={dictionary} />}
+              {children}
+              {!isAdminRoute && <Footer footer={dictionary.footer} />}
+            </CartProvider>
+          </TranslationProvider>
+        </StyledComponentsRegistry>
+      </SessionRestore>
+    </SessionProvider>
+>>>>>>> 696d478 (Delete clerk implementation from the project, Add login/registration using next-auth library)
   );
 }

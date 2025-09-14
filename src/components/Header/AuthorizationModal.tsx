@@ -7,11 +7,18 @@ import AuthToggleButtons from "./AuthToggleButtons";
 import ModalInput from "./ModalInput";
 import InputTitle from "./InputTitle";
 import AdditionalAction from "./AdditionalAction";
-import { useSignIn, useSignUp } from "@clerk/nextjs";
 import Image from "next/image";
+<<<<<<< Updated upstream
 import { AuthService } from "@/lib/authService";
 import { ApiAuthManager } from "@/lib/apiAuthManager";
 import "@/utils/registrationDebugger"; // Enable debugging
+=======
+<<<<<<< Updated upstream
+=======
+import { AuthService } from "@/lib/authService";
+import "@/utils/registrationDebugger"; // Enable debugging
+>>>>>>> Stashed changes
+>>>>>>> Stashed changes
 
 interface AuthorizationModalProps {
   onClose: () => void;
@@ -134,9 +141,17 @@ const AuthorizationModal: React.FC<AuthorizationModalProps> = ({
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
 
+<<<<<<< Updated upstream
   const { isLoaded: isSignInLoaded, signIn } = useSignIn();
   const { isLoaded: isSignUpLoaded, signUp } = useSignUp();
+=======
+<<<<<<< Updated upstream
+  const { isLoaded: isSignInLoaded, signIn, setActive: setSignInActive } = useSignIn();
+  const { isLoaded: isSignUpLoaded, signUp, setActive: setSignUpActive } = useSignUp();
+>>>>>>> Stashed changes
 
+=======
+>>>>>>> Stashed changes
   const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setEmail(e.target.value);
     setError("");
@@ -168,6 +183,7 @@ const AuthorizationModal: React.FC<AuthorizationModalProps> = ({
 
     try {
       if (activeTab === "auth") {
+<<<<<<< Updated upstream
         // Login with API only
         const apiLoginData = {
           email: email,
@@ -183,6 +199,13 @@ const AuthorizationModal: React.FC<AuthorizationModalProps> = ({
         console.log("🔍 About to store login data:", {
           access_token: apiResult.access_token,
           user: apiResult.user,
+=======
+<<<<<<< Updated upstream
+        // Sign In with Email
+        const result = await signIn?.create({
+          identifier: email,
+          password,
+>>>>>>> Stashed changes
         });
 
         // Generate a session token if API doesn't provide one
@@ -210,7 +233,40 @@ const AuthorizationModal: React.FC<AuthorizationModalProps> = ({
         console.log("Login completed successfully");
         onClose();
       } else {
+<<<<<<< Updated upstream
         // Registration - use both API and Clerk
+=======
+        // Sign Up with Email
+=======
+        // Login with API only
+        const apiLoginData = {
+          email: email,
+          password: password,
+        };
+
+        console.log("Attempting API login...");
+        const apiResult = await AuthService.login(apiLoginData);
+
+        console.log("API Login result:", apiResult);
+
+        if (apiResult.success) {
+          // Update the authentication state in the hook
+          console.log("� Updating auth state after login...");
+          if (updateAuthState) {
+            updateAuthState();
+          }
+
+          console.log("Login completed successfully");
+          onClose();
+        } else {
+          setError(apiResult.error || "Login failed");
+          setIsLoading(false);
+          return;
+        }
+      } else {
+        // Registration - use API endpoint
+>>>>>>> Stashed changes
+>>>>>>> Stashed changes
         if (!firstName) {
           setError(dictionary?.registrationModal?.alert || "Please enter name");
           setIsLoading(false);
@@ -223,6 +279,7 @@ const AuthorizationModal: React.FC<AuthorizationModalProps> = ({
           return;
         }
 
+<<<<<<< Updated upstream
         try {
           // First, register with backend API
           const apiRegistrationData = {
@@ -259,14 +316,43 @@ const AuthorizationModal: React.FC<AuthorizationModalProps> = ({
             ApiAuthManager.setUser(apiResult.user);
           }
 
+=======
+<<<<<<< Updated upstream
+        if (result?.status === "complete") {
+          if (setSignUpActive) {
+            await setSignUpActive({ session: result.createdSessionId });
+          }
+=======
+        try {
+          // First, register with backend API
+          const apiRegistrationData = {
+            first_name: firstName,
+            email: email,
+            password: password,
+            password_confirmation: passwordConfirmation,
+          };
+
+          console.log("Attempting API registration...");
+          const apiResult = await AuthService.register(apiRegistrationData);
+
+          console.log("API Registration successful:", apiResult);
+
+          // Registration successful, tokens are stored in localStorage by AuthService
+>>>>>>> Stashed changes
           // Update the authentication state in the hook
           console.log("🔄 Updating auth state after registration...");
           if (updateAuthState) {
             updateAuthState();
           }
 
+<<<<<<< Updated upstream
           // After successful API registration, just show success
           console.log("Registration completed successfully");
+=======
+          // After successful API registration, show success
+          console.log("Registration completed successfully");
+>>>>>>> Stashed changes
+>>>>>>> Stashed changes
           onRegisterSuccess?.();
           onClose();
         } catch (apiError: any) {
@@ -311,43 +397,18 @@ const AuthorizationModal: React.FC<AuthorizationModalProps> = ({
 
   const handleSocialSignIn = async (provider: "google" | "facebook") => {
     try {
-      // Map the provider to the correct Clerk strategy
-      const strategy = provider === "google" ? "oauth_google" : "oauth_facebook";
+      console.log(`Social sign-in with ${provider} - using NextAuth`);
 
-      console.log(`Using OAuth strategy: ${strategy} for provider: ${provider}`);
+      // Use NextAuth signIn for social providers
+      const { signIn } = await import("next-auth/react");
+      await signIn(provider, { callbackUrl: window.location.pathname });
 
-      // Get the current URL to return to after authentication
-      const currentUrl = window.location.pathname + window.location.search;
-
-      if (activeTab === "auth") {
-        if (isSignInLoaded) {
-          console.log("Initiating sign-in with redirect...");
-          await signIn?.authenticateWithRedirect({
-            strategy,
-            redirectUrl: "/sso-callback",
-            redirectUrlComplete: currentUrl || "/", // Return to current page
-          });
-        } else {
-          console.error("Sign-in component not loaded yet");
-        }
-      } else {
-        if (isSignUpLoaded) {
-          console.log("Initiating sign-up with redirect...");
-          await signUp?.authenticateWithRedirect({
-            strategy,
-            redirectUrl: "/sso-callback",
-            redirectUrlComplete: currentUrl || "/", // Return to current page
-          });
-        } else {
-          console.error("Sign-up component not loaded yet");
-        }
-      }
+      onClose();
     } catch (error) {
-      console.error(`Failed to authenticate with ${provider}:`, error);
-      // Display more detailed error information in development
-      if (process.env.NODE_ENV === "development") {
-        console.error("Full error:", JSON.stringify(error, null, 2));
-      }
+      console.error(`Error with ${provider} sign-in:`, error);
+      setError(
+        dictionary?.loginModal?.oauthError || `Error signing in with ${provider}. Please try again.`
+      );
     }
   };
 

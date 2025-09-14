@@ -3,6 +3,23 @@ import axios from "axios";
 // API base URL
 const API_BASE_URL = "https://api.artlighthouse.ge";
 
+<<<<<<< Updated upstream
+=======
+// Function to get XSRF token from cookies
+const getXSRFToken = (): string | null => {
+  if (typeof window === "undefined") return null;
+
+  const cookies = document.cookie.split(";");
+  for (const cookie of cookies) {
+    const [name, value] = cookie.trim().split("=");
+    if (name === "XSRF-TOKEN") {
+      return decodeURIComponent(value);
+    }
+  }
+  return null;
+};
+
+>>>>>>> Stashed changes
 // Create axios instance with default config
 const apiClient = axios.create({
   baseURL: API_BASE_URL,
@@ -17,6 +34,10 @@ const apiClient = axios.create({
   },
 });
 
+<<<<<<< Updated upstream
+=======
+<<<<<<< HEAD
+>>>>>>> Stashed changes
 // Function to get XSRF token from cookies
 const getXSRFToken = (): string | null => {
   if (typeof window === "undefined") return null;
@@ -43,8 +64,29 @@ apiClient.interceptors.request.use(
 
       // Add auth token if available
       const token = localStorage.getItem("api_token");
+<<<<<<< Updated upstream
       if (token) {
         config.headers.Authorization = `Bearer ${token}`;
+=======
+=======
+// Request interceptor for adding auth tokens and XSRF token
+apiClient.interceptors.request.use(
+  (config) => {
+    // Add backend auth token if available
+    if (typeof window !== "undefined") {
+      const token = localStorage.getItem("access_token");
+      const tokenType = localStorage.getItem("token_type") || "Bearer";
+
+>>>>>>> 696d478 (Delete clerk implementation from the project, Add login/registration using next-auth library)
+      if (token) {
+        config.headers.Authorization = `${tokenType} ${token}`;
+      }
+
+      // Add XSRF token from cookies
+      const xsrfToken = getXSRFToken();
+      if (xsrfToken) {
+        config.headers["X-XSRF-TOKEN"] = xsrfToken;
+>>>>>>> Stashed changes
       }
     }
 

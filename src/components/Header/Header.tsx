@@ -17,7 +17,7 @@ import EmptyCartModal from "./EmptyCartModal";
 import CartModal from "./CartModal";
 import LanguageSwitcher from "./LanguageSwitcher/LanguageSwitcher";
 import LanguageSwitcherModal from "./LanguageSwitcher/LanguageSwitcherModal";
-import { useUser } from "@clerk/nextjs";
+import { useAuthState } from "@/hooks/useAuthState";
 import { usePathname, useRouter } from "next/navigation";
 import { Locale, i18n } from "@/config/i18n";
 import { useApiAuth } from "@/hooks/useApiAuth";
@@ -232,12 +232,19 @@ const Header = ({ header, dictionary }: HeaderProps) => {
   }, [isBurgerMenuOpen, isUserMenuOpen, isLanguageSwitcherModalOpen]);
 
   const isCartEmpty = cartItemCount === 0;
+<<<<<<< Updated upstream
   const { user, isSignedIn } = useUser();
+<<<<<<< Updated upstream
+=======
+=======
+  const { isAuthenticated, user, isLoading } = useAuthState();
+>>>>>>> Stashed changes
   const { isAuthenticated: isApiAuthenticated, user: apiUser, updateAuthState } = useApiAuth();
 
   // Debug logging
   useEffect(() => {
     console.log("🔍 Header Auth Debug:", {
+<<<<<<< Updated upstream
       isSignedIn,
       isApiAuthenticated,
       clerkUser: user,
@@ -248,13 +255,30 @@ const Header = ({ header, dictionary }: HeaderProps) => {
 
   // Combine both authentication states
   const isUserAuthorized = isSignedIn || isApiAuthenticated;
+=======
+      isAuthenticated,
+      user,
+      isLoading,
+      isApiAuthenticated,
+      apiUser,
+    });
+  }, [isAuthenticated, user, isLoading, isApiAuthenticated, apiUser]);
+
+  // Use the combined authentication state
+  const isUserAuthorized = isAuthenticated;
+>>>>>>> Stashed changes
 
   // Generate avatar URL for API users
   const generateAvatarUrl = (name: string): string => {
     return `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=FFCB40&color=000&size=64&font-size=0.6`;
   };
+<<<<<<< Updated upstream
+=======
+>>>>>>> Stashed changes
+>>>>>>> Stashed changes
 
   const currentUser = {
+<<<<<<< Updated upstream
     username:
       user?.firstName ||
       user?.fullName ||
@@ -264,6 +288,20 @@ const Header = ({ header, dictionary }: HeaderProps) => {
     userImage:
       user?.imageUrl ||
       (apiUser?.first_name ? generateAvatarUrl(apiUser.first_name) : "/assets/user.svg"),
+=======
+<<<<<<< Updated upstream
+    username: user?.firstName || user?.fullName || "User",
+    userImage: user?.imageUrl || "/assets/user.svg",
+=======
+    username:
+      user?.name ||
+      user?.email?.split("@")[0] ||
+      apiUser?.first_name ||
+      apiUser?.email?.split("@")[0] ||
+      "User",
+    userImage: user?.image || (user?.name ? generateAvatarUrl(user.name) : "/assets/user.svg"),
+>>>>>>> Stashed changes
+>>>>>>> Stashed changes
   };
 
   const closeEmptyCartModal = () => {
@@ -341,7 +379,14 @@ const Header = ({ header, dictionary }: HeaderProps) => {
                       isAuthorized={isUserAuthorized}
                       username={currentUser.username}
                       userImage={currentUser.userImage}
+<<<<<<< Updated upstream
                       isClerkUser={isSignedIn} // True if authenticated via Clerk, false if via API
+=======
+<<<<<<< Updated upstream
+=======
+                      isClerkUser={isAuthenticated} // True if authenticated, false otherwise
+>>>>>>> Stashed changes
+>>>>>>> Stashed changes
                       text={header.authorize}
                       onClick={() => {
                         if (isRegistrationCodeOpen) setIsRegistrationCodeOpen(false);
