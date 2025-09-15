@@ -8,17 +8,8 @@ import ModalInput from "./ModalInput";
 import InputTitle from "./InputTitle";
 import AdditionalAction from "./AdditionalAction";
 import Image from "next/image";
-<<<<<<< Updated upstream
-import { AuthService } from "@/lib/authService";
-import { ApiAuthManager } from "@/lib/apiAuthManager";
-import "@/utils/registrationDebugger"; // Enable debugging
-=======
-<<<<<<< Updated upstream
-=======
 import { AuthService } from "@/lib/authService";
 import "@/utils/registrationDebugger"; // Enable debugging
->>>>>>> Stashed changes
->>>>>>> Stashed changes
 
 interface AuthorizationModalProps {
   onClose: () => void;
@@ -141,17 +132,6 @@ const AuthorizationModal: React.FC<AuthorizationModalProps> = ({
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
 
-<<<<<<< Updated upstream
-  const { isLoaded: isSignInLoaded, signIn } = useSignIn();
-  const { isLoaded: isSignUpLoaded, signUp } = useSignUp();
-=======
-<<<<<<< Updated upstream
-  const { isLoaded: isSignInLoaded, signIn, setActive: setSignInActive } = useSignIn();
-  const { isLoaded: isSignUpLoaded, signUp, setActive: setSignUpActive } = useSignUp();
->>>>>>> Stashed changes
-
-=======
->>>>>>> Stashed changes
   const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setEmail(e.target.value);
     setError("");
@@ -183,61 +163,6 @@ const AuthorizationModal: React.FC<AuthorizationModalProps> = ({
 
     try {
       if (activeTab === "auth") {
-<<<<<<< Updated upstream
-        // Login with API only
-        const apiLoginData = {
-          email: email,
-          password: password,
-        };
-
-        console.log("Attempting API login...");
-        const apiResult = await AuthService.login(apiLoginData);
-
-        console.log("API Login successful:", apiResult);
-
-        // Store authentication data using ApiAuthManager
-        console.log("🔍 About to store login data:", {
-          access_token: apiResult.access_token,
-          user: apiResult.user,
-=======
-<<<<<<< Updated upstream
-        // Sign In with Email
-        const result = await signIn?.create({
-          identifier: email,
-          password,
->>>>>>> Stashed changes
-        });
-
-        // Generate a session token if API doesn't provide one
-        let tokenToStore = apiResult.access_token;
-        if (!tokenToStore && apiResult.success) {
-          // Generate a simple session token since API doesn't provide one
-          tokenToStore = `session_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
-          console.log("🔐 Generated session token:", tokenToStore);
-        }
-
-        if (tokenToStore) {
-          ApiAuthManager.setToken(tokenToStore);
-        }
-
-        if (apiResult.user) {
-          ApiAuthManager.setUser(apiResult.user);
-        }
-
-        // Update the authentication state in the hook
-        console.log("🔄 Updating auth state after login...");
-        if (updateAuthState) {
-          updateAuthState();
-        }
-
-        console.log("Login completed successfully");
-        onClose();
-      } else {
-<<<<<<< Updated upstream
-        // Registration - use both API and Clerk
-=======
-        // Sign Up with Email
-=======
         // Login with API only
         const apiLoginData = {
           email: email,
@@ -250,12 +175,9 @@ const AuthorizationModal: React.FC<AuthorizationModalProps> = ({
         console.log("API Login result:", apiResult);
 
         if (apiResult.success) {
-          // Update the authentication state in the hook
-          console.log("� Updating auth state after login...");
           if (updateAuthState) {
             updateAuthState();
           }
-
           console.log("Login completed successfully");
           onClose();
         } else {
@@ -265,8 +187,6 @@ const AuthorizationModal: React.FC<AuthorizationModalProps> = ({
         }
       } else {
         // Registration - use API endpoint
->>>>>>> Stashed changes
->>>>>>> Stashed changes
         if (!firstName) {
           setError(dictionary?.registrationModal?.alert || "Please enter name");
           setIsLoading(false);
@@ -279,9 +199,7 @@ const AuthorizationModal: React.FC<AuthorizationModalProps> = ({
           return;
         }
 
-<<<<<<< Updated upstream
         try {
-          // First, register with backend API
           const apiRegistrationData = {
             first_name: firstName,
             email: email,
@@ -294,73 +212,18 @@ const AuthorizationModal: React.FC<AuthorizationModalProps> = ({
 
           console.log("API Registration successful:", apiResult);
 
-          // Store authentication data if provided
-          console.log("🔍 About to store registration data:", {
-            access_token: apiResult.access_token,
-            user: apiResult.user,
-          });
-
-          // Generate a session token if API doesn't provide one
-          let tokenToStore = apiResult.access_token;
-          if (!tokenToStore && apiResult.success) {
-            // Generate a simple session token since API doesn't provide one
-            tokenToStore = `session_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
-            console.log("🔐 Generated session token:", tokenToStore);
-          }
-
-          if (tokenToStore) {
-            ApiAuthManager.setToken(tokenToStore);
-          }
-
-          if (apiResult.user) {
-            ApiAuthManager.setUser(apiResult.user);
-          }
-
-=======
-<<<<<<< Updated upstream
-        if (result?.status === "complete") {
-          if (setSignUpActive) {
-            await setSignUpActive({ session: result.createdSessionId });
-          }
-=======
-        try {
-          // First, register with backend API
-          const apiRegistrationData = {
-            first_name: firstName,
-            email: email,
-            password: password,
-            password_confirmation: passwordConfirmation,
-          };
-
-          console.log("Attempting API registration...");
-          const apiResult = await AuthService.register(apiRegistrationData);
-
-          console.log("API Registration successful:", apiResult);
-
-          // Registration successful, tokens are stored in localStorage by AuthService
->>>>>>> Stashed changes
-          // Update the authentication state in the hook
           console.log("🔄 Updating auth state after registration...");
           if (updateAuthState) {
             updateAuthState();
           }
 
-<<<<<<< Updated upstream
-          // After successful API registration, just show success
           console.log("Registration completed successfully");
-=======
-          // After successful API registration, show success
-          console.log("Registration completed successfully");
->>>>>>> Stashed changes
->>>>>>> Stashed changes
           onRegisterSuccess?.();
           onClose();
         } catch (apiError: any) {
           console.error("Registration failed:", apiError);
 
-          // Handle API registration errors
           if (apiError.errors) {
-            // Handle field-specific errors from API
             const errorMessages = Object.entries(apiError.errors)
               .map(([, messages]: [string, any]) => {
                 if (Array.isArray(messages)) {
@@ -399,7 +262,6 @@ const AuthorizationModal: React.FC<AuthorizationModalProps> = ({
     try {
       console.log(`Social sign-in with ${provider} - using NextAuth`);
 
-      // Use NextAuth signIn for social providers
       const { signIn } = await import("next-auth/react");
       await signIn(provider, { callbackUrl: window.location.pathname });
 

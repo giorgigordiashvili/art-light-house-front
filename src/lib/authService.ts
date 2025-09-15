@@ -1,8 +1,4 @@
-<<<<<<< Updated upstream
-import apiClient from "./api";
-=======
 import { signIn, signOut } from "next-auth/react";
->>>>>>> Stashed changes
 
 export interface RegisterRequest {
   first_name: string;
@@ -23,38 +19,17 @@ export interface RegisterResponse {
     id: number;
     first_name: string;
     email: string;
-<<<<<<< Updated upstream
-    email_verified_at: string | null;
-    created_at: string;
-    updated_at: string;
-  };
-  access_token?: string;
-  token_type?: string;
-=======
     created_at: string;
     updated_at: string;
   };
   access_token: string;
   token_type: string;
   redirect: string;
->>>>>>> Stashed changes
 }
 
 export interface LoginResponse {
   success: boolean;
   message: string;
-<<<<<<< Updated upstream
-  user: {
-    id: number;
-    first_name: string;
-    email: string;
-    email_verified_at: string | null;
-    created_at: string;
-    updated_at: string;
-  };
-  access_token?: string;
-  token_type?: string;
-=======
   data: {
     token: string;
     token_type: string;
@@ -65,7 +40,6 @@ export interface LoginResponse {
       email_verified: boolean;
     };
   };
->>>>>>> Stashed changes
 }
 
 export interface ApiError {
@@ -76,63 +50,6 @@ export interface ApiError {
 
 export class AuthService {
   /**
-<<<<<<< Updated upstream
-   * Register a new user with retry logic for Cloudflare challenges
-   */
-  static async register(
-    userData: RegisterRequest,
-    retryCount: number = 0
-  ): Promise<RegisterResponse> {
-    try {
-      console.log(`Registration attempt ${retryCount + 1}:`, {
-        first_name: userData.first_name,
-        email: userData.email,
-        // Don't log passwords
-      });
-
-      const response = await apiClient.post("/en/register", userData);
-
-      console.log("Registration successful:", {
-        status: response.status,
-        data: response.data,
-      });
-
-      return response.data;
-    } catch (error: any) {
-      console.error(`Registration attempt ${retryCount + 1} failed:`, error);
-
-      // Retry logic for Cloudflare challenges (403, 429) or network issues
-      if (
-        retryCount < 2 &&
-        (error.response?.status === 403 ||
-          error.response?.status === 429 ||
-          error.code === "ECONNABORTED" ||
-          error.code === "NETWORK_ERROR")
-      ) {
-        console.log(`Retrying registration in ${(retryCount + 1) * 1000}ms...`);
-        await new Promise((resolve) => setTimeout(resolve, (retryCount + 1) * 1000));
-        return this.register(userData, retryCount + 1);
-      }
-
-      // Handle axios error
-      if (error.response?.data) {
-        throw {
-          message: error.response.data.message || "Registration failed",
-          errors: error.response.data.errors || {},
-          status: error.response.status,
-        } as ApiError;
-      } else if (error.request) {
-        throw {
-          message: "Network error. Please check your internet connection and try again.",
-          status: 0,
-        } as ApiError;
-      } else {
-        throw {
-          message: error.message || "An unexpected error occurred",
-          status: 500,
-        } as ApiError;
-      }
-=======
    * Register a new user and store token in localStorage
    */
   static async register(userData: RegisterRequest): Promise<RegisterResponse> {
@@ -210,66 +127,10 @@ export class AuthService {
         message: "Network error. Please check your internet connection and try again.",
         status: 0,
       } as ApiError;
->>>>>>> Stashed changes
     }
   }
 
   /**
-<<<<<<< Updated upstream
-   * Login user with retry logic for Cloudflare challenges
-   */
-  static async login(credentials: LoginRequest, retryCount: number = 0): Promise<LoginResponse> {
-    try {
-      console.log(`Login attempt ${retryCount + 1}:`, {
-        email: credentials.email,
-        // Don't log passwords
-      });
-
-      const response = await apiClient.post("/en/login", credentials);
-
-      console.log("Login successful:", {
-        status: response.status,
-        data: response.data,
-      });
-
-      return response.data;
-    } catch (error: any) {
-      console.error(`Login attempt ${retryCount + 1} failed:`, error);
-
-      // Retry logic for Cloudflare challenges (403, 429) or network issues
-      if (
-        retryCount < 2 &&
-        (error.response?.status === 403 ||
-          error.response?.status === 429 ||
-          error.code === "ECONNABORTED" ||
-          error.code === "NETWORK_ERROR")
-      ) {
-        console.log(`Retrying login in ${(retryCount + 1) * 1000}ms...`);
-        await new Promise((resolve) => setTimeout(resolve, (retryCount + 1) * 1000));
-        return this.login(credentials, retryCount + 1);
-      }
-
-      // Handle axios error
-      if (error.response?.data) {
-        throw {
-          message: error.response.data.message || "Login failed",
-          errors: error.response.data.errors || {},
-          status: error.response.status,
-        } as ApiError;
-      } else if (error.request) {
-        throw {
-          message: "Network error. Please check your internet connection and try again.",
-          status: 0,
-        } as ApiError;
-      } else {
-        throw {
-          message: error.message || "An unexpected error occurred",
-          status: 500,
-        } as ApiError;
-      }
-    }
-  }
-=======
    * Login user using next-auth
    */
   static async login(credentials: LoginRequest): Promise<{ success: boolean; error?: string }> {
@@ -371,5 +232,4 @@ export class AuthService {
   static isAuthenticated(): boolean {
     return !!this.getAccessToken();
   }
->>>>>>> Stashed changes
 }

@@ -8,21 +8,11 @@ import { usePathname } from "next/navigation";
 import { SessionProvider } from "next-auth/react";
 import { ReactNode, useEffect } from "react";
 import { Dictionary } from "@/config/get-dictionary";
-<<<<<<< Updated upstream
+// import { TranslationProvider } from "@/hooks/useTranslations";
+// import { CartProvider } from "../../contexts/CartContext";
 import { TranslationProvider } from "@/hooks/useTranslations";
-import { CartProvider } from "../../contexts/CartContext";
-=======
-<<<<<<< Updated upstream
-=======
-import { TranslationProvider } from "@/hooks/useTranslations";
-<<<<<<< HEAD
-import { CartProvider } from "../../contexts/CartContext";
-=======
 import { CartProvider } from "@/contexts/CartContext";
 import SessionRestore from "@/components/SessionRestore";
->>>>>>> 696d478 (Delete clerk implementation from the project, Add login/registration using next-auth library)
->>>>>>> Stashed changes
->>>>>>> Stashed changes
 
 interface ClientRootLayoutProps {
   children: ReactNode;
@@ -56,38 +46,6 @@ export default function ClientRootLayout({ children, dictionary, lang }: ClientR
   }, []);
 
   return (
-<<<<<<< HEAD
-    <ClerkProvider
-      appearance={{
-        elements: {
-          formButtonPrimary: "bg-yellow-500 hover:bg-yellow-600 text-black",
-          captchaContainer: "w-full flex justify-center my-4",
-          userButtonAvatarBox: "w-10 h-10 overflow-hidden",
-          userButtonAvatarImage: "w-full h-full object-cover",
-          avatarBox: "overflow-hidden rounded-full",
-          avatarImage: "w-full h-full object-cover",
-        },
-        layout: {
-          logoPlacement: "inside",
-          showOptionalFields: true,
-          helpPageUrl: "https://art-light-house.netlify.app/help",
-          privacyPageUrl: "https://art-light-house.netlify.app/privacy",
-          termsPageUrl: "https://art-light-house.netlify.app/terms",
-        },
-      }}
-    >
-      <div id="clerk-captcha" style={{ display: "none" }}></div>
-      <StyledComponentsRegistry>
-        <TranslationProvider defaultLanguage={normalizedLang as any}>
-          <CartProvider>
-            {!isAdminRoute && <Header header={dictionary.header} dictionary={dictionary} />}
-            {children}
-            {!isAdminRoute && <Footer footer={dictionary.footer} />}
-          </CartProvider>
-        </TranslationProvider>
-      </StyledComponentsRegistry>
-    </ClerkProvider>
-=======
     <SessionProvider>
       <SessionRestore>
         <StyledComponentsRegistry>
@@ -101,6 +59,5 @@ export default function ClientRootLayout({ children, dictionary, lang }: ClientR
         </StyledComponentsRegistry>
       </SessionRestore>
     </SessionProvider>
->>>>>>> 696d478 (Delete clerk implementation from the project, Add login/registration using next-auth library)
   );
 }
