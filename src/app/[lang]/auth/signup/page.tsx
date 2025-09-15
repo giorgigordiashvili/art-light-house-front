@@ -112,7 +112,8 @@ const SignUpPage = () => {
 
       setSuccess("Registration successful! Redirecting to login...");
       setTimeout(() => {
-        router.push("/auth/signin");
+        const current = (window.location.pathname.split("/")[1] as "ge" | "en") || "ge";
+        router.push(`/${current}/auth/signin`);
       }, 2000);
     } catch (err: any) {
       setError(err.message || "Registration failed. Please try again.");

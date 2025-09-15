@@ -137,6 +137,7 @@ interface HeaderProps {
 const Header = ({ header, dictionary }: HeaderProps) => {
   const pathname = usePathname();
   const router = useRouter();
+  const currentLang = ensureValidLanguage(pathname?.split("/")[1] || "ge");
 
   const [cartItemCount] = useState<number>(4);
   const [isBurgerMenuOpen, setIsBurgerMenuOpen] = useState(false);
@@ -318,13 +319,13 @@ const Header = ({ header, dictionary }: HeaderProps) => {
       <StyledContainer>
         <Container>
           <StyledContentWrapper>
-            <Logo size="small" href="/" />
+            <Logo size="small" href={`/${currentLang}`} />
             <StyledActionsWrapper>
               <StyledNavigation>
-                <NavItem text={header.products} href="/products" />
-                <NavItem text={header.sale} href="/" />
-                <NavItem text={header.project} href="/" />
-                <NavItem text={header.contact} href="/contact" />
+                <NavItem text={header.products} href={`/${currentLang}/products`} />
+                <NavItem text={header.sale} href={`/${currentLang}`} />
+                <NavItem text={header.project} href={`/${currentLang}`} />
+                <NavItem text={header.contact} href={`/${currentLang}/contact`} />
               </StyledNavigation>
               <StyledUserActions>
                 <StyledVerticalLine />

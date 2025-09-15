@@ -47,7 +47,8 @@ export default function SSOCallback() {
     // NextAuth handles its own callbacks at /api/auth/callback/[provider]
     // This page can redirect users back to home
     const timer = setTimeout(() => {
-      router.push("/");
+      const current = (window.location.pathname.split("/")[1] as "ge" | "en") || "ge";
+      router.push(`/${current}`);
     }, 2000);
 
     return () => clearTimeout(timer);

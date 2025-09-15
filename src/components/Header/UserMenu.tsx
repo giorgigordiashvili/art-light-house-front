@@ -73,7 +73,8 @@ const UserMenu = ({ closeModal, dictionary }: UserMenuProps) => {
   const handleSignOut = async () => {
     await signOut({ redirect: false });
     if (closeModal) closeModal();
-    router.push("/");
+    const current = (window.location.pathname.split("/")[1] as "ge" | "en") || "ge";
+    router.push(`/${current}`);
   };
 
   return (

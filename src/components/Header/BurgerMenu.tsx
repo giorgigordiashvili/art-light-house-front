@@ -1,4 +1,5 @@
 import React from "react";
+import { usePathname } from "next/navigation";
 import NavItem from "./NavItem";
 import styled from "styled-components";
 import LanguageSwitcher from "./LanguageSwitcher/LanguageSwitcher";
@@ -62,20 +63,26 @@ type Props = {
 };
 
 const BurgerMenu = ({ currentLanguage, onLanguageSwitcherClick, dictionary }: Props) => {
+  const pathname = usePathname();
+  const lang = (
+    pathname?.split("/")[1] === "ge" || pathname?.split("/")[1] === "en"
+      ? (pathname?.split("/")[1] as "ge" | "en")
+      : currentLanguage
+  ) as "ge" | "en";
   return (
     <StyledBurgeMenu>
       <StyledBurgerMenuContent>
         <StyledNavItem>
-          <NavItem text={dictionary?.header?.products} href="/products" />
+          <NavItem text={dictionary?.header?.products} href={`/${lang}/products`} />
         </StyledNavItem>
         <StyledNavItem>
-          <NavItem text={dictionary?.header?.sale} href="/" />
+          <NavItem text={dictionary?.header?.sale} href={`/${lang}`} />
         </StyledNavItem>
         <StyledNavItem>
-          <NavItem text={dictionary?.header?.project} href="/" />
+          <NavItem text={dictionary?.header?.project} href={`/${lang}`} />
         </StyledNavItem>
         <StyledNavItem>
-          <NavItem text={dictionary?.header?.contact} href="/contact" />
+          <NavItem text={dictionary?.header?.contact} href={`/${lang}/contact`} />
         </StyledNavItem>
         <StyledLanguageSwitcher onClick={onLanguageSwitcherClick}>
           <StyledLanguage>{dictionary?.header?.language}</StyledLanguage>

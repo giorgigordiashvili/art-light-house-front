@@ -96,7 +96,8 @@ const SignInPage = () => {
       if (result?.error) {
         setError("Invalid email or password");
       } else {
-        router.push("/");
+        const current = (window.location.pathname.split("/")[1] as "ge" | "en") || "ge";
+        router.push(`/${current}`);
       }
     } catch {
       setError("Something went wrong. Please try again.");

@@ -1,5 +1,7 @@
+"use client";
 import styled from "styled-components";
 import Link from "next/link";
+import { useParams } from "next/navigation";
 
 const StyledMenuBar = styled.ul`
   position: relative;
@@ -55,14 +57,19 @@ const Divider = styled.div`
 `;
 
 const MenuBar = ({ dictionary }: { dictionary: any }) => {
+  const params = useParams<{ lang?: string }>();
+  const rawLang = (params?.lang || "ge").toString();
+  const lang = ["ge", "en"].includes(rawLang) ? (rawLang as "ge" | "en") : "ge";
   return (
     <StyledMenuBar>
       <MenuItem>
-        <Link href="/">{dictionary?.productDetails?.navigation?.nav1 || "Home"}</Link>
+        <Link href={`/${lang}`}>{dictionary?.productDetails?.navigation?.nav1 || "Home"}</Link>
       </MenuItem>
       <Divider />
       <MenuItem>
-        <Link href="/products">{dictionary?.productDetails?.navigation?.nav2 || "Products"}</Link>
+        <Link href={`/${lang}/products`}>
+          {dictionary?.productDetails?.navigation?.nav2 || "Products"}
+        </Link>
       </MenuItem>
       <Divider />
       <MenuItem>

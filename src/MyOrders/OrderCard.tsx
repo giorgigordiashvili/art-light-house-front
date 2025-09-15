@@ -56,7 +56,8 @@ const OrderCard = ({ dictionary }: any) => {
   const router = useRouter();
 
   const handleClick = () => {
-    router.push("/orderdetail");
+    const current = (window.location.pathname.split("/")[1] as "ge" | "en") || "ge";
+    router.push(`/${current}/orderdetail`);
   };
 
   return (
