@@ -1,7 +1,7 @@
 import React from "react";
 import styled from "styled-components";
 import Image from "next/image";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 
 interface StyledContainerProps {
   textcolor?: string;
@@ -31,11 +31,24 @@ type Props = {
 
 const UserMenuItem = ({ text, icon, color, route, onClick }: Props) => {
   const router = useRouter();
+  const pathname = usePathname();
   const textcolor = color === "white" ? "white" : color === "red" ? "#FF4545" : undefined;
 
   const handleClick = () => {
     if (route) {
-      router.push(route);
+      const seg = pathname?.split("/")[1];
+      const currentLang = seg === "ge" || seg === "en" ? seg : "ge";
+
+      let target = route;
+      if (route.startsWith("/")) {
+        const firstSeg = route.split("/")[1];
+        const routeHasLang = firstSeg === "ge" || firstSeg === "en";
+        if (!routeHasLang) {
+          target = `/${currentLang}${route}`;
+        }
+      }
+
+      router.push(target);
     }
     if (onClick) {
       onClick();
