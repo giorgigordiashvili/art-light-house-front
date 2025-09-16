@@ -110,6 +110,34 @@ export class ApiAuthManager {
   }
 
   /**
+   * Check if user has at least access token (more lenient check)
+   */
+  static hasAccessToken(): boolean {
+    return this.getToken() !== null;
+  }
+
+  /**
+   * Debug authentication state
+   */
+  static debugAuth(): {
+    hasToken: boolean;
+    hasUser: boolean;
+    isFullyAuth: boolean;
+    token?: string;
+    user?: any;
+  } {
+    const token = this.getToken();
+    const user = this.getUser();
+    return {
+      hasToken: !!token,
+      hasUser: !!user,
+      isFullyAuth: this.isAuthenticated(),
+      token: token ? `${token.substring(0, 10)}...` : undefined,
+      user: user,
+    };
+  }
+
+  /**
    * Logout (clear all data)
    */
   static logout(): void {

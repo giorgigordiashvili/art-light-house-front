@@ -6,7 +6,7 @@ import ProductText from "./Text";
 import Image from "next/image";
 import { Product } from "@/lib/productService";
 import { useRouter, useParams } from "next/navigation";
-import axios from "axios";
+import { CartService } from "@/lib/cartService";
 const StyledRectangle = styled.div`
   width: 308px;
   height: 417px;
@@ -84,11 +84,50 @@ function Card({ dictionary, product }: CardProps) {
   };
 
   const addToCartHandler = async () => {
-    await axios.post(
-      "https://api.artlighthouse.ge/en/add-to-cart",
-      { productId: 5 },
-      { withCredentials: true }
-    );
+    if (!product?.id) {
+      console.error("Cannot add to cart: Product ID not available");
+      return;
+    }
+
+    // Debug: Log the product data being passed
+    console.log("🔍 Card Debug - Product Data:", {
+      productId: product.id,
+      productIdType: typeof product.id,
+      productIdValue: product.id,
+      isValidNumber: !isNaN(Number(product.id)),
+      productObject: product,
+      hasProductId: !!product.id,
+    });
+
+    try {
+      // Debug authentication status
+      const { ApiAuthManager } = await import("@/lib/apiAuthManager");
+      const token = ApiAuthManager.getToken();
+      const user = ApiAuthManager.getUser();
+      const isAuth = ApiAuthManager.isAuthenticated();
+
+      console.log("🔍 Debug authentication:", {
+        hasToken: !!token,
+        hasUser: !!user,
+        isAuthenticated: isAuth,
+        token: token ? `${token.substring(0, 10)}...` : null,
+        user: user,
+      });
+
+      const cartService = new CartService();
+      console.log("🔍 About to call addToCart with productId:", product.id);
+      const result = await cartService.addToCart(product.id, 1);
+
+      if (result.success) {
+        console.log("Product added to cart successfully:", result.message);
+        // You can add a toast notification here if needed
+      } else {
+        console.error("Failed to add to cart:", result.error);
+        // You can show an error message to user here if needed
+      }
+    } catch (error) {
+      console.error("Error adding product to cart:", error);
+    }
   };
 
   return (
@@ -106,13 +145,7 @@ function Card({ dictionary, product }: CardProps) {
         </div>
       )}
       {product && <ProductText product={product} />}
-      <AddButton
-        dictionary={dictionary}
-        onClick={() => {
-          addToCartHandler();
-          /* future add-to-cart: stopPropagation not needed because wrapper not inside clickable? Card handles click so we keep button clickable without navigation by stopping at AddButton level via pointer events if required */
-        }}
-      />
+      <AddButton dictionary={dictionary} onClick={addToCartHandler} />
     </StyledRectangle>
   );
 }

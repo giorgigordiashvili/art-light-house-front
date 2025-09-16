@@ -25,17 +25,51 @@ export class CartService {
    */
   async addToCart(productId: number, quantity: number = 1): Promise<CartResponse> {
     try {
-      // Check if user is authenticated
-      if (!ApiAuthManager.isAuthenticated()) {
-        throw new Error("Authentication required to add items to cart");
+      // Debug: Log the parameters received
+      console.log("🔍 CartService Debug - Received Parameters:", {
+        productId,
+        productIdType: typeof productId,
+        productIdValue: productId,
+        isValidNumber: !isNaN(Number(productId)),
+        isNull: productId === null,
+        isUndefined: productId === undefined,
+        quantity,
+        quantityType: typeof quantity,
+      });
+
+      // Check if user has access token (more flexible check)
+      const token = ApiAuthManager.getToken();
+      if (!token) {
+        throw new Error("Access token required to add items to cart. Please log in.");
       }
+
+      // Log authentication status for debugging
+      console.log("🔐 Cart authentication check:", {
+        hasToken: !!token,
+        hasUser: !!ApiAuthManager.getUser(),
+        isFullyAuthenticated: ApiAuthManager.isAuthenticated(),
+      });
 
       // Use FormData for Laravel compatibility
       const formData = new FormData();
-      formData.append("product_id", productId.toString());
+      formData.append("productId", productId.toString()); // Changed from "product_id" to "productid"
       formData.append("quantity", quantity.toString());
 
-      const response = await this.apiClient.post("/add-to-cart", formData, {
+      // Debug: Log what we're actually sending in FormData
+      console.log("🔍 FormData Debug - What we're sending:");
+      for (const [key, value] of formData.entries()) {
+        console.log(`  ${key}: "${value}" (type: ${typeof value})`);
+      }
+
+      // Debug: Log the full request details
+      console.log("🔍 Request Debug:", {
+        url: "/en/add-to-cart",
+        method: "POST",
+        hasToken: !!token,
+        formDataEntries: Array.from(formData.entries()),
+      });
+
+      const response = await this.apiClient.post("/en/add-to-cart", formData, {
         headers: {
           "Content-Type": "multipart/form-data",
         },
@@ -60,7 +94,8 @@ export class CartService {
    */
   async getCart(): Promise<CartItem[]> {
     try {
-      if (!ApiAuthManager.isAuthenticated()) {
+      const token = ApiAuthManager.getToken();
+      if (!token) {
         return []; // Return empty cart if not authenticated
       }
 
@@ -89,12 +124,13 @@ export class CartService {
    */
   async updateCartItem(productId: number, quantity: number): Promise<CartResponse> {
     try {
-      if (!ApiAuthManager.isAuthenticated()) {
-        throw new Error("Authentication required to update cart items");
+      const token = ApiAuthManager.getToken();
+      if (!token) {
+        throw new Error("Access token required to update cart items. Please log in.");
       }
 
       const formData = new FormData();
-      formData.append("product_id", productId.toString());
+      formData.append("productid", productId.toString()); // Changed from "product_id" to "productid"
       formData.append("quantity", quantity.toString());
 
       const response = await this.apiClient.put("/cart/update", formData, {
@@ -122,8 +158,9 @@ export class CartService {
    */
   async removeFromCart(productId: number): Promise<CartResponse> {
     try {
-      if (!ApiAuthManager.isAuthenticated()) {
-        throw new Error("Authentication required to remove cart items");
+      const token = ApiAuthManager.getToken();
+      if (!token) {
+        throw new Error("Access token required to remove cart items. Please log in.");
       }
 
       const response = await this.apiClient.delete(`/cart/remove/${productId}`);
@@ -147,8 +184,9 @@ export class CartService {
    */
   async clearCart(): Promise<CartResponse> {
     try {
-      if (!ApiAuthManager.isAuthenticated()) {
-        throw new Error("Authentication required to clear cart");
+      const token = ApiAuthManager.getToken();
+      if (!token) {
+        throw new Error("Access token required to clear cart. Please log in.");
       }
 
       const response = await this.apiClient.delete("/cart/clear");

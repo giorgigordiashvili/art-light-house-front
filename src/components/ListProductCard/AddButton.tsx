@@ -32,13 +32,13 @@ const StyledAddButton = styled.div`
 `;
 
 type Props = {
-  onClick?: () => void;
+  onClick?: () => void | Promise<void>;
 };
 
 const AddButton = ({ onClick, dictionary }: Props & { dictionary?: any }) => {
-  const handleClick = (e: React.MouseEvent) => {
+  const handleClick = async (e: React.MouseEvent) => {
     e.stopPropagation();
-    if (onClick) onClick();
+    if (onClick) await onClick();
   };
 
   return (

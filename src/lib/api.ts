@@ -25,7 +25,7 @@ const apiClient = axios.create({
   headers: {
     "Content-Type": "application/json",
     Accept: "application/json",
-    "User-Agent": "ArtLightHouse-Frontend/1.0",
+    // "User-Agent": "ArtLightHouse-Frontend/1.0",
     "X-Requested-With": "XMLHttpRequest",
   },
 });
@@ -46,6 +46,30 @@ apiClient.interceptors.request.use(
       const xsrfToken = getXSRFToken();
       if (xsrfToken) {
         config.headers["X-XSRF-TOKEN"] = xsrfToken;
+      }
+    }
+
+    // Enhanced debugging for cart requests
+    if (config.url?.includes("add-to-cart")) {
+      console.log("🔍 API Request Debug for add-to-cart:");
+      console.log(`  URL: ${config.baseURL}${config.url}`);
+      console.log(`  Method: ${config.method?.toUpperCase()}`);
+      console.log(`  Headers:`, {
+        Authorization: config.headers.Authorization
+          ? `${String(config.headers.Authorization).substring(0, 20)}...`
+          : null,
+        "Content-Type": config.headers["Content-Type"],
+        "X-XSRF-TOKEN": config.headers["X-XSRF-TOKEN"] ? "present" : "absent",
+      });
+
+      // Log FormData contents if present
+      if (config.data instanceof FormData) {
+        console.log("  FormData contents:");
+        for (const [key, value] of config.data.entries()) {
+          console.log(`    ${key}: "${value}" (${typeof value})`);
+        }
+      } else {
+        console.log("  Request data:", config.data);
       }
     }
 
