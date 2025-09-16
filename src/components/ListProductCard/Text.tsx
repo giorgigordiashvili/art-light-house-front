@@ -44,11 +44,18 @@ const DescriptionText = styled.div`
   }
 `;
 
-const ProductText = ({ dictionary }: any) => {
+interface ProductTextProps {
+  product: { title: string; price: number; currency?: string };
+}
+
+const ProductText = ({ product }: ProductTextProps) => {
+  const priceDisplay = product.currency
+    ? `${product.price} ${product.currency}`
+    : `${product.price} ₾`;
   return (
     <TextWrapper>
-      <PriceText>{dictionary?.price || "199,99 ₾"}</PriceText>
-      <DescriptionText>{dictionary?.cardTitle || "მოდერნული სანათიs"}</DescriptionText>
+      <PriceText>{priceDisplay}</PriceText>
+      <DescriptionText>{product.title}</DescriptionText>
     </TextWrapper>
   );
 };

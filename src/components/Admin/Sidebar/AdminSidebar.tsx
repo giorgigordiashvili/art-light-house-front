@@ -118,10 +118,14 @@ const AdminSidebar = ({ username = "Admin User", role = "Administrator" }: Admin
     { name: "Settings", path: "/admin/settings" },
   ];
 
+  // Derive current locale from pathname if present
+  const pathParts = (pathname || "/").split("/");
+  const currentLang = pathParts[1] === "ge" || pathParts[1] === "en" ? pathParts[1] : "ge";
+
   return (
     <SidebarContainer>
       <LogoContainer>
-        <Link href="/">
+        <Link href={`/${currentLang}`}>
           <Image src="/assets/Logo.png" alt="Art Light House" width={140} height={40} />
         </Link>
       </LogoContainer>

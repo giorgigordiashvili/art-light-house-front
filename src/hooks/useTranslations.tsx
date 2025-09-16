@@ -72,15 +72,33 @@ export function TranslationProvider({
     [dictionary]
   );
 
-  // Load initial language and check localStorage
+  // Load initial language: prefer route-provided defaultLanguage; only use saved if it matches
   useEffect(() => {
     const savedLanguage = localStorage.getItem("preferredLanguage") as SupportedLanguage;
-    const initialLanguage =
-      savedLanguage && ["en", "ka"].includes(savedLanguage) ? savedLanguage : defaultLanguage;
+    let initialLanguage: SupportedLanguage = defaultLanguage;
+
+    if (savedLanguage && ["en", "ka"].includes(savedLanguage)) {
+      if (savedLanguage === defaultLanguage) {
+        initialLanguage = savedLanguage;
+      } else {
+        // Route changed; override stored preference to follow route
+        localStorage.setItem("preferredLanguage", defaultLanguage);
+      }
+    } else {
+      localStorage.setItem("preferredLanguage", defaultLanguage);
+    }
 
     setCurrentLanguage(initialLanguage);
     loadDictionary(initialLanguage);
   }, [defaultLanguage, loadDictionary]);
+
+  // Sync when defaultLanguage prop changes (e.g., route segment change) and differs from state
+  useEffect(() => {
+    if (currentLanguage !== defaultLanguage) {
+      setCurrentLanguage(defaultLanguage);
+      loadDictionary(defaultLanguage);
+    }
+  }, [defaultLanguage, currentLanguage, loadDictionary]);
 
   const value: TranslationContextType = {
     currentLanguage,

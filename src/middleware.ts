@@ -1,79 +1,48 @@
-import { clerkMiddleware } from "@clerk/nextjs/server";
 import { NextRequest, NextResponse } from "next/server";
 import { i18n } from "@/config/i18n";
 
-// This example protects all routes including api/trpc routes
-// Please edit this to allow other routes to be public as needed.
-// See https://clerk.com/docs/references/nextjs/auth-middleware for more information about configuring your middleware
-export default clerkMiddleware();
-
-function getLocale(request: NextRequest): string {
-  // Check if there's already a locale in the pathname
-  const pathname = request.nextUrl.pathname;
-  const pathnameLocale = i18n.locales.find(
-    (locale) => pathname.startsWith(`/${locale}/`) || pathname === `/${locale}`
-  );
-
-  if (pathnameLocale) {
-    return pathnameLocale;
-  }
-
-  // Get locale from referrer if it exists
-  const referrer = request.headers.get("referer");
-  if (referrer) {
-    const referrerUrl = new URL(referrer);
-    const referrerLocale = i18n.locales.find(
-      (locale) =>
-        referrerUrl.pathname.startsWith(`/${locale}/`) || referrerUrl.pathname === `/${locale}`
-    );
-    if (referrerLocale) {
-      return referrerLocale;
-    }
-  }
-
-  return i18n.defaultLocale;
+// Always use the configured app default locale (Georgian)
+function getLocale(_request: NextRequest): string {
+  // Mark parameter as intentionally unused to satisfy lint rules
+  void _request;
+  return i18n.defaultLocale; // "ge"
 }
 
-export function middleware(request: NextRequest) {
+// Internationalization middleware for routing
+export default function middleware(request: NextRequest) {
   const pathname = request.nextUrl.pathname;
 
+  // Skip middleware for specific paths
   if (
-    [
-      "/manifest.json",
-      "/favicon.ico",
-      "/robots.txt",
-      "/sitemap.xml",
-      "/admin", // Add admin to the exempted paths
-      "/api-spec.json", // Add API spec file
-      // Add other files in `public` as needed
-    ].includes(pathname) ||
+    ["/manifest.json", "/favicon.ico", "/robots.txt", "/sitemap.xml", "/api-spec.json"].includes(
+      pathname
+    ) ||
+    pathname.startsWith("/api/") ||
+    pathname.startsWith("/_next/") ||
     pathname.startsWith("/images/") ||
     pathname.startsWith("/fonts/") ||
     pathname.startsWith("/assets/") ||
-    pathname.startsWith("/admin/") || // Also exempt all paths under /admin/
-    pathname.startsWith("/api/") || // Exempt all API routes
-    pathname.startsWith("/.netlify/") || // Exempt Netlify functionality paths
-    pathname.startsWith("/dictionaries/") || // Exempt dictionaries folder
-    pathname.includes("/api-docs") // Exempt API documentation pages
+    pathname.startsWith("/admin/") ||
+    pathname.startsWith("/.netlify/") ||
+    pathname.startsWith("/dictionaries/") ||
+    pathname.includes("/api-docs") ||
+    pathname.includes(".")
   ) {
-    return;
+    return NextResponse.next();
   }
 
-  // Check if there is any supported locale in the pathname
-  const pathnameIsMissingLocale = i18n.locales.every(
-    (locale) => !pathname.startsWith(`/${locale}/`) && pathname !== `/${locale}`
+  // Check if pathname has a locale
+  const pathnameHasLocale = i18n.locales.some(
+    (locale) => pathname.startsWith(`/${locale}/`) || pathname === `/${locale}`
   );
 
-  // Redirect if there is no locale
-  if (pathnameIsMissingLocale) {
+  if (!pathnameHasLocale) {
     const locale = getLocale(request);
-
-    // e.g. incoming request is /products
-    // The new URL is now /ge/products
-    return NextResponse.redirect(
-      new URL(`/${locale}${pathname.startsWith("/") ? "" : "/"}${pathname}`, request.url)
-    );
+    const url = new URL(`/${locale}${pathname}`, request.url);
+    return NextResponse.redirect(url);
   }
+
+  return NextResponse.next();
 }
 
 export const config = {

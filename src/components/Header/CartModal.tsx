@@ -104,7 +104,8 @@ const CartModal = ({ itemCount, onClose, dictionary }: Props) => {
   const router = useRouter();
 
   const handleRedirect = () => {
-    router.push("/favorites");
+    const current = (window.location.pathname.split("/")[1] as "ge" | "en") || "ge";
+    router.push(`/${current}/favorites`);
     onClose();
   };
 

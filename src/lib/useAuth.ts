@@ -1,30 +1,31 @@
 "use client";
 
-import { useUser } from "@clerk/nextjs";
+import { useSession } from "next-auth/react";
 import { useCallback } from "react";
 
 export function useAuth() {
-  const { user, isLoaded, isSignedIn } = useUser();
+  const { data: session, status } = useSession();
 
-  const isAuthenticated = isLoaded && isSignedIn;
+  const isLoaded = status !== "loading";
+  const isAuthenticated = isLoaded && !!session?.user;
 
-  // Get user display name (first name or full name or email)
+  // Get user display name (name or email)
   const getDisplayName = useCallback(() => {
-    if (!user) return "";
-    return user.firstName || user.fullName || user.primaryEmailAddress?.emailAddress || "";
-  }, [user]);
+    if (!session?.user) return "";
+    return session.user.name || session.user.email || "";
+  }, [session?.user]);
 
   // Get user profile image
   const getProfileImage = useCallback(() => {
-    return user?.imageUrl || "/assets/user.svg";
-  }, [user]);
+    return session?.user?.image || "/assets/user.svg";
+  }, [session?.user]);
 
   return {
-    user,
+    user: session?.user,
     isLoaded,
     isAuthenticated,
     getDisplayName,
     getProfileImage,
-    userId: user?.id,
+    userId: session?.user?.id,
   };
 }

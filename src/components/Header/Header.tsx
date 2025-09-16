@@ -17,9 +17,10 @@ import EmptyCartModal from "./EmptyCartModal";
 import CartModal from "./CartModal";
 import LanguageSwitcher from "./LanguageSwitcher/LanguageSwitcher";
 import LanguageSwitcherModal from "./LanguageSwitcher/LanguageSwitcherModal";
-import { useUser } from "@clerk/nextjs";
+import { useAuthState } from "@/hooks/useAuthState";
 import { usePathname, useRouter } from "next/navigation";
 import { Locale, i18n } from "@/config/i18n";
+import { useApiAuth } from "@/hooks/useApiAuth";
 
 const ensureValidLanguage = (lang: string): Locale => {
   return i18n.locales.includes(lang as Locale) ? (lang as Locale) : "ge";
@@ -136,6 +137,7 @@ interface HeaderProps {
 const Header = ({ header, dictionary }: HeaderProps) => {
   const pathname = usePathname();
   const router = useRouter();
+  const currentLang = ensureValidLanguage(pathname?.split("/")[1] || "ge");
 
   const [cartItemCount] = useState<number>(4);
   const [isBurgerMenuOpen, setIsBurgerMenuOpen] = useState(false);
@@ -159,10 +161,6 @@ const Header = ({ header, dictionary }: HeaderProps) => {
   const toggleBurgerMenu = () => {
     setIsBurgerMenuOpen((prev) => !prev);
   };
-
-  useEffect(() => {
-    // console.log(header);
-  }, []);
 
   useEffect(() => {
     document.body.style.overflow =
@@ -231,12 +229,40 @@ const Header = ({ header, dictionary }: HeaderProps) => {
   }, [isBurgerMenuOpen, isUserMenuOpen, isLanguageSwitcherModalOpen]);
 
   const isCartEmpty = cartItemCount === 0;
-  const { user, isSignedIn } = useUser();
 
-  const isUserAuthorized = isSignedIn;
+  // ✅ Keep only new logic
+  const { isAuthenticated, user, isLoading } = useAuthState();
+  const { isAuthenticated: isApiAuthenticated, user: apiUser, updateAuthState } = useApiAuth();
+
+  // Debug logging
+  useEffect(() => {
+    console.log("🔍 Header Auth Debug:", {
+      isAuthenticated,
+      user,
+      isLoading,
+      isApiAuthenticated,
+      apiUser,
+    });
+  }, [isAuthenticated, user, isLoading, isApiAuthenticated, apiUser]);
+
+  // Use the combined authentication state
+  const isUserAuthorized = isAuthenticated || isApiAuthenticated;
+
+  // Generate avatar URL for API users
+  const generateAvatarUrl = (name: string): string => {
+    return `https://ui-avatars.com/api/?name=${encodeURIComponent(
+      name
+    )}&background=FFCB40&color=000&size=64&font-size=0.6`;
+  };
+
   const currentUser = {
-    username: user?.firstName || user?.fullName || "User",
-    userImage: user?.imageUrl || "/assets/user.svg",
+    username:
+      user?.name ||
+      user?.email?.split("@")[0] ||
+      apiUser?.first_name ||
+      apiUser?.email?.split("@")[0] ||
+      "User",
+    userImage: user?.image || (user?.name ? generateAvatarUrl(user.name) : "/assets/user.svg"),
   };
 
   const closeEmptyCartModal = () => {
@@ -293,13 +319,13 @@ const Header = ({ header, dictionary }: HeaderProps) => {
       <StyledContainer>
         <Container>
           <StyledContentWrapper>
-            <Logo size="small" href="/" />
+            <Logo size="small" href={`/${currentLang}`} />
             <StyledActionsWrapper>
               <StyledNavigation>
-                <NavItem text={header.products} href="/products" />
-                <NavItem text={header.sale} href="/" />
-                <NavItem text={header.project} href="/" />
-                <NavItem text={header.contact} href="/contact" />
+                <NavItem text={header.products} href={`/${currentLang}/products`} />
+                <NavItem text={header.sale} href={`/${currentLang}`} />
+                <NavItem text={header.project} href={`/${currentLang}`} />
+                <NavItem text={header.contact} href={`/${currentLang}/contact`} />
               </StyledNavigation>
               <StyledUserActions>
                 <StyledVerticalLine />
@@ -314,6 +340,7 @@ const Header = ({ header, dictionary }: HeaderProps) => {
                       isAuthorized={isUserAuthorized}
                       username={currentUser.username}
                       userImage={currentUser.userImage}
+                      isClerkUser={isAuthenticated} // ✅ replaced with unified flag
                       text={header.authorize}
                       onClick={() => {
                         if (isRegistrationCodeOpen) setIsRegistrationCodeOpen(false);
@@ -382,6 +409,7 @@ const Header = ({ header, dictionary }: HeaderProps) => {
                       setIsUserMenuOpen(false);
                       setIsRegistrationCodeOpen(true);
                     }}
+                    updateAuthState={updateAuthState}
                     dictionary={header}
                   />
                 )}

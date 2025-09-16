@@ -1,4 +1,5 @@
 import Image from "next/image";
+import type React from "react";
 import styled from "styled-components";
 
 const StyledAddButton = styled.div`
@@ -31,12 +32,17 @@ const StyledAddButton = styled.div`
 `;
 
 type Props = {
-  onClick?: () => void;
+  onClick?: () => void | Promise<void>;
 };
 
 const AddButton = ({ onClick, dictionary }: Props & { dictionary?: any }) => {
+  const handleClick = async (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (onClick) await onClick();
+  };
+
   return (
-    <StyledAddButton onClick={onClick}>
+    <StyledAddButton onClick={handleClick}>
       <Image
         src="/assets/plus.svg"
         alt={dictionary?.products?.addToCartAlt || "დამატება"}

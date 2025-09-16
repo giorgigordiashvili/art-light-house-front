@@ -7,14 +7,16 @@ import AuthToggleButtons from "./AuthToggleButtons";
 import ModalInput from "./ModalInput";
 import InputTitle from "./InputTitle";
 import AdditionalAction from "./AdditionalAction";
-import { useSignIn, useSignUp } from "@clerk/nextjs";
 import Image from "next/image";
+import { AuthService } from "@/lib/authService";
+import "@/utils/registrationDebugger"; // Enable debugging
 
 interface AuthorizationModalProps {
   onClose: () => void;
   onRecoverPasswordClick?: () => void;
   onRegisterSuccess?: () => void;
   dictionary?: any;
+  updateAuthState?: () => void;
 }
 
 const StyledContainer = styled.div`
@@ -120,16 +122,15 @@ const AuthorizationModal: React.FC<AuthorizationModalProps> = ({
   onRecoverPasswordClick,
   onRegisterSuccess,
   dictionary,
+  updateAuthState,
 }) => {
   const [activeTab, setActiveTab] = useState<"auth" | "register">("auth");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [passwordConfirmation, setPasswordConfirmation] = useState("");
   const [firstName, setFirstName] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
-
-  const { isLoaded: isSignInLoaded, signIn, setActive: setSignInActive } = useSignIn();
-  const { isLoaded: isSignUpLoaded, signUp, setActive: setSignUpActive } = useSignUp();
 
   const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setEmail(e.target.value);
@@ -146,6 +147,11 @@ const AuthorizationModal: React.FC<AuthorizationModalProps> = ({
     setError("");
   };
 
+  const handlePasswordConfirmationChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setPasswordConfirmation(e.target.value);
+    setError("");
+  };
+
   const handleSubmit = async () => {
     if (!email || !password) {
       setError(dictionary?.authorizationModal?.alert3 || "Please fill in all fields");
@@ -157,44 +163,86 @@ const AuthorizationModal: React.FC<AuthorizationModalProps> = ({
 
     try {
       if (activeTab === "auth") {
-        // Sign In with Email
-        const result = await signIn?.create({
-          identifier: email,
-          password,
-        });
+        // Login with API only
+        const apiLoginData = {
+          email: email,
+          password: password,
+        };
 
-        if (result?.status === "complete") {
-          if (setSignInActive) {
-            await setSignInActive({ session: result.createdSessionId });
+        console.log("Attempting API login...");
+        const apiResult = await AuthService.login(apiLoginData);
+
+        console.log("API Login result:", apiResult);
+
+        if (apiResult.success) {
+          if (updateAuthState) {
+            updateAuthState();
           }
+          console.log("Login completed successfully");
           onClose();
+        } else {
+          setError(apiResult.error || "Login failed");
+          setIsLoading(false);
+          return;
         }
       } else {
-        // Sign Up with Email
+        // Registration - use API endpoint
         if (!firstName) {
           setError(dictionary?.registrationModal?.alert || "Please enter name");
           setIsLoading(false);
           return;
         }
 
-        const result = await signUp?.create({
-          emailAddress: email,
-          password,
-          firstName,
-        });
+        if (password !== passwordConfirmation) {
+          setError(dictionary?.registrationModal?.passwordMismatch || "Passwords do not match");
+          setIsLoading(false);
+          return;
+        }
 
-        if (result?.status === "complete") {
-          if (setSignUpActive) {
-            await setSignUpActive({ session: result.createdSessionId });
+        try {
+          const apiRegistrationData = {
+            first_name: firstName,
+            email: email,
+            password: password,
+            password_confirmation: passwordConfirmation,
+          };
+
+          console.log("Attempting API registration...");
+          const apiResult = await AuthService.register(apiRegistrationData);
+
+          console.log("API Registration successful:", apiResult);
+
+          console.log("🔄 Updating auth state after registration...");
+          if (updateAuthState) {
+            updateAuthState();
           }
+
+          console.log("Registration completed successfully");
           onRegisterSuccess?.();
           onClose();
-        } else {
-          // Handle email verification if needed
-          if (result?.status === "missing_requirements") {
-            onRegisterSuccess?.();
-            onClose();
+        } catch (apiError: any) {
+          console.error("Registration failed:", apiError);
+
+          if (apiError.errors) {
+            const errorMessages = Object.entries(apiError.errors)
+              .map(([, messages]: [string, any]) => {
+                if (Array.isArray(messages)) {
+                  return messages.join(", ");
+                }
+                return messages;
+              })
+              .filter(Boolean);
+
+            setError(errorMessages.join(", ") || apiError.message);
+          } else if (apiError.status === 422) {
+            setError("Validation failed. Please check your input and try again.");
+          } else if (apiError.status === 409) {
+            setError("User already exists with this email address.");
+          } else {
+            setError(apiError.message || "Registration failed. Please try again.");
           }
+          setIsLoading(false);
+          return;
         }
       }
     } catch (error: any) {
@@ -212,43 +260,17 @@ const AuthorizationModal: React.FC<AuthorizationModalProps> = ({
 
   const handleSocialSignIn = async (provider: "google" | "facebook") => {
     try {
-      // Map the provider to the correct Clerk strategy
-      const strategy = provider === "google" ? "oauth_google" : "oauth_facebook";
+      console.log(`Social sign-in with ${provider} - using NextAuth`);
 
-      console.log(`Using OAuth strategy: ${strategy} for provider: ${provider}`);
+      const { signIn } = await import("next-auth/react");
+      await signIn(provider, { callbackUrl: window.location.pathname });
 
-      // Get the current URL to return to after authentication
-      const currentUrl = window.location.pathname + window.location.search;
-
-      if (activeTab === "auth") {
-        if (isSignInLoaded) {
-          console.log("Initiating sign-in with redirect...");
-          await signIn?.authenticateWithRedirect({
-            strategy,
-            redirectUrl: "/sso-callback",
-            redirectUrlComplete: currentUrl || "/", // Return to current page
-          });
-        } else {
-          console.error("Sign-in component not loaded yet");
-        }
-      } else {
-        if (isSignUpLoaded) {
-          console.log("Initiating sign-up with redirect...");
-          await signUp?.authenticateWithRedirect({
-            strategy,
-            redirectUrl: "/sso-callback",
-            redirectUrlComplete: currentUrl || "/", // Return to current page
-          });
-        } else {
-          console.error("Sign-up component not loaded yet");
-        }
-      }
+      onClose();
     } catch (error) {
-      console.error(`Failed to authenticate with ${provider}:`, error);
-      // Display more detailed error information in development
-      if (process.env.NODE_ENV === "development") {
-        console.error("Full error:", JSON.stringify(error, null, 2));
-      }
+      console.error(`Error with ${provider} sign-in:`, error);
+      setError(
+        dictionary?.loginModal?.oauthError || `Error signing in with ${provider}. Please try again.`
+      );
     }
   };
 
@@ -308,6 +330,24 @@ const AuthorizationModal: React.FC<AuthorizationModalProps> = ({
             onChange={handlePasswordChange}
           />
         </StyledModalInput>
+
+        {activeTab === "register" && (
+          <StyledModalInput>
+            <InputTitle
+              text={dictionary?.authorizationModal?.confirmPassword || "Confirm Password"}
+            />
+            <ModalInput
+              placeholder={
+                dictionary?.authorizationModal?.confirmPasswordPlaceholder ||
+                "Confirm your password"
+              }
+              iconSrc="/assets/eye.svg"
+              type="password"
+              value={passwordConfirmation}
+              onChange={handlePasswordConfirmationChange}
+            />
+          </StyledModalInput>
+        )}
 
         {error && <ErrorMessage>{error}</ErrorMessage>}
 

@@ -107,7 +107,11 @@ const CardGrid = styled.div`
   }
 `;
 
-function DetailMain({ dictionary }: { dictionary: any }) {
+import { Product } from "@/lib/productService";
+import { useSimilarProducts } from "@/hooks/useSimilarProducts";
+
+function DetailMain({ dictionary, product }: { dictionary: any; product: Product | null }) {
+  const { similar, loading, error } = useSimilarProducts({ product, limit: 4 });
   return (
     <StyledComponent>
       <NewCircle size="small" right="142px" top="1000px" media="yes" />
@@ -120,7 +124,7 @@ function DetailMain({ dictionary }: { dictionary: any }) {
         <FlexRow>
           <BigCard />
           <RightColumn>
-            <DetailDescription dictionary={dictionary} />
+            <DetailDescription dictionary={dictionary} product={product} />
             <ButtonRow>
               <BuyButton dictionary={dictionary} />
               <AddToCartButton dictionary={dictionary} />
@@ -139,10 +143,14 @@ function DetailMain({ dictionary }: { dictionary: any }) {
           <p>{dictionary?.productDetails?.similarProducts || "Similar Products"}</p>
         </ProductHeader>
         <CardGrid>
-          <Card dictionary={dictionary.productDetails} />
-          <Card dictionary={dictionary.productDetails} />
-          <Card dictionary={dictionary.productDetails} />
-          <Card dictionary={dictionary.productDetails} />
+          {loading && <p style={{ color: "white" }}>Loading...</p>}
+          {error && <p style={{ color: "red" }}>{error}</p>}
+          {!loading && !error && similar.length === 0 && (
+            <p style={{ color: "white" }}>No similar products found.</p>
+          )}
+          {similar.map((p) => (
+            <Card key={p.id} dictionary={dictionary.productDetails} product={p} />
+          ))}
         </CardGrid>
       </Container>
     </StyledComponent>
