@@ -21,6 +21,7 @@
     "@formatjs/intl-localematcher": "^0.6.1",
     "@gordela/api-generator": "^1.2.0",
     "@prisma/client": "^6.8.2",
+    "@react-google-maps/api": "^2.20.7",
     "@vis.gl/react-google-maps": "^1.5.2",
     "axios": "^1.12.2",
     "imagekit": "^6.0.0",

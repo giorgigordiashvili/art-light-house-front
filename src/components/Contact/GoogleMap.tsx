@@ -2,8 +2,15 @@
 
 import { useState } from "react";
 import styled, { css } from "styled-components";
-import { APIProvider, Map, AdvancedMarker, InfoWindow } from "@vis.gl/react-google-maps";
+import {
+  APIProvider,
+  Map,
+  AdvancedMarker,
+  InfoWindow,
+  MapMouseEvent,
+} from "@vis.gl/react-google-maps";
 import CustomPin from "./CustomPIn";
+import MapController from "./MapController";
 
 const StyledMap = styled.div<{ $variant: 1 | 2 }>`
   ${({ $variant }) =>
@@ -32,18 +39,41 @@ const StyledMap = styled.div<{ $variant: 1 | 2 }>`
 type Props = {
   variant?: 1 | 2;
   dictionary?: any;
+  onLocationSelect?: (address: string) => void;
+  searchedAddress?: string;
 };
 
-export default function GoogleMap({ variant = 1, dictionary }: Props) {
-  const position = { lat: 41.720542, lng: 44.764789 };
+export default function GoogleMap({
+  variant = 1,
+  dictionary,
+  onLocationSelect,
+  searchedAddress,
+}: Props) {
+  const defaultPosition = { lat: 41.720542, lng: 44.764789 };
   const [open, setOpen] = useState(false);
+
+  const handleMapClick = (event: MapMouseEvent) => {
+    const lat = event.detail?.latLng?.lat;
+    const lng = event.detail?.latLng?.lng;
+
+    if (!lat || !lng || !onLocationSelect) return;
+
+    const geocoder = new window.google.maps.Geocoder();
+    geocoder.geocode({ location: { lat, lng } }, (results, status) => {
+      if (status === "OK" && results && results[0]) {
+        onLocationSelect(results[0].formatted_address);
+      } else {
+        console.warn("Reverse geocoding failed:", status);
+      }
+    });
+  };
 
   return (
     <APIProvider apiKey={process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY ?? ""}>
       <StyledMap $variant={variant}>
         <Map
           defaultZoom={17}
-          defaultCenter={position}
+          defaultCenter={defaultPosition}
           mapId={process.env.NEXT_PUBLIC_MAP_ID}
           gestureHandling="auto"
           disableDefaultUI={true}
@@ -51,26 +81,23 @@ export default function GoogleMap({ variant = 1, dictionary }: Props) {
           scrollwheel={true}
           draggable={true}
           colorScheme="DARK"
+          onClick={handleMapClick}
         >
           {variant !== 2 && (
             <>
-              <AdvancedMarker position={position} onClick={() => setOpen(true)}>
+              <AdvancedMarker position={defaultPosition} onClick={() => setOpen(true)}>
                 <CustomPin />
               </AdvancedMarker>
-
               {open && (
-                <InfoWindow position={position} onCloseClick={() => setOpen(false)}>
+                <InfoWindow position={defaultPosition} onCloseClick={() => setOpen(false)}>
                   <p>{dictionary?.googleMapClusterAddress || "ბახტრიონის N23"}</p>
                 </InfoWindow>
               )}
             </>
           )}
-
-          <Markers />
+          <MapController searchedAddress={searchedAddress} />
         </Map>
       </StyledMap>
     </APIProvider>
   );
 }
-
-const Markers = () => null;
