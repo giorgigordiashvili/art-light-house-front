@@ -131,7 +131,7 @@ const AuthorizationModal: React.FC<AuthorizationModalProps> = ({
   const [error, setError] = useState("");
 
   const { login } = useAuth();
-  const { isLoaded: isSignInLoaded, signIn, setActive: setSignInActive } = useSignIn();
+  const { isLoaded: isSignInLoaded, signIn } = useSignIn();
   const { isLoaded: isSignUpLoaded, signUp, setActive: setSignUpActive } = useSignUp();
 
   const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {

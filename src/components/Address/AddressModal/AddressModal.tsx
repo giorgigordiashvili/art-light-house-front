@@ -8,6 +8,8 @@ import PlaceSelector from "./PlaceSelector";
 import ModalTitle from "./ModalTitle";
 import GoogleMap from "@/components/Contact/GoogleMap";
 import { AddressData } from "@/types";
+import { addressCreate } from "@/api/generated/api";
+import { AddressRequest } from "@/api/generated/interfaces";
 
 const StyledContainer = styled.div`
   width: 508px;
@@ -61,10 +63,106 @@ const AddressModal = ({ onClose, onSave, initialData, dictionary }: Props) => {
   const [selectedPlace, setSelectedPlace] = useState(initialData?.place || dictionary.cardTitle2);
   const [address, setAddress] = useState(initialData?.address || "");
   const [additionalInfo, setAdditionalInfo] = useState(initialData?.additionalInfo || "");
+  const [coordinates, setCoordinates] = useState<{ lat: number; lng: number } | null>(
+    initialData?.latitude && initialData?.longitude
+      ? { lat: parseFloat(initialData.latitude), lng: parseFloat(initialData.longitude) }
+      : null
+  );
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-  const handleSave = () => {
-    onSave({ place: selectedPlace, address, additionalInfo });
-    onClose();
+  // Map dictionary place names to API address types
+  const mapPlaceToAddressType = (place: string): string => {
+    if (place === dictionary.addressOption1 || place === dictionary.cardTitle2) {
+      return "home";
+    } else if (place === dictionary.addressOption2 || place === dictionary.cardTitle3) {
+      return "work";
+    } else if (place === dictionary.addressOption3 || place === dictionary.cardTitle4) {
+      return "other";
+    }
+    return "other"; // default fallback
+  };
+
+  // Ensure coordinate string length doesn't exceed API limits
+  const formatCoordinateForAPI = (coord: number): string => {
+    const rounded = parseFloat(coord.toFixed(6));
+    const coordString = rounded.toString();
+
+    // If still too long, reduce precision further
+    if (coordString.length > 10) {
+      return parseFloat(coord.toFixed(5)).toString();
+    }
+
+    return coordString;
+  };
+
+  const handleSave = async () => {
+    try {
+      setIsLoading(true);
+      setError(null);
+
+      if (!address.trim()) {
+        setError("Address is required");
+        setIsLoading(false);
+        return;
+      }
+
+      // Round coordinates to 6 decimal places (accuracy ~0.1 meters)
+      const roundedLat = coordinates?.lat ? formatCoordinateForAPI(coordinates.lat) : undefined;
+      const roundedLng = coordinates?.lng ? formatCoordinateForAPI(coordinates.lng) : undefined;
+
+      if (coordinates) {
+        console.log("🔧 Coordinate rounding:", {
+          original: { lat: coordinates.lat, lng: coordinates.lng },
+          rounded: { lat: roundedLat, lng: roundedLng },
+          stringLength: {
+            lat: roundedLat?.length,
+            lng: roundedLng?.length,
+          },
+        });
+      }
+
+      // Prepare API request data
+      const addressData: AddressRequest = {
+        address_type: mapPlaceToAddressType(selectedPlace) as any,
+        address_string: address,
+        extra_details: additionalInfo || undefined,
+        latitude: roundedLat,
+        longitude: roundedLng,
+        is_default: false, // You can make this configurable if needed
+      };
+
+      console.log("📤 Creating address with data:", {
+        ...addressData,
+        coordinates: roundedLat && roundedLng ? `${roundedLat}, ${roundedLng}` : "not available",
+        coordinateStringLengths: {
+          latitude: roundedLat?.length || 0,
+          longitude: roundedLng?.length || 0,
+        },
+      });
+
+      // Create address via API
+      const createdAddress = await addressCreate(addressData);
+
+      console.log("✅ Address created successfully:", createdAddress);
+
+      // Pass the created address data back to parent component
+      const resultData: AddressData = {
+        place: selectedPlace,
+        address,
+        additionalInfo,
+        latitude: roundedLat,
+        longitude: roundedLng,
+      };
+
+      onSave(resultData);
+      onClose();
+    } catch (err: any) {
+      console.error("❌ Failed to create address:", err);
+      setError(err?.response?.data?.message || err?.message || "Failed to create address");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -97,14 +195,43 @@ const AddressModal = ({ onClose, onSave, initialData, dictionary }: Props) => {
         <GoogleMap
           variant={2}
           searchedAddress={address}
-          onLocationSelect={(locationName) => {
+          onLocationSelect={(locationName, coords) => {
+            console.log("🗺️ Location selected:", { locationName, coords });
             setAddress(locationName);
+            if (coords) {
+              setCoordinates(coords);
+              console.log("📍 Coordinates updated:", coords);
+            }
           }}
         />
+        {coordinates && (
+          <div
+            style={{
+              marginTop: "8px",
+              padding: "8px",
+              backgroundColor: "#2a2a2a",
+              borderRadius: "4px",
+              fontSize: "12px",
+              color: "#aaa",
+            }}
+          >
+            📍 Coordinates: {coordinates.lat.toFixed(6)}, {coordinates.lng.toFixed(6)}
+          </div>
+        )}
       </StyledMap>
+      {error && (
+        <div style={{ color: "#ff4444", fontSize: "14px", marginTop: "10px", textAlign: "center" }}>
+          {error}
+        </div>
+      )}
       <StyledButton>
-        <CancelButton onClick={onClose} dictionary={dictionary} />
-        <SaveButton onClick={handleSave} dictionary={dictionary} />
+        <CancelButton onClick={onClose} dictionary={dictionary} disabled={isLoading} />
+        <SaveButton
+          onSave={handleSave}
+          dictionary={dictionary}
+          disabled={!address.trim() || isLoading}
+          isLoading={isLoading}
+        />
       </StyledButton>
     </StyledContainer>
   );
