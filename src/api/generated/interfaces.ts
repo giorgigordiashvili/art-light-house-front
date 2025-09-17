@@ -279,6 +279,17 @@ export interface UserLoginRequest {
   password: string;
 }
 
+export interface UserLoginResponse {
+  user: User;
+  refresh: string;
+  access: string;
+  message: string;
+}
+
+export interface UserLogoutRequest {
+  refresh: string;
+}
+
 export interface UserRegistrationRequest {
   email: string;
   first_name: string;

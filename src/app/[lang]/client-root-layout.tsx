@@ -6,6 +6,7 @@ import StyledComponentsRegistry from "../../../lib/registry";
 import "../globals.css";
 import { usePathname } from "next/navigation";
 import { ClerkProvider } from "@clerk/nextjs";
+import { AuthProvider } from "@/contexts/AuthContext";
 import { ReactNode, useEffect } from "react";
 import { Dictionary } from "@/config/get-dictionary";
 
@@ -60,12 +61,14 @@ export default function ClientRootLayout({ children, dictionary }: ClientRootLay
         },
       }}
     >
-      <div id="clerk-captcha" style={{ display: "none" }}></div>
-      <StyledComponentsRegistry>
-        {!isAdminRoute && <Header header={dictionary.header} dictionary={dictionary} />}
-        {children}
-        {!isAdminRoute && <Footer footer={dictionary.footer} />}
-      </StyledComponentsRegistry>
+      <AuthProvider>
+        <div id="clerk-captcha" style={{ display: "none" }}></div>
+        <StyledComponentsRegistry>
+          {!isAdminRoute && <Header header={dictionary.header} dictionary={dictionary} />}
+          {children}
+          {!isAdminRoute && <Footer footer={dictionary.footer} />}
+        </StyledComponentsRegistry>
+      </AuthProvider>
     </ClerkProvider>
   );
 }

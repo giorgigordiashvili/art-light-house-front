@@ -8,6 +8,8 @@ import ModalInput from "./ModalInput";
 import InputTitle from "./InputTitle";
 import AdditionalAction from "./AdditionalAction";
 import { useSignIn, useSignUp } from "@clerk/nextjs";
+import { useAuth } from "@/contexts/AuthContext";
+import { UserLoginRequest } from "@/api/generated/interfaces";
 import Image from "next/image";
 
 interface AuthorizationModalProps {
@@ -128,6 +130,7 @@ const AuthorizationModal: React.FC<AuthorizationModalProps> = ({
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
 
+  const { login } = useAuth();
   const { isLoaded: isSignInLoaded, signIn, setActive: setSignInActive } = useSignIn();
   const { isLoaded: isSignUpLoaded, signUp, setActive: setSignUpActive } = useSignUp();
 
@@ -157,20 +160,16 @@ const AuthorizationModal: React.FC<AuthorizationModalProps> = ({
 
     try {
       if (activeTab === "auth") {
-        // Sign In with Email
-        const result = await signIn?.create({
-          identifier: email,
+        // Sign In with our custom API
+        const credentials: UserLoginRequest = {
+          email,
           password,
-        });
+        };
 
-        if (result?.status === "complete") {
-          if (setSignInActive) {
-            await setSignInActive({ session: result.createdSessionId });
-          }
-          onClose();
-        }
+        await login(credentials);
+        onClose();
       } else {
-        // Sign Up with Email
+        // Sign Up with Clerk
         if (!firstName) {
           setError(dictionary?.registrationModal?.alert || "Please enter name");
           setIsLoading(false);
@@ -199,12 +198,32 @@ const AuthorizationModal: React.FC<AuthorizationModalProps> = ({
       }
     } catch (error: any) {
       console.error(error);
-      setError(
-        activeTab === "auth"
-          ? dictionary?.authorizationModal?.invalidCredentials || "invalid email or password"
-          : dictionary?.registrationModal?.alert2 ||
-              "Error while registering. Please check your details and try again."
-      );
+
+      if (activeTab === "auth") {
+        // Handle custom API login errors
+        let errorMessage =
+          dictionary?.authorizationModal?.invalidCredentials || "Invalid email or password";
+
+        if (error?.response?.status === 400) {
+          errorMessage =
+            dictionary?.authorizationModal?.invalidCredentials || "Invalid email or password";
+        } else if (error?.response?.status === 401) {
+          errorMessage =
+            dictionary?.authorizationModal?.invalidCredentials || "Invalid email or password";
+        } else {
+          errorMessage =
+            dictionary?.authorizationModal?.connectionError ||
+            "Connection error. Please try again.";
+        }
+
+        setError(errorMessage);
+      } else {
+        // Handle Clerk registration errors
+        setError(
+          dictionary?.registrationModal?.alert2 ||
+            "Error while registering. Please check your details and try again."
+        );
+      }
     } finally {
       setIsLoading(false);
     }

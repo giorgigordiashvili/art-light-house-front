@@ -44,9 +44,9 @@ const createAxiosInstance = (baseURL?: string): AxiosInstance => {
       }
 
       const token =
-        typeof window !== "undefined" ? localStorage.getItem("echodesk_auth_token") : null;
+        typeof window !== "undefined" ? localStorage.getItem("auth_access_token") : null;
       if (token && config.headers) {
-        config.headers.Authorization = `Token ${token}`;
+        config.headers.Authorization = `Bearer ${token}`;
       }
 
       // Add origin header for CORS

@@ -18,6 +18,7 @@ import CartModal from "./CartModal";
 import LanguageSwitcher from "./LanguageSwitcher/LanguageSwitcher";
 import LanguageSwitcherModal from "./LanguageSwitcher/LanguageSwitcherModal";
 import { useUser } from "@clerk/nextjs";
+import { useAuth } from "@/contexts/AuthContext";
 import { usePathname, useRouter } from "next/navigation";
 import { Locale, i18n } from "@/config/i18n";
 
@@ -231,12 +232,16 @@ const Header = ({ header, dictionary }: HeaderProps) => {
   }, [isBurgerMenuOpen, isUserMenuOpen, isLanguageSwitcherModalOpen]);
 
   const isCartEmpty = cartItemCount === 0;
-  const { user, isSignedIn } = useUser();
+  const { user: clerkUser, isSignedIn } = useUser();
+  const { user: customUser, isAuthenticated } = useAuth();
 
-  const isUserAuthorized = isSignedIn;
+  // Priority: Custom API user first, then Clerk user
+  const isUserAuthorized = isAuthenticated || isSignedIn;
   const currentUser = {
-    username: user?.firstName || user?.fullName || "User",
-    userImage: user?.imageUrl || "/assets/user.svg",
+    username: customUser
+      ? `${customUser.first_name} ${customUser.last_name}`.trim()
+      : clerkUser?.firstName || clerkUser?.fullName || "User",
+    userImage: clerkUser?.imageUrl || "/assets/user.svg",
   };
 
   const closeEmptyCartModal = () => {

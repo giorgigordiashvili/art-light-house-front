@@ -10,6 +10,8 @@ import type {
   AddressRequest,
   PasswordChangeRequest,
   UserLoginRequest,
+  UserLoginResponse,
+  UserLogoutRequest,
   User,
   PatchedUserUpdateRequest,
   UserRegistrationRequest,
@@ -65,13 +67,22 @@ export async function userChangePassword(
   return response.data;
 }
 
-export async function userLogin(data: UserLoginRequest): Promise<Record<string, any>> {
+export async function userLogin(data: UserLoginRequest): Promise<UserLoginResponse> {
   const response = await axios.post(`/api/auth/login/`, data);
   return response.data;
 }
 
 export async function userLogout(): Promise<Record<string, any>> {
-  const response = await axios.post(`/api/auth/logout/`);
+  const refreshToken =
+    typeof window !== "undefined" ? localStorage.getItem("auth_refresh_token") : null;
+
+  if (!refreshToken) {
+    // If no refresh token, just return success since user is already "logged out"
+    return { message: "Logged out successfully" };
+  }
+
+  const requestData: UserLogoutRequest = { refresh: refreshToken };
+  const response = await axios.post(`/api/auth/logout/`, requestData);
   return response.data;
 }
 
