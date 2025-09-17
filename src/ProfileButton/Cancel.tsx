@@ -40,7 +40,7 @@
 
 import styled from "styled-components";
 
-const StyleCancelButton = styled.div`
+const StyleCancelButton = styled.div<{ disabled?: boolean }>`
   width: 143px;
   height: 48px;
   border-radius: 10px;
@@ -48,8 +48,9 @@ const StyleCancelButton = styled.div`
   align-items: center;
   justify-content: center;
   border: 1px solid #ffcb401a;
-  cursor: pointer;
+  cursor: ${({ disabled }) => (disabled ? "not-allowed" : "pointer")};
   transition: all 0.2s ease-in-out;
+  opacity: ${({ disabled }) => (disabled ? 0.5 : 1)};
 
   @media (max-width: 1080px) {
     max-width: 100%;
@@ -57,7 +58,7 @@ const StyleCancelButton = styled.div`
   }
 
   &:hover p {
-    color: #fbe4a7;
+    color: ${({ disabled }) => (disabled ? "#ffcb40" : "#fbe4a7")};
   }
 `;
 
@@ -75,11 +76,23 @@ const ButtonText = styled.p`
 type Props = {
   onClick?: () => void;
   dictionary?: any;
+  onCancel?: () => void;
+  disabled?: boolean;
 };
 
-const CancelButton = ({ onClick, dictionary }: Props) => {
+const CancelButton = ({ onClick, dictionary, onCancel, disabled = false }: Props) => {
+  const handleClick = () => {
+    if (disabled) return;
+
+    if (onCancel) {
+      onCancel();
+    } else if (onClick) {
+      onClick();
+    }
+  };
+
   return (
-    <StyleCancelButton onClick={onClick}>
+    <StyleCancelButton onClick={handleClick} disabled={disabled}>
       <ButtonText>{dictionary?.button1 || "Cancel"}</ButtonText>
     </StyleCancelButton>
   );

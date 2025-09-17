@@ -1,10 +1,11 @@
 "use client";
 import styled from "styled-components";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import InputWithLabel from "./Input";
 import SaveButton from "@/ProfileButton/Save";
 import Cancel from "@/ProfileButton/Cancel";
 import { User } from "@/api/generated/interfaces";
+import { useProfileUpdate } from "@/hooks/useProfileUpdate";
 const StylePersonal = styled.div`
   /* width: 800px; */
   width: 100%;
@@ -103,7 +104,18 @@ const Personal = ({
   profileData: User | null;
   isLoading: boolean;
 }) => {
+  const { updateProfile, isUpdating, updateError, updateSuccess, clearUpdateStatus } =
+    useProfileUpdate();
+
   const [formData, setFormData] = useState({
+    first_name: "",
+    last_name: "",
+    email: "",
+    phone_number: "",
+    date_of_birth: "",
+  });
+
+  const [originalData, setOriginalData] = useState({
     first_name: "",
     last_name: "",
     email: "",
@@ -114,21 +126,68 @@ const Personal = ({
   // Update form data when profile data is loaded
   useEffect(() => {
     if (profileData) {
-      setFormData({
+      const data = {
         first_name: profileData.first_name || "",
         last_name: profileData.last_name || "",
         email: profileData.email || "",
         phone_number: profileData.phone_number || "",
         date_of_birth: profileData.date_of_birth || "",
-      });
+      };
+      setFormData(data);
+      setOriginalData(data);
     }
   }, [profileData]);
+
+  // Check if form has been modified
+  const hasChanges = useMemo(() => {
+    return (
+      formData.first_name !== originalData.first_name ||
+      formData.last_name !== originalData.last_name ||
+      formData.phone_number !== originalData.phone_number ||
+      formData.date_of_birth !== originalData.date_of_birth
+    );
+  }, [formData, originalData]);
 
   const handleInputChange = (field: keyof typeof formData) => (value: string) => {
     setFormData((prev) => ({
       ...prev,
       [field]: value,
     }));
+    // Clear any previous error/success messages when user starts editing
+    if (updateError || updateSuccess) {
+      clearUpdateStatus();
+    }
+  };
+
+  const handleSave = async () => {
+    if (!hasChanges) return;
+
+    const updateData = {
+      first_name: formData.first_name,
+      last_name: formData.last_name,
+      phone_number: formData.phone_number || undefined,
+      date_of_birth: formData.date_of_birth || undefined,
+    };
+
+    const updatedUser = await updateProfile(updateData);
+
+    if (updatedUser) {
+      // Update original data to reflect saved state
+      const newData = {
+        first_name: updatedUser.first_name || "",
+        last_name: updatedUser.last_name || "",
+        email: updatedUser.email || "",
+        phone_number: updatedUser.phone_number || "",
+        date_of_birth: updatedUser.date_of_birth || "",
+      };
+      setFormData(newData);
+      setOriginalData(newData);
+    }
+  };
+
+  const handleCancel = () => {
+    setFormData(originalData);
+    clearUpdateStatus();
   };
 
   if (isLoading) {
@@ -145,6 +204,38 @@ const Personal = ({
   return (
     <StylePersonal>
       <Title>{dictionary?.profileBarTitle || "Personal information"}</Title>
+
+      {/* Success/Error Messages */}
+      {updateSuccess && (
+        <div
+          style={{
+            padding: "10px",
+            backgroundColor: "#4CAF50",
+            color: "white",
+            borderRadius: "5px",
+            marginBottom: "16px",
+            textAlign: "center",
+          }}
+        >
+          Profile updated successfully!
+        </div>
+      )}
+
+      {updateError && (
+        <div
+          style={{
+            padding: "10px",
+            backgroundColor: "#f44336",
+            color: "white",
+            borderRadius: "5px",
+            marginBottom: "16px",
+            textAlign: "center",
+          }}
+        >
+          {updateError}
+        </div>
+      )}
+
       <InputsWrapper>
         <LeftColumn>
           <InputWithLabel
@@ -169,6 +260,7 @@ const Personal = ({
             value={formData.email}
             onChange={handleInputChange("email")}
             type="email"
+            readOnly
           />
         </LeftColumn>
 
@@ -192,8 +284,17 @@ const Personal = ({
       </InputsWrapper>
 
       <ButtonRow>
-        <Cancel dictionary={dictionary.profile} />
-        <SaveButton dictionary={dictionary} />
+        <Cancel
+          dictionary={dictionary}
+          onCancel={handleCancel}
+          disabled={!hasChanges || isUpdating}
+        />
+        <SaveButton
+          dictionary={dictionary}
+          onSave={handleSave}
+          disabled={!hasChanges || isUpdating}
+          isLoading={isUpdating}
+        />
       </ButtonRow>
     </StylePersonal>
   );

@@ -10,6 +10,7 @@ interface InputWithLabelProps {
   value?: string;
   onChange?: (value: string) => void;
   type?: string;
+  readOnly?: boolean;
 }
 
 const Wrapper = styled.div<{ $gap?: number }>`
@@ -59,7 +60,7 @@ const StyledInput = styled.input`
   }
 `;
 
-const InputWithLabel = ({
+const InputWithLabel: React.FC<InputWithLabelProps> = ({
   label,
   placeholder,
   icon,
@@ -67,9 +68,10 @@ const InputWithLabel = ({
   value,
   onChange,
   type = "text",
+  readOnly = false,
 }: InputWithLabelProps) => {
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (onChange) {
+    if (onChange && !readOnly) {
       onChange(e.target.value);
     }
   };
@@ -84,6 +86,7 @@ const InputWithLabel = ({
           value={value || ""}
           onChange={handleInputChange}
           type={type}
+          readOnly={readOnly}
         />
       </InputWrapper>
     </Wrapper>
