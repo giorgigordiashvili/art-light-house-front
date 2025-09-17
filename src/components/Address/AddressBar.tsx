@@ -49,9 +49,9 @@ const AddressBar = ({ onOpenModal, addresses, onEditAddress, dictionary }: Props
     <DividerLine />
     <StyledCardsWrapper>
       <AddressCard onOpenModal={onOpenModal} dictionary={dictionary} />
-      {addresses.map((item, index) => (
+      {addresses.map((item) => (
         <AddedAddressCard
-          key={index}
+          key={item.id || `${item.place}-${item.address}`}
           data={item}
           onEditAddress={() => onEditAddress(item)}
           dictionary={dictionary}

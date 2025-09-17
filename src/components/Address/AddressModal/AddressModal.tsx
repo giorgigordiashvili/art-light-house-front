@@ -10,6 +10,7 @@ import GoogleMap from "@/components/Contact/GoogleMap";
 import { AddressData } from "@/types";
 import { addressCreate } from "@/api/generated/api";
 import { AddressRequest } from "@/api/generated/interfaces";
+import { mapPlaceToAddressType } from "@/utils/addressHelpers";
 
 const StyledContainer = styled.div`
   width: 508px;
@@ -54,7 +55,7 @@ const StyledButton = styled.div`
 
 type Props = {
   onClose: () => void;
-  onSave: (data: AddressData) => void;
+  onSave: () => void;
   initialData?: AddressData;
   dictionary: any;
 };
@@ -70,18 +71,6 @@ const AddressModal = ({ onClose, onSave, initialData, dictionary }: Props) => {
   );
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-
-  // Map dictionary place names to API address types
-  const mapPlaceToAddressType = (place: string): string => {
-    if (place === dictionary.addressOption1 || place === dictionary.cardTitle2) {
-      return "home";
-    } else if (place === dictionary.addressOption2 || place === dictionary.cardTitle3) {
-      return "work";
-    } else if (place === dictionary.addressOption3 || place === dictionary.cardTitle4) {
-      return "other";
-    }
-    return "other"; // default fallback
-  };
 
   // Ensure coordinate string length doesn't exceed API limits
   const formatCoordinateForAPI = (coord: number): string => {
@@ -124,7 +113,7 @@ const AddressModal = ({ onClose, onSave, initialData, dictionary }: Props) => {
 
       // Prepare API request data
       const addressData: AddressRequest = {
-        address_type: mapPlaceToAddressType(selectedPlace) as any,
+        address_type: mapPlaceToAddressType(selectedPlace, dictionary) as any,
         address_string: address,
         extra_details: additionalInfo || undefined,
         latitude: roundedLat,
@@ -146,16 +135,8 @@ const AddressModal = ({ onClose, onSave, initialData, dictionary }: Props) => {
 
       console.log("✅ Address created successfully:", createdAddress);
 
-      // Pass the created address data back to parent component
-      const resultData: AddressData = {
-        place: selectedPlace,
-        address,
-        additionalInfo,
-        latitude: roundedLat,
-        longitude: roundedLng,
-      };
-
-      onSave(resultData);
+      // Call the parent callback to trigger refresh
+      onSave();
       onClose();
     } catch (err: any) {
       console.error("❌ Failed to create address:", err);
