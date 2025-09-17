@@ -1,7 +1,8 @@
-import React from "react";
+import React, { useState } from "react";
 import styled from "styled-components";
 import ModalOption from "./ModalOption";
 import DividerLine from "@/components/MainPage/HeroAndCategory/DividerLine";
+import { addressDelete } from "@/api/generated/api";
 
 const StyledContainer = styled.div`
   position: absolute;
@@ -17,17 +18,41 @@ const StyledContainer = styled.div`
 `;
 
 type Props = {
-  onClose: () => void;
   onEdit: () => void;
+  onDelete: () => void;
+  addressId: number;
   dictionary: any;
 };
 
-const EditModal = ({ onClose, onEdit, dictionary }: Props) => {
+const EditModal = ({ onEdit, onDelete, addressId, dictionary }: Props) => {
+  const [isLoading, setIsLoading] = useState(false);
+
+  const handleDelete = async () => {
+    try {
+      setIsLoading(true);
+      console.log(`🗑️ Deleting address with ID: ${addressId}`);
+
+      await addressDelete(addressId);
+
+      console.log("✅ Address deleted successfully");
+      onDelete();
+    } catch (error: any) {
+      console.error("❌ Failed to delete address:", error);
+      // You might want to show an error message to the user here
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   return (
     <StyledContainer>
       <ModalOption text={dictionary.modalText1} color="white" onClick={onEdit} />
       <DividerLine />
-      <ModalOption text={dictionary.modalText2} color="red" onClick={onClose} />
+      <ModalOption
+        text={isLoading ? "Deleting..." : dictionary.modalText2}
+        color="red"
+        onClick={isLoading ? undefined : handleDelete}
+      />
     </StyledContainer>
   );
 };

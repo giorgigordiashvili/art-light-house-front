@@ -93,6 +93,13 @@ const Address = ({ dictionary }: any) => {
     setEditingAddress(address);
   };
 
+  const handleDeleteAddress = (address: AddressData) => {
+    console.log(`🗑️ Address delete requested for ID: ${address.id}`);
+    // The actual deletion is handled by the EditModal component
+    // After deletion, this callback will trigger a refetch
+    refetch();
+  };
+
   const handleSaveEditedAddress = () => {
     // After updating an address, refetch the addresses from API
     refetch();
@@ -149,6 +156,7 @@ const Address = ({ dictionary }: any) => {
               onOpenModal={() => setIsModalOpen(true)}
               addresses={addresses}
               onEditAddress={handleEditAddress}
+              onDeleteAddress={handleDeleteAddress}
               dictionary={dictionary}
             />
           )}
