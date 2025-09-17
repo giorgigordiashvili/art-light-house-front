@@ -84,6 +84,7 @@ import { useState } from "react";
 import DetailBar from "@/components/DetailBar/DetailBar";
 import Personal from "@/components/Profile/PersonalInf";
 import MobileDetailDropdown from "@/components/DetailBar/MobileDetailDropdown";
+import { useProfileData } from "@/hooks/useProfileData";
 
 const StyledComponent = styled.div`
   margin-top: 80px;
@@ -167,6 +168,12 @@ const DetailBarWrapper = styled.div<{ $isOpen: boolean }>`
 
 const MyDetails = ({ dictionary }: any) => {
   const [isDropdownOpen] = useState(false);
+  const { profileData, isLoading, error } = useProfileData();
+
+  // Show error state if there's an error
+  if (error) {
+    console.error("Profile data error:", error);
+  }
 
   return (
     <StyledComponent>
@@ -176,7 +183,11 @@ const MyDetails = ({ dictionary }: any) => {
           <ContentWrapper>
             <DetailBar dictionary={dictionary?.profile} />
             <RightSection>
-              <Personal dictionary={dictionary?.profile} />
+              <Personal
+                dictionary={dictionary?.profile}
+                profileData={profileData}
+                isLoading={isLoading}
+              />
             </RightSection>
           </ContentWrapper>
         </DesktopWrapper>
@@ -188,7 +199,11 @@ const MyDetails = ({ dictionary }: any) => {
             <DetailBar dictionary={dictionary?.profile} />
           </DetailBarWrapper>
           <RightSection>
-            <Personal dictionary={dictionary?.profile} />
+            <Personal
+              dictionary={dictionary?.profile}
+              profileData={profileData}
+              isLoading={isLoading}
+            />
           </RightSection>
         </MobileWrapper>
       </Container>

@@ -6,7 +6,10 @@ interface InputWithLabelProps {
   label: string;
   placeholder?: string;
   icon?: string;
-  gap?: number; // ახალი prop
+  gap?: number;
+  value?: string;
+  onChange?: (value: string) => void;
+  type?: string;
 }
 
 const Wrapper = styled.div<{ $gap?: number }>`
@@ -56,13 +59,32 @@ const StyledInput = styled.input`
   }
 `;
 
-const InputWithLabel = ({ label, placeholder, icon, gap }: InputWithLabelProps) => {
+const InputWithLabel = ({
+  label,
+  placeholder,
+  icon,
+  gap,
+  value,
+  onChange,
+  type = "text",
+}: InputWithLabelProps) => {
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (onChange) {
+      onChange(e.target.value);
+    }
+  };
+
   return (
     <Wrapper $gap={gap}>
       <Label>{label}</Label>
       <InputWrapper>
         {icon && <StyledIcon src={icon} alt="icon" width={24} height={24} />}
-        <StyledInput placeholder={placeholder} />
+        <StyledInput
+          placeholder={placeholder}
+          value={value || ""}
+          onChange={handleInputChange}
+          type={type}
+        />
       </InputWrapper>
     </Wrapper>
   );

@@ -1,7 +1,10 @@
+"use client";
 import styled from "styled-components";
+import { useState, useEffect } from "react";
 import InputWithLabel from "./Input";
 import SaveButton from "@/ProfileButton/Save";
 import Cancel from "@/ProfileButton/Cancel";
+import { User } from "@/api/generated/interfaces";
 const StylePersonal = styled.div`
   /* width: 800px; */
   width: 100%;
@@ -91,7 +94,54 @@ const Title = styled.p`
   }
 `;
 
-const Personal = ({ dictionary }: any) => {
+const Personal = ({
+  dictionary,
+  profileData,
+  isLoading,
+}: {
+  dictionary: any;
+  profileData: User | null;
+  isLoading: boolean;
+}) => {
+  const [formData, setFormData] = useState({
+    first_name: "",
+    last_name: "",
+    email: "",
+    phone_number: "",
+    date_of_birth: "",
+  });
+
+  // Update form data when profile data is loaded
+  useEffect(() => {
+    if (profileData) {
+      setFormData({
+        first_name: profileData.first_name || "",
+        last_name: profileData.last_name || "",
+        email: profileData.email || "",
+        phone_number: profileData.phone_number || "",
+        date_of_birth: profileData.date_of_birth || "",
+      });
+    }
+  }, [profileData]);
+
+  const handleInputChange = (field: keyof typeof formData) => (value: string) => {
+    setFormData((prev) => ({
+      ...prev,
+      [field]: value,
+    }));
+  };
+
+  if (isLoading) {
+    return (
+      <StylePersonal>
+        <Title>{dictionary?.profileBarTitle || "Personal information"}</Title>
+        <div style={{ padding: "20px", textAlign: "center", color: "#777" }}>
+          Loading profile data...
+        </div>
+      </StylePersonal>
+    );
+  }
+
   return (
     <StylePersonal>
       <Title>{dictionary?.profileBarTitle || "Personal information"}</Title>
@@ -100,17 +150,25 @@ const Personal = ({ dictionary }: any) => {
           <InputWithLabel
             label={dictionary?.inputTitle1 || "Name"}
             placeholder={dictionary?.placeholder1 || "Name"}
+            value={formData.first_name}
+            onChange={handleInputChange("first_name")}
             gap={12}
           />
           <InputWithLabel
             icon="/assets/icons/Field Icon.svg"
             label={dictionary?.inputTitle3 || "Date of birth"}
             placeholder={dictionary?.placeholder3 || "Enter date"}
+            value={formData.date_of_birth}
+            onChange={handleInputChange("date_of_birth")}
+            type="date"
           />
           <InputWithLabel
             icon="/assets/icons/gmail.svg"
             label={dictionary?.inputTitle5 || "Email"}
             placeholder={dictionary?.placeholder5 || "yourmail@gmail.com"}
+            value={formData.email}
+            onChange={handleInputChange("email")}
+            type="email"
           />
         </LeftColumn>
 
@@ -118,12 +176,17 @@ const Personal = ({ dictionary }: any) => {
           <InputWithLabel
             label={dictionary?.inputTitle2 || "Last name"}
             placeholder={dictionary?.placeholder2 || "Last name"}
+            value={formData.last_name}
+            onChange={handleInputChange("last_name")}
             gap={12}
           />
           <InputWithLabel
             icon="/assets/icons/phone icon.svg"
             label={dictionary?.inputTitle4 || "Phone number"}
             placeholder={dictionary?.placeholder4 || "Enter phone number"}
+            value={formData.phone_number}
+            onChange={handleInputChange("phone_number")}
+            type="tel"
           />
         </RightColumn>
       </InputsWrapper>
