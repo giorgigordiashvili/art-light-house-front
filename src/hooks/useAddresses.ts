@@ -32,7 +32,10 @@ export const useAddresses = (): UseAddressesResult => {
   };
 
   useEffect(() => {
-    fetchAddresses();
+    const timeoutId = setTimeout(() => {
+      fetchAddresses();
+    }, 0);
+    return () => clearTimeout(timeoutId);
   }, []);
 
   return {

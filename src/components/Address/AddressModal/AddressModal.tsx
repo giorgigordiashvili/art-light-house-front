@@ -8,8 +8,8 @@ import PlaceSelector from "./PlaceSelector";
 import ModalTitle from "./ModalTitle";
 import GoogleMap from "@/components/Contact/GoogleMap";
 import { AddressData } from "@/types";
-import { addressCreate } from "@/api/generated/api";
-import { AddressRequest } from "@/api/generated/interfaces";
+import { addressCreate, addressUpdate } from "@/api/generated/api";
+import { AddressRequest, PatchedAddressUpdateRequest } from "@/api/generated/interfaces";
 import { mapPlaceToAddressType } from "@/utils/addressHelpers";
 
 const StyledContainer = styled.div`
@@ -111,36 +111,65 @@ const AddressModal = ({ onClose, onSave, initialData, dictionary }: Props) => {
         });
       }
 
-      // Prepare API request data
-      const addressData: AddressRequest = {
-        address_type: mapPlaceToAddressType(selectedPlace, dictionary) as any,
-        address_string: address,
-        extra_details: additionalInfo || undefined,
-        latitude: roundedLat,
-        longitude: roundedLng,
-        is_default: false, // You can make this configurable if needed
-      };
+      // Check if we're editing an existing address or creating a new one
+      const isEditing = initialData && initialData.id;
 
-      console.log("📤 Creating address with data:", {
-        ...addressData,
-        coordinates: roundedLat && roundedLng ? `${roundedLat}, ${roundedLng}` : "not available",
-        coordinateStringLengths: {
-          latitude: roundedLat?.length || 0,
-          longitude: roundedLng?.length || 0,
-        },
-      });
+      if (isEditing) {
+        // Update existing address
+        const updateData: PatchedAddressUpdateRequest = {
+          address_string: address,
+          extra_details: additionalInfo || undefined,
+          latitude: roundedLat,
+          longitude: roundedLng,
+          is_default: initialData.is_default || false,
+        };
 
-      // Create address via API
-      const createdAddress = await addressCreate(addressData);
+        console.log("📝 Updating address with data:", {
+          addressId: initialData.id,
+          ...updateData,
+          coordinates: roundedLat && roundedLng ? `${roundedLat}, ${roundedLng}` : "not available",
+          coordinateStringLengths: {
+            latitude: roundedLat?.length || 0,
+            longitude: roundedLng?.length || 0,
+          },
+        });
 
-      console.log("✅ Address created successfully:", createdAddress);
+        const updatedAddress = await addressUpdate(initialData.id!, updateData);
+        console.log("✅ Address updated successfully:", updatedAddress);
+      } else {
+        // Create new address
+        const addressData: AddressRequest = {
+          address_type: mapPlaceToAddressType(selectedPlace, dictionary) as any,
+          address_string: address,
+          extra_details: additionalInfo || undefined,
+          latitude: roundedLat,
+          longitude: roundedLng,
+          is_default: false, // You can make this configurable if needed
+        };
+
+        console.log("📤 Creating address with data:", {
+          ...addressData,
+          coordinates: roundedLat && roundedLng ? `${roundedLat}, ${roundedLng}` : "not available",
+          coordinateStringLengths: {
+            latitude: roundedLat?.length || 0,
+            longitude: roundedLng?.length || 0,
+          },
+        });
+
+        const createdAddress = await addressCreate(addressData);
+        console.log("✅ Address created successfully:", createdAddress);
+      }
 
       // Call the parent callback to trigger refresh
       onSave();
       onClose();
     } catch (err: any) {
-      console.error("❌ Failed to create address:", err);
-      setError(err?.response?.data?.message || err?.message || "Failed to create address");
+      console.error(`❌ Failed to ${initialData?.id ? "update" : "create"} address:`, err);
+      setError(
+        err?.response?.data?.message ||
+          err?.message ||
+          `Failed to ${initialData?.id ? "update" : "create"} address`
+      );
     } finally {
       setIsLoading(false);
     }
@@ -148,11 +177,13 @@ const AddressModal = ({ onClose, onSave, initialData, dictionary }: Props) => {
 
   return (
     <StyledContainer>
-      <ModalTitle text={dictionary.modalTitle} />
+      <ModalTitle
+        text={initialData?.id ? `${dictionary.modalTitle} - Edit` : dictionary.modalTitle}
+      />
       <StyledSelector>
         <PlaceSelector
           selectedPlace={selectedPlace}
-          onSelect={setSelectedPlace}
+          onSelect={initialData?.id ? () => {} : setSelectedPlace} // Disable selection during edit
           dictionary={dictionary}
         />
       </StyledSelector>

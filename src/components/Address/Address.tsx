@@ -15,8 +15,10 @@ import { convertAddressToAddressData } from "@/utils/addressHelpers";
 
 const StyledContainer = styled.div`
   position: relative;
-  padding-inline: 20px;
   z-index: 1;
+  @media (max-width: 1332px) {
+    padding-inline: 20px;
+  }
   @media (max-width: 1080px) {
     padding-inline: 0;
   }
