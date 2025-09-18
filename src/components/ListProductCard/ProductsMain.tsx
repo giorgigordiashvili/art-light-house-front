@@ -7,6 +7,8 @@ import FilterButton from "@/components/FilterSidebar/FilterButtom";
 import SortDropdown from "@/components/Sort/SortDropdown";
 import Container from "@/components/ui/Container";
 import MobileFilterDropdown from "../FilterDropdown/MobileFilterDropdown";
+import PaginationWithArrows from "@/components/PagesButton/PaginationWithArrows";
+import { useProducts } from "@/hooks/useProducts";
 
 const StyledComponent = styled.div`
   background: black;
@@ -65,12 +67,75 @@ const OnDesktop = styled.div`
   }
 `;
 
+const PaginationWrapper = styled.div`
+  display: flex;
+  justify-content: center;
+  margin-top: 40px;
+  margin-bottom: 40px;
+`;
+
 function ProductsMain({ dictionary }: any) {
   const [isMobileFilterDropdownVisible, setMobileFilterDropdownVisible] = useState(false);
+
+  // Fetch products with pagination
+  const {
+    products,
+    loading,
+    error,
+    currentPage,
+    totalPages,
+    hasNextPage,
+    hasPreviousPage,
+    fetchPage,
+  } = useProducts();
 
   const toggleMobileFilterDropdown = () => {
     setMobileFilterDropdownVisible(!isMobileFilterDropdownVisible);
   };
+
+  const handlePageChange = async (page: number) => {
+    await fetchPage(page);
+  };
+
+  if (loading) {
+    return (
+      <StyledComponent>
+        <Container>
+          <PageTitle>{dictionary.title}</PageTitle>
+          <div
+            style={{
+              color: "#ffffff",
+              textAlign: "center",
+              padding: "40px",
+              fontSize: "16px",
+            }}
+          >
+            Loading products...
+          </div>
+        </Container>
+      </StyledComponent>
+    );
+  }
+
+  if (error) {
+    return (
+      <StyledComponent>
+        <Container>
+          <PageTitle>{dictionary.title}</PageTitle>
+          <div
+            style={{
+              color: "#ff4444",
+              textAlign: "center",
+              padding: "40px",
+              fontSize: "16px",
+            }}
+          >
+            Error loading products: {error}
+          </div>
+        </Container>
+      </StyledComponent>
+    );
+  }
 
   return (
     <StyledComponent>
@@ -86,7 +151,22 @@ function ProductsMain({ dictionary }: any) {
           <OnDesktop>
             <FilterSidebar dictionary={dictionary.filter} />
           </OnDesktop>
-          <CardGrid dictionary={dictionary} />
+          <div style={{ width: "100%" }}>
+            <CardGrid products={products} dictionary={dictionary} />
+
+            {/* Pagination */}
+            {totalPages > 1 && (
+              <PaginationWrapper>
+                <PaginationWithArrows
+                  currentPage={currentPage}
+                  totalPages={totalPages}
+                  onPageChange={handlePageChange}
+                  hasNextPage={hasNextPage}
+                  hasPreviousPage={hasPreviousPage}
+                />
+              </PaginationWrapper>
+            )}
+          </div>
         </ContentWrapper>
 
         {isMobileFilterDropdownVisible && (

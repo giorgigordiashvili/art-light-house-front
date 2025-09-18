@@ -1,5 +1,6 @@
 import React from "react";
 import styled from "styled-components";
+import { ProductList } from "@/api/generated/interfaces";
 
 const TextWrapper = styled.div`
   position: absolute;
@@ -44,11 +45,16 @@ const DescriptionText = styled.div`
   }
 `;
 
-const ProductText = ({ dictionary }: any) => {
+const ProductText = ({ product }: { product: ProductList }) => {
+  // Format price with discount if available
+  const formattedPrice = product.compare_price
+    ? `${product.price} ₾ (${product.compare_price} ₾)`
+    : `${product.price} ₾`;
+
   return (
     <TextWrapper>
-      <PriceText>{dictionary?.price || "199,99 ₾"}</PriceText>
-      <DescriptionText>{dictionary?.cardTitle || "მოდერნული სანათიs"}</DescriptionText>
+      <PriceText>{formattedPrice}</PriceText>
+      <DescriptionText>{product.title}</DescriptionText>
     </TextWrapper>
   );
 };

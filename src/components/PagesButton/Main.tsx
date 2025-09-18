@@ -13,9 +13,20 @@ const MainContainer = styled.div`
 `;
 
 const Main = () => {
+  // Demo pagination props
+  const handlePageChange = (page: number) => {
+    console.log("Page changed to:", page);
+  };
+
   return (
     <MainContainer>
-      <PaginationWithArrows />
+      <PaginationWithArrows
+        currentPage={1}
+        totalPages={5}
+        onPageChange={handlePageChange}
+        hasNextPage={true}
+        hasPreviousPage={false}
+      />
     </MainContainer>
   );
 };

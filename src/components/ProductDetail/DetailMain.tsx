@@ -139,10 +139,50 @@ function DetailMain({ dictionary }: { dictionary: any }) {
           <p>{dictionary?.productDetails?.similarProducts || "Similar Products"}</p>
         </ProductHeader>
         <CardGrid>
-          <Card dictionary={dictionary.productDetails} />
-          <Card dictionary={dictionary.productDetails} />
-          <Card dictionary={dictionary.productDetails} />
-          <Card dictionary={dictionary.productDetails} />
+          <Card
+            product={
+              {
+                id: 1,
+                title: "Sample Product 1",
+                price: 199.99,
+                imageUrl: "/assets/PillarLight.png",
+              } as any
+            }
+            dictionary={dictionary.productDetails}
+          />
+          <Card
+            product={
+              {
+                id: 2,
+                title: "Sample Product 2",
+                price: 299.99,
+                imageUrl: "/assets/PillarLight.png",
+              } as any
+            }
+            dictionary={dictionary.productDetails}
+          />
+          <Card
+            product={
+              {
+                id: 3,
+                title: "Sample Product 3",
+                price: 399.99,
+                imageUrl: "/assets/PillarLight.png",
+              } as any
+            }
+            dictionary={dictionary.productDetails}
+          />
+          <Card
+            product={
+              {
+                id: 4,
+                title: "Sample Product 4",
+                price: 499.99,
+                imageUrl: "/assets/PillarLight.png",
+              } as any
+            }
+            dictionary={dictionary.productDetails}
+          />
         </CardGrid>
       </Container>
     </StyledComponent>

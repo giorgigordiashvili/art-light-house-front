@@ -1,6 +1,5 @@
 "use client";
 import ProductsMain from "@/components/ListProductCard/ProductsMain";
-import Main from "@/components/PagesButton/Main";
 import styled from "styled-components";
 import NewCircle from "@/components/ui/NewCircle";
 import Circle from "@/components/ui/Circle";
@@ -29,7 +28,6 @@ const ProductsScreen = ({ dictionary }: any) => {
   return (
     <StyledComponent>
       <ProductsMain dictionary={dictionary.products} />
-      <Main />
       <NewCircle size="small" top="1000px" right="142px" media="no" />
       <StyledCircle>
         <Circle size="large" />

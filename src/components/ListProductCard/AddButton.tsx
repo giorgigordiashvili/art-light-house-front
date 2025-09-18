@@ -1,5 +1,6 @@
 import Image from "next/image";
 import styled from "styled-components";
+import { ProductList } from "@/api/generated/interfaces";
 
 const StyledAddButton = styled.div`
   position: absolute;
@@ -34,9 +35,18 @@ type Props = {
   onClick?: () => void;
 };
 
-const AddButton = ({ onClick, dictionary }: Props & { dictionary?: any }) => {
+const AddButton = ({
+  onClick,
+  product,
+  dictionary,
+}: Props & { product: ProductList; dictionary?: any }) => {
+  const handleClick = () => {
+    console.log("🛒 Adding product to cart:", product);
+    onClick?.();
+  };
+
   return (
-    <StyledAddButton onClick={onClick}>
+    <StyledAddButton onClick={handleClick}>
       <Image
         src="/assets/plus.svg"
         alt={dictionary?.products?.addToCartAlt || "დამატება"}

@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React from "react";
 import styled from "styled-components";
 import { LeftArrow, RightArrow } from "./ArrowButtons";
 
@@ -28,33 +28,51 @@ const PageNumber = styled.button<{ active?: boolean }>`
   background-color: ${({ active }) => (active ? "#F1C654" : "transparent")};
 `;
 
-const PaginationWithArrows = () => {
-  const [currentPage, setCurrentPage] = useState(1);
-  const totalPages = 4;
-
+const PaginationWithArrows = ({
+  currentPage,
+  totalPages,
+  onPageChange,
+  hasNextPage,
+  hasPreviousPage,
+}: {
+  currentPage: number;
+  totalPages: number;
+  onPageChange: (page: number) => void;
+  hasNextPage: boolean;
+  hasPreviousPage: boolean;
+}) => {
   const handlePrev = () => {
-    if (currentPage > 1) setCurrentPage(currentPage - 1);
+    if (hasPreviousPage) {
+      onPageChange(currentPage - 1);
+    }
   };
 
   const handleNext = () => {
-    if (currentPage < totalPages) setCurrentPage(currentPage + 1);
+    if (hasNextPage) {
+      onPageChange(currentPage + 1);
+    }
   };
 
   return (
     <PaginationWrapper>
-      <div onClick={handlePrev}>
+      <div
+        onClick={handlePrev}
+        style={{
+          cursor: hasPreviousPage ? "pointer" : "not-allowed",
+          opacity: hasPreviousPage ? 1 : 0.5,
+        }}
+      >
         <LeftArrow />
       </div>
       {Array.from({ length: totalPages }, (_, i) => (
-        <PageNumber
-          key={i + 1}
-          active={i + 1 === currentPage}
-          onClick={() => setCurrentPage(i + 1)}
-        >
+        <PageNumber key={i + 1} active={i + 1 === currentPage} onClick={() => onPageChange(i + 1)}>
           {i + 1}
         </PageNumber>
       ))}
-      <div onClick={handleNext}>
+      <div
+        onClick={handleNext}
+        style={{ cursor: hasNextPage ? "pointer" : "not-allowed", opacity: hasNextPage ? 1 : 0.5 }}
+      >
         <RightArrow />
       </div>
     </PaginationWrapper>

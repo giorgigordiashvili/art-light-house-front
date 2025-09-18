@@ -3,6 +3,7 @@ import styled from "styled-components";
 import Image from "next/image";
 import Desktoplampa from "../../../public/assets/desktopLampa.svg";
 import mobilelampa from "../../../public/assets/mobileLampa.svg";
+import { ProductList } from "@/api/generated/interfaces";
 
 const StyledLampaImage = styled.div`
   position: absolute;
@@ -35,14 +36,38 @@ const MobileOnlyIcons = styled.div`
   }
 `;
 
-const LampaImage = () => {
+const LampaImage = ({ product }: { product: ProductList }) => {
+  // Use product image if available, otherwise fallback to default
+  const imageUrl = product.primary_image || Desktoplampa;
+  const mobileImageUrl = product.primary_image || mobilelampa;
+
   return (
     <StyledLampaImage>
       <MobileOnlyIcons>
-        <Image src={mobilelampa} alt="Mobile Lampa" layout="fill" objectFit="contain" priority />
+        {product.primary_image ? (
+          <Image
+            src={mobileImageUrl}
+            alt={product.title}
+            layout="fill"
+            objectFit="contain"
+            priority
+          />
+        ) : (
+          <Image src={mobilelampa} alt="Mobile Lampa" layout="fill" objectFit="contain" priority />
+        )}
       </MobileOnlyIcons>
       <DesktopOnlyIcons>
-        <Image src={Desktoplampa} alt="Desktop Lampa" layout="fill" objectFit="contain" priority />
+        {product.primary_image ? (
+          <Image src={imageUrl} alt={product.title} layout="fill" objectFit="contain" priority />
+        ) : (
+          <Image
+            src={Desktoplampa}
+            alt="Desktop Lampa"
+            layout="fill"
+            objectFit="contain"
+            priority
+          />
+        )}
       </DesktopOnlyIcons>
     </StyledLampaImage>
   );

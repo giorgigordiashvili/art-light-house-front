@@ -3,6 +3,7 @@ import styled from "styled-components";
 import AddButton from "./AddButton";
 import LampaImage from "./Image";
 import ProductText from "./Text";
+import { ProductList } from "@/api/generated/interfaces";
 const StyledRectangle = styled.div`
   width: 308px;
   height: 417px;
@@ -53,12 +54,12 @@ const StyledRectangle = styled.div`
   }
 `;
 
-function Card({ dictionary }: any) {
+function Card({ product, dictionary }: { product: ProductList; dictionary: any }) {
   return (
     <StyledRectangle>
-      <LampaImage />
-      <ProductText dictionary={dictionary} />
-      <AddButton dictionary={dictionary} />
+      <LampaImage product={product} />
+      <ProductText product={product} />
+      <AddButton product={product} dictionary={dictionary} />
     </StyledRectangle>
   );
 }
