@@ -1,6 +1,7 @@
 import React from "react";
 import styled from "styled-components";
 import Image from "next/image";
+import { ProductList } from "@/api/generated/interfaces";
 
 const StyledButton = styled.button`
   width: 55px;
@@ -23,9 +24,17 @@ const StyledButton = styled.button`
   }
 `;
 
-const PlusButton = () => {
+const PlusButton = ({ product }: { product?: ProductList }) => {
+  const handleClick = (e: React.MouseEvent) => {
+    e.stopPropagation(); // Prevent card click navigation
+    if (product) {
+      console.log("🛒 Adding featured product to cart:", product);
+      // Add to cart logic here
+    }
+  };
+
   return (
-    <StyledButton>
+    <StyledButton onClick={handleClick} data-plus-button="true">
       <Image src={"/assets/BlackPlus.svg"} width={28} height={28} alt="plus-icon" />
     </StyledButton>
   );
