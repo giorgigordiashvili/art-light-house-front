@@ -1,3 +1,4 @@
+import React from "react";
 import Image from "next/image";
 import styled from "styled-components";
 import { ProductList } from "@/api/generated/interfaces";
@@ -40,13 +41,14 @@ const AddButton = ({
   product,
   dictionary,
 }: Props & { product: ProductList; dictionary?: any }) => {
-  const handleClick = () => {
+  const handleClick = (e: React.MouseEvent) => {
+    e.stopPropagation(); // Prevent card click navigation
     console.log("🛒 Adding product to cart:", product);
     onClick?.();
   };
 
   return (
-    <StyledAddButton onClick={handleClick}>
+    <StyledAddButton onClick={handleClick} data-add-button="true">
       <Image
         src="/assets/plus.svg"
         alt={dictionary?.products?.addToCartAlt || "დამატება"}

@@ -12,9 +12,12 @@ const StyledComponent = styled.div`
 `;
 
 const MyDetails = ({ dictionary }: { dictionary: any }) => {
+  // This is a placeholder - this screen might need to be updated or separated from ProductDetail
+  const placeholderProductId = 1;
+
   return (
     <StyledComponent>
-      <DetailMain dictionary={dictionary}></DetailMain>
+      <DetailMain dictionary={dictionary} productId={placeholderProductId}></DetailMain>
     </StyledComponent>
   );
 };

@@ -1,4 +1,5 @@
 import styled from "styled-components";
+import { ProductDetail } from "@/api/generated/interfaces";
 
 const Wrapper = styled.div`
   color: white;
@@ -49,15 +50,18 @@ const Description = styled.p`
   }
 `;
 
-const DetailDescription = ({ dictionary }: { dictionary: any }) => {
+const DetailDescription = ({
+  dictionary,
+  product,
+}: {
+  dictionary: any;
+  product: ProductDetail;
+}) => {
   return (
     <Wrapper>
-      <Title>{dictionary?.productDetails?.title || "Blue Star Chandelier"}</Title>
-      <Price>{dictionary?.productDetails?.price || "199,99 ₾"}</Price>
-      <Description>
-        {dictionary?.productDetails?.description ||
-          "This chandelier is designed with a modern aesthetic and perfectly suits any interior style. Its unique shape and blue elements create a special atmosphere in your home. The chandelier is equipped with energy-efficient LED bulbs, ensuring long service life and low energy consumption. Buy now on our website and enrich your space!"}
-      </Description>
+      <Title>{product.title}</Title>
+      <Price>{product.price} ₾</Price>
+      <Description>{product.description}</Description>
     </Wrapper>
   );
 };

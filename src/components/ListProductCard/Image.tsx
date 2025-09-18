@@ -37,16 +37,18 @@ const MobileOnlyIcons = styled.div`
 `;
 
 const LampaImage = ({ product }: { product: ProductList }) => {
-  // Use product image if available, otherwise fallback to default
-  const imageUrl = product.primary_image || Desktoplampa;
-  const mobileImageUrl = product.primary_image || mobilelampa;
+  // Check if we have a valid primary image (not null, undefined, or empty string)
+  const hasValidImage =
+    product.primary_image &&
+    typeof product.primary_image === "string" &&
+    product.primary_image.trim() !== "";
 
   return (
     <StyledLampaImage>
       <MobileOnlyIcons>
-        {product.primary_image ? (
+        {hasValidImage ? (
           <Image
-            src={mobileImageUrl}
+            src={product.primary_image}
             alt={product.title}
             layout="fill"
             objectFit="contain"
@@ -57,8 +59,14 @@ const LampaImage = ({ product }: { product: ProductList }) => {
         )}
       </MobileOnlyIcons>
       <DesktopOnlyIcons>
-        {product.primary_image ? (
-          <Image src={imageUrl} alt={product.title} layout="fill" objectFit="contain" priority />
+        {hasValidImage ? (
+          <Image
+            src={product.primary_image}
+            alt={product.title}
+            layout="fill"
+            objectFit="contain"
+            priority
+          />
         ) : (
           <Image
             src={Desktoplampa}

@@ -1,5 +1,7 @@
 import styled from "styled-components";
+import Image from "next/image";
 import SmallCard from "./SmallCard";
+import { ProductDetail } from "@/api/generated/interfaces";
 
 const StyleBigCard = styled.div`
   /* max-width: 100%; */
@@ -7,6 +9,7 @@ const StyleBigCard = styled.div`
   height: 636px;
   background: #1a1a1a96;
   border-radius: 17px;
+  display: flex;
   align-items: center;
   justify-content: center;
   position: relative;
@@ -19,6 +22,22 @@ const StyleBigCard = styled.div`
     max-width: 100%;
     width: 100%;
     height: 350px;
+  }
+`;
+
+const MainImageWrapper = styled.div`
+  width: 90%;
+  height: 90%;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+    border-radius: 12px;
   }
 `;
 
@@ -36,13 +55,45 @@ const InnerWrapper = styled.div`
   }
 `;
 
-const BigCard = () => {
+const BigCard = ({ product }: { product: ProductDetail }) => {
+  // Get the primary image or first image
+  const primaryImage = product.images.find((img) => img.is_primary) || product.images[0];
+  // Check if we have a valid image URL
+  const hasValidImage =
+    primaryImage &&
+    primaryImage.image &&
+    typeof primaryImage.image === "string" &&
+    primaryImage.image.trim() !== "";
+
   return (
     <StyleBigCard>
+      {hasValidImage ? (
+        <MainImageWrapper>
+          <Image
+            src={primaryImage.image}
+            alt={primaryImage.alt_text || product.title}
+            fill
+            style={{ objectFit: "contain" }}
+          />
+        </MainImageWrapper>
+      ) : (
+        <MainImageWrapper>
+          <div
+            style={{
+              color: "#ffffff40",
+              fontSize: "16px",
+              textAlign: "center",
+            }}
+          >
+            No image available
+          </div>
+        </MainImageWrapper>
+      )}
+
       <InnerWrapper>
-        <SmallCard />
-        <SmallCard />
-        <SmallCard />
+        {product.images.slice(0, 3).map((image) => (
+          <SmallCard key={image.id} image={image} />
+        ))}
       </InnerWrapper>
     </StyleBigCard>
   );

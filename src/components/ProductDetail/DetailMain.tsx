@@ -11,6 +11,7 @@ import Card from "../ListProductCard/Card";
 import LeftCircle from "../ui/LeftCircle";
 import NewCircle from "../ui/NewCircle";
 import Circle from "../ui/Circle";
+import { useProductDetail } from "@/hooks/useProductDetail";
 
 const StyledComponent = styled.div`
   background: black;
@@ -107,7 +108,55 @@ const CardGrid = styled.div`
   }
 `;
 
-function DetailMain({ dictionary }: { dictionary: any }) {
+function DetailMain({ dictionary, productId }: { dictionary: any; productId: number }) {
+  const { product, loading, error } = useProductDetail(productId);
+
+  if (loading) {
+    return (
+      <StyledComponent>
+        <Container>
+          <div
+            style={{
+              color: "#ffffff",
+              textAlign: "center",
+              padding: "40px",
+              fontSize: "16px",
+              minHeight: "50vh",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            Loading product details...
+          </div>
+        </Container>
+      </StyledComponent>
+    );
+  }
+
+  if (error || !product) {
+    return (
+      <StyledComponent>
+        <Container>
+          <div
+            style={{
+              color: "#ff4444",
+              textAlign: "center",
+              padding: "40px",
+              fontSize: "16px",
+              minHeight: "50vh",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            {error || "Product not found"}
+          </div>
+        </Container>
+      </StyledComponent>
+    );
+  }
+
   return (
     <StyledComponent>
       <NewCircle size="small" right="142px" top="1000px" media="yes" />
@@ -118,9 +167,9 @@ function DetailMain({ dictionary }: { dictionary: any }) {
       <Container>
         <MenuBar dictionary={dictionary} />
         <FlexRow>
-          <BigCard />
+          <BigCard product={product} />
           <RightColumn>
-            <DetailDescription dictionary={dictionary} />
+            <DetailDescription dictionary={dictionary} product={product} />
             <ButtonRow>
               <BuyButton dictionary={dictionary} />
               <AddToCartButton dictionary={dictionary} />
