@@ -12,6 +12,7 @@ import LeftCircle from "../ui/LeftCircle";
 import NewCircle from "../ui/NewCircle";
 import Circle from "../ui/Circle";
 import { useProductDetail } from "@/hooks/useProductDetail";
+import { useSimilarProducts } from "@/hooks/useSimilarProducts";
 
 const StyledComponent = styled.div`
   background: black;
@@ -111,6 +112,13 @@ const CardGrid = styled.div`
 function DetailMain({ dictionary, productId }: { dictionary: any; productId: number }) {
   const { product, loading, error } = useProductDetail(productId);
 
+  // Fetch similar products based on the current product's category
+  const {
+    similarProducts,
+    loading: similarLoading,
+    error: similarError,
+  } = useSimilarProducts(product?.category, productId, 4);
+
   if (loading) {
     return (
       <StyledComponent>
@@ -188,50 +196,51 @@ function DetailMain({ dictionary, productId }: { dictionary: any; productId: num
           <p>{dictionary?.productDetails?.similarProducts || "Similar Products"}</p>
         </ProductHeader>
         <CardGrid>
-          <Card
-            product={
-              {
-                id: 1,
-                title: "Sample Product 1",
-                price: 199.99,
-                imageUrl: "/assets/PillarLight.png",
-              } as any
-            }
-            dictionary={dictionary.productDetails}
-          />
-          <Card
-            product={
-              {
-                id: 2,
-                title: "Sample Product 2",
-                price: 299.99,
-                imageUrl: "/assets/PillarLight.png",
-              } as any
-            }
-            dictionary={dictionary.productDetails}
-          />
-          <Card
-            product={
-              {
-                id: 3,
-                title: "Sample Product 3",
-                price: 399.99,
-                imageUrl: "/assets/PillarLight.png",
-              } as any
-            }
-            dictionary={dictionary.productDetails}
-          />
-          <Card
-            product={
-              {
-                id: 4,
-                title: "Sample Product 4",
-                price: 499.99,
-                imageUrl: "/assets/PillarLight.png",
-              } as any
-            }
-            dictionary={dictionary.productDetails}
-          />
+          {similarLoading ? (
+            <div
+              style={{
+                gridColumn: "1 / -1",
+                color: "#ffffff",
+                textAlign: "center",
+                padding: "40px",
+                fontSize: "16px",
+              }}
+            >
+              Loading similar products...
+            </div>
+          ) : similarError ? (
+            <div
+              style={{
+                gridColumn: "1 / -1",
+                color: "#ff4444",
+                textAlign: "center",
+                padding: "40px",
+                fontSize: "16px",
+              }}
+            >
+              Error loading similar products: {similarError}
+            </div>
+          ) : similarProducts.length > 0 ? (
+            similarProducts.map((similarProduct) => (
+              <Card
+                key={similarProduct.id}
+                product={similarProduct}
+                dictionary={dictionary.productDetails}
+              />
+            ))
+          ) : (
+            <div
+              style={{
+                gridColumn: "1 / -1",
+                color: "#ffffff60",
+                textAlign: "center",
+                padding: "40px",
+                fontSize: "16px",
+              }}
+            >
+              No similar products found
+            </div>
+          )}
         </CardGrid>
       </Container>
     </StyledComponent>
