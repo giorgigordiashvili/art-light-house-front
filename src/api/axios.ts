@@ -68,12 +68,28 @@ const createAxiosInstance = (baseURL?: string): AxiosInstance => {
     },
     (error) => {
       if (error.response?.status === 401) {
-        // Handle unauthorized access
+        // Handle unauthorized access - token expired or invalid
         if (typeof window !== "undefined") {
-          localStorage.removeItem("echodesk_auth_token");
-          localStorage.removeItem("echodesk_user_data");
-          localStorage.removeItem("echodesk_tenant_data");
-          window.location.href = "/";
+          console.warn("🔒 Access token expired or invalid - logging out user");
+
+          // Clear all authentication tokens and user data
+          localStorage.removeItem("auth_access_token");
+          localStorage.removeItem("auth_refresh_token");
+          localStorage.removeItem("auth_user");
+
+          // Clear any filter state to avoid issues after logout
+          localStorage.removeItem("artLightHouse_filters");
+
+          // Dispatch a custom event to notify AuthContext about the forced logout
+          const logoutEvent = new CustomEvent("forceLogout", {
+            detail: { reason: "tokenExpired" },
+          });
+          window.dispatchEvent(logoutEvent);
+
+          // Redirect to login/home page
+          if (window.location.pathname !== "/" && !window.location.pathname.startsWith("/auth")) {
+            window.location.href = "/";
+          }
         }
       }
       return Promise.reject(error);

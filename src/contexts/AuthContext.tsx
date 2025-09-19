@@ -50,7 +50,24 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       }
     };
 
+    // Listen for forced logout events from axios interceptor
+    const handleForceLogout = (event: CustomEvent) => {
+      console.warn("🔒 Forced logout triggered:", event.detail?.reason || "unknown");
+      // Clear state immediately when forced logout occurs
+      setToken(null);
+      setUser(null);
+      setIsLoading(false);
+    };
+
     initializeAuth();
+
+    // Add event listener for forced logout
+    window.addEventListener("forceLogout", handleForceLogout as EventListener);
+
+    // Cleanup event listener
+    return () => {
+      window.removeEventListener("forceLogout", handleForceLogout as EventListener);
+    };
   }, []);
 
   const login = async (credentials: UserLoginRequest): Promise<void> => {
