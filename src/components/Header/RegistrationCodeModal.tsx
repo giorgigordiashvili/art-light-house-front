@@ -8,7 +8,7 @@ import InputTitle from "./InputTitle";
 import CloseIcon from "./CloseIcon";
 import ReturnIcon from "./ReturnIcon";
 import AdditionalAction from "./AdditionalAction";
-import { verifyEmail } from "@/api/generated/api";
+import { verifyEmail, resendVerificationCode } from "@/api/generated/api";
 import { useAuth } from "@/contexts/AuthContext";
 
 const StyledContainer = styled.div`
@@ -87,6 +87,9 @@ const RegistrationCodeModal = ({
   const [code, setCode] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
+  const [isResending, setIsResending] = useState(false);
+  const [resendInfo, setResendInfo] = useState("");
+  const [resendError, setResendError] = useState("");
   const { loginWithTokens } = useAuth();
   const handleClickInside = (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -108,6 +111,21 @@ const RegistrationCodeModal = ({
     }
   };
 
+  const handleResend = async () => {
+    if (isResending) return;
+    try {
+      setIsResending(true);
+      setResendInfo("");
+      setResendError("");
+      await resendVerificationCode({ email });
+      setResendInfo("კოდი ხელახლა გაიგზავნა თქვენს ელ.ფოსტაზე");
+    } catch {
+      setResendError("ვერ მოხერხდა კოდის გაგზავნა. ცადეთ თავიდან.");
+    } finally {
+      setIsResending(false);
+    }
+  };
+
   return (
     <StyledContainer onClick={handleClickInside}>
       <StyledCloseIcon onClick={onClose}>
@@ -124,7 +142,7 @@ const RegistrationCodeModal = ({
         />
       </StyledDescription>
       <StyledInput>
-        <InputTitle text="ერჯერადი კოდი" />
+        <InputTitle text="ერთჯერადი კოდი" />
         <ModalInput
           placeholder="ჩაწერე ერთჯერადი კოდი აქ"
           value={code}
@@ -133,8 +151,14 @@ const RegistrationCodeModal = ({
       </StyledInput>
       {error && <div style={{ color: "#ff4d4f", marginTop: 8, textAlign: "center" }}>{error}</div>}
       <StyledAdditionalAction>
-        <AdditionalAction text="თავიდან გაგზავნა" />
+        <AdditionalAction text="თავიდან გაგზავნა" onClick={handleResend} />
       </StyledAdditionalAction>
+      {resendInfo && (
+        <div style={{ color: "#52c41a", marginTop: 8, textAlign: "center" }}>{resendInfo}</div>
+      )}
+      {resendError && (
+        <div style={{ color: "#ff4d4f", marginTop: 8, textAlign: "center" }}>{resendError}</div>
+      )}
       <StyledPrimaryButton>
         <PrimaryButton
           text="დადასტურება"
