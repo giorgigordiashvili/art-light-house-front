@@ -6,7 +6,6 @@ import Line from "./Line";
 import StyleFilter from "./StyleFilter";
 import TypeFilter from "./TypeFilter";
 import PriceFilter from "./PriceFilter";
-import { useFilterContext } from "@/contexts/FilterContext";
 
 const SidebarWrapper = styled.div`
   width: 308px;
@@ -29,56 +28,12 @@ const Title = styled.p`
   color: white;
 `;
 
-const ApplyFiltersButton = styled.button`
-  width: 100%;
-  height: 48px;
-  background: #ffffff;
-  border: none;
-  border-radius: 8px;
-  font-family: "Helvetica", sans-serif;
-  font-weight: 600;
-  font-size: 16px;
-  color: #000000;
-  cursor: pointer;
-  margin-top: auto;
-  margin-bottom: 20px;
-  transition: background-color 0.3s ease;
-
-  &:hover {
-    background: #f0f0f0;
-  }
-
-  &:disabled {
-    background: #666666;
-    color: #999999;
-    cursor: not-allowed;
-  }
-`;
-
 interface FilterSidebarProps {
   dictionary: any;
-  onApplyFilters?: (filters: any) => void;
 }
 
-function FilterSidebar({ dictionary, onApplyFilters }: FilterSidebarProps) {
-  const { filters } = useFilterContext();
-
-  const handleApplyFilters = () => {
-    if (onApplyFilters) {
-      onApplyFilters({
-        categoryIds: filters.selectedCategoryIds,
-        minPrice: filters.minPrice,
-        maxPrice: filters.maxPrice,
-        attributes: filters.selectedAttributes,
-      });
-    }
-  };
-
-  const hasFilters =
-    filters.selectedCategoryIds.length > 0 ||
-    filters.minPrice !== undefined ||
-    filters.maxPrice !== undefined ||
-    filters.selectedAttributes !== undefined;
+function FilterSidebar({ dictionary }: FilterSidebarProps) {
+  // No longer need manual apply button since filtering is immediate
 
   return (
     <SidebarWrapper>
@@ -91,9 +46,6 @@ function FilterSidebar({ dictionary, onApplyFilters }: FilterSidebarProps) {
       <StyleFilter dictionary={dictionary} />
       <Line />
       <TypeFilter dictionary={dictionary} />
-      <ApplyFiltersButton onClick={handleApplyFilters} disabled={!hasFilters}>
-        {dictionary.applyFilters || "Apply Filters"}
-      </ApplyFiltersButton>
     </SidebarWrapper>
   );
 }

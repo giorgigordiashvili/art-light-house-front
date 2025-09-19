@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import FilterSidebar from "@/components/FilterSidebar/FilterSidebar";
 import CardGrid from "@/components/ListProductCard/CardGrid";
 import styled from "styled-components";
@@ -9,6 +9,7 @@ import Container from "@/components/ui/Container";
 import MobileFilterDropdown from "../FilterDropdown/MobileFilterDropdown";
 import PaginationWithArrows from "@/components/PagesButton/PaginationWithArrows";
 import { useProducts } from "@/hooks/useProducts";
+import { useFilterContext } from "@/contexts/FilterContext";
 
 const StyledComponent = styled.div`
   background: black;
@@ -76,6 +77,7 @@ const PaginationWrapper = styled.div`
 
 function ProductsMain({ dictionary }: any) {
   const [isMobileFilterDropdownVisible, setMobileFilterDropdownVisible] = useState(false);
+  const { setOnFilterChange } = useFilterContext();
 
   // Fetch products without automatic filtering - filtering is manual now
   const {
@@ -90,9 +92,24 @@ function ProductsMain({ dictionary }: any) {
     applyFilters,
   } = useProducts();
 
-  const handleApplyFilters = async (filterOptions: any) => {
-    await applyFilters(filterOptions);
-  };
+  // Register immediate filter callback
+  useEffect(() => {
+    const handleImmediateFilter = async (filters: any) => {
+      await applyFilters({
+        categoryIds: filters.selectedCategoryIds,
+        minPrice: filters.minPrice,
+        maxPrice: filters.maxPrice,
+        attributes: filters.selectedAttributes,
+      });
+    };
+
+    setOnFilterChange(handleImmediateFilter);
+
+    // Cleanup on unmount
+    return () => {
+      setOnFilterChange(null);
+    };
+  }, [applyFilters, setOnFilterChange]);
 
   const toggleMobileFilterDropdown = () => {
     setMobileFilterDropdownVisible(!isMobileFilterDropdownVisible);
@@ -154,7 +171,7 @@ function ProductsMain({ dictionary }: any) {
         </SortWrapper>
         <ContentWrapper>
           <OnDesktop>
-            <FilterSidebar dictionary={dictionary.filter} onApplyFilters={handleApplyFilters} />
+            <FilterSidebar dictionary={dictionary.filter} />
           </OnDesktop>
           <div style={{ width: "100%" }}>
             <CardGrid products={products} dictionary={dictionary} />
@@ -175,11 +192,7 @@ function ProductsMain({ dictionary }: any) {
         </ContentWrapper>
 
         {isMobileFilterDropdownVisible && (
-          <MobileFilterDropdown
-            onClose={toggleMobileFilterDropdown}
-            dictionary={dictionary}
-            onApplyFilters={handleApplyFilters}
-          />
+          <MobileFilterDropdown onClose={toggleMobileFilterDropdown} dictionary={dictionary} />
         )}
       </Container>
     </StyledComponent>

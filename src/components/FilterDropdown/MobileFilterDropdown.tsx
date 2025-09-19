@@ -7,7 +7,6 @@ import StyleFilter from "../FilterSidebar/StyleFilter";
 import TypeFilter from "../FilterSidebar/TypeFilter";
 import PriceFilter from "../FilterSidebar/PriceFilter";
 import ButtonFilter from "./ButtonFilter";
-import { useFilterContext } from "@/contexts/FilterContext";
 
 const slideUp = keyframes`
   from {
@@ -82,27 +81,10 @@ const CloseButton = styled.button`
 interface MobileFilterDropdownProps {
   onClose: () => void;
   dictionary: any;
-  onApplyFilters?: (filters: any) => void;
 }
 
-const MobileFilterDropdown: React.FC<MobileFilterDropdownProps> = ({
-  onClose,
-  dictionary,
-  onApplyFilters,
-}) => {
-  const { filters } = useFilterContext();
-
-  const handleApplyFilters = () => {
-    if (onApplyFilters) {
-      onApplyFilters({
-        categoryIds: filters.selectedCategoryIds,
-        minPrice: filters.minPrice,
-        maxPrice: filters.maxPrice,
-        attributes: filters.selectedAttributes,
-      });
-    }
-    onClose(); // Close dropdown after applying filters
-  };
+const MobileFilterDropdown: React.FC<MobileFilterDropdownProps> = ({ onClose, dictionary }) => {
+  // Since filtering is now immediate, the button just closes the dropdown
 
   return (
     <>
@@ -122,7 +104,7 @@ const MobileFilterDropdown: React.FC<MobileFilterDropdownProps> = ({
         </ScrollArea>
 
         <BottomBar>
-          <ButtonFilter onClick={handleApplyFilters} dictionary={dictionary} />
+          <ButtonFilter onClick={onClose} dictionary={dictionary} />
         </BottomBar>
       </DropdownWrapper>
     </>

@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, ReactNode } from "react";
+import React, { createContext, useContext, useState, ReactNode, useRef } from "react";
 
 interface FilterState {
   selectedCategoryIds: number[];
@@ -16,6 +16,7 @@ interface FilterContextType {
   updatePriceFilter: (minPrice?: number, maxPrice?: number) => void;
   updateAttributeFilter: (attributes?: string) => void;
   clearFilters: () => void;
+  setOnFilterChange: (callback: ((filters: FilterState) => void) | null) => void;
 }
 
 const FilterContext = createContext<FilterContextType | undefined>(undefined);
@@ -28,33 +29,46 @@ export const FilterProvider: React.FC<FilterProviderProps> = ({ children }) => {
   const [filters, setFilters] = useState<FilterState>({
     selectedCategoryIds: [],
   });
+  const onFilterChangeRef = useRef<((filters: FilterState) => void) | null>(null);
 
   const updateCategoryFilter = (categoryIds: number[]) => {
-    setFilters((prev) => ({
-      ...prev,
+    const newFilters = {
+      ...filters,
       selectedCategoryIds: categoryIds,
-    }));
+    };
+    setFilters(newFilters);
+    // Trigger immediate filtering when categories change
+    if (onFilterChangeRef.current) {
+      onFilterChangeRef.current(newFilters);
+    }
   };
 
   const updatePriceFilter = (minPrice?: number, maxPrice?: number) => {
-    setFilters((prev) => ({
-      ...prev,
+    const newFilters = {
+      ...filters,
       minPrice,
       maxPrice,
-    }));
+    };
+    setFilters(newFilters);
   };
 
   const updateAttributeFilter = (attributes?: string) => {
-    setFilters((prev) => ({
-      ...prev,
+    const newFilters = {
+      ...filters,
       selectedAttributes: attributes,
-    }));
+    };
+    setFilters(newFilters);
   };
 
   const clearFilters = () => {
-    setFilters({
+    const newFilters = {
       selectedCategoryIds: [],
-    });
+    };
+    setFilters(newFilters);
+  };
+
+  const setOnFilterChange = (callback: ((filters: FilterState) => void) | null) => {
+    onFilterChangeRef.current = callback;
   };
 
   return (
@@ -65,6 +79,7 @@ export const FilterProvider: React.FC<FilterProviderProps> = ({ children }) => {
         updatePriceFilter,
         updateAttributeFilter,
         clearFilters,
+        setOnFilterChange,
       }}
     >
       {children}
