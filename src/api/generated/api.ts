@@ -10,8 +10,6 @@ import type {
   AddressRequest,
   PasswordChangeRequest,
   UserLoginRequest,
-  UserLoginResponse,
-  UserLogoutRequest,
   User,
   PatchedUserUpdateRequest,
   UserRegistrationRequest,
@@ -30,6 +28,8 @@ import type {
   PatchedCartItemRequest,
   Category,
   ProductCreateUpdateRequest,
+  Favorite,
+  AddToFavoritesRequest,
 } from "./interfaces";
 
 export async function addressList(): Promise<Address[]> {
@@ -67,22 +67,13 @@ export async function userChangePassword(
   return response.data;
 }
 
-export async function userLogin(data: UserLoginRequest): Promise<UserLoginResponse> {
+export async function userLogin(data: UserLoginRequest): Promise<Record<string, any>> {
   const response = await axios.post(`/api/auth/login/`, data);
   return response.data;
 }
 
 export async function userLogout(): Promise<Record<string, any>> {
-  const refreshToken =
-    typeof window !== "undefined" ? localStorage.getItem("auth_refresh_token") : null;
-
-  if (!refreshToken) {
-    // If no refresh token, just return success since user is already "logged out"
-    return { message: "Logged out successfully" };
-  }
-
-  const requestData: UserLogoutRequest = { refresh: refreshToken };
-  const response = await axios.post(`/api/auth/logout/`, requestData);
+  const response = await axios.post(`/api/auth/logout/`);
   return response.data;
 }
 
@@ -129,7 +120,7 @@ export async function verifyEmail(data: EmailVerificationRequest): Promise<Recor
 
 export async function productList(
   attributes?: string,
-  category?: number,
+  category?: string,
   inStock?: boolean,
   isFeatured?: boolean,
   maxPrice?: number,
@@ -233,5 +224,25 @@ export async function categoryList(): Promise<Category[]> {
 
 export async function productCreate(data: ProductCreateUpdateRequest): Promise<ProductDetail> {
   const response = await axios.post(`/api/products/create/`, data);
+  return response.data;
+}
+
+export async function favoritesList(): Promise<Favorite[]> {
+  const response = await axios.get(`/api/products/favorites/`);
+  return response.data;
+}
+
+export async function favoritesRemove(productId: number): Promise<Record<string, any>> {
+  const response = await axios.delete(`/api/products/favorites/${productId}/remove/`);
+  return response.data;
+}
+
+export async function favoritesAdd(data: AddToFavoritesRequest): Promise<Favorite> {
+  const response = await axios.post(`/api/products/favorites/add/`, data);
+  return response.data;
+}
+
+export async function favoritesToggle(data: AddToFavoritesRequest): Promise<any> {
+  const response = await axios.post(`/api/products/favorites/toggle/`, data);
   return response.data;
 }

@@ -8,6 +8,10 @@ export interface AddToCartRequest {
   quantity: number;
 }
 
+export interface AddToFavoritesRequest {
+  product_id: number;
+}
+
 export interface Address {
   id: number;
   address_type?: AddressTypeEnum;
@@ -90,6 +94,13 @@ export interface Category {
 export interface EmailVerificationRequest {
   email: string;
   code: string;
+}
+
+export interface Favorite {
+  id: number;
+  product: number;
+  product_details: ProductList;
+  created_at: string;
 }
 
 export interface PasswordChangeRequest {
@@ -212,6 +223,7 @@ export interface ProductDetail {
   is_in_stock: string;
   images: ProductImage[];
   product_attributes: ProductAttribute[];
+  is_favorite: string;
   created_at: string;
   updated_at: string;
 }
@@ -246,6 +258,7 @@ export interface ProductList {
   review_count?: number;
   is_in_stock: string;
   stock_quantity?: number;
+  is_favorite: string;
 }
 
 export interface ProductListRequest {
@@ -277,17 +290,6 @@ export interface User {
 export interface UserLoginRequest {
   email: string;
   password: string;
-}
-
-export interface UserLoginResponse {
-  user: User;
-  refresh: string;
-  access: string;
-  message: string;
-}
-
-export interface UserLogoutRequest {
-  refresh: string;
 }
 
 export interface UserRegistrationRequest {
