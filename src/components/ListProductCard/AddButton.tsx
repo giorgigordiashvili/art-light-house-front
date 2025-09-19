@@ -2,6 +2,7 @@ import React from "react";
 import Image from "next/image";
 import styled from "styled-components";
 import { ProductList } from "@/api/generated/interfaces";
+import { cartAddItem } from "@/api/generated/api";
 
 const StyledAddButton = styled.div`
   position: absolute;
@@ -41,10 +42,16 @@ const AddButton = ({
   product,
   dictionary,
 }: Props & { product: ProductList; dictionary?: any }) => {
-  const handleClick = (e: React.MouseEvent) => {
-    e.stopPropagation(); // Prevent card click navigation
-    console.log("🛒 Adding product to cart:", product);
-    onClick?.();
+  const handleClick = async (e: React.MouseEvent) => {
+    e.stopPropagation();
+    try {
+      const payload = { product_id: product.id, quantity: 1 };
+      const cart = await cartAddItem(payload);
+      console.log("✅ Added to cart:", payload, "→ Cart:", cart);
+      onClick?.();
+    } catch (error) {
+      console.error("❌ Failed to add to cart", error);
+    }
   };
 
   return (

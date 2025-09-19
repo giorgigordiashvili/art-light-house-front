@@ -49,10 +49,7 @@ const createAxiosInstance = (baseURL?: string): AxiosInstance => {
         config.headers.Authorization = `Bearer ${token}`;
       }
 
-      // Add origin header for CORS
-      if (typeof window !== "undefined" && config.headers) {
-        config.headers.Origin = window.location.origin;
-      }
+      // Do not set 'Origin' header manually; browser controls it for CORS
 
       return config;
     },
