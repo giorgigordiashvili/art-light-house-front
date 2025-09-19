@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, ReactNode, useRef } from "react";
+import React, { createContext, useContext, useState, ReactNode, useRef, useEffect } from "react";
 
 interface FilterState {
   selectedCategoryIds: number[];
@@ -25,11 +25,59 @@ interface FilterProviderProps {
   children: ReactNode;
 }
 
+// Helper functions for localStorage
+const FILTER_STORAGE_KEY = "artLightHouse_filters";
+
+const saveFiltersToStorage = (filters: FilterState) => {
+  try {
+    localStorage.setItem(FILTER_STORAGE_KEY, JSON.stringify(filters));
+  } catch (error) {
+    console.warn("Failed to save filters to localStorage:", error);
+  }
+};
+
+const loadFiltersFromStorage = (): FilterState => {
+  try {
+    const stored = localStorage.getItem(FILTER_STORAGE_KEY);
+    if (stored) {
+      const parsed = JSON.parse(stored);
+      return {
+        selectedCategoryIds: parsed.selectedCategoryIds || [],
+        minPrice: parsed.minPrice,
+        maxPrice: parsed.maxPrice,
+        selectedAttributes: parsed.selectedAttributes,
+        inStock: parsed.inStock,
+        search: parsed.search,
+        ordering: parsed.ordering,
+      };
+    }
+  } catch (error) {
+    console.warn("Failed to load filters from localStorage:", error);
+  }
+  return { selectedCategoryIds: [] };
+};
+
 export const FilterProvider: React.FC<FilterProviderProps> = ({ children }) => {
-  const [filters, setFilters] = useState<FilterState>({
-    selectedCategoryIds: [],
-  });
+  const [filters, setFilters] = useState<FilterState>({ selectedCategoryIds: [] });
+  const [isInitialized, setIsInitialized] = useState(false);
   const onFilterChangeRef = useRef<((filters: FilterState) => void) | null>(null);
+
+  // Initialize filters from localStorage on mount
+  useEffect(() => {
+    const storedFilters = loadFiltersFromStorage();
+    setFilters(storedFilters);
+    setIsInitialized(true);
+
+    // If there are stored category filters, trigger filtering after initialization
+    if (storedFilters.selectedCategoryIds.length > 0) {
+      // Use timeout to ensure the callback is registered
+      setTimeout(() => {
+        if (onFilterChangeRef.current) {
+          onFilterChangeRef.current(storedFilters);
+        }
+      }, 100);
+    }
+  }, []);
 
   const updateCategoryFilter = (categoryIds: number[]) => {
     const newFilters = {
@@ -37,6 +85,8 @@ export const FilterProvider: React.FC<FilterProviderProps> = ({ children }) => {
       selectedCategoryIds: categoryIds,
     };
     setFilters(newFilters);
+    saveFiltersToStorage(newFilters);
+
     // Trigger immediate filtering when categories change
     if (onFilterChangeRef.current) {
       onFilterChangeRef.current(newFilters);
@@ -50,6 +100,7 @@ export const FilterProvider: React.FC<FilterProviderProps> = ({ children }) => {
       maxPrice,
     };
     setFilters(newFilters);
+    saveFiltersToStorage(newFilters);
   };
 
   const updateAttributeFilter = (attributes?: string) => {
@@ -58,6 +109,7 @@ export const FilterProvider: React.FC<FilterProviderProps> = ({ children }) => {
       selectedAttributes: attributes,
     };
     setFilters(newFilters);
+    saveFiltersToStorage(newFilters);
   };
 
   const clearFilters = () => {
@@ -65,6 +117,7 @@ export const FilterProvider: React.FC<FilterProviderProps> = ({ children }) => {
       selectedCategoryIds: [],
     };
     setFilters(newFilters);
+    saveFiltersToStorage(newFilters);
   };
 
   const setOnFilterChange = (callback: ((filters: FilterState) => void) | null) => {
