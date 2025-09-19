@@ -67,6 +67,7 @@ const StyledTitle = styled.div`
 
 const StyledAuthToggleButtons = styled.div`
   margin-top: 30px;
+  width: 100%;
 `;
 
 const StyledModalInput = styled.div`
@@ -85,16 +86,17 @@ const StyledPrimaryButton = styled.div<{ $isRegister: boolean }>`
 
 const SocialButtons = styled.div`
   display: flex;
+  justify-content: center;
   gap: 12px;
   margin-top: 16px;
-  justify-content: center;
+  width: 100%;
 `;
 
 const SocialButton = styled.button`
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 224px;
+  width: 100%;
   height: 50px;
   background-color: #2a2a2a;
   border: 1px solid #ffffff12;
@@ -117,6 +119,19 @@ const ErrorMessage = styled.div`
   text-align: left;
 `;
 
+// Grid layout for extra registration fields
+const RegisterGrid = styled.div`
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px 20px;
+  margin-top: 20px;
+  @media (max-width: 1080px) {
+    grid-template-columns: 1fr;
+  }
+`;
+
+const GridItem = styled.div``;
+
 const AuthorizationModal: React.FC<AuthorizationModalProps> = ({
   onClose,
   onRecoverPasswordClick,
@@ -127,6 +142,10 @@ const AuthorizationModal: React.FC<AuthorizationModalProps> = ({
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [birthDate, setBirthDate] = useState("");
+  const [phoneNumber, setPhoneNumber] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
 
@@ -146,6 +165,26 @@ const AuthorizationModal: React.FC<AuthorizationModalProps> = ({
 
   const handleFirstNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFirstName(e.target.value);
+    setError("");
+  };
+
+  const handleLastNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setLastName(e.target.value);
+    setError("");
+  };
+
+  const handleBirthDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setBirthDate(e.target.value);
+    setError("");
+  };
+
+  const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setPhoneNumber(e.target.value);
+    setError("");
+  };
+
+  const handleConfirmPasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setConfirmPassword(e.target.value);
     setError("");
   };
 
@@ -176,10 +215,19 @@ const AuthorizationModal: React.FC<AuthorizationModalProps> = ({
           return;
         }
 
+        if (password !== confirmPassword) {
+          setError(
+            dictionary?.authorizationModal?.passwordConfirmMismatch || "Passwords do not match"
+          );
+          setIsLoading(false);
+          return;
+        }
+
         const result = await signUp?.create({
           emailAddress: email,
           password,
           firstName,
+          lastName: lastName || undefined,
         });
 
         if (result?.status === "complete") {
@@ -296,37 +344,102 @@ const AuthorizationModal: React.FC<AuthorizationModalProps> = ({
           />
         </StyledAuthToggleButtons>
 
-        {activeTab === "register" && (
-          <StyledModalInput>
-            <InputTitle text={dictionary?.authorizationModal?.name} />
-            <ModalInput
-              placeholder={dictionary?.authorizationModal?.namePlaceholder}
-              value={firstName}
-              onChange={handleFirstNameChange}
-            />
-          </StyledModalInput>
+        {activeTab === "register" ? (
+          <>
+            <RegisterGrid>
+              <GridItem>
+                <StyledModalInput>
+                  <InputTitle text={dictionary?.authorizationModal?.name} />
+                  <ModalInput
+                    placeholder={dictionary?.authorizationModal?.namePlaceholder}
+                    value={firstName}
+                    onChange={handleFirstNameChange}
+                  />
+                </StyledModalInput>
+                <StyledModalInput>
+                  <InputTitle text={dictionary?.authorizationModal?.surname} />
+                  <ModalInput
+                    placeholder={dictionary?.authorizationModal?.surnamePlaceholder}
+                    value={lastName}
+                    onChange={handleLastNameChange}
+                  />
+                </StyledModalInput>
+                <StyledModalInput>
+                  <InputTitle text={dictionary?.authorizationModal?.birthDate} />
+                  <ModalInput
+                    placeholder={dictionary?.authorizationModal?.birthDatePlaceholder}
+                    type="date"
+                    value={birthDate}
+                    onChange={handleBirthDateChange}
+                  />
+                </StyledModalInput>
+                <StyledModalInput>
+                  <InputTitle text={dictionary?.authorizationModal?.phoneNumber} />
+                  <ModalInput
+                    placeholder={dictionary?.authorizationModal?.phoneNumberPlaceholder}
+                    type="tel"
+                    value={phoneNumber}
+                    onChange={handlePhoneChange}
+                  />
+                </StyledModalInput>
+              </GridItem>
+              <GridItem>
+                <StyledModalInput>
+                  <InputTitle text={dictionary?.authorizationModal?.email} />
+                  <ModalInput
+                    placeholder={dictionary?.authorizationModal?.emailPlaceholder}
+                    type="email"
+                    value={email}
+                    onChange={handleEmailChange}
+                  />
+                </StyledModalInput>
+                <StyledModalInput>
+                  <InputTitle text={dictionary?.authorizationModal?.password} />
+                  <ModalInput
+                    placeholder={dictionary?.authorizationModal?.passwordPlaceholder}
+                    iconSrc="/assets/eye.svg"
+                    type="password"
+                    value={password}
+                    onChange={handlePasswordChange}
+                  />
+                </StyledModalInput>
+                <StyledModalInput>
+                  <InputTitle text={dictionary?.authorizationModal?.passwordConfirm} />
+                  <ModalInput
+                    placeholder={dictionary?.authorizationModal?.passwordConfirmPlaceholder}
+                    type="password"
+                    iconSrc="/assets/eye.svg"
+                    value={confirmPassword}
+                    onChange={handleConfirmPasswordChange}
+                  />
+                </StyledModalInput>
+              </GridItem>
+            </RegisterGrid>
+          </>
+        ) : (
+          <>
+            <StyledModalInput>
+              <InputTitle text={dictionary?.authorizationModal?.email} />
+              <ModalInput
+                placeholder={dictionary?.authorizationModal?.emailPlaceholder}
+                type="email"
+                value={email}
+                onChange={handleEmailChange}
+              />
+            </StyledModalInput>
+
+            <StyledModalInput>
+              <InputTitle text={dictionary?.authorizationModal?.password} />
+              <ModalInput
+                placeholder={dictionary?.authorizationModal?.passwordPlaceholder}
+                iconSrc="/assets/eye.svg"
+                type="password"
+                value={password}
+                onChange={handlePasswordChange}
+              />
+            </StyledModalInput>
+          </>
         )}
-
-        <StyledModalInput>
-          <InputTitle text={dictionary?.authorizationModal?.email} />
-          <ModalInput
-            placeholder={dictionary?.authorizationModal?.emailPlaceholder}
-            type="email"
-            value={email}
-            onChange={handleEmailChange}
-          />
-        </StyledModalInput>
-
-        <StyledModalInput>
-          <InputTitle text={dictionary?.authorizationModal?.password} />
-          <ModalInput
-            placeholder={dictionary?.authorizationModal?.passwordPlaceholder}
-            iconSrc="/assets/eye.svg"
-            type="password"
-            value={password}
-            onChange={handlePasswordChange}
-          />
-        </StyledModalInput>
 
         {error && <ErrorMessage>{error}</ErrorMessage>}
 
@@ -348,7 +461,7 @@ const AuthorizationModal: React.FC<AuthorizationModalProps> = ({
                 ? dictionary?.authorizationModal?.loginButton
                 : dictionary?.authorizationModal?.registerButton
             }
-            width="460px"
+            width={activeTab === "register" ? "100%" : "460px"}
             height="50px"
             onClick={handleSubmit}
             disabled={isLoading}
