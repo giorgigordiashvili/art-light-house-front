@@ -77,7 +77,7 @@ const PaginationWrapper = styled.div`
 function ProductsMain({ dictionary }: any) {
   const [isMobileFilterDropdownVisible, setMobileFilterDropdownVisible] = useState(false);
 
-  // Fetch products with pagination
+  // Fetch products without automatic filtering - filtering is manual now
   const {
     products,
     loading,
@@ -87,7 +87,12 @@ function ProductsMain({ dictionary }: any) {
     hasNextPage,
     hasPreviousPage,
     fetchPage,
+    applyFilters,
   } = useProducts();
+
+  const handleApplyFilters = async (filterOptions: any) => {
+    await applyFilters(filterOptions);
+  };
 
   const toggleMobileFilterDropdown = () => {
     setMobileFilterDropdownVisible(!isMobileFilterDropdownVisible);
@@ -149,7 +154,7 @@ function ProductsMain({ dictionary }: any) {
         </SortWrapper>
         <ContentWrapper>
           <OnDesktop>
-            <FilterSidebar dictionary={dictionary.filter} />
+            <FilterSidebar dictionary={dictionary.filter} onApplyFilters={handleApplyFilters} />
           </OnDesktop>
           <div style={{ width: "100%" }}>
             <CardGrid products={products} dictionary={dictionary} />
@@ -170,7 +175,11 @@ function ProductsMain({ dictionary }: any) {
         </ContentWrapper>
 
         {isMobileFilterDropdownVisible && (
-          <MobileFilterDropdown onClose={toggleMobileFilterDropdown} dictionary={dictionary} />
+          <MobileFilterDropdown
+            onClose={toggleMobileFilterDropdown}
+            dictionary={dictionary}
+            onApplyFilters={handleApplyFilters}
+          />
         )}
       </Container>
     </StyledComponent>

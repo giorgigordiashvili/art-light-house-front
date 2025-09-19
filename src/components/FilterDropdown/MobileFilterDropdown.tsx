@@ -7,6 +7,7 @@ import StyleFilter from "../FilterSidebar/StyleFilter";
 import TypeFilter from "../FilterSidebar/TypeFilter";
 import PriceFilter from "../FilterSidebar/PriceFilter";
 import ButtonFilter from "./ButtonFilter";
+import { useFilterContext } from "@/contexts/FilterContext";
 
 const slideUp = keyframes`
   from {
@@ -81,9 +82,28 @@ const CloseButton = styled.button`
 interface MobileFilterDropdownProps {
   onClose: () => void;
   dictionary: any;
+  onApplyFilters?: (filters: any) => void;
 }
 
-const MobileFilterDropdown: React.FC<MobileFilterDropdownProps> = ({ onClose, dictionary }) => {
+const MobileFilterDropdown: React.FC<MobileFilterDropdownProps> = ({
+  onClose,
+  dictionary,
+  onApplyFilters,
+}) => {
+  const { filters } = useFilterContext();
+
+  const handleApplyFilters = () => {
+    if (onApplyFilters) {
+      onApplyFilters({
+        categoryIds: filters.selectedCategoryIds,
+        minPrice: filters.minPrice,
+        maxPrice: filters.maxPrice,
+        attributes: filters.selectedAttributes,
+      });
+    }
+    onClose(); // Close dropdown after applying filters
+  };
+
   return (
     <>
       <Overlay onClick={onClose} />
@@ -102,13 +122,7 @@ const MobileFilterDropdown: React.FC<MobileFilterDropdownProps> = ({ onClose, di
         </ScrollArea>
 
         <BottomBar>
-          <ButtonFilter
-            onClick={() => {
-              console.log("გაფილტვრა დააჭირეს");
-              onClose(); // ღილაკზე დაჭერის შემდეგ dropdown იკეტება
-            }}
-            dictionary={dictionary}
-          />
+          <ButtonFilter onClick={handleApplyFilters} dictionary={dictionary} />
         </BottomBar>
       </DropdownWrapper>
     </>
