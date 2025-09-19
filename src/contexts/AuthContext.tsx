@@ -10,6 +10,7 @@ interface AuthContextType {
   isLoading: boolean;
   login: (credentials: UserLoginRequest) => Promise<void>;
   logout: () => Promise<void>;
+  updateUser: (userData: User) => void;
   token: string | null;
 }
 
@@ -112,12 +113,27 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     }
   };
 
+  const updateUser = (userData: User): void => {
+    try {
+      // Update localStorage with new user data
+      localStorage.setItem(USER_KEY, JSON.stringify(userData));
+
+      // Update state
+      setUser(userData);
+
+      console.log("✅ User data updated in AuthContext:", userData);
+    } catch (error) {
+      console.error("Error updating user data:", error);
+    }
+  };
+
   const value: AuthContextType = {
     user,
     isAuthenticated: !!user && !!token,
     isLoading,
     login,
     logout,
+    updateUser,
     token,
   };
 

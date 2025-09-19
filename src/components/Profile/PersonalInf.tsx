@@ -6,6 +6,7 @@ import SaveButton from "@/ProfileButton/Save";
 import Cancel from "@/ProfileButton/Cancel";
 import { User } from "@/api/generated/interfaces";
 import { useProfileUpdate } from "@/hooks/useProfileUpdate";
+import { useAuth } from "@/contexts/AuthContext";
 const StylePersonal = styled.div`
   /* width: 800px; */
   width: 100%;
@@ -106,6 +107,7 @@ const Personal = ({
 }) => {
   const { updateProfile, isUpdating, updateError, updateSuccess, clearUpdateStatus } =
     useProfileUpdate();
+  const { updateUser } = useAuth();
 
   const [formData, setFormData] = useState({
     first_name: "",
@@ -172,6 +174,9 @@ const Personal = ({
     const updatedUser = await updateProfile(updateData);
 
     if (updatedUser) {
+      // Update AuthContext with new user data for immediate UI sync
+      updateUser(updatedUser);
+
       // Update original data to reflect saved state
       const newData = {
         first_name: updatedUser.first_name || "",
