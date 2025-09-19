@@ -383,9 +383,11 @@ const Header = ({ header, dictionary }: HeaderProps) => {
                       setIsUserMenuOpen(false);
                       setIsRecoverPasswordOpen(true);
                     }}
-                    onRegisterSuccess={() => {
+                    onRegisterSuccess={(email?: string) => {
                       setIsUserMenuOpen(false);
                       setIsRegistrationCodeOpen(true);
+                      // Store email temporarily on window for passing to code modal
+                      if (email) (window as any).__reg_email = email;
                     }}
                     dictionary={header}
                   />
@@ -419,6 +421,7 @@ const Header = ({ header, dictionary }: HeaderProps) => {
               setIsRegistrationCodeOpen(false);
               setIsRegistrationSuccessOpen(true);
             }}
+            email={(window as any).__reg_email || ""}
           />
         </>
       )}

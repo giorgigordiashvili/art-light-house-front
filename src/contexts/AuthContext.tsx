@@ -1,7 +1,7 @@
 "use client";
 
 import React, { createContext, useContext, useEffect, useState, ReactNode } from "react";
-import { User, UserLoginRequest, UserLoginResponse } from "@/api/generated/interfaces";
+import { User, UserLoginRequest } from "@/api/generated/interfaces";
 import { userLogin, userLogout } from "@/api/generated/api";
 
 interface AuthContextType {
@@ -12,6 +12,7 @@ interface AuthContextType {
   logout: () => Promise<void>;
   updateUser: (userData: User) => void;
   token: string | null;
+  loginWithTokens: (user: User, access: string, refresh: string) => void;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -74,7 +75,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const login = async (credentials: UserLoginRequest): Promise<void> => {
     setIsLoading(true);
     try {
-      const response: UserLoginResponse = await userLogin(credentials);
+      const response = await userLogin(credentials);
 
       // Store tokens and user data
       localStorage.setItem(TOKEN_KEY, response.access);
@@ -127,6 +128,18 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     }
   };
 
+  const loginWithTokens = (userData: User, access: string, refresh: string): void => {
+    try {
+      localStorage.setItem(TOKEN_KEY, access);
+      localStorage.setItem(REFRESH_KEY, refresh);
+      localStorage.setItem(USER_KEY, JSON.stringify(userData));
+      setToken(access);
+      setUser(userData);
+    } catch (error) {
+      console.error("Error storing tokens after verification:", error);
+    }
+  };
+
   const value: AuthContextType = {
     user,
     isAuthenticated: !!user && !!token,
@@ -135,6 +148,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     logout,
     updateUser,
     token,
+    loginWithTokens,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

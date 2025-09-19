@@ -9,13 +9,14 @@ import InputTitle from "./InputTitle";
 import AdditionalAction from "./AdditionalAction";
 import { useSignIn, useSignUp } from "@clerk/nextjs";
 import { useAuth } from "@/contexts/AuthContext";
-import { UserLoginRequest } from "@/api/generated/interfaces";
+import { UserLoginRequest, UserRegistrationRequest } from "@/api/generated/interfaces";
+import { userRegister } from "@/api/generated/api";
 import Image from "next/image";
 
 interface AuthorizationModalProps {
   onClose: () => void;
   onRecoverPasswordClick?: () => void;
-  onRegisterSuccess?: () => void;
+  onRegisterSuccess?: (email?: string) => void;
   dictionary?: any;
 }
 
@@ -151,7 +152,7 @@ const AuthorizationModal: React.FC<AuthorizationModalProps> = ({
 
   const { login } = useAuth();
   const { isLoaded: isSignInLoaded, signIn } = useSignIn();
-  const { isLoaded: isSignUpLoaded, signUp, setActive: setSignUpActive } = useSignUp();
+  const { isLoaded: isSignUpLoaded, signUp } = useSignUp();
 
   const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setEmail(e.target.value);
@@ -208,7 +209,7 @@ const AuthorizationModal: React.FC<AuthorizationModalProps> = ({
         await login(credentials);
         onClose();
       } else {
-        // Sign Up with Clerk
+        // Sign Up via custom API
         if (!firstName) {
           setError(dictionary?.registrationModal?.alert || "Please enter name");
           setIsLoading(false);
@@ -223,25 +224,20 @@ const AuthorizationModal: React.FC<AuthorizationModalProps> = ({
           return;
         }
 
-        const result = await signUp?.create({
-          emailAddress: email,
+        const payload: UserRegistrationRequest = {
+          email,
+          first_name: firstName,
+          last_name: lastName,
+          phone_number: phoneNumber || undefined,
+          date_of_birth: birthDate || undefined,
           password,
-          firstName,
-          lastName: lastName || undefined,
-        });
+          password_confirm: confirmPassword,
+        };
 
-        if (result?.status === "complete") {
-          if (setSignUpActive) {
-            await setSignUpActive({ session: result.createdSessionId });
-          }
-          onRegisterSuccess?.();
+        const resp = await userRegister(payload);
+        if (resp?.message && resp?.email) {
+          onRegisterSuccess?.(resp.email);
           onClose();
-        } else {
-          // Handle email verification if needed
-          if (result?.status === "missing_requirements") {
-            onRegisterSuccess?.();
-            onClose();
-          }
         }
       }
     } catch (error: any) {
