@@ -129,7 +129,10 @@ const Cart = ({ dictionary }: any) => {
 
   const handleDecrease = async (itemId: number, current: number) => {
     if (!isAuthenticated) return;
-    if (current <= 1) return;
+    if (current <= 1) {
+      await handleRemove(itemId);
+      return;
+    }
     try {
       const updated = await cartUpdateItem(itemId, { quantity: current - 1 });
       setCart(updated);

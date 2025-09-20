@@ -173,7 +173,10 @@ const CartModal = ({ onClose, dictionary }: Props) => {
   };
 
   const handleDecrease = async (itemId: number, current: number) => {
-    if (current <= 1) return;
+    if (current <= 1) {
+      await handleRemove(itemId);
+      return;
+    }
     try {
       const updated = await cartUpdateItem(itemId, { quantity: current - 1 });
       setCart(updated);
