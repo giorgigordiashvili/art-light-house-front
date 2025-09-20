@@ -122,6 +122,14 @@ const Cart = ({ dictionary }: any) => {
     try {
       const updated = await cartUpdateItem(itemId, { quantity: current + 1 });
       setCart(updated);
+      try {
+        const count = updated.items?.reduce((acc, it) => acc + (it.quantity || 0), 0) || 0;
+        if (typeof window !== "undefined") {
+          window.dispatchEvent(
+            new CustomEvent("cartUpdated", { detail: { count, cart: updated } })
+          );
+        }
+      } catch {}
     } catch (e) {
       console.error("Failed to increase quantity", e);
     }
@@ -136,6 +144,14 @@ const Cart = ({ dictionary }: any) => {
     try {
       const updated = await cartUpdateItem(itemId, { quantity: current - 1 });
       setCart(updated);
+      try {
+        const count = updated.items?.reduce((acc, it) => acc + (it.quantity || 0), 0) || 0;
+        if (typeof window !== "undefined") {
+          window.dispatchEvent(
+            new CustomEvent("cartUpdated", { detail: { count, cart: updated } })
+          );
+        }
+      } catch {}
     } catch (e) {
       console.error("Failed to decrease quantity", e);
     }
@@ -146,6 +162,14 @@ const Cart = ({ dictionary }: any) => {
     try {
       const updated = await cartRemoveItem(itemId);
       setCart(updated);
+      try {
+        const count = updated.items?.reduce((acc, it) => acc + (it.quantity || 0), 0) || 0;
+        if (typeof window !== "undefined") {
+          window.dispatchEvent(
+            new CustomEvent("cartUpdated", { detail: { count, cart: updated } })
+          );
+        }
+      } catch {}
     } catch (e) {
       console.error("Failed to remove item", e);
     }

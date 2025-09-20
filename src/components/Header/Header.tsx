@@ -232,6 +232,37 @@ const Header = ({ header, dictionary }: HeaderProps) => {
     };
   }, [isBurgerMenuOpen, isUserMenuOpen, isLanguageSwitcherModalOpen]);
 
+  useEffect(() => {
+    const onCartUpdated = (e: Event) => {
+      try {
+        const detail = (e as CustomEvent).detail as { count?: number };
+        if (typeof detail?.count === "number") {
+          setCartItemCount(detail.count);
+        } else {
+          // fallback: refetch only if token exists
+          const hasToken =
+            typeof window !== "undefined" && !!localStorage.getItem("auth_access_token");
+          if (hasToken) {
+            cartGet()
+              .then((data) => {
+                const count = data.items?.reduce((acc, it) => acc + (it.quantity || 0), 0) || 0;
+                setCartItemCount(count);
+              })
+              .catch(() => {});
+          }
+        }
+      } catch {}
+    };
+    if (typeof window !== "undefined") {
+      window.addEventListener("cartUpdated", onCartUpdated as EventListener);
+    }
+    return () => {
+      if (typeof window !== "undefined") {
+        window.removeEventListener("cartUpdated", onCartUpdated as EventListener);
+      }
+    };
+  }, []);
+
   const { user: clerkUser, isSignedIn } = useUser();
   const { user: customUser, isAuthenticated } = useAuth();
 
