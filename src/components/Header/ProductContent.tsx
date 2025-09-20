@@ -24,13 +24,19 @@ const StyledTextContent = styled.div`
   }
 `;
 
-const ProductContent = ({ dictionary }: any) => {
+type Props = {
+  title?: string;
+  price?: string;
+  dictionary?: any;
+};
+
+const ProductContent = ({ title, price, dictionary }: Props) => {
   return (
     <StyledContainer>
       <ProductImage />
       <StyledTextContent>
-        <ProductTitle text={dictionary?.cart?.cartModal.cardTitle1} />
-        <ProductPrice text={dictionary?.cart?.cartModal.price} />
+        <ProductTitle text={title || dictionary?.cart?.cartModal.cardTitle1} />
+        <ProductPrice text={price || dictionary?.cart?.cartModal.price} />
       </StyledTextContent>
     </StyledContainer>
   );

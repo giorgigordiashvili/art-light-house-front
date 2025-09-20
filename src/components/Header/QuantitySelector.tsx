@@ -1,10 +1,14 @@
-import React, { useState } from "react";
+import React from "react";
 import styled, { css } from "styled-components";
 import DecreaseIcon from "./DecreaseIcon";
 import IncreaseIcon from "./IncreaseIcon";
 
 type Props = {
-  size?: "small" | "large"; // optional, defaults to "small"
+  size?: "small" | "large";
+  quantity?: number;
+  onIncrease?: () => void;
+  onDecrease?: () => void;
+  disabled?: boolean;
 };
 
 const StyledContainer = styled.div<{ size: "small" | "large" }>`
@@ -38,21 +42,33 @@ const StyledQuantity = styled.div`
   font-weight: 500;
 `;
 
-const QuantitySelector = ({ size = "small" }: Props) => {
-  const [quantity, setQuantity] = useState(1);
-
-  const increase = () => setQuantity((prev) => prev + 1);
+const QuantitySelector = ({
+  size = "small",
+  quantity = 1,
+  onIncrease,
+  onDecrease,
+  disabled,
+}: Props) => {
+  const increase = () => {
+    if (!disabled && onIncrease) onIncrease();
+  };
   const decrease = () => {
-    if (quantity > 1) setQuantity((prev) => prev - 1);
+    if (!disabled && onDecrease) onDecrease();
   };
 
   return (
     <StyledContainer size={size}>
-      <div onClick={decrease} style={{ cursor: "pointer" }}>
+      <div
+        onClick={decrease}
+        style={{ cursor: disabled ? "not-allowed" : "pointer", opacity: disabled ? 0.6 : 1 }}
+      >
         <DecreaseIcon color="#FFCB40" opacity={quantity > 1 ? 1 : 0.5} />
       </div>
       <StyledQuantity>{quantity}</StyledQuantity>
-      <div onClick={increase} style={{ cursor: "pointer" }}>
+      <div
+        onClick={increase}
+        style={{ cursor: disabled ? "not-allowed" : "pointer", opacity: disabled ? 0.6 : 1 }}
+      >
         <IncreaseIcon />
       </div>
     </StyledContainer>

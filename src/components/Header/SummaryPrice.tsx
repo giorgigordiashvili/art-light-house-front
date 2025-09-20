@@ -29,11 +29,11 @@ const StyledPrice = styled.p`
   color: #ffffff;
 `;
 
-const SummaryPrice = ({ dictionary }: any) => {
+const SummaryPrice = ({ dictionary, text }: any) => {
   return (
     <StyledContainer>
       <StyledText>{dictionary?.cart?.cartModal.summary}</StyledText>
-      <StyledPrice>{dictionary?.cart?.cartModal.sumPrice}</StyledPrice>
+      <StyledPrice>{text ?? dictionary?.cart?.cartModal.sumPrice}</StyledPrice>
     </StyledContainer>
   );
 };

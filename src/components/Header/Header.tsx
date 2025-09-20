@@ -20,6 +20,7 @@ import LanguageSwitcherModal from "./LanguageSwitcher/LanguageSwitcherModal";
 import { useUser } from "@clerk/nextjs";
 import { useAuth } from "@/contexts/AuthContext";
 import { usePathname, useRouter } from "next/navigation";
+import { cartGet } from "@/api/generated/api";
 import { Locale, i18n } from "@/config/i18n";
 
 const ensureValidLanguage = (lang: string): Locale => {
@@ -138,7 +139,7 @@ const Header = ({ header, dictionary }: HeaderProps) => {
   const pathname = usePathname();
   const router = useRouter();
 
-  const [cartItemCount] = useState<number>(4);
+  const [cartItemCount, setCartItemCount] = useState<number>(0);
   const [isBurgerMenuOpen, setIsBurgerMenuOpen] = useState(false);
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
   const [isRecoverPasswordOpen, setIsRecoverPasswordOpen] = useState(false);
@@ -231,7 +232,6 @@ const Header = ({ header, dictionary }: HeaderProps) => {
     };
   }, [isBurgerMenuOpen, isUserMenuOpen, isLanguageSwitcherModalOpen]);
 
-  const isCartEmpty = cartItemCount === 0;
   const { user: clerkUser, isSignedIn } = useUser();
   const { user: customUser, isAuthenticated } = useAuth();
 
@@ -254,23 +254,66 @@ const Header = ({ header, dictionary }: HeaderProps) => {
     setCartIconColor("#fff");
   };
 
-  const handleCartClick = () => {
-    if (isCartEmpty) {
+  const handleCartClick = async () => {
+    const hasToken = typeof window !== "undefined" && !!localStorage.getItem("auth_access_token");
+    if (!hasToken) {
+      setCartItemCount(0);
       if (isEmptyCartModalOpen) {
         closeEmptyCartModal();
       } else {
         setIsEmptyCartModalOpen(true);
         setCartIconColor("#FFCB40");
       }
-    } else {
-      if (isCartModalOpen) {
-        closeCartModal();
+      return;
+    }
+
+    try {
+      const data = await cartGet();
+      const count = data.items?.reduce((acc, it) => acc + (it.quantity || 0), 0) || 0;
+      setCartItemCount(count);
+      if (count === 0) {
+        if (isEmptyCartModalOpen) {
+          closeEmptyCartModal();
+        } else {
+          setIsEmptyCartModalOpen(true);
+          setCartIconColor("#FFCB40");
+        }
       } else {
-        setIsCartModalOpen(true);
+        if (isCartModalOpen) {
+          closeCartModal();
+        } else {
+          setIsCartModalOpen(true);
+          setCartIconColor("#FFCB40");
+        }
+      }
+    } catch {
+      setCartItemCount(0);
+      if (isEmptyCartModalOpen) {
+        closeEmptyCartModal();
+      } else {
+        setIsEmptyCartModalOpen(true);
         setCartIconColor("#FFCB40");
       }
     }
   };
+
+  useEffect(() => {
+    const loadCart = async () => {
+      const hasToken = typeof window !== "undefined" && !!localStorage.getItem("auth_access_token");
+      if (!hasToken) {
+        setCartItemCount(0);
+        return;
+      }
+      try {
+        const data = await cartGet();
+        const count = data.items?.reduce((acc, it) => acc + (it.quantity || 0), 0) || 0;
+        setCartItemCount(count);
+      } catch {
+        setCartItemCount(0);
+      }
+    };
+    loadCart();
+  }, [isAuthenticated]);
 
   const closeLanguageSwitcherModal = () => {
     setIsLanguageSwitcherModalOpen(false);
@@ -449,11 +492,7 @@ const Header = ({ header, dictionary }: HeaderProps) => {
           <Overlay onClick={closeCartModal} />
           <StyledTestWrapper>
             <StyledTest>
-              <CartModal
-                itemCount={cartItemCount}
-                onClose={closeCartModal}
-                dictionary={dictionary}
-              />{" "}
+              <CartModal onClose={closeCartModal} dictionary={dictionary} />{" "}
             </StyledTest>
           </StyledTestWrapper>
         </>

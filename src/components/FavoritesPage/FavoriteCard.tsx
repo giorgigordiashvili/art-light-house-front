@@ -11,6 +11,12 @@ import CompactButton from "../Buttons/CompactButton";
 type Props = {
   card: "favorite" | "cart";
   dictionary?: any;
+  title?: string;
+  price?: string;
+  quantity?: number;
+  onIncrease?: () => void;
+  onDecrease?: () => void;
+  onRemove?: () => void;
 };
 
 const StyledContainer = styled.div.withConfig({
@@ -123,7 +129,16 @@ const StyledRemoveIconWrapper = styled.div.withConfig({
     `}
 `;
 
-const FavoriteCard = ({ card, dictionary }: Props) => {
+const FavoriteCard = ({
+  card,
+  dictionary,
+  title,
+  price,
+  quantity = 1,
+  onIncrease,
+  onDecrease,
+  onRemove,
+}: Props) => {
   const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
@@ -148,10 +163,17 @@ const FavoriteCard = ({ card, dictionary }: Props) => {
         />
         <StyledText>
           <ProductTitle
-            text={dictionary?.cart?.favorites?.cardTitle || "ლურჯი ვარსკვლავის ჭაღი"}
+            text={
+              card === "cart"
+                ? title || dictionary?.cart?.favorites?.cardTitle || ""
+                : dictionary?.cart?.favorites?.cardTitle || "ლურჯი ვარსკვლავის ჭაღი"
+            }
             size="large"
           />
-          <ProductPrice text={dictionary?.productDetails?.price || "199,99 ₾"} size="large" />
+          <ProductPrice
+            text={card === "cart" ? price || "" : dictionary?.productDetails?.price || "199,99 ₾"}
+            size="large"
+          />
         </StyledText>
       </StyledContent>
 
@@ -180,13 +202,20 @@ const FavoriteCard = ({ card, dictionary }: Props) => {
           </>
         ) : (
           <>
-            <QuantitySelector size="large" />
-            <Image
-              src={isMobile ? "/assets/DeleteIcon.svg" : "/assets/RemoveProduct.svg"}
-              width={isMobile ? 18 : 34}
-              height={isMobile ? 18 : 34}
-              alt="remove-icon"
+            <QuantitySelector
+              size="large"
+              quantity={quantity}
+              onIncrease={onIncrease}
+              onDecrease={onDecrease}
             />
+            <div onClick={onRemove} style={{ cursor: "pointer" }}>
+              <Image
+                src={isMobile ? "/assets/DeleteIcon.svg" : "/assets/RemoveProduct.svg"}
+                width={isMobile ? 18 : 34}
+                height={isMobile ? 18 : 34}
+                alt="remove-icon"
+              />
+            </div>
           </>
         )}
       </StyledActions>
