@@ -61,20 +61,32 @@ export const useProducts = (options: UseProductsOptions = {}): UseProductsResult
           filtersToUse.search
         );
 
+        // Exclude out-of-stock products (stock_quantity === 0). Fallback to is_in_stock when missing.
+        const availableProducts = fetchedProducts.filter((p) => {
+          if (typeof p.stock_quantity === "number") {
+            return p.stock_quantity > 0;
+          }
+          if (typeof p.is_in_stock === "string") {
+            const v = p.is_in_stock.toLowerCase();
+            return v === "true" || v === "1" || v === "yes";
+          }
+          return true; // keep if unknown
+        });
+
         // Client-side pagination
         const startIndex = (page - 1) * PRODUCTS_PER_PAGE;
         const endIndex = startIndex + PRODUCTS_PER_PAGE;
-        const paginatedProducts = fetchedProducts.slice(startIndex, endIndex);
+        const paginatedProducts = availableProducts.slice(startIndex, endIndex);
 
         setProducts(paginatedProducts);
         setCurrentPage(page);
-        setTotalPages(Math.ceil(fetchedProducts.length / PRODUCTS_PER_PAGE));
+        setTotalPages(Math.ceil(availableProducts.length / PRODUCTS_PER_PAGE));
 
         console.log(`✅ Products fetched successfully:`, {
-          total: fetchedProducts.length,
+          total: availableProducts.length,
           page,
           productsOnPage: paginatedProducts.length,
-          totalPages: Math.ceil(fetchedProducts.length / PRODUCTS_PER_PAGE),
+          totalPages: Math.ceil(availableProducts.length / PRODUCTS_PER_PAGE),
         });
       } catch (err: any) {
         console.error("❌ Failed to fetch products:", err);
