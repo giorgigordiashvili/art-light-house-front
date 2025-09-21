@@ -33,31 +33,32 @@ export const useProducts = (options: UseProductsOptions = {}): UseProductsResult
   const [error, setError] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
+  const [activeFilters, setActiveFilters] = useState<UseProductsOptions>(options);
 
   const fetchProducts = useCallback(
-    async (page: number = 1, filterOptions: UseProductsOptions = {}) => {
+    async (page: number = 1, filterOptions?: UseProductsOptions) => {
       try {
         setLoading(true);
         setError(null);
 
-        console.log(`🛒 Fetching products for page ${page} with filters:`, filterOptions);
+        const filtersToUse = filterOptions ?? activeFilters;
 
-        // Use the first selected category for API filtering (API accepts single category)
+        // Build comma-separated category IDs string for API (supports multiple IDs)
         const categoryFilter =
-          filterOptions.categoryIds && filterOptions.categoryIds.length > 0
-            ? filterOptions.categoryIds[0]
+          filtersToUse.categoryIds && filtersToUse.categoryIds.length > 0
+            ? filtersToUse.categoryIds.join(",")
             : undefined;
 
         // Fetch products from API with filters
         const fetchedProducts = await productList(
-          filterOptions.attributes,
+          filtersToUse.attributes,
           categoryFilter,
-          filterOptions.inStock,
+          filtersToUse.inStock,
           undefined, // isFeatured
-          filterOptions.maxPrice,
-          filterOptions.minPrice,
-          filterOptions.ordering,
-          filterOptions.search
+          filtersToUse.maxPrice,
+          filtersToUse.minPrice,
+          filtersToUse.ordering,
+          filtersToUse.search
         );
 
         // Client-side pagination
@@ -82,35 +83,36 @@ export const useProducts = (options: UseProductsOptions = {}): UseProductsResult
         setLoading(false);
       }
     },
-    []
+    [activeFilters]
   );
 
   const fetchPage = useCallback(
     async (page: number) => {
-      await fetchProducts(page, options);
+      await fetchProducts(page, activeFilters);
     },
-    [fetchProducts, options]
+    [fetchProducts, activeFilters]
   );
 
   const refetch = useCallback(async () => {
-    await fetchProducts(1, options);
-  }, [fetchProducts, options]);
+    await fetchProducts(1, activeFilters);
+  }, [fetchProducts, activeFilters]);
 
   // Add method to apply filters manually
   const applyFilters = useCallback(
     async (filterOptions: UseProductsOptions) => {
+      setActiveFilters(filterOptions);
       await fetchProducts(1, filterOptions);
     },
     [fetchProducts]
   );
 
   useEffect(() => {
-    // Only fetch products once on initial mount, without filters
+    // Initial fetch with current active filters (defaults to options)
     const timeoutId = setTimeout(() => {
-      fetchProducts(1, {});
+      fetchProducts(1, activeFilters);
     }, 0);
     return () => clearTimeout(timeoutId);
-  }, [fetchProducts]);
+  }, [fetchProducts, activeFilters]);
 
   return {
     products,
