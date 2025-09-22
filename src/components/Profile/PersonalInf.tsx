@@ -7,6 +7,8 @@ import Cancel from "@/ProfileButton/Cancel";
 import { User } from "@/api/generated/interfaces";
 import { useProfileUpdate } from "@/hooks/useProfileUpdate";
 import { useAuth } from "@/contexts/AuthContext";
+import { userChangePassword } from "@/api/generated/api";
+import type { PasswordChangeRequest } from "@/api/generated/interfaces";
 const StylePersonal = styled.div`
   width: 100%;
   max-width: 800px;
@@ -109,6 +111,9 @@ const Personal = ({
   const { updateProfile, isUpdating, updateError, updateSuccess, clearUpdateStatus } =
     useProfileUpdate();
   const { updateUser } = useAuth();
+  const [passwordChangeLoading, setPasswordChangeLoading] = useState(false);
+  const [passwordChangeError, setPasswordChangeError] = useState<string | null>(null);
+  const [passwordChangeSuccess, setPasswordChangeSuccess] = useState(false);
 
   const [formData, setFormData] = useState({
     first_name: "",
@@ -191,13 +196,41 @@ const Personal = ({
     if (!hasChanges) return;
 
     if (variant === "password") {
-      // Handle password change logic
-      if (passwordData.new_password !== passwordData.confirm_password) {
-        // TODO: Show error message for password mismatch
+      setPasswordChangeError(null);
+      setPasswordChangeSuccess(false);
+      if (
+        !passwordData.old_password ||
+        !passwordData.new_password ||
+        !passwordData.confirm_password
+      ) {
+        setPasswordChangeError(dictionary?.password?.required || "Please fill in all fields");
         return;
       }
-      // TODO: Implement password change API call
-      console.log("Password change:", passwordData);
+      if (passwordData.new_password !== passwordData.confirm_password) {
+        setPasswordChangeError(dictionary?.password?.mismatch || "New passwords do not match");
+        return;
+      }
+      const payload: PasswordChangeRequest = {
+        current_password: passwordData.old_password,
+        new_password: passwordData.new_password,
+        new_password_confirm: passwordData.confirm_password,
+      };
+      try {
+        setPasswordChangeLoading(true);
+        await userChangePassword(payload);
+        setPasswordChangeSuccess(true);
+        // reset fields after success
+        setPasswordData({ old_password: "", new_password: "", confirm_password: "" });
+      } catch (e: any) {
+        const message = e?.response?.data?.detail || e?.message || null;
+        setPasswordChangeError(
+          message ||
+            dictionary?.password?.changeFailed ||
+            "Failed to change password. Please try again."
+        );
+      } finally {
+        setPasswordChangeLoading(false);
+      }
       return;
     }
 
@@ -234,6 +267,8 @@ const Personal = ({
         new_password: "",
         confirm_password: "",
       });
+      setPasswordChangeError(null);
+      setPasswordChangeSuccess(false);
     } else {
       setFormData(originalData);
     }
@@ -264,7 +299,7 @@ const Personal = ({
       </Title>
 
       {/* Success/Error Messages */}
-      {updateSuccess && (
+      {updateSuccess && variant === "data" && (
         <div
           style={{
             padding: "10px",
@@ -279,7 +314,7 @@ const Personal = ({
         </div>
       )}
 
-      {updateError && (
+      {updateError && variant === "data" && (
         <div
           style={{
             padding: "10px",
@@ -291,6 +326,36 @@ const Personal = ({
           }}
         >
           {updateError}
+        </div>
+      )}
+
+      {variant === "password" && passwordChangeSuccess && (
+        <div
+          style={{
+            padding: "10px",
+            backgroundColor: "#4CAF50",
+            color: "white",
+            borderRadius: "5px",
+            marginBottom: "16px",
+            textAlign: "center",
+          }}
+        >
+          {dictionary?.password?.changeSuccess || "Password changed successfully!"}
+        </div>
+      )}
+
+      {variant === "password" && passwordChangeError && (
+        <div
+          style={{
+            padding: "10px",
+            backgroundColor: "#f44336",
+            color: "white",
+            borderRadius: "5px",
+            marginBottom: "16px",
+            textAlign: "center",
+          }}
+        >
+          {passwordChangeError}
         </div>
       )}
 
@@ -378,13 +443,21 @@ const Personal = ({
         <Cancel
           dictionary={dictionary}
           onCancel={handleCancel}
-          disabled={!hasChanges || isUpdating}
+          disabled={
+            variant === "password"
+              ? !hasChanges || passwordChangeLoading
+              : !hasChanges || isUpdating
+          }
         />
         <SaveButton
           dictionary={dictionary}
           onSave={handleSave}
-          disabled={!hasChanges || isUpdating}
-          isLoading={isUpdating}
+          disabled={
+            variant === "password"
+              ? !hasChanges || passwordChangeLoading
+              : !hasChanges || isUpdating
+          }
+          isLoading={variant === "password" ? passwordChangeLoading : isUpdating}
         />
       </ButtonRow>
     </StylePersonal>

@@ -317,7 +317,11 @@
       "confirm": "გაიმეორეთ ახალი პაროლი",
       "placeholderOld": "პაროლი",
       "placeholderNew": "ახალი პაროლი",
-      "placeholderConfirm": "გაიმეორეთ პაროლი"
+      "placeholderConfirm": "გაიმეორეთ პაროლი",
+      "required": "გთხოვთ შეავსოთ ყველა ველი",
+      "mismatch": "ახალი პაროლები არ ემთხვევა",
+      "changeSuccess": "პაროლი წარმატებით შეიცვალა!",
+      "changeFailed": "პაროლის შეცვლა ვერ მოხერხდა. სცადეთ თავიდან."
     }
   },
   "orders": {

@@ -318,7 +318,11 @@
       "confirm": "Repeat New Password",
       "placeholderOld": "Password",
       "placeholderNew": "New Password",
-      "placeholderConfirm": "Repeat Password"
+      "placeholderConfirm": "Repeat Password",
+      "required": "Please fill in all fields",
+      "mismatch": "New passwords do not match",
+      "changeSuccess": "Password changed successfully!",
+      "changeFailed": "Failed to change password. Please try again."
     }
   },
   "orders": {
