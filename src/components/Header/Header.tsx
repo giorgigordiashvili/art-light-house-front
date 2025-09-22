@@ -11,6 +11,7 @@ import BurgerMenu from "./BurgerMenu";
 import UserMenu from "./UserMenu";
 import AuthorizationModal from "./AuthorizationModal";
 import RecoverPasswordModal from "./RecoverPasswordModal";
+import PasswordResetVerifyModal from "./PasswordResetVerifyModal";
 import RegistrationCodeModal from "./RegistrationCodeModal";
 import RegistrationSuccessModal from "./RegistrationSuccessModal";
 import EmptyCartModal from "./EmptyCartModal";
@@ -143,6 +144,8 @@ const Header = ({ header, dictionary }: HeaderProps) => {
   const [isBurgerMenuOpen, setIsBurgerMenuOpen] = useState(false);
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
   const [isRecoverPasswordOpen, setIsRecoverPasswordOpen] = useState(false);
+  const [isPasswordResetVerifyOpen, setIsPasswordResetVerifyOpen] = useState(false);
+  const [passwordResetEmail, setPasswordResetEmail] = useState("");
   const [isRegistrationCodeOpen, setIsRegistrationCodeOpen] = useState(false);
   const [isRegistrationSuccessOpen, setIsRegistrationSuccessOpen] = useState(false);
   const [isEmptyCartModalOpen, setIsEmptyCartModalOpen] = useState(false);
@@ -170,6 +173,8 @@ const Header = ({ header, dictionary }: HeaderProps) => {
     document.body.style.overflow =
       isBurgerMenuOpen ||
       isUserMenuOpen ||
+      isRecoverPasswordOpen ||
+      isPasswordResetVerifyOpen ||
       isEmptyCartModalOpen ||
       isCartModalOpen ||
       isLanguageSwitcherModalOpen
@@ -181,6 +186,8 @@ const Header = ({ header, dictionary }: HeaderProps) => {
   }, [
     isBurgerMenuOpen,
     isUserMenuOpen,
+    isRecoverPasswordOpen,
+    isPasswordResetVerifyOpen,
     isEmptyCartModalOpen,
     isCartModalOpen,
     isLanguageSwitcherModalOpen,
@@ -477,6 +484,26 @@ const Header = ({ header, dictionary }: HeaderProps) => {
           <Overlay onClick={() => setIsRecoverPasswordOpen(false)} />
           <RecoverPasswordModal
             onClose={() => setIsRecoverPasswordOpen(false)}
+            onPasswordResetRequested={(email) => {
+              setPasswordResetEmail(email);
+              setIsRecoverPasswordOpen(false);
+              setIsPasswordResetVerifyOpen(true);
+            }}
+            dictionary={dictionary}
+          />
+        </>
+      )}
+
+      {isPasswordResetVerifyOpen && (
+        <>
+          <Overlay onClick={() => setIsPasswordResetVerifyOpen(false)} />
+          <PasswordResetVerifyModal
+            onClose={() => setIsPasswordResetVerifyOpen(false)}
+            onPasswordResetSuccess={() => {
+              setIsPasswordResetVerifyOpen(false);
+              // Optionally show success message or redirect
+            }}
+            email={passwordResetEmail}
             dictionary={dictionary}
           />
         </>

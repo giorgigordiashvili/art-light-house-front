@@ -63,6 +63,17 @@
       "placeholder1": "Enter email",
       "button1": "Send"
     },
+    "passwordResetVerifyModal": {
+      "title": "Reset Password",
+      "subTitle": "Enter the 6-digit code sent to your email and your new password",
+      "inputTitle1": "Verification Code",
+      "inputTitle2": "New Password",
+      "inputTitle3": "Confirm Password",
+      "placeholder1": "Enter 6-digit code",
+      "placeholder2": "Enter new password",
+      "placeholder3": "Confirm new password",
+      "button1": "Reset Password"
+    },
     "registrationCodeModal": {
       "title": "Registration",
       "subTitle": "A one-time confirmation code has been sent to the specified email “gagi.murjikneli@gmail.com”. Please enter it.",

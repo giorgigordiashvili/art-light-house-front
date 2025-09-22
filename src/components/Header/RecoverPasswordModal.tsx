@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import styled from "styled-components";
 import InputTitle from "./InputTitle";
 import ModalInput from "./ModalInput";
@@ -6,6 +6,8 @@ import CloseIcon from "./CloseIcon";
 import ModalDescription from "./ModalDescription";
 import PrimaryButton from "../Buttons/PrimaryButton";
 import ModalTitle from "./ModalTitle";
+import { requestPasswordReset } from "@/api/generated/api";
+import type { PasswordResetRequestRequest } from "@/api/generated/interfaces";
 
 const StyledOverlayWrapper = styled.div`
   position: fixed;
@@ -72,12 +74,57 @@ const StyledInput = styled.div`
 
 interface RecoverPasswordModalProps {
   onClose: () => void;
+  onPasswordResetRequested: (email: string) => void;
   dictionary: any;
 }
 
-const RecoverPasswordModal = ({ onClose, dictionary }: RecoverPasswordModalProps) => {
+const RecoverPasswordModal = ({
+  onClose,
+  onPasswordResetRequested,
+  dictionary,
+}: RecoverPasswordModalProps) => {
+  const [email, setEmail] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
+
   const handleClickInside = (e: React.MouseEvent) => {
     e.stopPropagation();
+  };
+
+  const handleSubmit = async () => {
+    if (!email.trim()) {
+      setError("Email is required");
+      return;
+    }
+
+    if (!email.includes("@")) {
+      setError("Please enter a valid email address");
+      return;
+    }
+
+    try {
+      setLoading(true);
+      setError("");
+      setSuccess("");
+
+      const requestData: PasswordResetRequestRequest = {
+        email: email.trim(),
+      };
+
+      await requestPasswordReset(requestData);
+      setSuccess("Reset code sent to your email");
+
+      // Wait a moment to show success message then proceed to verification
+      setTimeout(() => {
+        onPasswordResetRequested(email.trim());
+      }, 1500);
+    } catch (err: any) {
+      console.error("Password reset request failed:", err);
+      setError(err?.response?.data?.message || "Failed to send reset code. Please try again.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -103,13 +150,25 @@ const RecoverPasswordModal = ({ onClose, dictionary }: RecoverPasswordModalProps
           <InputTitle text={dictionary?.header?.passwordRecoveryModal?.inputTitle1 || "Email"} />
           <ModalInput
             placeholder={dictionary?.header?.passwordRecoveryModal?.placeholder1 || "Enter email"}
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
           />
+          {error && (
+            <div style={{ color: "#ff4444", fontSize: "14px", marginTop: "8px" }}>{error}</div>
+          )}
+          {success && (
+            <div style={{ color: "#4CAF50", fontSize: "14px", marginTop: "8px" }}>{success}</div>
+          )}
         </StyledInput>
         <StyledPrimaryButton>
           <PrimaryButton
-            text={dictionary?.header?.passwordRecoveryModal?.button1 || "Send"}
+            text={
+              loading ? "Sending..." : dictionary?.header?.passwordRecoveryModal?.button1 || "Send"
+            }
             width="460px"
             height="50px"
+            onClick={handleSubmit}
+            disabled={loading}
           />
         </StyledPrimaryButton>
       </StyledContainer>
