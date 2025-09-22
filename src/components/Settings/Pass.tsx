@@ -88,12 +88,6 @@ const Title = styled.p`
   }
 `;
 
-const Message = styled.p<{ $type: "error" | "success" }>`
-  margin: 8px 0 0 0;
-  color: ${({ $type }) => ($type === "error" ? "#ff6b6b" : "#4caf50")};
-  font-size: 12px;
-`;
-
 const Pass = ({ dictionary }: any) => {
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
@@ -113,11 +107,11 @@ const Pass = ({ dictionary }: any) => {
     setSuccess(null);
 
     if (!currentPassword || !newPassword || !confirmPassword) {
-      setError("Please fill all fields");
+      setError(dictionary?.password?.required || "Please fill in all fields");
       return;
     }
     if (newPassword !== confirmPassword) {
-      setError("New passwords do not match");
+      setError(dictionary?.password?.mismatch || "New passwords do not match");
       return;
     }
 
@@ -130,14 +124,18 @@ const Pass = ({ dictionary }: any) => {
     try {
       setIsLoading(true);
       await userChangePassword(payload);
-      setSuccess("Password changed successfully");
+      setSuccess(dictionary?.password?.changeSuccess || "Password changed successfully!");
       resetForm();
     } catch (e: any) {
       const apiMsg =
         e?.response?.data?.detail ||
         e?.response?.data?.message ||
         (typeof e?.response?.data === "string" ? e.response.data : null);
-      setError(apiMsg || "Failed to change password");
+      setError(
+        apiMsg ||
+          dictionary?.password?.changeFailed ||
+          "Failed to change password. Please try again."
+      );
     } finally {
       setIsLoading(false);
     }
@@ -149,16 +147,41 @@ const Pass = ({ dictionary }: any) => {
     resetForm();
   };
 
-  const isDisabled =
-    isLoading ||
-    !currentPassword ||
-    !newPassword ||
-    !confirmPassword ||
-    newPassword !== confirmPassword;
+  const hasChanges = !!(currentPassword || newPassword || confirmPassword);
+  const isDisabled = isLoading || !hasChanges;
 
   return (
     <StylePass>
       <Title>{dictionary?.title2}</Title>
+      {/* Success/Error Messages */}
+      {success && (
+        <div
+          style={{
+            padding: "10px",
+            backgroundColor: "#4CAF50",
+            color: "white",
+            borderRadius: "5px",
+            marginBottom: "16px",
+            textAlign: "center",
+          }}
+        >
+          {success}
+        </div>
+      )}
+      {error && (
+        <div
+          style={{
+            padding: "10px",
+            backgroundColor: "#f44336",
+            color: "white",
+            borderRadius: "5px",
+            marginBottom: "16px",
+            textAlign: "center",
+          }}
+        >
+          {error}
+        </div>
+      )}
       <InputsWrapper>
         <LeftColumn>
           <InputWithLabel
@@ -185,13 +208,15 @@ const Pass = ({ dictionary }: any) => {
             onChange={setConfirmPassword}
             isPasswordField
           />
-          {error && <Message $type="error">{error}</Message>}
-          {success && <Message $type="success">{success}</Message>}
         </LeftColumn>
       </InputsWrapper>
 
       <ButtonRow>
-        <Cancel dictionary={dictionary} onCancel={handleCancel} disabled={isLoading} />
+        <Cancel
+          dictionary={dictionary}
+          onCancel={handleCancel}
+          disabled={!hasChanges || isLoading}
+        />
         <SaveButton
           dictionary={dictionary}
           onSave={handleSave}
