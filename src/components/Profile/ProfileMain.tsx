@@ -127,6 +127,7 @@ const ContentWrapper = styled.div`
   flex-direction: row;
   width: 100%;
   gap: 20px;
+  margin-bottom: 219px;
 `;
 
 const RightSection = styled.div`
