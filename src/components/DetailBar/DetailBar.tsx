@@ -2,6 +2,8 @@
 import styled from "styled-components";
 import Image from "next/image";
 import { useRouter, usePathname } from "next/navigation";
+import { useClerk } from "@clerk/nextjs";
+import { useAuth } from "@/contexts/AuthContext";
 
 const Container = styled.div`
   width: 472px;
@@ -66,6 +68,8 @@ const IconWrapper = styled.div`
 const DetailBar = ({ dictionary }: any) => {
   const router = useRouter();
   const pathname = usePathname();
+  const { signOut } = useClerk();
+  const { logout, isAuthenticated } = useAuth();
   const parts = (pathname || "/").split("/");
   const currentLocale = parts[1];
   const supportedLocales = ["ge", "en"];
@@ -99,6 +103,20 @@ const DetailBar = ({ dictionary }: any) => {
     },
   ];
 
+  const handleSignOut = async () => {
+    const homePath = localePrefix || "/";
+    try {
+      if (isAuthenticated) {
+        await logout();
+      }
+      await signOut();
+      router.push(homePath);
+    } catch (error) {
+      console.error("Logout error:", error);
+      router.push(homePath);
+    }
+  };
+
   return (
     <Container>
       {menuItems.map(({ label, icon, route }, index) => (
@@ -113,7 +131,7 @@ const DetailBar = ({ dictionary }: any) => {
         </div>
       ))}
       <Divider last />
-      <Item logout>
+      <Item logout onClick={handleSignOut}>
         <IconWrapper>
           <Image
             src="/assets/icons/Logout.svg"
