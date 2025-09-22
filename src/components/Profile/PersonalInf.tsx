@@ -370,6 +370,7 @@ const Personal = ({
                 value={passwordData.old_password}
                 onChange={handlePasswordChange("old_password")}
                 type="password"
+                isPasswordField
               />
               <InputWithLabel
                 icon="/assets/icons/new-password.png"
@@ -378,6 +379,7 @@ const Personal = ({
                 value={passwordData.new_password}
                 onChange={handlePasswordChange("new_password")}
                 type="password"
+                isPasswordField
               />
               <InputWithLabel
                 icon="/assets/icons/confirm-new-password.png"
@@ -386,6 +388,7 @@ const Personal = ({
                 value={passwordData.confirm_password}
                 onChange={handlePasswordChange("confirm_password")}
                 type="password"
+                isPasswordField
               />
             </>
           ) : (

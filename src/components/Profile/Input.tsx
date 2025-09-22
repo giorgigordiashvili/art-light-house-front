@@ -1,6 +1,7 @@
 "use client";
 import styled from "styled-components";
 import Image from "next/image";
+import { useState } from "react";
 
 interface InputWithLabelProps {
   label: string;
@@ -11,6 +12,7 @@ interface InputWithLabelProps {
   onChange?: (value: string) => void;
   type?: string;
   readOnly?: boolean;
+  isPasswordField?: boolean;
 }
 
 const Wrapper = styled.div<{ $gap?: number }>`
@@ -60,6 +62,12 @@ const StyledInput = styled.input`
   }
 `;
 
+const ToggleIcon = styled(Image)`
+  margin-left: 12px;
+  cursor: pointer;
+  flex-shrink: 0;
+`;
+
 const InputWithLabel: React.FC<InputWithLabelProps> = ({
   label,
   placeholder,
@@ -69,12 +77,19 @@ const InputWithLabel: React.FC<InputWithLabelProps> = ({
   onChange,
   type = "text",
   readOnly = false,
+  isPasswordField = false,
 }: InputWithLabelProps) => {
+  const [showPassword, setShowPassword] = useState(false);
+
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (onChange && !readOnly) {
       onChange(e.target.value);
     }
   };
+
+  const effectiveType = isPasswordField ? (showPassword ? "text" : "password") : type;
+  const toggleSrc = showPassword ? "/assets/icons/eye-off.png" : "/assets/eye.svg";
+  const toggleAlt = showPassword ? "Hide password" : "Show password";
 
   return (
     <Wrapper $gap={gap}>
@@ -85,9 +100,19 @@ const InputWithLabel: React.FC<InputWithLabelProps> = ({
           placeholder={placeholder}
           value={value || ""}
           onChange={handleInputChange}
-          type={type}
+          type={effectiveType}
           readOnly={readOnly}
         />
+        {isPasswordField && !readOnly && (
+          <ToggleIcon
+            src={toggleSrc}
+            alt={toggleAlt}
+            width={20}
+            height={20}
+            onClick={() => setShowPassword((prev) => !prev)}
+            title={toggleAlt}
+          />
+        )}
       </InputWrapper>
     </Wrapper>
   );
