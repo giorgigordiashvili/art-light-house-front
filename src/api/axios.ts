@@ -51,6 +51,21 @@ const createAxiosInstance = (baseURL?: string): AxiosInstance => {
 
       // Do not set 'Origin' header manually; browser controls it for CORS
 
+      // Set Accept-Language header based on current route locale
+      try {
+        let lang = "ka";
+        if (typeof window !== "undefined") {
+          const seg = (window.location.pathname.split("/")[1] || "").toLowerCase();
+          if (seg === "en") lang = "en";
+          else lang = "ka"; // 'ge' route maps to 'ka' for backend
+        }
+        if (config.headers) {
+          (config.headers as any)["Accept-Language"] = lang;
+        }
+      } catch {
+        // noop
+      }
+
       return config;
     },
     (error) => {
