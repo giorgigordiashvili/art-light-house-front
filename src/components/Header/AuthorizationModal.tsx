@@ -393,8 +393,7 @@ const AuthorizationModal: React.FC<AuthorizationModalProps> = ({
                   <InputTitle text={dictionary?.authorizationModal?.password} />
                   <ModalInput
                     placeholder={dictionary?.authorizationModal?.passwordPlaceholder}
-                    iconSrc="/assets/eye.svg"
-                    type="password"
+                    isPasswordField={true}
                     value={password}
                     onChange={handlePasswordChange}
                   />
@@ -403,8 +402,7 @@ const AuthorizationModal: React.FC<AuthorizationModalProps> = ({
                   <InputTitle text={dictionary?.authorizationModal?.passwordConfirm} />
                   <ModalInput
                     placeholder={dictionary?.authorizationModal?.passwordConfirmPlaceholder}
-                    type="password"
-                    iconSrc="/assets/eye.svg"
+                    isPasswordField={true}
                     value={confirmPassword}
                     onChange={handleConfirmPasswordChange}
                   />
@@ -418,7 +416,6 @@ const AuthorizationModal: React.FC<AuthorizationModalProps> = ({
               <InputTitle text={dictionary?.authorizationModal?.email} />
               <ModalInput
                 placeholder={dictionary?.authorizationModal?.emailPlaceholder}
-                type="email"
                 value={email}
                 onChange={handleEmailChange}
               />
@@ -428,8 +425,7 @@ const AuthorizationModal: React.FC<AuthorizationModalProps> = ({
               <InputTitle text={dictionary?.authorizationModal?.password} />
               <ModalInput
                 placeholder={dictionary?.authorizationModal?.passwordPlaceholder}
-                iconSrc="/assets/eye.svg"
-                type="password"
+                isPasswordField={true}
                 value={password}
                 onChange={handlePasswordChange}
               />

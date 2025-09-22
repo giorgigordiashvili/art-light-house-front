@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import styled from "styled-components";
 import Image from "next/image";
 
@@ -42,6 +42,7 @@ const StyledIconWrapper = styled.div`
   transform: translateY(-50%);
   display: flex;
   align-items: center;
+  cursor: pointer;
 `;
 
 type Props = {
@@ -53,6 +54,7 @@ type Props = {
   onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
   value?: string;
   name?: string;
+  isPasswordField?: boolean;
 };
 
 const ModalInput = ({
@@ -64,15 +66,43 @@ const ModalInput = ({
   onChange,
   value,
   name,
+  isPasswordField = false,
 }: Props) => {
-  const hasIcon = Boolean(iconSrc);
+  const [showPassword, setShowPassword] = useState(false);
+
+  // Determine the actual input type based on password visibility and provided type
+  let inputType = type;
+  if (isPasswordField) {
+    inputType = showPassword ? "text" : "password";
+  }
+
+  // Determine which icon to show for password fields
+  const displayIcon = isPasswordField
+    ? showPassword
+      ? "/assets/icons/eye-off.png"
+      : "/assets/eye.svg"
+    : iconSrc;
+
+  const hasIcon = Boolean(displayIcon);
+
+  const handleIconClick = () => {
+    if (isPasswordField) {
+      setShowPassword(!showPassword);
+    }
+  };
 
   return (
     <StyledContainer $hasIcon={hasIcon}>
-      <input type={type} placeholder={placeholder} onChange={onChange} value={value} name={name} />
-      {iconSrc && (
-        <StyledIconWrapper>
-          <Image src={iconSrc} alt={iconAlt} width={iconSize} height={iconSize} />
+      <input
+        type={inputType}
+        placeholder={placeholder}
+        onChange={onChange}
+        value={value}
+        name={name}
+      />
+      {displayIcon && (
+        <StyledIconWrapper onClick={handleIconClick}>
+          <Image src={displayIcon} alt={iconAlt} width={iconSize} height={iconSize} />
         </StyledIconWrapper>
       )}
     </StyledContainer>

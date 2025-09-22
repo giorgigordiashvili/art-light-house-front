@@ -206,7 +206,7 @@ const PasswordResetVerifyModal = ({
             text={dictionary?.header?.passwordResetVerifyModal?.inputTitle2 || "New Password"}
           />
           <ModalInput
-            type="password"
+            isPasswordField={true}
             placeholder={
               dictionary?.header?.passwordResetVerifyModal?.placeholder2 || "Enter new password"
             }
@@ -220,7 +220,7 @@ const PasswordResetVerifyModal = ({
             text={dictionary?.header?.passwordResetVerifyModal?.inputTitle3 || "Confirm Password"}
           />
           <ModalInput
-            type="password"
+            isPasswordField={true}
             placeholder={
               dictionary?.header?.passwordResetVerifyModal?.placeholder3 || "Confirm new password"
             }
