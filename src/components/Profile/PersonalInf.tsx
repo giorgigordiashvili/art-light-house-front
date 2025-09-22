@@ -8,9 +8,8 @@ import { User } from "@/api/generated/interfaces";
 import { useProfileUpdate } from "@/hooks/useProfileUpdate";
 import { useAuth } from "@/contexts/AuthContext";
 const StylePersonal = styled.div`
-  /* width: 800px; */
   width: 100%;
-  max-width: 100%;
+  max-width: 800px;
   min-height: 544px;
   padding: 24px;
   background: #1a1a1a96;
@@ -100,10 +99,12 @@ const Personal = ({
   dictionary,
   profileData,
   isLoading,
+  variant = "data",
 }: {
   dictionary: any;
   profileData: User | null;
   isLoading: boolean;
+  variant?: "data" | "password";
 }) => {
   const { updateProfile, isUpdating, updateError, updateSuccess, clearUpdateStatus } =
     useProfileUpdate();
@@ -125,6 +126,13 @@ const Personal = ({
     date_of_birth: "",
   });
 
+  // Password form state
+  const [passwordData, setPasswordData] = useState({
+    old_password: "",
+    new_password: "",
+    confirm_password: "",
+  });
+
   // Update form data when profile data is loaded
   useEffect(() => {
     if (profileData) {
@@ -142,13 +150,20 @@ const Personal = ({
 
   // Check if form has been modified
   const hasChanges = useMemo(() => {
+    if (variant === "password") {
+      return (
+        passwordData.old_password !== "" ||
+        passwordData.new_password !== "" ||
+        passwordData.confirm_password !== ""
+      );
+    }
     return (
       formData.first_name !== originalData.first_name ||
       formData.last_name !== originalData.last_name ||
       formData.phone_number !== originalData.phone_number ||
       formData.date_of_birth !== originalData.date_of_birth
     );
-  }, [formData, originalData]);
+  }, [variant, formData, originalData, passwordData]);
 
   const handleInputChange = (field: keyof typeof formData) => (value: string) => {
     setFormData((prev) => ({
@@ -161,8 +176,30 @@ const Personal = ({
     }
   };
 
+  const handlePasswordChange = (field: keyof typeof passwordData) => (value: string) => {
+    setPasswordData((prev) => ({
+      ...prev,
+      [field]: value,
+    }));
+    // Clear any previous error/success messages when user starts editing
+    if (updateError || updateSuccess) {
+      clearUpdateStatus();
+    }
+  };
+
   const handleSave = async () => {
     if (!hasChanges) return;
+
+    if (variant === "password") {
+      // Handle password change logic
+      if (passwordData.new_password !== passwordData.confirm_password) {
+        // TODO: Show error message for password mismatch
+        return;
+      }
+      // TODO: Implement password change API call
+      console.log("Password change:", passwordData);
+      return;
+    }
 
     const updateData = {
       first_name: formData.first_name,
@@ -191,16 +228,28 @@ const Personal = ({
   };
 
   const handleCancel = () => {
-    setFormData(originalData);
+    if (variant === "password") {
+      setPasswordData({
+        old_password: "",
+        new_password: "",
+        confirm_password: "",
+      });
+    } else {
+      setFormData(originalData);
+    }
     clearUpdateStatus();
   };
 
   if (isLoading) {
     return (
       <StylePersonal>
-        <Title>{dictionary?.profileBarTitle || "Personal information"}</Title>
+        <Title>
+          {variant === "password"
+            ? dictionary?.password?.title || "Change Password"
+            : dictionary?.profileBarTitle || "Personal information"}
+        </Title>
         <div style={{ padding: "20px", textAlign: "center", color: "#777" }}>
-          Loading profile data...
+          {dictionary?.loading || "Loading profile data..."}
         </div>
       </StylePersonal>
     );
@@ -208,7 +257,11 @@ const Personal = ({
 
   return (
     <StylePersonal>
-      <Title>{dictionary?.profileBarTitle || "Personal information"}</Title>
+      <Title>
+        {variant === "password"
+          ? dictionary?.password?.title || "Change Password"
+          : dictionary?.profileBarTitle || "Personal information"}
+      </Title>
 
       {/* Success/Error Messages */}
       {updateSuccess && (
@@ -222,7 +275,7 @@ const Personal = ({
             textAlign: "center",
           }}
         >
-          Profile updated successfully!
+          {dictionary?.updateSuccess || "Profile updated successfully!"}
         </div>
       )}
 
@@ -243,49 +296,82 @@ const Personal = ({
 
       <InputsWrapper>
         <LeftColumn>
-          <InputWithLabel
-            label={dictionary?.inputTitle1 || "Name"}
-            placeholder={dictionary?.placeholder1 || "Name"}
-            value={formData.first_name}
-            onChange={handleInputChange("first_name")}
-            gap={12}
-          />
-          <InputWithLabel
-            icon="/assets/icons/Field Icon.svg"
-            label={dictionary?.inputTitle3 || "Date of birth"}
-            placeholder={dictionary?.placeholder3 || "Enter date"}
-            value={formData.date_of_birth}
-            onChange={handleInputChange("date_of_birth")}
-            type="date"
-          />
-          <InputWithLabel
-            icon="/assets/icons/gmail.svg"
-            label={dictionary?.inputTitle5 || "Email"}
-            placeholder={dictionary?.placeholder5 || "yourmail@gmail.com"}
-            value={formData.email}
-            onChange={handleInputChange("email")}
-            type="email"
-            readOnly
-          />
+          {variant === "password" ? (
+            <>
+              <InputWithLabel
+                icon="/assets/icons/old-password.png"
+                label={dictionary?.password?.old || "Old Password"}
+                placeholder={dictionary?.password?.placeholderOld || "Password"}
+                value={passwordData.old_password}
+                onChange={handlePasswordChange("old_password")}
+                type="password"
+              />
+              <InputWithLabel
+                icon="/assets/icons/new-password.png"
+                label={dictionary?.password?.new || "Enter New Password"}
+                placeholder={dictionary?.password?.placeholderNew || "New Password"}
+                value={passwordData.new_password}
+                onChange={handlePasswordChange("new_password")}
+                type="password"
+              />
+              <InputWithLabel
+                icon="/assets/icons/confirm-new-password.png"
+                label={dictionary?.password?.confirm || "Repeat New Password"}
+                placeholder={dictionary?.password?.placeholderConfirm || "Repeat Password"}
+                value={passwordData.confirm_password}
+                onChange={handlePasswordChange("confirm_password")}
+                type="password"
+              />
+            </>
+          ) : (
+            <>
+              <InputWithLabel
+                label={dictionary?.inputTitle1 || "Name"}
+                placeholder={dictionary?.placeholder1 || "Name"}
+                value={formData.first_name}
+                onChange={handleInputChange("first_name")}
+                gap={12}
+              />
+              <InputWithLabel
+                icon="/assets/icons/Field Icon.svg"
+                label={dictionary?.inputTitle3 || "Date of birth"}
+                placeholder={dictionary?.placeholder3 || "Enter date"}
+                value={formData.date_of_birth}
+                onChange={handleInputChange("date_of_birth")}
+                type="date"
+              />
+              <InputWithLabel
+                icon="/assets/icons/gmail.svg"
+                label={dictionary?.inputTitle5 || "Email"}
+                placeholder={dictionary?.placeholder5 || "yourmail@gmail.com"}
+                value={formData.email}
+                onChange={handleInputChange("email")}
+                type="email"
+                readOnly
+              />
+            </>
+          )}
         </LeftColumn>
 
-        <RightColumn>
-          <InputWithLabel
-            label={dictionary?.inputTitle2 || "Last name"}
-            placeholder={dictionary?.placeholder2 || "Last name"}
-            value={formData.last_name}
-            onChange={handleInputChange("last_name")}
-            gap={12}
-          />
-          <InputWithLabel
-            icon="/assets/icons/phone icon.svg"
-            label={dictionary?.inputTitle4 || "Phone number"}
-            placeholder={dictionary?.placeholder4 || "Enter phone number"}
-            value={formData.phone_number}
-            onChange={handleInputChange("phone_number")}
-            type="tel"
-          />
-        </RightColumn>
+        {variant === "data" && (
+          <RightColumn>
+            <InputWithLabel
+              label={dictionary?.inputTitle2 || "Last name"}
+              placeholder={dictionary?.placeholder2 || "Last name"}
+              value={formData.last_name}
+              onChange={handleInputChange("last_name")}
+              gap={12}
+            />
+            <InputWithLabel
+              icon="/assets/icons/phone icon.svg"
+              label={dictionary?.inputTitle4 || "Phone number"}
+              placeholder={dictionary?.placeholder4 || "Enter phone number"}
+              value={formData.phone_number}
+              onChange={handleInputChange("phone_number")}
+              type="tel"
+            />
+          </RightColumn>
+        )}
       </InputsWrapper>
 
       <ButtonRow>

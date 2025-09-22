@@ -307,7 +307,18 @@
     "placeholder4": "შეიყვანეთ ტელეფონის ნომერი",
     "placeholder5": "Yourmail@gmail.com",
     "button1": "გაუქმება",
-    "button2": "შენახვა"
+    "button2": "შენახვა",
+    "loading": "პროფილის მონაცემები იტვირთება...",
+    "updateSuccess": "პროფილი წარმატებით განახლდა!",
+    "password": {
+      "title": "პაროლის ცვლილება",
+      "old": "ძველი პაროლი",
+      "new": "შეიყვანეთ ახალი პაროლი",
+      "confirm": "გაიმეორეთ ახალი პაროლი",
+      "placeholderOld": "პაროლი",
+      "placeholderNew": "ახალი პაროლი",
+      "placeholderConfirm": "გაიმეორეთ პაროლი"
+    }
   },
   "orders": {
     "title": "ჩემი შეკვეთები",

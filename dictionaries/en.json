@@ -308,7 +308,18 @@
     "placeholder4": "Enter phone number",
     "placeholder5": "Yourmail@gmail.com",
     "button1": "Cancel",
-    "button2": "Save"
+    "button2": "Save",
+    "loading": "Loading profile data...",
+    "updateSuccess": "Profile updated successfully!",
+    "password": {
+      "title": "Change Password",
+      "old": "Old Password",
+      "new": "Enter New Password",
+      "confirm": "Repeat New Password",
+      "placeholderOld": "Password",
+      "placeholderNew": "New Password",
+      "placeholderConfirm": "Repeat Password"
+    }
   },
   "orders": {
     "title": "My orders",

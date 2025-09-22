@@ -97,6 +97,8 @@ const StyledComponent = styled.div`
 const Container = styled.div`
   width: 100%;
   max-width: 1292px;
+  @media (max-width: 1332px) {
+  }
 
   @media (max-width: 1080px) {
     max-width: 100%;
@@ -105,8 +107,6 @@ const Container = styled.div`
 `;
 
 const DesktopWrapper = styled.div`
-  padding: 20px;
-
   @media (max-width: 1080px) {
     display: none;
   }
@@ -126,7 +126,7 @@ const ContentWrapper = styled.div`
   display: flex;
   flex-direction: row;
   width: 100%;
-  gap: 24px;
+  gap: 20px;
 `;
 
 const RightSection = styled.div`
@@ -187,6 +187,13 @@ const MyDetails = ({ dictionary }: any) => {
                 dictionary={dictionary?.profile}
                 profileData={profileData}
                 isLoading={isLoading}
+                variant="data"
+              />
+              <Personal
+                dictionary={dictionary?.profile}
+                profileData={profileData}
+                isLoading={isLoading}
+                variant="password"
               />
             </RightSection>
           </ContentWrapper>
@@ -203,6 +210,7 @@ const MyDetails = ({ dictionary }: any) => {
               dictionary={dictionary?.profile}
               profileData={profileData}
               isLoading={isLoading}
+              variant="data"
             />
           </RightSection>
         </MobileWrapper>
