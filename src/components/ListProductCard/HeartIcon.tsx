@@ -1,35 +1,46 @@
 "use client";
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import Image from "next/image";
-import { favoritesAdd } from "@/api/generated/api";
+import { favoritesAdd, favoritesList } from "@/api/generated/api";
 import type { AddToFavoritesRequest } from "@/api/generated/interfaces";
 
 type Props = {
-  productId: number;
+  productId?: number;
   defaultIsFavorite?: boolean | string;
+  size?: number;
 };
 
-const HeartIcon = ({ productId, defaultIsFavorite }: Props) => {
-  const initial = useMemo(() => {
-    if (typeof defaultIsFavorite === "string") {
-      const v = defaultIsFavorite.trim().toLowerCase();
-      return v === "true" || v === "1" || v === "yes";
+const HeartIcon = ({ productId, defaultIsFavorite, size = 44 }: Props) => {
+  const initialFilled = useMemo(() => {
+    if (productId != null) {
+      if (typeof defaultIsFavorite === "string") {
+        const v = defaultIsFavorite.trim().toLowerCase();
+        return v === "true" || v === "1" || v === "yes";
+      }
+      return Boolean(defaultIsFavorite);
     }
-    return Boolean(defaultIsFavorite);
-  }, [defaultIsFavorite]);
+    return false; // header mode initializes as not filled; will fetch below
+  }, [productId, defaultIsFavorite]);
 
-  const [isFavorite, setIsFavorite] = useState<boolean>(initial);
+  const [isFilled, setIsFilled] = useState<boolean>(initialFilled);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleClick = async (e: React.MouseEvent) => {
     e.stopPropagation();
-    if (isSubmitting || isFavorite) return;
+    // Header mode: no productId -> do nothing on click
+    if (productId == null) return;
+    if (isSubmitting || isFilled) return;
 
     try {
       setIsSubmitting(true);
       const payload: AddToFavoritesRequest = { product_id: productId };
       await favoritesAdd(payload);
-      setIsFavorite(true);
+      setIsFilled(true);
+      try {
+        if (typeof window !== "undefined") {
+          window.dispatchEvent(new CustomEvent("favoritesUpdated", { detail: { hasAny: true } }));
+        }
+      } catch {}
     } catch (err) {
       console.error("Failed to add to favorites", err);
     } finally {
@@ -37,12 +48,54 @@ const HeartIcon = ({ productId, defaultIsFavorite }: Props) => {
     }
   };
 
-  const src = isFavorite ? "/assets/icons/filled-heart.png" : "/assets/icons/heart.png";
-  const alt = isFavorite ? "favorite" : "add to favorites";
+  // Header mode: keep icon in sync with favorites list and updates
+  useEffect(() => {
+    if (productId != null) return; // only header mode
+    let isMounted = true;
+
+    const syncFavorites = async () => {
+      try {
+        const list = await favoritesList();
+        if (isMounted) setIsFilled(Array.isArray(list) && list.length > 0);
+      } catch {
+        if (isMounted) setIsFilled(false);
+      }
+    };
+
+    const onFavoritesUpdated = (e: Event) => {
+      try {
+        const detail = (e as CustomEvent).detail as { hasAny?: boolean; count?: number };
+        if (typeof detail?.hasAny === "boolean") {
+          setIsFilled(detail.hasAny);
+        } else if (typeof detail?.count === "number") {
+          setIsFilled(detail.count > 0);
+        } else {
+          // fallback: re-fetch
+          syncFavorites();
+        }
+      } catch {
+        syncFavorites();
+      }
+    };
+
+    syncFavorites();
+    if (typeof window !== "undefined") {
+      window.addEventListener("favoritesUpdated", onFavoritesUpdated as EventListener);
+    }
+    return () => {
+      isMounted = false;
+      if (typeof window !== "undefined") {
+        window.removeEventListener("favoritesUpdated", onFavoritesUpdated as EventListener);
+      }
+    };
+  }, [productId]);
+
+  const src = isFilled ? "/assets/icons/filled-heart.png" : "/assets/icons/heart.png";
+  const alt = isFilled ? "favorite" : "add to favorites";
 
   return (
     <span onClick={handleClick} data-heart-button="true" style={{ display: "inline-flex" }}>
-      <Image src={src} alt={alt} width={44} height={44} />
+      <Image src={src} alt={alt} width={size} height={size} />
     </span>
   );
 };
