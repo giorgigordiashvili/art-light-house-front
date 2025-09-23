@@ -12,9 +12,9 @@ import {
   CheckboxLabel,
   ErrorMessage,
   HelperText,
-} from "@/components/Admin/ui/Form";
-import { Button } from "@/components/Admin/ui/Button";
-import { Card, CardHeader, CardContent } from "@/components/Admin/ui/Card";
+} from "@/components/NewAdmin/ui/Form";
+import { Button } from "@/components/NewAdmin/ui/Button";
+import { Card, CardHeader, CardContent } from "@/components/NewAdmin/ui/Card";
 
 interface FormData {
   name: string;

@@ -1,11 +1,11 @@
 "use client";
 import { useState } from "react";
-import AdminLayout from "@/components/Admin/layout/AdminLayout";
-import { Card, CardContent } from "@/components/Admin/ui/Card";
-import { Button, ButtonGroup } from "@/components/Admin/ui/Button";
-import { Input, Select } from "@/components/Admin/ui/Form";
-import ProductsTable from "@/components/Admin/products/ProductsTable";
-import ProductForm from "@/components/Admin/products/ProductForm";
+import AdminLayout from "@/components/NewAdmin/layout/AdminLayout";
+import { Card, CardContent } from "@/components/NewAdmin/ui/Card";
+import { Button, ButtonGroup } from "@/components/NewAdmin/ui/Button";
+import { Input, Select } from "@/components/NewAdmin/ui/Form";
+import ProductsTable from "@/components/NewAdmin/products/ProductsTable";
+import ProductForm from "@/components/NewAdmin/products/ProductForm";
 import styled from "styled-components";
 
 const PageHeader = styled.div`

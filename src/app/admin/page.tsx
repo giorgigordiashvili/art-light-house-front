@@ -1,6 +1,6 @@
 "use client";
-import AdminLayout from "@/components/Admin/layout/AdminLayout";
-import { Card, CardHeader, CardContent } from "@/components/Admin/ui/Card";
+import AdminLayout from "@/components/NewAdmin/layout/AdminLayout";
+import { Card, CardHeader, CardContent } from "@/components/NewAdmin/ui/Card";
 import styled from "styled-components";
 
 const StatsGrid = styled.div`

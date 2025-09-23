@@ -9,8 +9,8 @@ import {
   TableActions,
   EmptyState,
   LoadingSpinner,
-} from "@/components/Admin/ui/Table";
-import { Button } from "@/components/Admin/ui/Button";
+} from "@/components/NewAdmin/ui/Table";
+import { Button } from "@/components/NewAdmin/ui/Button";
 import styled from "styled-components";
 
 const CategoryHierarchy = styled.div`
