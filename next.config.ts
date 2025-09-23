@@ -26,6 +26,11 @@ const nextConfig: NextConfig = {
         hostname: "cdn.clerk.app",
         pathname: "**",
       },
+      {
+        protocol: "https",
+        hostname: "testapi.artlighthouse.ge",
+        pathname: "**",
+      },
     ],
   },
 };
