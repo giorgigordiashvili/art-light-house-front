@@ -110,8 +110,13 @@ const HeartIcon = ({ productId, defaultIsFavorite, size = 30 }: Props) => {
   const src = isFilled ? "/assets/icons/filled-heart.png" : "/assets/icons/heart.png";
   const alt = isFilled ? "favorite" : "add to favorites";
 
+  const isCardMode = productId != null;
   return (
-    <span onClick={handleClick} data-heart-button="true" style={{ display: "inline-flex" }}>
+    <span
+      onClick={isCardMode ? handleClick : undefined}
+      data-heart-button={isCardMode ? "true" : undefined}
+      style={{ display: "inline-flex" }}
+    >
       <Image src={src} alt={alt} width={size} height={size} />
     </span>
   );

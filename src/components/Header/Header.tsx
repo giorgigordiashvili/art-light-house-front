@@ -17,6 +17,7 @@ import RegistrationCodeModal from "./RegistrationCodeModal";
 import RegistrationSuccessModal from "./RegistrationSuccessModal";
 import EmptyCartModal from "./EmptyCartModal";
 import CartModal from "./CartModal";
+import FavoritesModal from "./FavoritesModal";
 import LanguageSwitcher from "./LanguageSwitcher/LanguageSwitcher";
 import LanguageSwitcherModal from "./LanguageSwitcher/LanguageSwitcherModal";
 import { useUser } from "@clerk/nextjs";
@@ -151,6 +152,7 @@ const Header = ({ header, dictionary }: HeaderProps) => {
   const [isRegistrationSuccessOpen, setIsRegistrationSuccessOpen] = useState(false);
   const [isEmptyCartModalOpen, setIsEmptyCartModalOpen] = useState(false);
   const [isCartModalOpen, setIsCartModalOpen] = useState(false);
+  const [isFavoritesModalOpen, setIsFavoritesModalOpen] = useState(false);
   const [cartIconColor, setCartIconColor] = useState("#fff");
   const [isLanguageSwitcherModalOpen, setIsLanguageSwitcherModalOpen] = useState(false);
   const [selectedLanguage, setSelectedLanguage] = useState<"ge" | "en">(
@@ -178,6 +180,7 @@ const Header = ({ header, dictionary }: HeaderProps) => {
       isPasswordResetVerifyOpen ||
       isEmptyCartModalOpen ||
       isCartModalOpen ||
+      isFavoritesModalOpen ||
       isLanguageSwitcherModalOpen
         ? "hidden"
         : "visible";
@@ -191,6 +194,7 @@ const Header = ({ header, dictionary }: HeaderProps) => {
     isPasswordResetVerifyOpen,
     isEmptyCartModalOpen,
     isCartModalOpen,
+    isFavoritesModalOpen,
     isLanguageSwitcherModalOpen,
   ]);
 
@@ -291,6 +295,10 @@ const Header = ({ header, dictionary }: HeaderProps) => {
   const closeCartModal = () => {
     setIsCartModalOpen(false);
     setCartIconColor("#fff");
+  };
+
+  const closeFavoritesModal = () => {
+    setIsFavoritesModalOpen(false);
   };
 
   const handleCartClick = async () => {
@@ -395,7 +403,16 @@ const Header = ({ header, dictionary }: HeaderProps) => {
                   onClick={handleCartClick}
                   color={cartIconColor}
                 />
-                <HeartIcon />
+                <div
+                  onClick={() => {
+                    setIsFavoritesModalOpen((prev) => !prev);
+                    closeEmptyCartModal();
+                    closeCartModal();
+                    closeLanguageSwitcherModal();
+                  }}
+                >
+                  <HeartIcon />
+                </div>
                 <ResponsiveGapWrapper>
                   <div ref={authButtonRef}>
                     <AuthorizationButton
@@ -553,6 +570,17 @@ const Header = ({ header, dictionary }: HeaderProps) => {
           <StyledTestWrapper>
             <StyledTest>
               <CartModal onClose={closeCartModal} dictionary={dictionary} />{" "}
+            </StyledTest>
+          </StyledTestWrapper>
+        </>
+      )}
+
+      {isFavoritesModalOpen && (
+        <>
+          <Overlay onClick={closeFavoritesModal} />
+          <StyledTestWrapper>
+            <StyledTest>
+              <FavoritesModal onClose={closeFavoritesModal} dictionary={dictionary} />
             </StyledTest>
           </StyledTestWrapper>
         </>
