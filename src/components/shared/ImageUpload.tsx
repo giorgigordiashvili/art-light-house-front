@@ -223,7 +223,7 @@ const ImageUpload = ({
     if (disabled) return;
 
     try {
-      // Delete from ImageKit
+      // Delete from server
       await fetch(`/api/upload/image?fileId=${image.fileId}`, {
         method: "DELETE",
       });
