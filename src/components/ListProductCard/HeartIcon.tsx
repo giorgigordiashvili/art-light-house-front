@@ -10,7 +10,7 @@ type Props = {
   size?: number;
 };
 
-const HeartIcon = ({ productId, defaultIsFavorite, size = 44 }: Props) => {
+const HeartIcon = ({ productId, defaultIsFavorite, size = 30 }: Props) => {
   const initialFilled = useMemo(() => {
     if (productId != null) {
       if (typeof defaultIsFavorite === "string") {
