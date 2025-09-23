@@ -32,10 +32,12 @@ const DesktopOnlyIcons = styled.div`
   }
 `;
 
+const CurrentYear = new Date().getFullYear();
+
 function FooterBottom() {
   return (
     <BottomWrapper>
-      <Copyright>© 2025. All rights reserved.</Copyright>
+      <Copyright>© {CurrentYear}. All rights reserved.</Copyright>
       <DesktopOnlyIcons>
         <FooterIcons />
       </DesktopOnlyIcons>

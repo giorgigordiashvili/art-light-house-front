@@ -1,6 +1,8 @@
 "use client";
 import styled from "styled-components";
 import Image from "next/image";
+import { useRouter, usePathname } from "next/navigation";
+import { useAuth } from "@/contexts/AuthContext";
 
 const Container = styled.div`
   width: 472px;
@@ -35,6 +37,7 @@ const Item = styled.div.withConfig({
   color: ${({ logout }) => (logout ? "#FF4D4F" : "#edededcc")};
   &:hover {
     background: linear-gradient(90deg, #f7cb57 0%, #ffd700 100%);
+    background-clip: text;
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     filter: brightness(0) saturate(100%) invert(67%) sepia(81%) saturate(360%) hue-rotate(5deg)
@@ -62,20 +65,61 @@ const IconWrapper = styled.div`
 `;
 
 const DetailBar = ({ dictionary }: any) => {
+  const router = useRouter();
+  const pathname = usePathname();
+  const { logout, isAuthenticated } = useAuth();
+  const parts = (pathname || "/").split("/");
+  const currentLocale = parts[1];
+  const supportedLocales = ["ge", "en"];
+  const localePrefix = supportedLocales.includes(currentLocale) ? `/${currentLocale}` : "";
+
   const menuItems = [
-    { label: dictionary?.detailBar1 || "My details", icon: "/assets/icons/Details.svg" },
-    { label: dictionary?.detailBar2 || "My addresses", icon: "/assets/icons/misamarti.svg" },
-    { label: dictionary?.detailBar3 || "My orders", icon: "/assets/icons/Shekvetebi.svg" },
-    { label: dictionary?.detailBar4 || "Payment methods", icon: "/assets/icons/gadaxda.svg" },
-    { label: dictionary?.detailBar5 || "Settings", icon: "/assets/icons/settings.svg" },
+    {
+      label: dictionary?.detailBar1 || "My details",
+      icon: "/assets/icons/Details.svg",
+      route: "/profile",
+    },
+    {
+      label: dictionary?.detailBar2 || "My addresses",
+      icon: "/assets/icons/misamarti.svg",
+      route: "/address",
+    },
+    {
+      label: dictionary?.detailBar3 || "My orders",
+      icon: "/assets/icons/Shekvetebi.svg",
+      route: "/orders",
+    },
+    {
+      label: dictionary?.detailBar4 || "Payment methods",
+      icon: "/assets/icons/gadaxda.svg",
+      route: "/checkout",
+    },
+    {
+      label: dictionary?.detailBar5 || "Settings",
+      icon: "/assets/icons/settings.svg",
+      route: "/settings",
+    },
   ];
+
+  const handleSignOut = async () => {
+    const homePath = localePrefix || "/";
+    try {
+      if (isAuthenticated) {
+        await logout();
+      }
+      router.push(homePath);
+    } catch (error) {
+      console.error("Logout error:", error);
+      router.push(homePath);
+    }
+  };
 
   return (
     <Container>
-      {menuItems.map(({ label, icon }, index) => (
+      {menuItems.map(({ label, icon, route }, index) => (
         <div key={label}>
           {index !== 0 && <Divider />}
-          <Item>
+          <Item onClick={() => router.push(`${localePrefix}${route}`)}>
             <IconWrapper>
               <Image src={icon} alt={label} width={24} height={24} />
             </IconWrapper>
@@ -84,7 +128,7 @@ const DetailBar = ({ dictionary }: any) => {
         </div>
       ))}
       <Divider last />
-      <Item logout>
+      <Item logout onClick={handleSignOut}>
         <IconWrapper>
           <Image
             src="/assets/icons/Logout.svg"

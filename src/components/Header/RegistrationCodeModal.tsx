@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import styled from "styled-components";
 import PrimaryButton from "../Buttons/PrimaryButton";
 import ModalInput from "./ModalInput";
@@ -8,6 +8,8 @@ import InputTitle from "./InputTitle";
 import CloseIcon from "./CloseIcon";
 import ReturnIcon from "./ReturnIcon";
 import AdditionalAction from "./AdditionalAction";
+import { verifyEmail, resendVerificationCode } from "@/api/generated/api";
+import { useAuth } from "@/contexts/AuthContext";
 
 const StyledContainer = styled.div`
   padding: 30px 24px 24px 24px;
@@ -75,13 +77,53 @@ const RegistrationCodeModal = ({
   onClose,
   onReturn,
   onConfirm,
+  email,
 }: {
   onClose: () => void;
   onReturn: () => void;
   onConfirm: () => void;
+  email: string;
 }) => {
+  const [code, setCode] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState("");
+  const [isResending, setIsResending] = useState(false);
+  const [resendInfo, setResendInfo] = useState("");
+  const [resendError, setResendError] = useState("");
+  const { loginWithTokens } = useAuth();
   const handleClickInside = (e: React.MouseEvent) => {
     e.stopPropagation();
+  };
+
+  const handleVerify = async () => {
+    try {
+      setIsLoading(true);
+      setError("");
+      const resp = await verifyEmail({ email, code });
+      if (resp?.access && resp?.refresh && resp?.user) {
+        loginWithTokens(resp.user, resp.access, resp.refresh);
+        onConfirm();
+      }
+    } catch {
+      setError("Invalid or expired code. Please try again.");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleResend = async () => {
+    if (isResending) return;
+    try {
+      setIsResending(true);
+      setResendInfo("");
+      setResendError("");
+      await resendVerificationCode({ email });
+      setResendInfo("კოდი ხელახლა გაიგზავნა თქვენს ელ.ფოსტაზე");
+    } catch {
+      setResendError("ვერ მოხერხდა კოდის გაგზავნა. ცადეთ თავიდან.");
+    } finally {
+      setIsResending(false);
+    }
   };
 
   return (
@@ -96,18 +138,35 @@ const RegistrationCodeModal = ({
       <StyledDescription>
         <ModalDescription
           variant="alt"
-          text="მითიტებულ ელ.ფოსტაზე “gagi.murjikneli@gmail.com” გაიგზავნა ერთჯერადი დადასტურების კოდი. გთხოვთ შეიყვანოთ."
+          text={`მითიტებულ ელ.ფოსტაზე “${email}” გაიგზავნა ერთჯერადი დადასტურების კოდი. გთხოვთ შეიყვანოთ.`}
         />
       </StyledDescription>
       <StyledInput>
-        <InputTitle text="ერჯერადი კოდი" />
-        <ModalInput placeholder="ჩაწერე ერთჯერადი კოდი აქ" />
+        <InputTitle text="ერთჯერადი კოდი" />
+        <ModalInput
+          placeholder="ჩაწერე ერთჯერადი კოდი აქ"
+          value={code}
+          onChange={(e) => setCode(e.target.value)}
+        />
       </StyledInput>
+      {error && <div style={{ color: "#ff4d4f", marginTop: 8, textAlign: "center" }}>{error}</div>}
       <StyledAdditionalAction>
-        <AdditionalAction text="თავიდან გაგზავნა" />
+        <AdditionalAction text="თავიდან გაგზავნა" onClick={handleResend} />
       </StyledAdditionalAction>
+      {resendInfo && (
+        <div style={{ color: "#52c41a", marginTop: 8, textAlign: "center" }}>{resendInfo}</div>
+      )}
+      {resendError && (
+        <div style={{ color: "#ff4d4f", marginTop: 8, textAlign: "center" }}>{resendError}</div>
+      )}
       <StyledPrimaryButton>
-        <PrimaryButton text="დადასტურება" width="460px" height="50px" onClick={onConfirm} />
+        <PrimaryButton
+          text="დადასტურება"
+          width="460px"
+          height="50px"
+          onClick={handleVerify}
+          disabled={isLoading}
+        />
       </StyledPrimaryButton>
     </StyledContainer>
   );

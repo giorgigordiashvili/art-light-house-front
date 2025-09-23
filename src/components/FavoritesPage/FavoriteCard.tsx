@@ -11,6 +11,13 @@ import CompactButton from "../Buttons/CompactButton";
 type Props = {
   card: "favorite" | "cart";
   dictionary?: any;
+  title?: string;
+  price?: string;
+  imageSrc?: string;
+  quantity?: number;
+  onIncrease?: () => void;
+  onDecrease?: () => void;
+  onRemove?: () => void;
 };
 
 const StyledContainer = styled.div.withConfig({
@@ -123,7 +130,17 @@ const StyledRemoveIconWrapper = styled.div.withConfig({
     `}
 `;
 
-const FavoriteCard = ({ card, dictionary }: Props) => {
+const FavoriteCard = ({
+  card,
+  dictionary,
+  title,
+  price,
+  imageSrc,
+  quantity = 1,
+  onIncrease,
+  onDecrease,
+  onRemove,
+}: Props) => {
   const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
@@ -141,17 +158,20 @@ const FavoriteCard = ({ card, dictionary }: Props) => {
     <StyledContainer cardType={card}>
       <StyledContent cardType={card}>
         <Image
-          src={"/assets/ProductImageContainer.svg"}
+          src={imageSrc || "/assets/ProductImageContainer.svg"}
           width={120}
           height={120}
           alt={dictionary?.cart?.favorites?.imageAlt || "პროდუქტის სურათი"}
         />
         <StyledText>
           <ProductTitle
-            text={dictionary?.cart?.favorites?.cardTitle || "ლურჯი ვარსკვლავის ჭაღი"}
+            text={title || dictionary?.cart?.favorites?.cardTitle || "ლურჯი ვარსკვლავის ჭაღი"}
             size="large"
           />
-          <ProductPrice text={dictionary?.productDetails?.price || "199,99 ₾"} size="large" />
+          <ProductPrice
+            text={price || dictionary?.productDetails?.price || "199,99 ₾"}
+            size="large"
+          />
         </StyledText>
       </StyledContent>
 
@@ -169,7 +189,7 @@ const FavoriteCard = ({ card, dictionary }: Props) => {
                 card={true}
               />
             )}
-            <StyledRemoveIconWrapper cardType={card}>
+            <StyledRemoveIconWrapper cardType={card} onClick={onRemove}>
               <Image
                 src={isMobile ? "/assets/DeleteIcon.svg" : "/assets/RemoveProduct.svg"}
                 width={isMobile ? 18 : 34}
@@ -180,13 +200,20 @@ const FavoriteCard = ({ card, dictionary }: Props) => {
           </>
         ) : (
           <>
-            <QuantitySelector size="large" />
-            <Image
-              src={isMobile ? "/assets/DeleteIcon.svg" : "/assets/RemoveProduct.svg"}
-              width={isMobile ? 18 : 34}
-              height={isMobile ? 18 : 34}
-              alt="remove-icon"
+            <QuantitySelector
+              size="large"
+              quantity={quantity}
+              onIncrease={onIncrease}
+              onDecrease={onDecrease}
             />
+            <div onClick={onRemove} style={{ cursor: "pointer" }}>
+              <Image
+                src={isMobile ? "/assets/DeleteIcon.svg" : "/assets/RemoveProduct.svg"}
+                width={isMobile ? 18 : 34}
+                height={isMobile ? 18 : 34}
+                alt="remove-icon"
+              />
+            </div>
           </>
         )}
       </StyledActions>

@@ -7,14 +7,12 @@ const StyledContainer = styled.div`
   background-color: #131313;
   padding: 5px;
   border-radius: 12px;
-  width: fit-content;
-  @media (max-width: 1080px) {
-    width: auto;
-  }
+  width: 100%;
 `;
 
 const ToggleButton = styled.button<{ $active: boolean }>`
-  width: 219px;
+  flex: 1 1 0;
+  width: 100%;
   height: 47px;
   padding: 10px 24px;
   border: none;

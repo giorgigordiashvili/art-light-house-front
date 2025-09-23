@@ -1,5 +1,6 @@
 import styled from "styled-components";
 import Card from "./Card";
+import { ProductList } from "@/api/generated/interfaces";
 
 const GridWrapper = styled.div`
   display: grid;
@@ -28,21 +29,21 @@ const MobileOnly = styled.div`
   }
 `;
 
-const CardGrid = ({ dictionary }: any) => {
+const CardGrid = ({ products, dictionary }: { products: ProductList[]; dictionary: any }) => {
   return (
     <>
       <DesktopOnly>
         <GridWrapper>
-          {Array.from({ length: 11 }).map((_, i) => (
-            <Card key={i} dictionary={dictionary} />
+          {products.map((product) => (
+            <Card key={product.id} product={product} dictionary={dictionary} />
           ))}
         </GridWrapper>
       </DesktopOnly>
 
       <MobileOnly>
         <GridWrapper>
-          {Array.from({ length: 6 }).map((_, i) => (
-            <Card key={i} dictionary={dictionary} />
+          {products.map((product) => (
+            <Card key={product.id} product={product} dictionary={dictionary} />
           ))}
         </GridWrapper>
       </MobileOnly>

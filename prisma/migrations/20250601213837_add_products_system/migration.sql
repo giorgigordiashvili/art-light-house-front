@@ -1,2 +1,0 @@
--- This migration was created for the products system but is now handled by the dynamic attributes migration
--- Placeholder migration to maintain migration history

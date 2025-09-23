@@ -1,7 +1,11 @@
+"use client";
 import styled from "styled-components";
+import { useState } from "react";
 import InputWithLabel from "../Profile/Input";
 import SaveButton from "@/ProfileButton/Save";
 import Cancel from "@/ProfileButton/Cancel";
+import { userChangePassword } from "@/api/generated/api";
+import type { PasswordChangeRequest } from "@/api/generated/interfaces";
 const StylePass = styled.div`
   /* width: 800px; */
   width: 100%;
@@ -85,32 +89,140 @@ const Title = styled.p`
 `;
 
 const Pass = ({ dictionary }: any) => {
+  const [currentPassword, setCurrentPassword] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState<string | null>(null);
+
+  const resetForm = () => {
+    setCurrentPassword("");
+    setNewPassword("");
+    setConfirmPassword("");
+  };
+
+  const handleSave = async () => {
+    setError(null);
+    setSuccess(null);
+
+    if (!currentPassword || !newPassword || !confirmPassword) {
+      setError(dictionary?.password?.required || "Please fill in all fields");
+      return;
+    }
+    if (newPassword !== confirmPassword) {
+      setError(dictionary?.password?.mismatch || "New passwords do not match");
+      return;
+    }
+
+    const payload: PasswordChangeRequest = {
+      current_password: currentPassword,
+      new_password: newPassword,
+      new_password_confirm: confirmPassword,
+    };
+
+    try {
+      setIsLoading(true);
+      await userChangePassword(payload);
+      setSuccess(dictionary?.password?.changeSuccess || "Password changed successfully!");
+      resetForm();
+    } catch (e: any) {
+      const apiMsg =
+        e?.response?.data?.detail ||
+        e?.response?.data?.message ||
+        (typeof e?.response?.data === "string" ? e.response.data : null);
+      setError(
+        apiMsg ||
+          dictionary?.password?.changeFailed ||
+          "Failed to change password. Please try again."
+      );
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleCancel = () => {
+    setError(null);
+    setSuccess(null);
+    resetForm();
+  };
+
+  const hasChanges = !!(currentPassword || newPassword || confirmPassword);
+  const isDisabled = isLoading || !hasChanges;
+
   return (
     <StylePass>
       <Title>{dictionary?.title2}</Title>
+      {/* Success/Error Messages */}
+      {success && (
+        <div
+          style={{
+            padding: "10px",
+            backgroundColor: "#4CAF50",
+            color: "white",
+            borderRadius: "5px",
+            marginBottom: "16px",
+            textAlign: "center",
+          }}
+        >
+          {success}
+        </div>
+      )}
+      {error && (
+        <div
+          style={{
+            padding: "10px",
+            backgroundColor: "#f44336",
+            color: "white",
+            borderRadius: "5px",
+            marginBottom: "16px",
+            textAlign: "center",
+          }}
+        >
+          {error}
+        </div>
+      )}
       <InputsWrapper>
         <LeftColumn>
           <InputWithLabel
             icon="/assets/icons/pass1.svg"
             label={dictionary?.subTitle1}
             placeholder={dictionary?.placeHolder1}
+            value={currentPassword}
+            onChange={setCurrentPassword}
+            isPasswordField
           />
           <InputWithLabel
             icon="/assets/icons/pass2.svg"
             label={dictionary?.subTitle2}
             placeholder={dictionary?.placeHolder2}
+            value={newPassword}
+            onChange={setNewPassword}
+            isPasswordField
           />
           <InputWithLabel
             icon="/assets/icons/pass2.svg"
             label={dictionary?.subTitle3}
             placeholder={dictionary?.placeHolder3}
+            value={confirmPassword}
+            onChange={setConfirmPassword}
+            isPasswordField
           />
         </LeftColumn>
       </InputsWrapper>
 
       <ButtonRow>
-        <Cancel dictionary={dictionary} />
-        <SaveButton dictionary={dictionary} />
+        <Cancel
+          dictionary={dictionary}
+          onCancel={handleCancel}
+          disabled={!hasChanges || isLoading}
+        />
+        <SaveButton
+          dictionary={dictionary}
+          onSave={handleSave}
+          disabled={isDisabled}
+          isLoading={isLoading}
+        />
       </ButtonRow>
     </StylePass>
   );

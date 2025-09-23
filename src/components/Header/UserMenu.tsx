@@ -1,7 +1,7 @@
 import React from "react";
 import UserMenuItem from "./UserMenuItem";
 import styled from "styled-components";
-import { useClerk } from "@clerk/nextjs";
+import { useAuth } from "@/contexts/AuthContext";
 import { useRouter } from "next/navigation";
 
 const StyledContainer = styled.div`
@@ -68,13 +68,23 @@ interface UserMenuProps {
 }
 
 const UserMenu = ({ closeModal, dictionary }: UserMenuProps) => {
-  const { signOut } = useClerk();
+  const { logout, isAuthenticated } = useAuth();
   const router = useRouter();
 
   const handleSignOut = async () => {
-    await signOut();
-    if (closeModal) closeModal();
-    router.push("/");
+    try {
+      if (isAuthenticated) {
+        await logout();
+      }
+
+      if (closeModal) closeModal();
+      router.push("/");
+    } catch (error) {
+      console.error("Logout error:", error);
+      // Still close modal and redirect even if logout fails
+      if (closeModal) closeModal();
+      router.push("/");
+    }
   };
 
   return (
@@ -110,6 +120,7 @@ const UserMenu = ({ closeModal, dictionary }: UserMenuProps) => {
               <UserMenuItem
                 text={dictionary?.header?.detailBar4}
                 icon="/assets/paymentIcon.svg"
+                route="/checkout"
                 onClick={closeModal}
               />
             </StyledUserMenuItem>
@@ -117,6 +128,7 @@ const UserMenu = ({ closeModal, dictionary }: UserMenuProps) => {
               <UserMenuItem
                 text={dictionary?.header?.detailBar5}
                 icon="/assets/settingsIcon.svg"
+                route="/settings"
                 onClick={closeModal}
               />
             </StyledUserMenuItem>

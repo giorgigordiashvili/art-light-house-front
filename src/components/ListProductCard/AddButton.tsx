@@ -1,5 +1,8 @@
+import React from "react";
 import Image from "next/image";
 import styled from "styled-components";
+import { ProductList } from "@/api/generated/interfaces";
+import { cartAddItem } from "@/api/generated/api";
 
 const StyledAddButton = styled.div`
   position: absolute;
@@ -34,9 +37,33 @@ type Props = {
   onClick?: () => void;
 };
 
-const AddButton = ({ onClick, dictionary }: Props & { dictionary?: any }) => {
+const AddButton = ({
+  onClick,
+  product,
+  dictionary,
+}: Props & { product: ProductList; dictionary?: any }) => {
+  const handleClick = async (e: React.MouseEvent) => {
+    e.stopPropagation();
+    try {
+      const payload = { product_id: product.id, quantity: 1 };
+      const cart = await cartAddItem(payload);
+      console.log("✅ Added to cart:", payload, "→ Cart:", cart);
+      try {
+        const count = Array.isArray(cart?.items)
+          ? cart.items.reduce((acc: number, it: any) => acc + (it.quantity || 0), 0)
+          : 0;
+        if (typeof window !== "undefined") {
+          window.dispatchEvent(new CustomEvent("cartUpdated", { detail: { count, cart } }));
+        }
+      } catch {}
+      onClick?.();
+    } catch (error) {
+      console.error("❌ Failed to add to cart", error);
+    }
+  };
+
   return (
-    <StyledAddButton onClick={onClick}>
+    <StyledAddButton onClick={handleClick} data-add-button="true">
       <Image
         src="/assets/plus.svg"
         alt={dictionary?.products?.addToCartAlt || "დამატება"}

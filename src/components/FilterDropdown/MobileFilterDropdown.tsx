@@ -84,6 +84,8 @@ interface MobileFilterDropdownProps {
 }
 
 const MobileFilterDropdown: React.FC<MobileFilterDropdownProps> = ({ onClose, dictionary }) => {
+  // Since filtering is now immediate, the button just closes the dropdown
+
   return (
     <>
       <Overlay onClick={onClose} />
@@ -102,13 +104,7 @@ const MobileFilterDropdown: React.FC<MobileFilterDropdownProps> = ({ onClose, di
         </ScrollArea>
 
         <BottomBar>
-          <ButtonFilter
-            onClick={() => {
-              console.log("გაფილტვრა დააჭირეს");
-              onClose(); // ღილაკზე დაჭერის შემდეგ dropdown იკეტება
-            }}
-            dictionary={dictionary}
-          />
+          <ButtonFilter onClick={onClose} dictionary={dictionary} />
         </BottomBar>
       </DropdownWrapper>
     </>

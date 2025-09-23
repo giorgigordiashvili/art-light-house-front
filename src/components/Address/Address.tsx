@@ -10,11 +10,15 @@ import Circle from "../ui/Circle";
 import RightCircle from "../ui/RightCircle";
 import LeftCircle from "../ui/LeftCircle";
 import { AddressData } from "@/types";
+import { useAddresses } from "@/hooks/useAddresses";
+import { convertAddressToAddressData } from "@/utils/addressHelpers";
 
 const StyledContainer = styled.div`
   position: relative;
-  padding-inline: 20px;
   z-index: 1;
+  @media (max-width: 1332px) {
+    padding-inline: 20px;
+  }
   @media (max-width: 1080px) {
     padding-inline: 0;
   }
@@ -73,11 +77,17 @@ const StyledMobileDetail = styled.div`
 
 const Address = ({ dictionary }: any) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [addresses, setAddresses] = useState<AddressData[]>([]);
   const [editingAddress, setEditingAddress] = useState<AddressData | null>(null);
 
-  const handleSaveAddress = (newAddress: AddressData) => {
-    setAddresses([...addresses, newAddress]);
+  // Fetch addresses from API
+  const { addresses: apiAddresses, loading, error, refetch } = useAddresses();
+
+  // Convert API addresses to AddressData format
+  const addresses = apiAddresses.map((address) => convertAddressToAddressData(address, dictionary));
+
+  const handleSaveAddress = () => {
+    // After saving a new address, refetch the addresses from API
+    refetch();
     setIsModalOpen(false);
   };
 
@@ -85,8 +95,16 @@ const Address = ({ dictionary }: any) => {
     setEditingAddress(address);
   };
 
-  const handleSaveEditedAddress = (updatedData: AddressData) => {
-    setAddresses((prev) => prev.map((addr) => (addr === editingAddress ? updatedData : addr)));
+  const handleDeleteAddress = (address: AddressData) => {
+    console.log(`🗑️ Address delete requested for ID: ${address.id}`);
+    // The actual deletion is handled by the EditModal component
+    // After deletion, this callback will trigger a refetch
+    refetch();
+  };
+
+  const handleSaveEditedAddress = () => {
+    // After updating an address, refetch the addresses from API
+    refetch();
     setEditingAddress(null);
   };
 
@@ -113,12 +131,37 @@ const Address = ({ dictionary }: any) => {
           <StyledMobileDetail>
             <MobileDetailDropdown dictionary={dictionary} />
           </StyledMobileDetail>
-          <AddressBar
-            onOpenModal={() => setIsModalOpen(true)}
-            addresses={addresses}
-            onEditAddress={handleEditAddress}
-            dictionary={dictionary}
-          />
+          {loading ? (
+            <div
+              style={{
+                color: "#ffffff",
+                textAlign: "center",
+                padding: "40px",
+                fontSize: "16px",
+              }}
+            >
+              Loading addresses...
+            </div>
+          ) : error ? (
+            <div
+              style={{
+                color: "#ff4444",
+                textAlign: "center",
+                padding: "40px",
+                fontSize: "16px",
+              }}
+            >
+              Error loading addresses: {error}
+            </div>
+          ) : (
+            <AddressBar
+              onOpenModal={() => setIsModalOpen(true)}
+              addresses={addresses}
+              onEditAddress={handleEditAddress}
+              onDeleteAddress={handleDeleteAddress}
+              dictionary={dictionary}
+            />
+          )}
         </StyledBars>
       </StyledContainer>
 

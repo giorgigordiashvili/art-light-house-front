@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import FilterSidebar from "@/components/FilterSidebar/FilterSidebar";
 import CardGrid from "@/components/ListProductCard/CardGrid";
 import styled from "styled-components";
@@ -7,6 +7,9 @@ import FilterButton from "@/components/FilterSidebar/FilterButtom";
 import SortDropdown from "@/components/Sort/SortDropdown";
 import Container from "@/components/ui/Container";
 import MobileFilterDropdown from "../FilterDropdown/MobileFilterDropdown";
+import PaginationWithArrows from "@/components/PagesButton/PaginationWithArrows";
+import { useProducts } from "@/hooks/useProducts";
+import { useFilterContext } from "@/contexts/FilterContext";
 
 const StyledComponent = styled.div`
   background: black;
@@ -65,12 +68,96 @@ const OnDesktop = styled.div`
   }
 `;
 
+const PaginationWrapper = styled.div`
+  display: flex;
+  justify-content: center;
+  margin-top: 70px;
+  margin-bottom: 183px;
+`;
+
 function ProductsMain({ dictionary }: any) {
   const [isMobileFilterDropdownVisible, setMobileFilterDropdownVisible] = useState(false);
+  const { setOnFilterChange } = useFilterContext();
+
+  // Fetch products without automatic filtering - filtering is manual now
+  const {
+    products,
+    loading,
+    error,
+    currentPage,
+    totalPages,
+    hasNextPage,
+    hasPreviousPage,
+    fetchPage,
+    applyFilters,
+  } = useProducts();
+
+  // Register immediate filter callback
+  useEffect(() => {
+    const handleImmediateFilter = async (filters: any) => {
+      await applyFilters({
+        categoryIds: filters.selectedCategoryIds,
+        minPrice: filters.minPrice,
+        maxPrice: filters.maxPrice,
+        attributes: filters.selectedAttributes,
+      });
+    };
+
+    setOnFilterChange(handleImmediateFilter);
+
+    // Cleanup on unmount
+    return () => {
+      setOnFilterChange(null);
+    };
+  }, [applyFilters, setOnFilterChange]);
 
   const toggleMobileFilterDropdown = () => {
     setMobileFilterDropdownVisible(!isMobileFilterDropdownVisible);
   };
+
+  const handlePageChange = async (page: number) => {
+    await fetchPage(page);
+  };
+
+  if (loading) {
+    return (
+      <StyledComponent>
+        <Container>
+          <PageTitle>{dictionary.title}</PageTitle>
+          <div
+            style={{
+              color: "#ffffff",
+              textAlign: "center",
+              padding: "40px",
+              fontSize: "16px",
+            }}
+          >
+            Loading products...
+          </div>
+        </Container>
+      </StyledComponent>
+    );
+  }
+
+  if (error) {
+    return (
+      <StyledComponent>
+        <Container>
+          <PageTitle>{dictionary.title}</PageTitle>
+          <div
+            style={{
+              color: "#ff4444",
+              textAlign: "center",
+              padding: "40px",
+              fontSize: "16px",
+            }}
+          >
+            Error loading products: {error}
+          </div>
+        </Container>
+      </StyledComponent>
+    );
+  }
 
   return (
     <StyledComponent>
@@ -86,7 +173,22 @@ function ProductsMain({ dictionary }: any) {
           <OnDesktop>
             <FilterSidebar dictionary={dictionary.filter} />
           </OnDesktop>
-          <CardGrid dictionary={dictionary} />
+          <div style={{ width: "100%" }}>
+            <CardGrid products={products} dictionary={dictionary} />
+
+            {/* Pagination */}
+            {totalPages > 1 && (
+              <PaginationWrapper>
+                <PaginationWithArrows
+                  currentPage={currentPage}
+                  totalPages={totalPages}
+                  onPageChange={handlePageChange}
+                  hasNextPage={hasNextPage}
+                  hasPreviousPage={hasPreviousPage}
+                />
+              </PaginationWrapper>
+            )}
+          </div>
         </ContentWrapper>
 
         {isMobileFilterDropdownVisible && (

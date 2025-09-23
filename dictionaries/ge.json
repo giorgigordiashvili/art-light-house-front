@@ -28,6 +28,15 @@
       "registerWithGoogle": "Google-ით რეგისტრაცია",
       "loginWithFacebook": "Facebook-ით შესვლა",
       "registerWithFacebook": "Facebook-ით რეგისტრაცია",
+      "surname": "გვარი",
+      "surnamePlaceholder": "შეიყვანეთ გვარი",
+      "birthDate": "დაბადების თარიღი",
+      "birthDatePlaceholder": "აირჩიეთ თარიღი",
+      "passwordConfirm": "პაროლის დადასტურება",
+      "passwordConfirmPlaceholder": "გაიმეორეთ პაროლი",
+      "passwordConfirmMismatch": "პაროლები არ ემთხვევა",
+      "phoneNumber": "ტელეფონის ნომერი",
+      "phoneNumberPlaceholder": "შეიყვანეთ ტელეფონის ნომერი",
       "alert3": "გთხოვთ შეავსოთ ყველა ველი",
       "invalidCredentials": "არასწორი ელ.ფოსტა ან პაროლი"
     },
@@ -53,6 +62,17 @@
       "inputTitle1": "ელ.ფოსტა",
       "placeholder1": "შეიყვანეთ ელ.ფოსტა",
       "button1": "გაგზავნა"
+    },
+    "passwordResetVerifyModal": {
+      "title": "პაროლის შეცვლა",
+      "subTitle": "შეიყვანეთ 6-ნიშნა კოდი რომელიც გაგზავნილია თქვენს ელ.ფოსტაზე და ახალი პაროლი",
+      "inputTitle1": "დასტურის კოდი",
+      "inputTitle2": "ახალი პაროლი",
+      "inputTitle3": "პაროლის დადასტურება",
+      "placeholder1": "შეიყვანეთ 6-ნიშნა კოდი",
+      "placeholder2": "შეიყვანეთ ახალი პაროლი",
+      "placeholder3": "დაადასტურეთ ახალი პაროლი",
+      "button1": "პაროლის შეცვლა"
     },
     "registrationCodeModal": {
       "title": "რეგისტრაცია",
@@ -287,7 +307,22 @@
     "placeholder4": "შეიყვანეთ ტელეფონის ნომერი",
     "placeholder5": "Yourmail@gmail.com",
     "button1": "გაუქმება",
-    "button2": "შენახვა"
+    "button2": "შენახვა",
+    "loading": "პროფილის მონაცემები იტვირთება...",
+    "updateSuccess": "პროფილი წარმატებით განახლდა!",
+    "password": {
+      "title": "პაროლის ცვლილება",
+      "old": "ძველი პაროლი",
+      "new": "შეიყვანეთ ახალი პაროლი",
+      "confirm": "გაიმეორეთ ახალი პაროლი",
+      "placeholderOld": "პაროლი",
+      "placeholderNew": "ახალი პაროლი",
+      "placeholderConfirm": "გაიმეორეთ პაროლი",
+      "required": "გთხოვთ შეავსოთ ყველა ველი",
+      "mismatch": "ახალი პაროლები არ ემთხვევა",
+      "changeSuccess": "პაროლი წარმატებით შეიცვალა!",
+      "changeFailed": "პაროლის შეცვლა ვერ მოხერხდა. სცადეთ თავიდან."
+    }
   },
   "orders": {
     "title": "ჩემი შეკვეთები",

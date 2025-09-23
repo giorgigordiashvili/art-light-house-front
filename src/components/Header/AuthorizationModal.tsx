@@ -7,13 +7,15 @@ import AuthToggleButtons from "./AuthToggleButtons";
 import ModalInput from "./ModalInput";
 import InputTitle from "./InputTitle";
 import AdditionalAction from "./AdditionalAction";
-import { useSignIn, useSignUp } from "@clerk/nextjs";
+import { useAuth } from "@/contexts/AuthContext";
+import { UserLoginRequest, UserRegistrationRequest } from "@/api/generated/interfaces";
+import { userRegister } from "@/api/generated/api";
 import Image from "next/image";
 
 interface AuthorizationModalProps {
   onClose: () => void;
   onRecoverPasswordClick?: () => void;
-  onRegisterSuccess?: () => void;
+  onRegisterSuccess?: (email?: string) => void;
   dictionary?: any;
 }
 
@@ -65,6 +67,7 @@ const StyledTitle = styled.div`
 
 const StyledAuthToggleButtons = styled.div`
   margin-top: 30px;
+  width: 100%;
 `;
 
 const StyledModalInput = styled.div`
@@ -83,16 +86,17 @@ const StyledPrimaryButton = styled.div<{ $isRegister: boolean }>`
 
 const SocialButtons = styled.div`
   display: flex;
+  justify-content: center;
   gap: 12px;
   margin-top: 16px;
-  justify-content: center;
+  width: 100%;
 `;
 
 const SocialButton = styled.button`
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 224px;
+  width: 100%;
   height: 50px;
   background-color: #2a2a2a;
   border: 1px solid #ffffff12;
@@ -115,6 +119,19 @@ const ErrorMessage = styled.div`
   text-align: left;
 `;
 
+// Grid layout for extra registration fields
+const RegisterGrid = styled.div`
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px 20px;
+  margin-top: 20px;
+  @media (max-width: 1080px) {
+    grid-template-columns: 1fr;
+  }
+`;
+
+const GridItem = styled.div``;
+
 const AuthorizationModal: React.FC<AuthorizationModalProps> = ({
   onClose,
   onRecoverPasswordClick,
@@ -125,11 +142,14 @@ const AuthorizationModal: React.FC<AuthorizationModalProps> = ({
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [birthDate, setBirthDate] = useState("");
+  const [phoneNumber, setPhoneNumber] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
 
-  const { isLoaded: isSignInLoaded, signIn, setActive: setSignInActive } = useSignIn();
-  const { isLoaded: isSignUpLoaded, signUp, setActive: setSignUpActive } = useSignUp();
+  const { login } = useAuth();
 
   const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setEmail(e.target.value);
@@ -146,6 +166,26 @@ const AuthorizationModal: React.FC<AuthorizationModalProps> = ({
     setError("");
   };
 
+  const handleLastNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setLastName(e.target.value);
+    setError("");
+  };
+
+  const handleBirthDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setBirthDate(e.target.value);
+    setError("");
+  };
+
+  const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setPhoneNumber(e.target.value);
+    setError("");
+  };
+
+  const handleConfirmPasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setConfirmPassword(e.target.value);
+    setError("");
+  };
+
   const handleSubmit = async () => {
     if (!email || !password) {
       setError(dictionary?.authorizationModal?.alert3 || "Please fill in all fields");
@@ -157,99 +197,82 @@ const AuthorizationModal: React.FC<AuthorizationModalProps> = ({
 
     try {
       if (activeTab === "auth") {
-        // Sign In with Email
-        const result = await signIn?.create({
-          identifier: email,
+        // Sign In with our custom API
+        const credentials: UserLoginRequest = {
+          email,
           password,
-        });
+        };
 
-        if (result?.status === "complete") {
-          if (setSignInActive) {
-            await setSignInActive({ session: result.createdSessionId });
-          }
-          onClose();
-        }
+        await login(credentials);
+        onClose();
       } else {
-        // Sign Up with Email
+        // Sign Up via custom API
         if (!firstName) {
           setError(dictionary?.registrationModal?.alert || "Please enter name");
           setIsLoading(false);
           return;
         }
 
-        const result = await signUp?.create({
-          emailAddress: email,
-          password,
-          firstName,
-        });
+        if (password !== confirmPassword) {
+          setError(
+            dictionary?.authorizationModal?.passwordConfirmMismatch || "Passwords do not match"
+          );
+          setIsLoading(false);
+          return;
+        }
 
-        if (result?.status === "complete") {
-          if (setSignUpActive) {
-            await setSignUpActive({ session: result.createdSessionId });
-          }
-          onRegisterSuccess?.();
+        const payload: UserRegistrationRequest = {
+          email,
+          first_name: firstName,
+          last_name: lastName,
+          phone_number: phoneNumber || undefined,
+          date_of_birth: birthDate || undefined,
+          password,
+          password_confirm: confirmPassword,
+        };
+
+        const resp = await userRegister(payload);
+        if (resp?.message && resp?.email) {
+          onRegisterSuccess?.(resp.email);
           onClose();
-        } else {
-          // Handle email verification if needed
-          if (result?.status === "missing_requirements") {
-            onRegisterSuccess?.();
-            onClose();
-          }
         }
       }
     } catch (error: any) {
       console.error(error);
-      setError(
-        activeTab === "auth"
-          ? dictionary?.authorizationModal?.invalidCredentials || "invalid email or password"
-          : dictionary?.registrationModal?.alert2 ||
-              "Error while registering. Please check your details and try again."
-      );
+
+      if (activeTab === "auth") {
+        // Handle custom API login errors
+        let errorMessage =
+          dictionary?.authorizationModal?.invalidCredentials || "Invalid email or password";
+
+        if (error?.response?.status === 400) {
+          errorMessage =
+            dictionary?.authorizationModal?.invalidCredentials || "Invalid email or password";
+        } else if (error?.response?.status === 401) {
+          errorMessage =
+            dictionary?.authorizationModal?.invalidCredentials || "Invalid email or password";
+        } else {
+          errorMessage =
+            dictionary?.authorizationModal?.connectionError ||
+            "Connection error. Please try again.";
+        }
+
+        setError(errorMessage);
+      } else {
+        // Handle Clerk registration errors
+        setError(
+          dictionary?.registrationModal?.alert2 ||
+            "Error while registering. Please check your details and try again."
+        );
+      }
     } finally {
       setIsLoading(false);
     }
   };
 
-  const handleSocialSignIn = async (provider: "google" | "facebook") => {
-    try {
-      // Map the provider to the correct Clerk strategy
-      const strategy = provider === "google" ? "oauth_google" : "oauth_facebook";
-
-      console.log(`Using OAuth strategy: ${strategy} for provider: ${provider}`);
-
-      // Get the current URL to return to after authentication
-      const currentUrl = window.location.pathname + window.location.search;
-
-      if (activeTab === "auth") {
-        if (isSignInLoaded) {
-          console.log("Initiating sign-in with redirect...");
-          await signIn?.authenticateWithRedirect({
-            strategy,
-            redirectUrl: "/sso-callback",
-            redirectUrlComplete: currentUrl || "/", // Return to current page
-          });
-        } else {
-          console.error("Sign-in component not loaded yet");
-        }
-      } else {
-        if (isSignUpLoaded) {
-          console.log("Initiating sign-up with redirect...");
-          await signUp?.authenticateWithRedirect({
-            strategy,
-            redirectUrl: "/sso-callback",
-            redirectUrlComplete: currentUrl || "/", // Return to current page
-          });
-        } else {
-          console.error("Sign-up component not loaded yet");
-        }
-      }
-    } catch (error) {
-      console.error(`Failed to authenticate with ${provider}:`, error);
-      // Display more detailed error information in development
-      if (process.env.NODE_ENV === "development") {
-        console.error("Full error:", JSON.stringify(error, null, 2));
-      }
-    }
+  const handleSocialSignIn = async () => {
+    // Social authentication removed - only basic auth is supported
+    setError("Social authentication is not available. Please use email and password.");
   };
 
   return (
@@ -277,37 +300,98 @@ const AuthorizationModal: React.FC<AuthorizationModalProps> = ({
           />
         </StyledAuthToggleButtons>
 
-        {activeTab === "register" && (
-          <StyledModalInput>
-            <InputTitle text={dictionary?.authorizationModal?.name} />
-            <ModalInput
-              placeholder={dictionary?.authorizationModal?.namePlaceholder}
-              value={firstName}
-              onChange={handleFirstNameChange}
-            />
-          </StyledModalInput>
+        {activeTab === "register" ? (
+          <>
+            <RegisterGrid>
+              <GridItem>
+                <StyledModalInput>
+                  <InputTitle text={dictionary?.authorizationModal?.name} />
+                  <ModalInput
+                    placeholder={dictionary?.authorizationModal?.namePlaceholder}
+                    value={firstName}
+                    onChange={handleFirstNameChange}
+                  />
+                </StyledModalInput>
+                <StyledModalInput>
+                  <InputTitle text={dictionary?.authorizationModal?.surname} />
+                  <ModalInput
+                    placeholder={dictionary?.authorizationModal?.surnamePlaceholder}
+                    value={lastName}
+                    onChange={handleLastNameChange}
+                  />
+                </StyledModalInput>
+                <StyledModalInput>
+                  <InputTitle text={dictionary?.authorizationModal?.birthDate} />
+                  <ModalInput
+                    placeholder={dictionary?.authorizationModal?.birthDatePlaceholder}
+                    type="date"
+                    value={birthDate}
+                    onChange={handleBirthDateChange}
+                  />
+                </StyledModalInput>
+                <StyledModalInput>
+                  <InputTitle text={dictionary?.authorizationModal?.phoneNumber} />
+                  <ModalInput
+                    placeholder={dictionary?.authorizationModal?.phoneNumberPlaceholder}
+                    type="tel"
+                    value={phoneNumber}
+                    onChange={handlePhoneChange}
+                  />
+                </StyledModalInput>
+              </GridItem>
+              <GridItem>
+                <StyledModalInput>
+                  <InputTitle text={dictionary?.authorizationModal?.email} />
+                  <ModalInput
+                    placeholder={dictionary?.authorizationModal?.emailPlaceholder}
+                    type="email"
+                    value={email}
+                    onChange={handleEmailChange}
+                  />
+                </StyledModalInput>
+                <StyledModalInput>
+                  <InputTitle text={dictionary?.authorizationModal?.password} />
+                  <ModalInput
+                    placeholder={dictionary?.authorizationModal?.passwordPlaceholder}
+                    isPasswordField={true}
+                    value={password}
+                    onChange={handlePasswordChange}
+                  />
+                </StyledModalInput>
+                <StyledModalInput>
+                  <InputTitle text={dictionary?.authorizationModal?.passwordConfirm} />
+                  <ModalInput
+                    placeholder={dictionary?.authorizationModal?.passwordConfirmPlaceholder}
+                    isPasswordField={true}
+                    value={confirmPassword}
+                    onChange={handleConfirmPasswordChange}
+                  />
+                </StyledModalInput>
+              </GridItem>
+            </RegisterGrid>
+          </>
+        ) : (
+          <>
+            <StyledModalInput>
+              <InputTitle text={dictionary?.authorizationModal?.email} />
+              <ModalInput
+                placeholder={dictionary?.authorizationModal?.emailPlaceholder}
+                value={email}
+                onChange={handleEmailChange}
+              />
+            </StyledModalInput>
+
+            <StyledModalInput>
+              <InputTitle text={dictionary?.authorizationModal?.password} />
+              <ModalInput
+                placeholder={dictionary?.authorizationModal?.passwordPlaceholder}
+                isPasswordField={true}
+                value={password}
+                onChange={handlePasswordChange}
+              />
+            </StyledModalInput>
+          </>
         )}
-
-        <StyledModalInput>
-          <InputTitle text={dictionary?.authorizationModal?.email} />
-          <ModalInput
-            placeholder={dictionary?.authorizationModal?.emailPlaceholder}
-            type="email"
-            value={email}
-            onChange={handleEmailChange}
-          />
-        </StyledModalInput>
-
-        <StyledModalInput>
-          <InputTitle text={dictionary?.authorizationModal?.password} />
-          <ModalInput
-            placeholder={dictionary?.authorizationModal?.passwordPlaceholder}
-            iconSrc="/assets/eye.svg"
-            type="password"
-            value={password}
-            onChange={handlePasswordChange}
-          />
-        </StyledModalInput>
 
         {error && <ErrorMessage>{error}</ErrorMessage>}
 
@@ -329,7 +413,7 @@ const AuthorizationModal: React.FC<AuthorizationModalProps> = ({
                 ? dictionary?.authorizationModal?.loginButton
                 : dictionary?.authorizationModal?.registerButton
             }
-            width="460px"
+            width={activeTab === "register" ? "100%" : "460px"}
             height="50px"
             onClick={handleSubmit}
             disabled={isLoading}
@@ -337,13 +421,13 @@ const AuthorizationModal: React.FC<AuthorizationModalProps> = ({
         </StyledPrimaryButton>
 
         <SocialButtons>
-          <SocialButton onClick={() => handleSocialSignIn("google")}>
+          <SocialButton onClick={() => handleSocialSignIn()}>
             <Image src="/assets/icons/google-icon.svg" width={20} height={20} alt="Google" />
             {activeTab === "auth"
               ? dictionary?.authorizationModal?.loginWithGoogle
               : dictionary?.authorizationModal?.registerWithGoogle}
           </SocialButton>
-          <SocialButton onClick={() => handleSocialSignIn("facebook")}>
+          <SocialButton onClick={() => handleSocialSignIn()}>
             <Image src="/assets/icons/facebook-icon.svg" width={20} height={20} alt="Facebook" />
             {activeTab === "auth"
               ? dictionary?.authorizationModal?.loginWithFacebook

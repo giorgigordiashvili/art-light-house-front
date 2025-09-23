@@ -1,6 +1,6 @@
 "use client";
 import ProductsMain from "@/components/ListProductCard/ProductsMain";
-import Main from "@/components/PagesButton/Main";
+import { FilterProvider } from "@/contexts/FilterContext";
 import styled from "styled-components";
 import NewCircle from "@/components/ui/NewCircle";
 import Circle from "@/components/ui/Circle";
@@ -27,15 +27,16 @@ const StyledCircle = styled.div`
 
 const ProductsScreen = ({ dictionary }: any) => {
   return (
-    <StyledComponent>
-      <ProductsMain dictionary={dictionary.products} />
-      <Main />
-      <NewCircle size="small" top="1000px" right="142px" media="no" />
-      <StyledCircle>
-        <Circle size="large" />
-      </StyledCircle>
-      <BigCircle variant={2} />
-    </StyledComponent>
+    <FilterProvider>
+      <StyledComponent>
+        <ProductsMain dictionary={dictionary.products} />
+        <NewCircle size="small" top="1000px" right="142px" media="no" />
+        <StyledCircle>
+          <Circle size="large" />
+        </StyledCircle>
+        <BigCircle variant={2} />
+      </StyledComponent>
+    </FilterProvider>
   );
 };
 

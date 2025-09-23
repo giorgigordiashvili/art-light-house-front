@@ -83,6 +83,8 @@ import styled from "styled-components";
 import Image from "next/image";
 import PlusButton from "./PlusButton";
 import CardText from "./CardText";
+import { ProductList } from "@/api/generated/interfaces";
+import { useRouter } from "next/navigation";
 
 const useIsMobile = (breakpoint = 1080) => {
   const [isMobile, setIsMobile] = useState(false);
@@ -165,22 +167,49 @@ const StyledActions = styled.div`
   }
 `;
 
-const NewProductCard = ({ dictionary }: any) => {
+const NewProductCard = ({ product }: { product: ProductList; dictionary: any }) => {
   const isMobile = useIsMobile();
+  const router = useRouter();
+
+  // Check if we have a valid image URL
+  const hasValidImage =
+    product.primary_image &&
+    typeof product.primary_image === "string" &&
+    product.primary_image.trim() !== "";
+
+  const handleCardClick = (e: React.MouseEvent) => {
+    // Don't navigate if the click is on the plus button
+    const target = e.target as HTMLElement;
+    if (target.closest("[data-plus-button]")) {
+      return;
+    }
+
+    // Navigate to product detail page
+    router.push(`/products/${product.id}`);
+  };
 
   return (
-    <StyledContainer>
+    <StyledContainer onClick={handleCardClick}>
       <StyledImageWrapper>
-        <ZoomedImage
-          src={isMobile ? "/assets/desktopLampa.svg" : "/assets/desktopLampa.svg"}
-          alt="light"
-          width={isMobile ? 175 : 239}
-          height={isMobile ? 188 : 257}
-        />
+        {hasValidImage ? (
+          <ZoomedImage
+            src={product.primary_image}
+            alt={product.title}
+            width={isMobile ? 175 : 239}
+            height={isMobile ? 188 : 257}
+          />
+        ) : (
+          <ZoomedImage
+            src={isMobile ? "/assets/desktopLampa.svg" : "/assets/desktopLampa.svg"}
+            alt="Default light"
+            width={isMobile ? 175 : 239}
+            height={isMobile ? 188 : 257}
+          />
+        )}
       </StyledImageWrapper>
       <StyledActions>
-        <CardText name={dictionary.light1} price="199,99 ₾" />
-        <PlusButton />
+        <CardText name={product.title} price={`${product.price} ₾`} />
+        <PlusButton product={product} />
       </StyledActions>
     </StyledContainer>
   );

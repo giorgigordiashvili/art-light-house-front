@@ -1,13 +1,16 @@
 "use client";
-import React from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import styled from "styled-components";
 import { useRouter } from "next/navigation";
 import CartProduct from "./CartProduct";
 import PrimaryButton from "../Buttons/PrimaryButton";
 import SummaryPrice from "./SummaryPrice";
+import { cartGet, cartRemoveItem, cartUpdateItem } from "@/api/generated/api";
+import type { Cart } from "@/api/generated/interfaces";
+import { useAuth } from "@/contexts/AuthContext";
 
 type Props = {
-  itemCount: number;
+  itemCount?: number; // deprecated, will be overridden by API data
   onClose: () => void;
   dictionary: any;
 };
@@ -100,12 +103,121 @@ const StyledButton = styled.div`
   }
 `;
 
-const CartModal = ({ itemCount, onClose, dictionary }: Props) => {
+const CartModal = ({ onClose, dictionary }: Props) => {
   const router = useRouter();
+  const [cart, setCart] = useState<Cart | null>(null);
+  const [loading, setLoading] = useState(false);
+  const { isAuthenticated } = useAuth();
+
+  const fetchCart = async () => {
+    try {
+      setLoading(true);
+      const data = await cartGet();
+      setCart(data);
+    } catch (e) {
+      console.error("Failed to fetch cart", e);
+      setCart({
+        id: 0,
+        items: [],
+        total_items: "0",
+        total_price: "0",
+        created_at: "",
+        updated_at: "",
+      } as any);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    if (!isAuthenticated) {
+      setCart({
+        id: 0,
+        items: [],
+        total_items: "0",
+        total_price: "0",
+        created_at: "",
+        updated_at: "",
+      } as any);
+      return;
+    }
+    fetchCart();
+  }, [isAuthenticated]);
 
   const handleRedirect = () => {
-    router.push("/favorites");
+    router.push("/cart");
     onClose();
+  };
+
+  const totalPrice = useMemo(() => {
+    if (!cart?.items) return 0;
+    const sum = cart.total_price;
+    return sum;
+  }, [cart]);
+
+  const totalItems = useMemo(() => {
+    if (!cart?.items) return 0;
+    // total_items comes as string, but we can calculate from items as well
+    const sum = cart.items.reduce((acc, it) => acc + (it.quantity || 0), 0);
+    return sum;
+  }, [cart]);
+
+  const handleIncrease = async (itemId: number, current: number) => {
+    try {
+      const updated = await cartUpdateItem(itemId, { quantity: current + 1 });
+      setCart(updated);
+      try {
+        const count = updated.items?.reduce((acc, it) => acc + (it.quantity || 0), 0) || 0;
+        if (typeof window !== "undefined") {
+          window.dispatchEvent(
+            new CustomEvent("cartUpdated", { detail: { count, cart: updated } })
+          );
+        }
+      } catch {}
+    } catch (e) {
+      console.error("Failed to increase quantity", e);
+    } finally {
+    }
+  };
+
+  const handleDecrease = async (itemId: number, current: number) => {
+    if (current <= 1) {
+      await handleRemove(itemId);
+      return;
+    }
+    try {
+      const updated = await cartUpdateItem(itemId, { quantity: current - 1 });
+      setCart(updated);
+      try {
+        const count = updated.items?.reduce((acc, it) => acc + (it.quantity || 0), 0) || 0;
+        if (typeof window !== "undefined") {
+          window.dispatchEvent(
+            new CustomEvent("cartUpdated", { detail: { count, cart: updated } })
+          );
+        }
+      } catch {}
+    } catch (e) {
+      console.error("Failed to decrease quantity", e);
+    } finally {
+    }
+  };
+
+  const handleRemove = async (itemId: number) => {
+    try {
+      const updated = await cartRemoveItem(itemId);
+      setCart(updated);
+      try {
+        const count = updated.items?.reduce((acc, it) => acc + (it.quantity || 0), 0) || 0;
+        if (typeof window !== "undefined") {
+          window.dispatchEvent(
+            new CustomEvent("cartUpdated", { detail: { count, cart: updated } })
+          );
+        }
+      } catch {}
+    } catch (e) {
+      console.error("Failed to remove item", e);
+    } finally {
+    }
   };
 
   return (
@@ -114,17 +226,31 @@ const CartModal = ({ itemCount, onClose, dictionary }: Props) => {
         <StyledContainer>
           <StyledSpanContainer>
             <StyledSpan>
-              {itemCount} {dictionary?.cart?.cartModal.itemCount}
+              {totalItems} {dictionary?.cart?.cartModal.itemCount}
             </StyledSpan>
           </StyledSpanContainer>
           <ProductList>
-            {Array.from({ length: itemCount }).map((_, index) => (
-              <ProductWrapper key={index}>
-                <CartProduct dictionary={dictionary} />
-              </ProductWrapper>
-            ))}
+            {!loading && cart?.items?.length ? (
+              cart.items.map((it) => (
+                <ProductWrapper key={it.id}>
+                  <CartProduct
+                    dictionary={dictionary}
+                    title={it.product_details?.title}
+                    price={`${it.product_details?.price} ₾`}
+                    quantity={it.quantity || 1}
+                    onIncrease={() => handleIncrease(it.id, it.quantity || 1)}
+                    onDecrease={() => handleDecrease(it.id, it.quantity || 1)}
+                    onRemove={() => handleRemove(it.id)}
+                  />
+                </ProductWrapper>
+              ))
+            ) : (
+              <div style={{ color: "#8e8e8e", padding: "16px" }}>
+                {loading ? "იტვირთება..." : dictionary?.cart?.emptyCart?.subTitle}
+              </div>
+            )}
           </ProductList>
-          <SummaryPrice dictionary={dictionary} />
+          <SummaryPrice dictionary={dictionary} text={`${totalPrice}`} />
           <StyledButton>
             <PrimaryButton
               text={dictionary?.cart?.cartModal.button}

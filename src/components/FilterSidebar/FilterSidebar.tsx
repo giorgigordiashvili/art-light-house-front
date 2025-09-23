@@ -28,7 +28,13 @@ const Title = styled.p`
   color: white;
 `;
 
-function FilterSidebar({ dictionary }: any) {
+interface FilterSidebarProps {
+  dictionary: any;
+}
+
+function FilterSidebar({ dictionary }: FilterSidebarProps) {
+  // No longer need manual apply button since filtering is immediate
+
   return (
     <SidebarWrapper>
       <Title>{dictionary.title}</Title>

@@ -28,6 +28,15 @@
       "registerWithGoogle": "Register with Google",
       "loginWithFacebook": "Login with Facebook",
       "registerWithFacebook": "Register with Facebook",
+      "surname": "Surname",
+      "surnamePlaceholder": "Enter surname",
+      "birthDate": "Birth date",
+      "birthDatePlaceholder": "Select date",
+      "passwordConfirm": "Confirm password",
+      "passwordConfirmPlaceholder": "Repeat password",
+      "passwordConfirmMismatch": "Passwords do not match",
+      "phoneNumber": "Phone number",
+      "phoneNumberPlaceholder": "Enter phone number",
       "alert3": "Please fill in all fields",
       "invalidCredentials": "Invalid email or password"
     },
@@ -53,6 +62,17 @@
       "inputTitle1": "Email",
       "placeholder1": "Enter email",
       "button1": "Send"
+    },
+    "passwordResetVerifyModal": {
+      "title": "Reset Password",
+      "subTitle": "Enter the 6-digit code sent to your email and your new password",
+      "inputTitle1": "Verification Code",
+      "inputTitle2": "New Password",
+      "inputTitle3": "Confirm Password",
+      "placeholder1": "Enter 6-digit code",
+      "placeholder2": "Enter new password",
+      "placeholder3": "Confirm new password",
+      "button1": "Reset Password"
     },
     "registrationCodeModal": {
       "title": "Registration",
@@ -288,7 +308,22 @@
     "placeholder4": "Enter phone number",
     "placeholder5": "Yourmail@gmail.com",
     "button1": "Cancel",
-    "button2": "Save"
+    "button2": "Save",
+    "loading": "Loading profile data...",
+    "updateSuccess": "Profile updated successfully!",
+    "password": {
+      "title": "Change Password",
+      "old": "Old Password",
+      "new": "Enter New Password",
+      "confirm": "Repeat New Password",
+      "placeholderOld": "Password",
+      "placeholderNew": "New Password",
+      "placeholderConfirm": "Repeat Password",
+      "required": "Please fill in all fields",
+      "mismatch": "New passwords do not match",
+      "changeSuccess": "Password changed successfully!",
+      "changeFailed": "Failed to change password. Please try again."
+    }
   },
   "orders": {
     "title": "My orders",

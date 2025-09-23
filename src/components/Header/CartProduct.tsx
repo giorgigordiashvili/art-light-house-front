@@ -23,14 +23,32 @@ const StyledTrashButton = styled.div`
   right: 12px;
 `;
 
-const CartProduct = ({ dictionary }: any) => {
+type Props = {
+  dictionary?: any;
+  title: string;
+  price: string;
+  quantity: number;
+  onIncrease: () => void;
+  onDecrease: () => void;
+  onRemove: () => void;
+};
+
+const CartProduct = ({
+  dictionary,
+  title,
+  price,
+  quantity,
+  onIncrease,
+  onDecrease,
+  onRemove,
+}: Props) => {
   return (
     <StyledContainer>
-      <StyledTrashButton>
+      <StyledTrashButton onClick={onRemove}>
         <TrashIcon />
       </StyledTrashButton>
-      <ProductContent dictionary={dictionary} />
-      <QuantitySelector />
+      <ProductContent dictionary={dictionary} title={title} price={price} />
+      <QuantitySelector quantity={quantity} onIncrease={onIncrease} onDecrease={onDecrease} />
     </StyledContainer>
   );
 };

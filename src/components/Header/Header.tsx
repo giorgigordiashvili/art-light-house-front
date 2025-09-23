@@ -5,20 +5,24 @@ import Container from "../ui/Container";
 import Logo from "../Logo/Logo";
 import NavItem from "./NavItem";
 import ShoppingCartIcon from "./ShoppingCartIcon";
+import HeartIcon from "../ListProductCard/HeartIcon";
 import AuthorizationButton from "./AuthorizationButton";
 import BurgerIcon from "./BurgerIcon";
 import BurgerMenu from "./BurgerMenu";
 import UserMenu from "./UserMenu";
 import AuthorizationModal from "./AuthorizationModal";
 import RecoverPasswordModal from "./RecoverPasswordModal";
+import PasswordResetVerifyModal from "./PasswordResetVerifyModal";
 import RegistrationCodeModal from "./RegistrationCodeModal";
 import RegistrationSuccessModal from "./RegistrationSuccessModal";
 import EmptyCartModal from "./EmptyCartModal";
 import CartModal from "./CartModal";
+import FavoritesModal from "./FavoritesModal";
 import LanguageSwitcher from "./LanguageSwitcher/LanguageSwitcher";
 import LanguageSwitcherModal from "./LanguageSwitcher/LanguageSwitcherModal";
-import { useUser } from "@clerk/nextjs";
+import { useAuth } from "@/contexts/AuthContext";
 import { usePathname, useRouter } from "next/navigation";
+import { cartGet } from "@/api/generated/api";
 import { Locale, i18n } from "@/config/i18n";
 
 const ensureValidLanguage = (lang: string): Locale => {
@@ -137,14 +141,17 @@ const Header = ({ header, dictionary }: HeaderProps) => {
   const pathname = usePathname();
   const router = useRouter();
 
-  const [cartItemCount] = useState<number>(4);
+  const [cartItemCount, setCartItemCount] = useState<number>(0);
   const [isBurgerMenuOpen, setIsBurgerMenuOpen] = useState(false);
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
   const [isRecoverPasswordOpen, setIsRecoverPasswordOpen] = useState(false);
+  const [isPasswordResetVerifyOpen, setIsPasswordResetVerifyOpen] = useState(false);
+  const [passwordResetEmail, setPasswordResetEmail] = useState("");
   const [isRegistrationCodeOpen, setIsRegistrationCodeOpen] = useState(false);
   const [isRegistrationSuccessOpen, setIsRegistrationSuccessOpen] = useState(false);
   const [isEmptyCartModalOpen, setIsEmptyCartModalOpen] = useState(false);
   const [isCartModalOpen, setIsCartModalOpen] = useState(false);
+  const [isFavoritesModalOpen, setIsFavoritesModalOpen] = useState(false);
   const [cartIconColor, setCartIconColor] = useState("#fff");
   const [isLanguageSwitcherModalOpen, setIsLanguageSwitcherModalOpen] = useState(false);
   const [selectedLanguage, setSelectedLanguage] = useState<"ge" | "en">(
@@ -168,8 +175,11 @@ const Header = ({ header, dictionary }: HeaderProps) => {
     document.body.style.overflow =
       isBurgerMenuOpen ||
       isUserMenuOpen ||
+      isRecoverPasswordOpen ||
+      isPasswordResetVerifyOpen ||
       isEmptyCartModalOpen ||
       isCartModalOpen ||
+      isFavoritesModalOpen ||
       isLanguageSwitcherModalOpen
         ? "hidden"
         : "visible";
@@ -179,8 +189,11 @@ const Header = ({ header, dictionary }: HeaderProps) => {
   }, [
     isBurgerMenuOpen,
     isUserMenuOpen,
+    isRecoverPasswordOpen,
+    isPasswordResetVerifyOpen,
     isEmptyCartModalOpen,
     isCartModalOpen,
+    isFavoritesModalOpen,
     isLanguageSwitcherModalOpen,
   ]);
 
@@ -230,13 +243,43 @@ const Header = ({ header, dictionary }: HeaderProps) => {
     };
   }, [isBurgerMenuOpen, isUserMenuOpen, isLanguageSwitcherModalOpen]);
 
-  const isCartEmpty = cartItemCount === 0;
-  const { user, isSignedIn } = useUser();
+  useEffect(() => {
+    const onCartUpdated = (e: Event) => {
+      try {
+        const detail = (e as CustomEvent).detail as { count?: number };
+        if (typeof detail?.count === "number") {
+          setCartItemCount(detail.count);
+        } else {
+          // fallback: refetch only if token exists
+          const hasToken =
+            typeof window !== "undefined" && !!localStorage.getItem("auth_access_token");
+          if (hasToken) {
+            cartGet()
+              .then((data) => {
+                const count = data.items?.reduce((acc, it) => acc + (it.quantity || 0), 0) || 0;
+                setCartItemCount(count);
+              })
+              .catch(() => {});
+          }
+        }
+      } catch {}
+    };
+    if (typeof window !== "undefined") {
+      window.addEventListener("cartUpdated", onCartUpdated as EventListener);
+    }
+    return () => {
+      if (typeof window !== "undefined") {
+        window.removeEventListener("cartUpdated", onCartUpdated as EventListener);
+      }
+    };
+  }, []);
 
-  const isUserAuthorized = isSignedIn;
+  const { user: customUser, isAuthenticated } = useAuth();
+
+  const isUserAuthorized = isAuthenticated;
   const currentUser = {
-    username: user?.firstName || user?.fullName || "User",
-    userImage: user?.imageUrl || "/assets/user.svg",
+    username: customUser ? `${customUser.first_name} ${customUser.last_name}`.trim() : "User",
+    userImage: "/assets/user.svg",
   };
 
   const closeEmptyCartModal = () => {
@@ -249,23 +292,70 @@ const Header = ({ header, dictionary }: HeaderProps) => {
     setCartIconColor("#fff");
   };
 
-  const handleCartClick = () => {
-    if (isCartEmpty) {
+  const closeFavoritesModal = () => {
+    setIsFavoritesModalOpen(false);
+  };
+
+  const handleCartClick = async () => {
+    const hasToken = typeof window !== "undefined" && !!localStorage.getItem("auth_access_token");
+    if (!hasToken) {
+      setCartItemCount(0);
       if (isEmptyCartModalOpen) {
         closeEmptyCartModal();
       } else {
         setIsEmptyCartModalOpen(true);
         setCartIconColor("#FFCB40");
       }
-    } else {
-      if (isCartModalOpen) {
-        closeCartModal();
+      return;
+    }
+
+    try {
+      const data = await cartGet();
+      const count = data.items?.reduce((acc, it) => acc + (it.quantity || 0), 0) || 0;
+      setCartItemCount(count);
+      if (count === 0) {
+        if (isEmptyCartModalOpen) {
+          closeEmptyCartModal();
+        } else {
+          setIsEmptyCartModalOpen(true);
+          setCartIconColor("#FFCB40");
+        }
       } else {
-        setIsCartModalOpen(true);
+        if (isCartModalOpen) {
+          closeCartModal();
+        } else {
+          setIsCartModalOpen(true);
+          setCartIconColor("#FFCB40");
+        }
+      }
+    } catch {
+      setCartItemCount(0);
+      if (isEmptyCartModalOpen) {
+        closeEmptyCartModal();
+      } else {
+        setIsEmptyCartModalOpen(true);
         setCartIconColor("#FFCB40");
       }
     }
   };
+
+  useEffect(() => {
+    const loadCart = async () => {
+      const hasToken = typeof window !== "undefined" && !!localStorage.getItem("auth_access_token");
+      if (!hasToken) {
+        setCartItemCount(0);
+        return;
+      }
+      try {
+        const data = await cartGet();
+        const count = data.items?.reduce((acc, it) => acc + (it.quantity || 0), 0) || 0;
+        setCartItemCount(count);
+      } catch {
+        setCartItemCount(0);
+      }
+    };
+    loadCart();
+  }, [isAuthenticated]);
 
   const closeLanguageSwitcherModal = () => {
     setIsLanguageSwitcherModalOpen(false);
@@ -308,6 +398,16 @@ const Header = ({ header, dictionary }: HeaderProps) => {
                   onClick={handleCartClick}
                   color={cartIconColor}
                 />
+                <div
+                  onClick={() => {
+                    setIsFavoritesModalOpen((prev) => !prev);
+                    closeEmptyCartModal();
+                    closeCartModal();
+                    closeLanguageSwitcherModal();
+                  }}
+                >
+                  <HeartIcon />
+                </div>
                 <ResponsiveGapWrapper>
                   <div ref={authButtonRef}>
                     <AuthorizationButton
@@ -378,9 +478,11 @@ const Header = ({ header, dictionary }: HeaderProps) => {
                       setIsUserMenuOpen(false);
                       setIsRecoverPasswordOpen(true);
                     }}
-                    onRegisterSuccess={() => {
+                    onRegisterSuccess={(email?: string) => {
                       setIsUserMenuOpen(false);
                       setIsRegistrationCodeOpen(true);
+                      // Store email temporarily on window for passing to code modal
+                      if (email) (window as any).__reg_email = email;
                     }}
                     dictionary={header}
                   />
@@ -396,6 +498,26 @@ const Header = ({ header, dictionary }: HeaderProps) => {
           <Overlay onClick={() => setIsRecoverPasswordOpen(false)} />
           <RecoverPasswordModal
             onClose={() => setIsRecoverPasswordOpen(false)}
+            onPasswordResetRequested={(email) => {
+              setPasswordResetEmail(email);
+              setIsRecoverPasswordOpen(false);
+              setIsPasswordResetVerifyOpen(true);
+            }}
+            dictionary={dictionary}
+          />
+        </>
+      )}
+
+      {isPasswordResetVerifyOpen && (
+        <>
+          <Overlay onClick={() => setIsPasswordResetVerifyOpen(false)} />
+          <PasswordResetVerifyModal
+            onClose={() => setIsPasswordResetVerifyOpen(false)}
+            onPasswordResetSuccess={() => {
+              setIsPasswordResetVerifyOpen(false);
+              // Optionally show success message or redirect
+            }}
+            email={passwordResetEmail}
             dictionary={dictionary}
           />
         </>
@@ -414,6 +536,7 @@ const Header = ({ header, dictionary }: HeaderProps) => {
               setIsRegistrationCodeOpen(false);
               setIsRegistrationSuccessOpen(true);
             }}
+            email={(window as any).__reg_email || ""}
           />
         </>
       )}
@@ -441,11 +564,18 @@ const Header = ({ header, dictionary }: HeaderProps) => {
           <Overlay onClick={closeCartModal} />
           <StyledTestWrapper>
             <StyledTest>
-              <CartModal
-                itemCount={cartItemCount}
-                onClose={closeCartModal}
-                dictionary={dictionary}
-              />{" "}
+              <CartModal onClose={closeCartModal} dictionary={dictionary} />{" "}
+            </StyledTest>
+          </StyledTestWrapper>
+        </>
+      )}
+
+      {isFavoritesModalOpen && (
+        <>
+          <Overlay onClick={closeFavoritesModal} />
+          <StyledTestWrapper>
+            <StyledTest>
+              <FavoritesModal onClose={closeFavoritesModal} dictionary={dictionary} />
             </StyledTest>
           </StyledTestWrapper>
         </>
