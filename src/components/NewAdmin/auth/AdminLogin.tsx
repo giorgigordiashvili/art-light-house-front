@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useAdminAuth } from "@/contexts/AdminAuthContext";
 import styled from "styled-components";
@@ -9,7 +9,7 @@ const LoginContainer = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: #f8f9fa;
 `;
 
 const LoginCard = styled.div`
@@ -70,8 +70,8 @@ const Input = styled.input`
 
   &:focus {
     outline: none;
-    border-color: #667eea;
-    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    border-color: #007bff;
+    box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);
   }
 
   &.error {
@@ -80,7 +80,7 @@ const Input = styled.input`
 `;
 
 const SubmitButton = styled.button`
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: #007bff;
   color: white;
   border: none;
   padding: 12px 24px;
@@ -88,20 +88,16 @@ const SubmitButton = styled.button`
   font-size: 1rem;
   font-weight: 600;
   cursor: pointer;
-  transition:
-    transform 0.2s ease,
-    box-shadow 0.2s ease;
+  transition: background-color 0.2s ease;
   margin-top: 8px;
 
   &:hover:not(:disabled) {
-    transform: translateY(-1px);
-    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+    background: #0056b3;
   }
 
   &:disabled {
     opacity: 0.6;
     cursor: not-allowed;
-    transform: none;
   }
 `;
 
@@ -115,55 +111,123 @@ const ErrorMessage = styled.div`
   border-radius: 6px;
 `;
 
-const DemoCredentials = styled.div`
-  margin-top: 24px;
-  padding: 16px;
-  background: #f3f4f6;
-  border-radius: 8px;
-  border-left: 4px solid #667eea;
-
-  h4 {
-    margin: 0 0 8px 0;
-    font-size: 0.875rem;
-    font-weight: 600;
-    color: #374151;
-  }
-
-  p {
-    margin: 0;
-    font-size: 0.875rem;
-    color: #6b7280;
-    font-family: monospace;
-  }
+const SuccessMessage = styled.div`
+  color: #059669;
+  font-size: 0.875rem;
+  margin-top: -12px;
+  padding: 8px 12px;
+  background: #f0fdf4;
+  border: 1px solid #86efac;
+  border-radius: 6px;
 `;
 
 const AdminLogin = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
-  const { signIn } = useAdminAuth();
+  // Log error state changes
+  useEffect(() => {
+    if (error) {
+      console.log("🎯 AdminLogin: Error state updated:", error);
+    }
+  }, [error]);
+
+  useEffect(() => {
+    if (success) {
+      console.log("🎯 AdminLogin: Success state updated:", success);
+    }
+  }, [success]);
+
+  const { signIn, isAuthenticated, isLoading: authLoading } = useAdminAuth();
   const router = useRouter();
+
+  // Redirect if already authenticated
+  useEffect(() => {
+    if (!authLoading && isAuthenticated) {
+      router.replace("/admin");
+    }
+  }, [isAuthenticated, authLoading, router]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
+    setSuccess("");
     setIsLoading(true);
 
+    console.log("🎯 AdminLogin: Starting login process");
+
     try {
-      const success = await signIn(email, password);
-      if (success) {
-        router.push("/admin");
+      const loginSuccess = await signIn(email, password);
+      console.log("🎯 AdminLogin: Login result:", loginSuccess);
+
+      if (loginSuccess) {
+        console.log("🎯 AdminLogin: Login successful, setting success message");
+        setSuccess("Login successful! Redirecting to admin panel...");
+        // Small delay to show success message before redirect
+        setTimeout(() => {
+          console.log("🎯 AdminLogin: Redirecting to /admin");
+          router.replace("/admin");
+        }, 1500);
       } else {
-        setError("Invalid email or password. Please try again.");
+        console.log("🎯 AdminLogin: Login failed - no admin privileges");
+        const errorMsg = "Access denied. You don't have admin privileges.";
+        console.log("🎯 AdminLogin: Setting error message:", errorMsg);
+        setError(errorMsg);
       }
-    } catch {
-      setError("An error occurred. Please try again.");
+    } catch (err: any) {
+      console.error("Admin login error:", err);
+
+      // Handle different error scenarios
+      if (err?.response?.status === 400) {
+        setError("Invalid email or password format.");
+      } else if (err?.response?.status === 401) {
+        setError("Invalid email or password.");
+      } else if (err?.response?.status === 403) {
+        setError("Access denied. You don't have admin privileges.");
+      } else if (err?.response?.data?.detail) {
+        setError(err.response.data.detail);
+      } else if (err?.response?.data?.error) {
+        setError(err.response.data.error);
+      } else if (err?.message) {
+        setError(`Error: ${err.message}`);
+      } else {
+        setError("Network error. Please check your connection and try again.");
+      }
     } finally {
       setIsLoading(false);
     }
   };
+
+  // Show loading while checking authentication
+  if (authLoading) {
+    return (
+      <LoginContainer>
+        <LoginCard>
+          <LoginHeader>
+            <h1>Admin Panel</h1>
+            <p>Checking authentication...</p>
+          </LoginHeader>
+        </LoginCard>
+      </LoginContainer>
+    );
+  }
+
+  // Don't render login form if already authenticated (will redirect)
+  if (isAuthenticated) {
+    return (
+      <LoginContainer>
+        <LoginCard>
+          <LoginHeader>
+            <h1>Admin Panel</h1>
+            <p>Redirecting to admin panel...</p>
+          </LoginHeader>
+        </LoginCard>
+      </LoginContainer>
+    );
+  }
 
   return (
     <LoginContainer>
@@ -201,17 +265,12 @@ const AdminLogin = () => {
           </FormGroup>
 
           {error && <ErrorMessage>{error}</ErrorMessage>}
+          {success && <SuccessMessage>{success}</SuccessMessage>}
 
-          <SubmitButton type="submit" disabled={isLoading}>
-            {isLoading ? "Signing in..." : "Sign In"}
+          <SubmitButton type="submit" disabled={isLoading || !!success}>
+            {isLoading ? "Signing in..." : success ? "Redirecting..." : "Sign In"}
           </SubmitButton>
         </LoginForm>
-
-        <DemoCredentials>
-          <h4>Demo Credentials:</h4>
-          <p>Email: admin@artlighthouse.com</p>
-          <p>Password: admin123</p>
-        </DemoCredentials>
       </LoginCard>
     </LoginContainer>
   );

@@ -275,6 +275,7 @@ export interface User {
   phone_number?: string;
   date_of_birth?: string;
   date_joined: string;
+  is_admin: string;
 }
 
 export interface UserLoginRequest {

@@ -11,6 +11,7 @@ import {
   LoadingSpinner,
 } from "@/components/NewAdmin/ui/Table";
 import { Button } from "@/components/NewAdmin/ui/Button";
+import { ProductList } from "@/api/generated/interfaces";
 import styled from "styled-components";
 
 const ProductImage = styled.img`
@@ -50,34 +51,12 @@ const PriceText = styled.div`
   }
 `;
 
-interface Product {
-  id: number;
-  title: string;
-  slug: string;
-  description: string;
-  price: number;
-  compare_price?: number;
-  stock_quantity: number;
-  is_active: boolean;
-  is_featured: boolean;
-  category?: {
-    id: number;
-    name: string;
-  };
-  images?: Array<{
-    id: number;
-    image_url: string;
-    is_primary: boolean;
-  }>;
-  created_at: string;
-}
-
 interface ProductsTableProps {
-  products: Product[];
+  products: ProductList[];
   loading?: boolean;
-  onEdit: (product: Product) => void;
-  onDelete: (product: Product) => void;
-  onToggleStatus: (product: Product) => void;
+  onEdit: (product: ProductList) => void;
+  onDelete: (product: ProductList) => void;
+  onToggleStatus: (product: ProductList) => void;
 }
 
 const ProductsTable = ({
@@ -103,21 +82,6 @@ const ProductsTable = ({
     );
   }
 
-  const formatPrice = (price: number) => {
-    return new Intl.NumberFormat("en-US", {
-      style: "currency",
-      currency: "USD",
-    }).format(price);
-  };
-
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString("en-US", {
-      year: "numeric",
-      month: "short",
-      day: "numeric",
-    });
-  };
-
   return (
     <Table>
       <TableHeader>
@@ -127,7 +91,6 @@ const ProductsTable = ({
           <TableHead>Stock</TableHead>
           <TableHead>Category</TableHead>
           <TableHead>Status</TableHead>
-          <TableHead>Created</TableHead>
           <TableHead>Actions</TableHead>
         </TableRow>
       </TableHeader>
@@ -137,10 +100,7 @@ const ProductsTable = ({
             <TableCell>
               <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
                 <ProductImage
-                  src={
-                    product.images?.find((img) => img.is_primary)?.image_url ||
-                    "/assets/placeholder.png"
-                  }
+                  src={product.primary_image || "/assets/placeholder.png"}
                   alt={product.title}
                 />
                 <div>
@@ -151,24 +111,28 @@ const ProductsTable = ({
             </TableCell>
             <TableCell>
               <PriceText>
-                {formatPrice(product.price)}
-                {product.compare_price && product.compare_price > product.price && (
-                  <span className="compare-price">{formatPrice(product.compare_price)}</span>
-                )}
+                ₾{product.price}
+                {product.compare_price &&
+                  parseFloat(product.compare_price) > parseFloat(product.price) && (
+                    <span className="compare-price">₾{product.compare_price}</span>
+                  )}
               </PriceText>
             </TableCell>
             <TableCell>
-              <StockBadge $inStock={product.stock_quantity > 0}>
-                {product.stock_quantity > 0 ? `${product.stock_quantity} in stock` : "Out of stock"}
+              <StockBadge $inStock={product.is_in_stock === "true"}>
+                {product.stock_quantity
+                  ? `${product.stock_quantity} in stock`
+                  : product.is_in_stock === "true"
+                    ? "In stock"
+                    : "Out of stock"}
               </StockBadge>
             </TableCell>
-            <TableCell>{product.category ? product.category.name : "Uncategorized"}</TableCell>
+            <TableCell>{product.category_name || "Uncategorized"}</TableCell>
             <TableCell>
               <StatusBadge $status={product.is_active ? "active" : "inactive"}>
                 {product.is_active ? "Active" : "Inactive"}
               </StatusBadge>
             </TableCell>
-            <TableCell>{formatDate(product.created_at)}</TableCell>
             <TableCell>
               <TableActions>
                 <Button $variant="secondary" $size="sm" onClick={() => onEdit(product)}>

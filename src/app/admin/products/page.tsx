@@ -1,11 +1,19 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import AdminLayout from "@/components/NewAdmin/layout/AdminLayout";
 import { Card, CardContent } from "@/components/NewAdmin/ui/Card";
 import { Button, ButtonGroup } from "@/components/NewAdmin/ui/Button";
 import { Input, Select } from "@/components/NewAdmin/ui/Form";
 import ProductsTable from "@/components/NewAdmin/products/ProductsTable";
 import ProductForm from "@/components/NewAdmin/products/ProductForm";
+import { ProductList, ProductCreateUpdateRequest, Category } from "@/api/generated/interfaces";
+import {
+  productList,
+  productDelete,
+  productUpdate,
+  productCreate,
+  categoryList,
+} from "@/api/generated/api";
 import styled from "styled-components";
 
 const PageHeader = styled.div`
@@ -110,100 +118,147 @@ const CloseButton = styled.button`
   }
 `;
 
-// Mock data - replace with API calls
-const mockProducts = [
-  {
-    id: 1,
-    title: "Abstract Canvas Art",
-    slug: "abstract-canvas-art",
-    description: "Beautiful abstract artwork on canvas",
-    price: 299.99,
-    compare_price: 399.99,
-    stock_quantity: 15,
-    is_active: true,
-    is_featured: true,
-    category: { id: 1, name: "Abstract Art" },
-    images: [{ id: 1, image_url: "/assets/art1.jpg", is_primary: true }],
-    created_at: "2024-01-15T10:30:00Z",
-  },
-  {
-    id: 2,
-    title: "Modern Sculpture",
-    slug: "modern-sculpture",
-    description: "Contemporary metal sculpture",
-    price: 1299.99,
-    stock_quantity: 3,
-    is_active: true,
-    is_featured: false,
-    category: { id: 2, name: "Sculptures" },
-    images: [{ id: 2, image_url: "/assets/art2.jpg", is_primary: true }],
-    created_at: "2024-01-10T14:20:00Z",
-  },
-];
-
-const mockCategories = [
-  { id: 1, name: "Abstract Art" },
-  { id: 2, name: "Sculptures" },
-  { id: 3, name: "Paintings" },
-  { id: 4, name: "Photography" },
-];
-
 const ProductsManagement = () => {
-  const [products, setProducts] = useState(mockProducts);
-  const [categories] = useState(mockCategories);
+  const [products, setProducts] = useState<ProductList[]>([]);
+  const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(false);
   const [showForm, setShowForm] = useState(false);
-  const [editingProduct, setEditingProduct] = useState<any>(null);
+  const [editingProduct, setEditingProduct] = useState<ProductList | null>(null);
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
   const [categoryFilter, setCategoryFilter] = useState("all");
+
+  // Fetch products on component mount
+  useEffect(() => {
+    loadProducts();
+    loadCategories();
+  }, []);
+
+  const loadProducts = async () => {
+    try {
+      setLoading(true);
+      console.log("🔄 Loading products from API...");
+      const productsData = await productList();
+      console.log("✅ Products loaded:", productsData);
+      setProducts(productsData);
+    } catch (error) {
+      console.error("❌ Error loading products:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const loadCategories = async () => {
+    try {
+      console.log("🔄 Loading categories from API...");
+      const categoriesData = await categoryList();
+      console.log("✅ Categories loaded:", categoriesData);
+      setCategories(categoriesData);
+    } catch (error) {
+      console.error("❌ Error loading categories:", error);
+    }
+  };
 
   const handleCreateProduct = () => {
     setEditingProduct(null);
     setShowForm(true);
   };
 
-  const handleEditProduct = (product: any) => {
+  const handleEditProduct = (product: ProductList) => {
     setEditingProduct(product);
     setShowForm(true);
   };
 
-  const handleDeleteProduct = (product: any) => {
+  const handleDeleteProduct = async (product: ProductList) => {
     if (confirm(`Are you sure you want to delete "${product.title}"?`)) {
-      setProducts((prev) => prev.filter((p) => p.id !== product.id));
+      try {
+        setLoading(true);
+        console.log("🗑️ Deleting product:", product.id);
+        await productDelete(product.id);
+        console.log("✅ Product deleted successfully");
+        // Reload products after successful deletion
+        await loadProducts();
+      } catch (error) {
+        console.error("❌ Error deleting product:", error);
+        alert("Failed to delete product. Please try again.");
+      } finally {
+        setLoading(false);
+      }
     }
   };
 
-  const handleToggleStatus = (product: any) => {
-    setProducts((prev) =>
-      prev.map((p) => (p.id === product.id ? { ...p, is_active: !p.is_active } : p))
-    );
+  const handleToggleStatus = async (product: ProductList) => {
+    try {
+      setLoading(true);
+      console.log("🔄 Toggling product status:", product.id, "to", !product.is_active);
+
+      await productUpdate(product.id, {
+        is_active: !product.is_active,
+      });
+
+      console.log("✅ Product status updated successfully");
+      // Reload products after successful update
+      await loadProducts();
+    } catch (error) {
+      console.error("❌ Error updating product status:", error);
+      alert("Failed to update product status. Please try again.");
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const handleFormSubmit = (formData: any) => {
-    setLoading(true);
+  const handleFormSubmit = async (formData: any, images: File[]) => {
+    try {
+      setLoading(true);
+      console.log("📝 Submitting product form:", { formData, images });
 
-    // Simulate API call
-    setTimeout(() => {
+      // Generate slug from title if not provided
+      const slug = formData.title
+        .toLowerCase()
+        .replace(/[^a-z0-9\s]/g, "")
+        .replace(/\s+/g, "-")
+        .substring(0, 50);
+
+      // Prepare API data
+      const productData: ProductCreateUpdateRequest = {
+        title: formData.title,
+        description: formData.description,
+        slug: slug,
+        price: formData.price,
+        compare_price: formData.compare_price || undefined,
+        sku: formData.sku || undefined,
+        barcode: formData.barcode || undefined,
+        stock_quantity: formData.track_inventory ? parseInt(formData.stock_quantity) : undefined,
+        track_inventory: formData.track_inventory,
+        allow_backorder: formData.allow_backorder,
+        meta_title: formData.meta_title || undefined,
+        meta_description: formData.meta_description || undefined,
+        category: formData.category_id ? parseInt(formData.category_id) : undefined,
+        is_active: formData.is_active,
+        is_featured: formData.is_featured,
+      };
+
       if (editingProduct) {
-        setProducts((prev) =>
-          prev.map((p) =>
-            p.id === editingProduct.id ? { ...p, ...formData, id: editingProduct.id } : p
-          )
-        );
+        console.log("✏️ Updating existing product:", editingProduct.id);
+        await productUpdate(editingProduct.id, productData);
+        console.log("✅ Product updated successfully");
       } else {
-        const newProduct = {
-          ...formData,
-          id: Math.max(...products.map((p) => p.id)) + 1,
-          created_at: new Date().toISOString(),
-        };
-        setProducts((prev) => [...prev, newProduct]);
+        console.log("🆕 Creating new product");
+        await productCreate(productData);
+        console.log("✅ Product created successfully");
       }
+
+      // Reload products after successful create/update
+      await loadProducts();
 
       setShowForm(false);
       setEditingProduct(null);
+    } catch (error) {
+      console.error("❌ Error submitting product form:", error);
+      alert("Failed to save product. Please try again.");
+    } finally {
       setLoading(false);
-    }, 1000);
+    }
   };
 
   const handleCloseForm = () => {
@@ -214,13 +269,15 @@ const ProductsManagement = () => {
   const filteredProducts = products.filter((product) => {
     const matchesSearch =
       product.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      product.description.toLowerCase().includes(searchTerm.toLowerCase());
+      product.slug.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesStatus =
       statusFilter === "all" ||
       (statusFilter === "active" && product.is_active) ||
       (statusFilter === "inactive" && !product.is_active);
     const matchesCategory =
-      categoryFilter === "all" || product.category?.id.toString() === categoryFilter;
+      categoryFilter === "all" ||
+      categories.find((cat) => cat.id.toString() === categoryFilter)?.name ===
+        product.category_name;
 
     return matchesSearch && matchesStatus && matchesCategory;
   });

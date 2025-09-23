@@ -1,5 +1,6 @@
 "use client";
 import { useState } from "react";
+import { ProductList } from "@/api/generated/interfaces";
 import {
   Form,
   FormGroup,
@@ -119,7 +120,7 @@ interface Category {
 }
 
 interface ProductFormProps {
-  initialData?: Partial<FormData>;
+  initialData?: ProductList | null;
   categories: Category[];
   onSubmit: (data: FormData, images: File[]) => void;
   onCancel: () => void;
@@ -133,22 +134,43 @@ const ProductForm = ({
   onCancel,
   loading = false,
 }: ProductFormProps) => {
-  const [formData, setFormData] = useState<FormData>({
-    title: "",
-    description: "",
-    price: "",
-    compare_price: "",
-    stock_quantity: "0",
-    category_id: "",
-    is_active: true,
-    is_featured: false,
-    track_inventory: true,
-    allow_backorder: false,
-    meta_title: "",
-    meta_description: "",
-    sku: "",
-    barcode: "",
-    ...initialData,
+  const [formData, setFormData] = useState<FormData>(() => {
+    // Convert ProductList to FormData format
+    if (initialData) {
+      return {
+        title: initialData.title || "",
+        description: "", // ProductList doesn't have description, will need to fetch from ProductDetail
+        price: initialData.price || "",
+        compare_price: initialData.compare_price || "",
+        stock_quantity: initialData.stock_quantity?.toString() || "0",
+        category_id: "", // Will need to derive from category_name
+        is_active: initialData.is_active ?? true,
+        is_featured: initialData.is_featured ?? false,
+        track_inventory: true,
+        allow_backorder: false,
+        meta_title: "",
+        meta_description: "",
+        sku: initialData.slug || "",
+        barcode: "",
+      };
+    }
+
+    return {
+      title: "",
+      description: "",
+      price: "",
+      compare_price: "",
+      stock_quantity: "0",
+      category_id: "",
+      is_active: true,
+      is_featured: false,
+      track_inventory: true,
+      allow_backorder: false,
+      meta_title: "",
+      meta_description: "",
+      sku: "",
+      barcode: "",
+    };
   });
 
   const [images, setImages] = useState<File[]>([]);

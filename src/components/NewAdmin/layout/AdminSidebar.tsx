@@ -197,9 +197,15 @@ const AdminSidebar = () => {
 
       <UserSection>
         <div className="user-info">
-          <div className="avatar">{user?.name?.charAt(0) || user?.email?.charAt(0) || "A"}</div>
+          <div className="avatar">
+            {user?.first_name?.charAt(0) || user?.email?.charAt(0) || "A"}
+          </div>
           <div className="details">
-            <div className="name">{user?.name || user?.email || "Admin User"}</div>
+            <div className="name">
+              {user?.first_name
+                ? `${user.first_name} ${user.last_name}`.trim()
+                : user?.email || "Admin User"}
+            </div>
             <div className="role">Administrator</div>
           </div>
         </div>
