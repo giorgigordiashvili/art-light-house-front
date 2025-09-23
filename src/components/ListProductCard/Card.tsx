@@ -30,6 +30,9 @@ const StyledRectangle = styled.div`
       -webkit-mask:
         linear-gradient(#fff 0 0) content-box,
         linear-gradient(#fff 0 0);
+      mask:
+        linear-gradient(#fff 0 0) content-box,
+        linear-gradient(#fff 0 0);
       -webkit-mask-composite: destination-out;
       mask-composite: exclude;
       z-index: 1;
@@ -51,6 +54,9 @@ const StyledRectangle = styled.div`
         border-radius: 17px;
         background: linear-gradient(180deg, #f2c754 0%, rgba(242, 199, 84, 0) 100%);
         -webkit-mask:
+          linear-gradient(#fff 0 0) content-box,
+          linear-gradient(#fff 0 0);
+        mask:
           linear-gradient(#fff 0 0) content-box,
           linear-gradient(#fff 0 0);
         -webkit-mask-composite: destination-out;
@@ -94,7 +100,7 @@ function Card({ product, dictionary }: { product: ProductList; dictionary: any }
     <StyledRectangle onClick={handleCardClick}>
       <ClickableArea>
         <StyledHeartIcon>
-          <HeartIcon />
+          <HeartIcon productId={product.id} defaultIsFavorite={product.is_favorite} />
         </StyledHeartIcon>
         <LampaImage product={product} />
         <ProductText product={product} />
