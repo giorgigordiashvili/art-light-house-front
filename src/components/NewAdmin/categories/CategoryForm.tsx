@@ -1,5 +1,6 @@
 "use client";
 import { useState } from "react";
+import { AdminCategory } from "@/api/generated/interfaces";
 import {
   Form,
   FormGroup,
@@ -26,19 +27,13 @@ interface FormData {
   slug: string;
 }
 
-interface Category {
-  id: number;
-  name: string;
-  full_path: string;
-}
-
 interface CategoryFormProps {
-  initialData?: Partial<FormData>;
-  categories: Category[];
+  initialData?: AdminCategory | null;
+  categories: AdminCategory[];
   onSubmit: (data: FormData) => void;
   onCancel: () => void;
   loading?: boolean;
-  parentId?: number; // For creating child categories
+  parentId?: number;
 }
 
 const CategoryForm = ({
@@ -49,15 +44,28 @@ const CategoryForm = ({
   loading = false,
   parentId,
 }: CategoryFormProps) => {
-  const [formData, setFormData] = useState<FormData>({
-    name: "",
-    description: "",
-    parent_id: parentId?.toString() || "",
-    is_active: true,
-    meta_title: "",
-    meta_description: "",
-    slug: "",
-    ...initialData,
+  const [formData, setFormData] = useState<FormData>(() => {
+    if (initialData) {
+      return {
+        name: initialData.name || "",
+        description: initialData.description || "",
+        parent_id: initialData.parent?.toString() || "",
+        is_active: initialData.is_active ?? true,
+        meta_title: "",
+        meta_description: "",
+        slug: initialData.slug || "",
+      };
+    }
+
+    return {
+      name: "",
+      description: "",
+      parent_id: parentId?.toString() || "",
+      is_active: true,
+      meta_title: "",
+      meta_description: "",
+      slug: "",
+    };
   });
 
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -69,7 +77,7 @@ const CategoryForm = ({
       newErrors.name = "Category name is required";
     }
 
-    if (formData.parent_id && formData.parent_id === initialData?.parent_id?.toString()) {
+    if (formData.parent_id && initialData && formData.parent_id === initialData.id?.toString()) {
       newErrors.parent_id = "Category cannot be its own parent";
     }
 
@@ -96,7 +104,7 @@ const CategoryForm = ({
     }));
 
     // Auto-generate slug from name
-    if (name === "name" && !initialData?.slug) {
+    if (name === "name" && !initialData) {
       const slug = value
         .toLowerCase()
         .replace(/[^a-z0-9\s]/g, "")
@@ -106,7 +114,7 @@ const CategoryForm = ({
     }
 
     // Auto-generate meta title from name
-    if (name === "name" && !initialData?.meta_title) {
+    if (name === "name" && !initialData) {
       setFormData((prev) => ({ ...prev, meta_title: value }));
     }
   };
@@ -115,7 +123,7 @@ const CategoryForm = ({
   const availableParents = categories.filter((cat) => {
     if (initialData) {
       // Don't allow selecting self or descendants as parent
-      return cat.id.toString() !== (initialData as any).id?.toString();
+      return cat.id.toString() !== initialData.id?.toString();
     }
     return true;
   });

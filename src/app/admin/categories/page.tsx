@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import AdminLayout from "@/components/NewAdmin/layout/AdminLayout";
 import { Card, CardContent } from "@/components/NewAdmin/ui/Card";
 import { Button, ButtonGroup } from "@/components/NewAdmin/ui/Button";
@@ -7,6 +7,8 @@ import { Input, Select } from "@/components/NewAdmin/ui/Form";
 import CategoriesTable from "@/components/NewAdmin/categories/CategoriesTable";
 import CategoryForm from "@/components/NewAdmin/categories/CategoryForm";
 import styled from "styled-components";
+import { AdminCategory, AdminCategoryRequest } from "@/api/generated/interfaces";
+import adminAxios from "@/api/admin-axios";
 
 const PageHeader = styled.div`
   display: flex;
@@ -145,104 +147,33 @@ const TreeNode = styled.div<{ $level: number }>`
   }
 `;
 
-// Mock data
-const mockCategories = [
-  {
-    id: 1,
-    name: "Abstract Art",
-    slug: "abstract-art",
-    description: "Modern abstract artworks",
-    full_path: "Abstract Art",
-    is_active: true,
-    product_count: 25,
-    level: 0,
-    created_at: "2024-01-15T10:30:00Z",
-    children: [
-      {
-        id: 5,
-        name: "Canvas Paintings",
-        slug: "canvas-paintings",
-        parent_id: 1,
-        full_path: "Abstract Art > Canvas Paintings",
-        is_active: true,
-        product_count: 15,
-        level: 1,
-        created_at: "2024-01-20T14:20:00Z",
-        children: [],
-      },
-      {
-        id: 6,
-        name: "Digital Art",
-        slug: "digital-art",
-        parent_id: 1,
-        full_path: "Abstract Art > Digital Art",
-        is_active: true,
-        product_count: 10,
-        level: 1,
-        created_at: "2024-01-22T09:15:00Z",
-        children: [],
-      },
-    ],
-  },
-  {
-    id: 2,
-    name: "Sculptures",
-    slug: "sculptures",
-    description: "Three-dimensional artworks",
-    full_path: "Sculptures",
-    is_active: true,
-    product_count: 12,
-    level: 0,
-    created_at: "2024-01-10T14:20:00Z",
-    children: [
-      {
-        id: 7,
-        name: "Metal Sculptures",
-        slug: "metal-sculptures",
-        parent_id: 2,
-        full_path: "Sculptures > Metal Sculptures",
-        is_active: true,
-        product_count: 8,
-        level: 1,
-        created_at: "2024-01-25T11:30:00Z",
-        children: [],
-      },
-    ],
-  },
-  {
-    id: 3,
-    name: "Photography",
-    slug: "photography",
-    description: "Photographic artworks",
-    full_path: "Photography",
-    is_active: true,
-    product_count: 18,
-    level: 0,
-    created_at: "2024-01-12T16:45:00Z",
-    children: [],
-  },
-  {
-    id: 4,
-    name: "Vintage Art",
-    slug: "vintage-art",
-    description: "Classic and vintage pieces",
-    full_path: "Vintage Art",
-    is_active: false,
-    product_count: 0,
-    level: 0,
-    created_at: "2024-01-08T12:10:00Z",
-    children: [],
-  },
-];
-
 const CategoriesManagement = () => {
-  const [categories, setCategories] = useState(mockCategories);
+  const [categories, setCategories] = useState<AdminCategory[]>([]);
   const [loading, setLoading] = useState(false);
   const [showForm, setShowForm] = useState(false);
-  const [editingCategory, setEditingCategory] = useState<any>(null);
+  const [editingCategory, setEditingCategory] = useState<AdminCategory | null>(null);
   const [parentForNewCategory, setParentForNewCategory] = useState<number | undefined>(undefined);
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
+
+  // Fetch categories on component mount
+  useEffect(() => {
+    loadCategories();
+  }, []);
+
+  const loadCategories = async () => {
+    try {
+      setLoading(true);
+      console.log("🔄 Loading categories from API...");
+      const response = await adminAxios.get("/api/products/admin/categories/");
+      console.log("✅ Categories loaded:", response.data);
+      setCategories(response.data);
+    } catch (error) {
+      console.error("❌ Error loading categories:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleCreateCategory = () => {
     setEditingCategory(null);
@@ -250,169 +181,103 @@ const CategoriesManagement = () => {
     setShowForm(true);
   };
 
-  const handleEditCategory = (category: any) => {
+  const handleEditCategory = (category: AdminCategory) => {
     setEditingCategory(category);
     setParentForNewCategory(undefined);
     setShowForm(true);
   };
 
-  const handleAddChildCategory = (parentCategory: any) => {
+  const handleAddChildCategory = (parentCategory: AdminCategory) => {
     setEditingCategory(null);
     setParentForNewCategory(parentCategory.id);
     setShowForm(true);
   };
 
-  const handleDeleteCategory = (category: any) => {
-    if (category.product_count > 0) {
-      alert("Cannot delete category with products. Please move or delete products first.");
-      return;
-    }
-
-    if (category.children && category.children.length > 0) {
-      alert("Cannot delete category with subcategories. Please delete subcategories first.");
-      return;
-    }
-
+  const handleDeleteCategory = async (category: AdminCategory) => {
     if (confirm(`Are you sure you want to delete "${category.name}"?`)) {
-      const removeCategory = (categories: any[]): any[] => {
-        return categories
-          .filter((cat) => cat.id !== category.id)
-          .map((cat) => ({
-            ...cat,
-            children: cat.children ? removeCategory(cat.children) : [],
-          }));
+      try {
+        setLoading(true);
+        console.log("🗑️ Deleting category:", category.id);
+        await adminAxios.delete(`/api/products/admin/categories/${category.id}/delete/`);
+        console.log("✅ Category deleted successfully");
+        await loadCategories();
+      } catch (error) {
+        console.error("❌ Error deleting category:", error);
+        alert("Failed to delete category. Please try again.");
+      } finally {
+        setLoading(false);
+      }
+    }
+  };
+
+  const handleToggleStatus = async (category: AdminCategory) => {
+    try {
+      setLoading(true);
+      console.log("🔄 Toggling category status:", category.id, "to", !category.is_active);
+      await adminAxios.patch(`/api/products/admin/categories/${category.id}/update/`, {
+        is_active: !category.is_active,
+      });
+      console.log("✅ Category status updated successfully");
+      await loadCategories();
+    } catch (error) {
+      console.error("❌ Error updating category status:", error);
+      alert("Failed to update category status. Please try again.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleFormSubmit = async (formData: any) => {
+    try {
+      setLoading(true);
+      console.log("📝 Submitting category form:", { formData, editingCategory });
+
+      // Prepare API data
+      const categoryData: AdminCategoryRequest = {
+        name: formData.name,
+        description: formData.description || undefined,
+        slug:
+          formData.slug ||
+          formData.name
+            .toLowerCase()
+            .replace(/[^a-z0-9\s]/g, "")
+            .replace(/\s+/g, "-"),
+        parent:
+          parentForNewCategory || (formData.parent_id ? parseInt(formData.parent_id) : undefined),
+        is_active: formData.is_active ?? true,
       };
 
-      setCategories(removeCategory(categories));
-    }
-  };
-
-  const handleToggleStatus = (category: any) => {
-    const updateCategory = (categories: any[]): any[] => {
-      return categories.map((cat) => {
-        if (cat.id === category.id) {
-          return { ...cat, is_active: !cat.is_active };
-        }
-        return {
-          ...cat,
-          children: cat.children ? updateCategory(cat.children) : [],
-        };
-      });
-    };
-
-    setCategories(updateCategory(categories));
-  };
-
-  const handleFormSubmit = (formData: any) => {
-    setLoading(true);
-
-    // Simulate API call
-    setTimeout(() => {
       if (editingCategory) {
-        const updateCategory = (categories: any[]): any[] => {
-          return categories.map((cat) => {
-            if (cat.id === editingCategory.id) {
-              return {
-                ...cat,
-                ...formData,
-                full_path: formData.parent_id
-                  ? `${findCategoryById(parseInt(formData.parent_id))?.full_path} > ${formData.name}`
-                  : formData.name,
-              };
-            }
-            return {
-              ...cat,
-              children: cat.children ? updateCategory(cat.children) : [],
-            };
-          });
-        };
-
-        setCategories(updateCategory(categories));
+        console.log("✏️ Updating existing category:", editingCategory.id);
+        await adminAxios.patch(
+          `/api/products/admin/categories/${editingCategory.id}/update/`,
+          categoryData
+        );
+        console.log("✅ Category updated successfully");
       } else {
-        const newCategory = {
-          ...formData,
-          id: Math.max(...getAllCategoryIds(categories)) + 1,
-          product_count: 0,
-          level: formData.parent_id ? findCategoryById(parseInt(formData.parent_id))!.level + 1 : 0,
-          created_at: new Date().toISOString(),
-          children: [],
-          full_path: formData.parent_id
-            ? `${findCategoryById(parseInt(formData.parent_id))?.full_path} > ${formData.name}`
-            : formData.name,
-        };
-
-        if (formData.parent_id) {
-          const addToParent = (categories: any[]): any[] => {
-            return categories.map((cat) => {
-              if (cat.id === parseInt(formData.parent_id)) {
-                return {
-                  ...cat,
-                  children: [...(cat.children || []), newCategory],
-                };
-              }
-              return {
-                ...cat,
-                children: cat.children ? addToParent(cat.children) : [],
-              };
-            });
-          };
-          setCategories(addToParent(categories));
-        } else {
-          setCategories((prev) => [...prev, newCategory]);
-        }
+        console.log("🆕 Creating new category");
+        await adminAxios.post("/api/products/admin/categories/create/", categoryData);
+        console.log("✅ Category created successfully");
       }
+
+      // Reload categories after successful create/update
+      await loadCategories();
 
       setShowForm(false);
       setEditingCategory(null);
       setParentForNewCategory(undefined);
+    } catch (error) {
+      console.error("❌ Error submitting category form:", error);
+      alert("Failed to save category. Please try again.");
+    } finally {
       setLoading(false);
-    }, 1000);
+    }
   };
 
   const handleCloseForm = () => {
     setShowForm(false);
     setEditingCategory(null);
     setParentForNewCategory(undefined);
-  };
-
-  const findCategoryById = (id: number): any => {
-    const search = (categories: any[]): any => {
-      for (const category of categories) {
-        if (category.id === id) return category;
-        if (category.children) {
-          const found = search(category.children);
-          if (found) return found;
-        }
-      }
-      return null;
-    };
-    return search(categories);
-  };
-
-  const getAllCategoryIds = (categories: any[]): number[] => {
-    const ids: number[] = [];
-    const collect = (cats: any[]) => {
-      for (const cat of cats) {
-        ids.push(cat.id);
-        if (cat.children) collect(cat.children);
-      }
-    };
-    collect(categories);
-    return ids;
-  };
-
-  const flattenCategoriesForDisplay = (categories: any[]): any[] => {
-    const flattened: any[] = [];
-    const flatten = (cats: any[], level = 0) => {
-      for (const cat of cats) {
-        flattened.push({ ...cat, level });
-        if (cat.children && cat.children.length > 0) {
-          flatten(cat.children, level + 1);
-        }
-      }
-    };
-    flatten(categories);
-    return flattened;
   };
 
   const filteredCategories = categories.filter((category) => {
@@ -424,27 +289,25 @@ const CategoriesManagement = () => {
     return matchesSearch && matchesStatus;
   });
 
-  const allCategories = flattenCategoriesForDisplay(categories);
   const stats = {
-    total: allCategories.length,
-    active: allCategories.filter((c) => c.is_active).length,
-    withProducts: allCategories.filter((c) => c.product_count > 0).length,
+    total: categories.length,
+    active: categories.filter((c) => c.is_active).length,
+    withSubcategories: categories.filter(
+      (c) => c.subcategories_count && parseInt(c.subcategories_count) > 0
+    ).length,
     rootLevel: categories.length,
   };
 
-  const renderTreeVisualization = (categories: any[], level = 0) => {
+  const renderTreeVisualization = (categories: AdminCategory[], level = 0) => {
     return categories.map((category) => (
       <div key={category.id}>
         <TreeNode $level={level}>
           <span className="node-name">{category.name}</span>
           <span className="node-info">
-            ({category.product_count} products)
+            {category.full_path}
             {!category.is_active && " - Inactive"}
           </span>
         </TreeNode>
-        {category.children &&
-          category.children.length > 0 &&
-          renderTreeVisualization(category.children, level + 1)}
       </div>
     ));
   };
@@ -474,8 +337,8 @@ const CategoriesManagement = () => {
           <div className="stat-label">Active Categories</div>
         </StatCard>
         <StatCard>
-          <div className="stat-value">{stats.withProducts}</div>
-          <div className="stat-label">With Products</div>
+          <div className="stat-value">{stats.withSubcategories}</div>
+          <div className="stat-label">With Subcategories</div>
         </StatCard>
         <StatCard>
           <div className="stat-value">{stats.rootLevel}</div>
@@ -520,7 +383,7 @@ const CategoriesManagement = () => {
 
           <CategoriesTable
             categories={filteredCategories}
-            loading={false}
+            loading={loading}
             onEdit={handleEditCategory}
             onDelete={handleDeleteCategory}
             onToggleStatus={handleToggleStatus}
@@ -544,7 +407,7 @@ const CategoriesManagement = () => {
 
           <CategoryForm
             initialData={editingCategory}
-            categories={allCategories}
+            categories={categories}
             onSubmit={handleFormSubmit}
             onCancel={handleCloseForm}
             loading={loading}

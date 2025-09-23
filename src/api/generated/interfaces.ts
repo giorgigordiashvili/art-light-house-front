@@ -37,6 +37,68 @@ export interface AddressTypeEnum {
   [key: string]: any;
 }
 
+export interface AdminAttribute {
+  id: number;
+  name: string;
+  attribute_type: AttributeTypeEnum;
+  is_required?: boolean;
+  is_filterable?: boolean;
+  parent?: number;
+  categories?: number[];
+  sub_attributes_count: string;
+  categories_count: string;
+  values: AdminAttributeValue[];
+  created_at: string;
+  translations?: AttributeTranslation[];
+}
+
+export interface AdminAttributeRequest {
+  name: string;
+  attribute_type: AttributeTypeEnum;
+  is_required?: boolean;
+  is_filterable?: boolean;
+  parent?: number;
+  categories?: number[];
+  translations?: AttributeTranslationRequest[];
+}
+
+export interface AdminAttributeValue {
+  id: number;
+  value: string;
+  color_code?: string;
+  sort_order?: number;
+  translations?: AttributeValueTranslation[];
+}
+
+export interface AdminAttributeValueRequest {
+  value: string;
+  color_code?: string;
+  sort_order?: number;
+  translations?: AttributeValueTranslationRequest[];
+}
+
+export interface AdminCategory {
+  id: number;
+  name: string;
+  description?: string;
+  slug: string;
+  parent?: number;
+  full_path: string;
+  subcategories_count: string;
+  is_active?: boolean;
+  created_at: string;
+  translations?: CategoryTranslation[];
+}
+
+export interface AdminCategoryRequest {
+  name: string;
+  description?: string;
+  slug: string;
+  parent?: number;
+  is_active?: boolean;
+  translations?: CategoryTranslationRequest[];
+}
+
 export interface Attribute {
   id: number;
   name: string;
@@ -50,6 +112,16 @@ export interface Attribute {
   created_at: string;
 }
 
+export interface AttributeTranslation {
+  language_code: LanguageCodeEnum;
+  name: string;
+}
+
+export interface AttributeTranslationRequest {
+  language_code: LanguageCodeEnum;
+  name: string;
+}
+
 export interface AttributeTypeEnum {
   [key: string]: any;
 }
@@ -59,6 +131,16 @@ export interface AttributeValue {
   value: string;
   color_code?: string;
   sort_order?: number;
+}
+
+export interface AttributeValueTranslation {
+  language_code: LanguageCodeEnum;
+  value: string;
+}
+
+export interface AttributeValueTranslationRequest {
+  language_code: LanguageCodeEnum;
+  value: string;
 }
 
 export interface Cart {
@@ -91,6 +173,18 @@ export interface Category {
   created_at: string;
 }
 
+export interface CategoryTranslation {
+  language_code: LanguageCodeEnum;
+  name: string;
+  description?: string;
+}
+
+export interface CategoryTranslationRequest {
+  language_code: LanguageCodeEnum;
+  name: string;
+  description?: string;
+}
+
 export interface EmailVerificationRequest {
   email: string;
   code: string;
@@ -101,6 +195,10 @@ export interface Favorite {
   product: number;
   product_details: ProductList;
   created_at: string;
+}
+
+export interface LanguageCodeEnum {
+  [key: string]: any;
 }
 
 export interface PasswordChangeRequest {
@@ -126,6 +224,32 @@ export interface PatchedAddressUpdateRequest {
   latitude?: string;
   longitude?: string;
   is_default?: boolean;
+}
+
+export interface PatchedAdminAttributeRequest {
+  name?: string;
+  attribute_type?: AttributeTypeEnum;
+  is_required?: boolean;
+  is_filterable?: boolean;
+  parent?: number;
+  categories?: number[];
+  translations?: AttributeTranslationRequest[];
+}
+
+export interface PatchedAdminAttributeValueRequest {
+  value?: string;
+  color_code?: string;
+  sort_order?: number;
+  translations?: AttributeValueTranslationRequest[];
+}
+
+export interface PatchedAdminCategoryRequest {
+  name?: string;
+  description?: string;
+  slug?: string;
+  parent?: number;
+  is_active?: boolean;
+  translations?: CategoryTranslationRequest[];
 }
 
 export interface PatchedCartItemRequest {

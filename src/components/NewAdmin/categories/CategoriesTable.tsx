@@ -12,6 +12,7 @@ import {
 } from "@/components/NewAdmin/ui/Table";
 import { Button } from "@/components/NewAdmin/ui/Button";
 import styled from "styled-components";
+import { AdminCategory } from "@/api/generated/interfaces";
 
 const CategoryHierarchy = styled.div`
   display: flex;
@@ -46,27 +47,13 @@ const ProductCountBadge = styled.span`
   font-weight: 500;
 `;
 
-interface Category {
-  id: number;
-  name: string;
-  slug: string;
-  description?: string;
-  parent_id?: number;
-  full_path: string;
-  is_active: boolean;
-  product_count: number;
-  children?: Category[];
-  level: number;
-  created_at: string;
-}
-
 interface CategoriesTableProps {
-  categories: Category[];
+  categories: AdminCategory[];
   loading?: boolean;
-  onEdit: (category: Category) => void;
-  onDelete: (category: Category) => void;
-  onToggleStatus: (category: Category) => void;
-  onAddChild: (category: Category) => void;
+  onEdit: (category: AdminCategory) => void;
+  onDelete: (category: AdminCategory) => void;
+  onToggleStatus: (category: AdminCategory) => void;
+  onAddChild: (category: AdminCategory) => void;
 }
 
 const CategoriesTable = ({
@@ -101,20 +88,7 @@ const CategoriesTable = ({
     });
   };
 
-  const flattenCategories = (categories: Category[], level = 0): Category[] => {
-    const flattened: Category[] = [];
-
-    for (const category of categories) {
-      flattened.push({ ...category, level });
-      if (category.children && category.children.length > 0) {
-        flattened.push(...flattenCategories(category.children, level + 1));
-      }
-    }
-
-    return flattened;
-  };
-
-  const flatCategories = flattenCategories(categories);
+  // API categories are already flat, no need to flatten
 
   return (
     <Table>
@@ -128,10 +102,10 @@ const CategoriesTable = ({
         </TableRow>
       </TableHeader>
       <TableBody>
-        {flatCategories.map((category) => (
+        {categories.map((category) => (
           <TableRow key={category.id}>
             <TableCell>
-              <CategoryHierarchy style={{ paddingLeft: `${category.level * 20}px` }}>
+              <CategoryHierarchy>
                 <div>
                   <div className="category-name">{category.name}</div>
                   {category.full_path && <div className="category-path">{category.full_path}</div>}
@@ -139,10 +113,14 @@ const CategoriesTable = ({
               </CategoryHierarchy>
             </TableCell>
             <TableCell>
-              <ProductCountBadge>{category.product_count} products</ProductCountBadge>
+              <ProductCountBadge>
+                {category.subcategories_count
+                  ? `${category.subcategories_count} subcategories`
+                  : "No subcategories"}
+              </ProductCountBadge>
             </TableCell>
             <TableCell>
-              <StatusBadge $isActive={category.is_active}>
+              <StatusBadge $isActive={category.is_active ?? false}>
                 {category.is_active ? "Active" : "Inactive"}
               </StatusBadge>
             </TableCell>
@@ -167,8 +145,7 @@ const CategoriesTable = ({
                   $size="sm"
                   onClick={() => onDelete(category)}
                   disabled={
-                    category.product_count > 0 ||
-                    (category.children && category.children.length > 0)
+                    !!(category.subcategories_count && parseInt(category.subcategories_count) > 0)
                   }
                 >
                   Delete

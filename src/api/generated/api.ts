@@ -22,6 +22,15 @@ import type {
   ProductImage,
   ProductImageUploadRequest,
   PatchedProductCreateUpdateRequest,
+  AdminAttribute,
+  AdminAttributeRequest,
+  PatchedAdminAttributeRequest,
+  AdminAttributeValue,
+  AdminAttributeValueRequest,
+  PatchedAdminAttributeValueRequest,
+  AdminCategory,
+  AdminCategoryRequest,
+  PatchedAdminCategoryRequest,
   Attribute,
   Cart,
   AddToCartRequest,
@@ -182,6 +191,130 @@ export async function productUpdate(
   data: PatchedProductCreateUpdateRequest
 ): Promise<ProductDetail> {
   const response = await axios.patch(`/api/products/${productId}/update/`, data);
+  return response.data;
+}
+
+export async function adminAttributesList(): Promise<AdminAttribute[]> {
+  const response = await axios.get(`/api/products/admin/attributes/`);
+  return response.data;
+}
+
+export async function adminAttributeDetail(attributeId: number): Promise<AdminAttribute> {
+  const response = await axios.get(`/api/products/admin/attributes/${attributeId}/`);
+  return response.data;
+}
+
+export async function adminAttributeDelete(attributeId: number): Promise<Record<string, any>> {
+  const response = await axios.delete(`/api/products/admin/attributes/${attributeId}/delete/`);
+  return response.data;
+}
+
+export async function adminAttributeUpdate2(
+  attributeId: number,
+  data: AdminAttributeRequest
+): Promise<AdminAttribute> {
+  const response = await axios.put(`/api/products/admin/attributes/${attributeId}/update/`, data);
+  return response.data;
+}
+
+export async function adminAttributeUpdate(
+  attributeId: number,
+  data: PatchedAdminAttributeRequest
+): Promise<AdminAttribute> {
+  const response = await axios.patch(`/api/products/admin/attributes/${attributeId}/update/`, data);
+  return response.data;
+}
+
+export async function adminAttributeValuesList(
+  attributeId: number
+): Promise<AdminAttributeValue[]> {
+  const response = await axios.get(`/api/products/admin/attributes/${attributeId}/values/`);
+  return response.data;
+}
+
+export async function adminAttributeValueDelete(
+  attributeId: number,
+  valueId: number
+): Promise<Record<string, any>> {
+  const response = await axios.delete(
+    `/api/products/admin/attributes/${attributeId}/values/${valueId}/delete/`
+  );
+  return response.data;
+}
+
+export async function adminAttributeValueUpdate2(
+  attributeId: number,
+  valueId: number,
+  data: AdminAttributeValueRequest
+): Promise<AdminAttributeValue> {
+  const response = await axios.put(
+    `/api/products/admin/attributes/${attributeId}/values/${valueId}/update/`,
+    data
+  );
+  return response.data;
+}
+
+export async function adminAttributeValueUpdate(
+  attributeId: number,
+  valueId: number,
+  data: PatchedAdminAttributeValueRequest
+): Promise<AdminAttributeValue> {
+  const response = await axios.patch(
+    `/api/products/admin/attributes/${attributeId}/values/${valueId}/update/`,
+    data
+  );
+  return response.data;
+}
+
+export async function adminAttributeValueCreate(
+  attributeId: number,
+  data: AdminAttributeValueRequest
+): Promise<AdminAttributeValue> {
+  const response = await axios.post(
+    `/api/products/admin/attributes/${attributeId}/values/create/`,
+    data
+  );
+  return response.data;
+}
+
+export async function adminAttributeCreate(data: AdminAttributeRequest): Promise<AdminAttribute> {
+  const response = await axios.post(`/api/products/admin/attributes/create/`, data);
+  return response.data;
+}
+
+export async function adminCategoriesList(): Promise<AdminCategory[]> {
+  const response = await axios.get(`/api/products/admin/categories/`);
+  return response.data;
+}
+
+export async function adminCategoryDetail(categoryId: number): Promise<AdminCategory> {
+  const response = await axios.get(`/api/products/admin/categories/${categoryId}/`);
+  return response.data;
+}
+
+export async function adminCategoryDelete(categoryId: number): Promise<Record<string, any>> {
+  const response = await axios.delete(`/api/products/admin/categories/${categoryId}/delete/`);
+  return response.data;
+}
+
+export async function adminCategoryUpdate2(
+  categoryId: number,
+  data: AdminCategoryRequest
+): Promise<AdminCategory> {
+  const response = await axios.put(`/api/products/admin/categories/${categoryId}/update/`, data);
+  return response.data;
+}
+
+export async function adminCategoryUpdate(
+  categoryId: number,
+  data: PatchedAdminCategoryRequest
+): Promise<AdminCategory> {
+  const response = await axios.patch(`/api/products/admin/categories/${categoryId}/update/`, data);
+  return response.data;
+}
+
+export async function adminCategoryCreate(data: AdminCategoryRequest): Promise<AdminCategory> {
+  const response = await axios.post(`/api/products/admin/categories/create/`, data);
   return response.data;
 }
 

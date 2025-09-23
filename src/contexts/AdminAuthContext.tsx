@@ -35,8 +35,8 @@ const checkAdminStatus = (user: User): boolean => {
   console.log("🔍 Checking admin status for user:", user);
   console.log("🔍 is_admin value:", user.is_admin, "type:", typeof user.is_admin);
 
-  // The API returns is_admin as a string
-  const isAdmin = user.is_admin === "true";
+  // Handle both boolean and string types for is_admin
+  const isAdmin = (user.is_admin as any) === true || user.is_admin === "true";
   console.log("🔍 Final admin status:", isAdmin);
 
   return isAdmin;

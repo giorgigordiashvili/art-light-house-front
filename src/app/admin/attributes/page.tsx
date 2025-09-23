@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import AdminLayout from "@/components/NewAdmin/layout/AdminLayout";
 import { Card, CardHeader, CardContent } from "@/components/NewAdmin/ui/Card";
 import { Button, ButtonGroup } from "@/components/NewAdmin/ui/Button";
@@ -8,6 +8,8 @@ import AttributesTable from "@/components/NewAdmin/attributes/AttributesTable";
 import AttributeForm from "@/components/NewAdmin/attributes/AttributeForm";
 import AttributeValuesManager from "@/components/NewAdmin/attributes/AttributeValuesManager";
 import styled from "styled-components";
+import { AdminAttribute, AdminAttributeRequest } from "@/api/generated/interfaces";
+import adminAxios from "@/api/admin-axios";
 
 const PageHeader = styled.div`
   display: flex;
@@ -149,157 +151,132 @@ const TypeCard = styled.div`
   }
 `;
 
-// Mock data
-const mockAttributes = [
-  {
-    id: 1,
-    name: "Color",
-    type: "color" as const,
-    is_required: false,
-    is_filterable: true,
-    display_order: 1,
-    created_at: "2024-01-15T10:30:00Z",
-    values: [
-      { id: 1, value: "Red", color_code: "#ff0000", display_order: 0 },
-      { id: 2, value: "Blue", color_code: "#0000ff", display_order: 1 },
-      { id: 3, value: "Green", color_code: "#008000", display_order: 2 },
-      { id: 4, value: "Black", color_code: "#000000", display_order: 3 },
-    ],
-  },
-  {
-    id: 2,
-    name: "Size",
-    type: "size" as const,
-    is_required: true,
-    is_filterable: true,
-    display_order: 2,
-    created_at: "2024-01-16T14:20:00Z",
-    values: [
-      { id: 5, value: "Small", display_order: 0 },
-      { id: 6, value: "Medium", display_order: 1 },
-      { id: 7, value: "Large", display_order: 2 },
-    ],
-  },
-  {
-    id: 3,
-    name: "Material",
-    type: "choice" as const,
-    is_required: false,
-    is_filterable: true,
-    display_order: 3,
-    created_at: "2024-01-18T09:15:00Z",
-    values: [
-      { id: 8, value: "Canvas", display_order: 0 },
-      { id: 9, value: "Paper", display_order: 1 },
-      { id: 10, value: "Metal", display_order: 2 },
-      { id: 11, value: "Wood", display_order: 3 },
-    ],
-  },
-  {
-    id: 4,
-    name: "Weight",
-    type: "number" as const,
-    is_required: false,
-    is_filterable: false,
-    display_order: 4,
-    created_at: "2024-01-20T11:30:00Z",
-  },
-  {
-    id: 5,
-    name: "Is Framed",
-    type: "boolean" as const,
-    is_required: false,
-    is_filterable: true,
-    display_order: 5,
-    created_at: "2024-01-22T16:45:00Z",
-  },
-  {
-    id: 6,
-    name: "Artist Notes",
-    type: "text" as const,
-    is_required: false,
-    is_filterable: false,
-    display_order: 6,
-    created_at: "2024-01-25T13:20:00Z",
-  },
-];
-
 type ModalView = "form" | "values" | null;
 
 const AttributesManagement = () => {
-  const [attributes, setAttributes] = useState(mockAttributes);
+  const [attributes, setAttributes] = useState<AdminAttribute[]>([]);
   const [loading, setLoading] = useState(false);
   const [modalView, setModalView] = useState<ModalView>(null);
-  const [editingAttribute, setEditingAttribute] = useState<any>(null);
-  const [managingValuesFor, setManagingValuesFor] = useState<any>(null);
+  const [editingAttribute, setEditingAttribute] = useState<AdminAttribute | null>(null);
+  const [managingValuesFor, setManagingValuesFor] = useState<AdminAttribute | null>(null);
   const [searchTerm, setSearchTerm] = useState("");
   const [typeFilter, setTypeFilter] = useState("all");
+
+  // Fetch attributes on component mount
+  useEffect(() => {
+    loadAttributes();
+  }, []);
+
+  const loadAttributes = async () => {
+    try {
+      setLoading(true);
+      console.log("🔄 Loading attributes from API...");
+      const response = await adminAxios.get("/api/products/admin/attributes/");
+      console.log("✅ Attributes loaded:", response.data);
+      setAttributes(response.data);
+    } catch (error) {
+      console.error("❌ Error loading attributes:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleCreateAttribute = () => {
     setEditingAttribute(null);
     setModalView("form");
   };
 
-  const handleEditAttribute = (attribute: any) => {
+  const handleEditAttribute = (attribute: AdminAttribute) => {
     setEditingAttribute(attribute);
     setModalView("form");
   };
 
-  const handleManageValues = (attribute: any) => {
+  const handleManageValues = (attribute: AdminAttribute) => {
     setManagingValuesFor(attribute);
     setModalView("values");
   };
 
-  const handleDeleteAttribute = (attribute: any) => {
+  const handleDeleteAttribute = async (attribute: AdminAttribute) => {
     if (confirm(`Are you sure you want to delete "${attribute.name}"?`)) {
-      setAttributes((prev) => prev.filter((a) => a.id !== attribute.id));
+      try {
+        setLoading(true);
+        console.log("🗑️ Deleting attribute:", attribute.id);
+        await adminAxios.delete(`/api/products/admin/attributes/${attribute.id}/delete/`);
+        console.log("✅ Attribute deleted successfully");
+        await loadAttributes();
+      } catch (error) {
+        console.error("❌ Error deleting attribute:", error);
+        alert("Failed to delete attribute. Please try again.");
+      } finally {
+        setLoading(false);
+      }
     }
   };
 
-  const handleReorderAttributes = (reorderedAttributes: any[]) => {
+  const handleReorderAttributes = (reorderedAttributes: AdminAttribute[]) => {
     setAttributes(reorderedAttributes);
   };
 
-  const handleFormSubmit = (formData: any) => {
-    setLoading(true);
+  const handleFormSubmit = async (formData: any) => {
+    try {
+      setLoading(true);
+      console.log("📝 Submitting attribute form:", { formData, editingAttribute });
 
-    // Simulate API call
-    setTimeout(() => {
+      // Prepare API data
+      const attributeData: AdminAttributeRequest = {
+        name: formData.name,
+        attribute_type: formData.attribute_type,
+        is_required: formData.is_required ?? false,
+        is_filterable: formData.is_filterable ?? false,
+        parent: formData.parent || undefined,
+        categories: formData.categories || [],
+      };
+
       if (editingAttribute) {
-        setAttributes((prev) =>
-          prev.map((a) =>
-            a.id === editingAttribute.id ? { ...a, ...formData, id: editingAttribute.id } : a
-          )
+        console.log("✏️ Updating existing attribute:", editingAttribute.id);
+        await adminAxios.patch(
+          `/api/products/admin/attributes/${editingAttribute.id}/update/`,
+          attributeData
         );
+        console.log("✅ Attribute updated successfully");
       } else {
-        const newAttribute = {
-          ...formData,
-          id: Math.max(...attributes.map((a) => a.id)) + 1,
-          created_at: new Date().toISOString(),
-          values: [],
-        };
-        setAttributes((prev) => [...prev, newAttribute]);
+        console.log("🆕 Creating new attribute");
+        await adminAxios.post("/api/products/admin/attributes/create/", attributeData);
+        console.log("✅ Attribute created successfully");
       }
+
+      // Reload attributes after successful create/update
+      await loadAttributes();
 
       setModalView(null);
       setEditingAttribute(null);
+    } catch (error) {
+      console.error("❌ Error submitting attribute form:", error);
+      alert("Failed to save attribute. Please try again.");
+    } finally {
       setLoading(false);
-    }, 1000);
+    }
   };
 
-  const handleValuesSubmit = (values: any[]) => {
-    setLoading(true);
+  const handleValuesSubmit = async (values: any[]) => {
+    if (!managingValuesFor) return;
 
-    // Simulate API call
-    setTimeout(() => {
-      setAttributes((prev) =>
-        prev.map((a) => (a.id === managingValuesFor.id ? { ...a, values: values as any } : a))
-      );
+    try {
+      setLoading(true);
+      console.log("📝 Updating attribute values:", values);
+
+      // Note: This would need to be implemented based on the specific API
+      // for now just reload the attributes
+      await loadAttributes();
 
       setModalView(null);
       setManagingValuesFor(null);
+    } catch (error) {
+      console.error("❌ Error updating attribute values:", error);
+      alert("Failed to update attribute values. Please try again.");
+    } finally {
       setLoading(false);
-    }, 1000);
+    }
   };
 
   const handleCloseModal = () => {
@@ -310,7 +287,7 @@ const AttributesManagement = () => {
 
   const filteredAttributes = attributes.filter((attribute) => {
     const matchesSearch = attribute.name.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesType = typeFilter === "all" || attribute.type === typeFilter;
+    const matchesType = typeFilter === "all" || (attribute.attribute_type as any) === typeFilter;
     return matchesSearch && matchesType;
   });
 
@@ -322,12 +299,12 @@ const AttributesManagement = () => {
   };
 
   const typeStats = {
-    text: attributes.filter((a) => a.type === "text").length,
-    number: attributes.filter((a) => a.type === "number").length,
-    boolean: attributes.filter((a) => a.type === "boolean").length,
-    choice: attributes.filter((a) => a.type === "choice").length,
-    color: attributes.filter((a) => a.type === "color").length,
-    size: attributes.filter((a) => a.type === "size").length,
+    text: attributes.filter((a) => (a.attribute_type as any) === "text").length,
+    number: attributes.filter((a) => (a.attribute_type as any) === "number").length,
+    boolean: attributes.filter((a) => (a.attribute_type as any) === "boolean").length,
+    choice: attributes.filter((a) => (a.attribute_type as any) === "choice").length,
+    color: attributes.filter((a) => (a.attribute_type as any) === "color").length,
+    size: attributes.filter((a) => (a.attribute_type as any) === "size").length,
   };
 
   return (
@@ -447,7 +424,7 @@ const AttributesManagement = () => {
 
           <AttributesTable
             attributes={filteredAttributes}
-            loading={false}
+            loading={loading}
             onEdit={handleEditAttribute}
             onDelete={handleDeleteAttribute}
             onManageValues={handleManageValues}

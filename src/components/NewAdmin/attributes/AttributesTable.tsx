@@ -12,6 +12,7 @@ import {
 } from "@/components/NewAdmin/ui/Table";
 import { Button } from "@/components/NewAdmin/ui/Button";
 import styled from "styled-components";
+import { AdminAttribute } from "@/api/generated/interfaces";
 
 const TypeBadge = styled.span<{ $type: string }>`
   padding: 4px 8px;
@@ -95,30 +96,13 @@ const OptionalBadge = styled.span`
   font-weight: 500;
 `;
 
-interface AttributeValue {
-  id: number;
-  value: string;
-  display_order: number;
-}
-
-interface Attribute {
-  id: number;
-  name: string;
-  type: "text" | "number" | "boolean" | "choice" | "color" | "size";
-  is_required: boolean;
-  is_filterable: boolean;
-  display_order: number;
-  values?: AttributeValue[];
-  created_at: string;
-}
-
 interface AttributesTableProps {
-  attributes: Attribute[];
+  attributes: AdminAttribute[];
   loading?: boolean;
-  onEdit: (attribute: Attribute) => void;
-  onDelete: (attribute: Attribute) => void;
-  onManageValues: (attribute: Attribute) => void;
-  onReorder: (attributes: Attribute[]) => void;
+  onEdit: (attribute: AdminAttribute) => void;
+  onDelete: (attribute: AdminAttribute) => void;
+  onManageValues: (attribute: AdminAttribute) => void;
+  onReorder: (attributes: AdminAttribute[]) => void;
 }
 
 const AttributesTable = ({
@@ -152,7 +136,7 @@ const AttributesTable = ({
     });
   };
 
-  const renderValues = (attribute: Attribute) => {
+  const renderValues = (attribute: AdminAttribute) => {
     if (!attribute.values || attribute.values.length === 0) {
       return <span style={{ color: "#6c757d", fontSize: "0.875rem" }}>No values</span>;
     }
@@ -181,7 +165,7 @@ const AttributesTable = ({
           <TableHead>Values</TableHead>
           <TableHead>Required</TableHead>
           <TableHead>Filterable</TableHead>
-          <TableHead>Order</TableHead>
+          <TableHead>ID</TableHead>
           <TableHead>Created</TableHead>
           <TableHead>Actions</TableHead>
         </TableRow>
@@ -193,7 +177,9 @@ const AttributesTable = ({
               <div style={{ fontWeight: 500 }}>{attribute.name}</div>
             </TableCell>
             <TableCell>
-              <TypeBadge $type={attribute.type}>{attribute.type}</TypeBadge>
+              <TypeBadge $type={attribute.attribute_type as any}>
+                {attribute.attribute_type as any}
+              </TypeBadge>
             </TableCell>
             <TableCell>{renderValues(attribute)}</TableCell>
             <TableCell>
@@ -219,7 +205,7 @@ const AttributesTable = ({
                   fontSize: "0.875rem",
                 }}
               >
-                {attribute.display_order}
+                {attribute.id}
               </span>
             </TableCell>
             <TableCell>{formatDate(attribute.created_at)}</TableCell>
@@ -228,9 +214,9 @@ const AttributesTable = ({
                 <Button $variant="secondary" $size="sm" onClick={() => onEdit(attribute)}>
                   Edit
                 </Button>
-                {(attribute.type === "choice" ||
-                  attribute.type === "color" ||
-                  attribute.type === "size") && (
+                {((attribute.attribute_type as any) === "choice" ||
+                  (attribute.attribute_type as any) === "color" ||
+                  (attribute.attribute_type as any) === "size") && (
                   <Button $variant="secondary" $size="sm" onClick={() => onManageValues(attribute)}>
                     Values
                   </Button>

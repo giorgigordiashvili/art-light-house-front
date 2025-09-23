@@ -1,5 +1,6 @@
 "use client";
 import { useState } from "react";
+import { AdminAttribute } from "@/api/generated/interfaces";
 import {
   Form,
   FormGroup,
@@ -17,15 +18,15 @@ import { Card, CardHeader, CardContent } from "@/components/NewAdmin/ui/Card";
 
 interface FormData {
   name: string;
-  type: "text" | "number" | "boolean" | "choice" | "color" | "size";
+  attribute_type: "text" | "number" | "boolean" | "choice" | "color" | "size";
   is_required: boolean;
   is_filterable: boolean;
-  display_order: string;
-  description: string;
+  parent?: number;
+  categories: number[];
 }
 
 interface AttributeFormProps {
-  initialData?: Partial<FormData>;
+  initialData?: AdminAttribute | null;
   onSubmit: (data: FormData) => void;
   onCancel: () => void;
   loading?: boolean;
@@ -37,14 +38,25 @@ const AttributeForm = ({
   onCancel,
   loading = false,
 }: AttributeFormProps) => {
-  const [formData, setFormData] = useState<FormData>({
-    name: "",
-    type: "text",
-    is_required: false,
-    is_filterable: true,
-    display_order: "0",
-    description: "",
-    ...initialData,
+  const [formData, setFormData] = useState<FormData>(() => {
+    if (initialData) {
+      return {
+        name: initialData.name || "",
+        attribute_type: (initialData.attribute_type as any) || "text",
+        is_required: initialData.is_required ?? false,
+        is_filterable: initialData.is_filterable ?? true,
+        parent: initialData.parent || undefined,
+        categories: initialData.categories || [],
+      };
+    }
+
+    return {
+      name: "",
+      attribute_type: "text",
+      is_required: false,
+      is_filterable: true,
+      categories: [],
+    };
   });
 
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -65,12 +77,8 @@ const AttributeForm = ({
       newErrors.name = "Attribute name is required";
     }
 
-    if (!formData.type) {
-      newErrors.type = "Attribute type is required";
-    }
-
-    if (formData.display_order && parseInt(formData.display_order) < 0) {
-      newErrors.display_order = "Display order cannot be negative";
+    if (!formData.attribute_type) {
+      newErrors.attribute_type = "Attribute type is required";
     }
 
     setErrors(newErrors);
@@ -108,7 +116,7 @@ const AttributeForm = ({
     return typeInfo ? typeInfo.description : "";
   };
 
-  const supportsValues = ["choice", "color", "size"].includes(formData.type);
+  const supportsValues = ["choice", "color", "size"].includes(formData.attribute_type);
 
   return (
     <Form onSubmit={handleSubmit}>
@@ -131,22 +139,12 @@ const AttributeForm = ({
           </FormGroup>
 
           <FormGroup>
-            <Label>Description</Label>
-            <Input
-              name="description"
-              value={formData.description}
-              onChange={handleInputChange}
-              placeholder="Brief description of this attribute"
-            />
-          </FormGroup>
-
-          <FormGroup>
             <Label>Attribute Type *</Label>
             <Select
-              name="type"
-              value={formData.type}
+              name="attribute_type"
+              value={formData.attribute_type}
               onChange={handleInputChange}
-              className={errors.type ? "error" : ""}
+              className={errors.attribute_type ? "error" : ""}
               required
             >
               {attributeTypes.map((type) => (
@@ -155,8 +153,8 @@ const AttributeForm = ({
                 </option>
               ))}
             </Select>
-            {errors.type && <ErrorMessage>{errors.type}</ErrorMessage>}
-            <HelperText>{getTypeDescription(formData.type)}</HelperText>
+            {errors.attribute_type && <ErrorMessage>{errors.attribute_type}</ErrorMessage>}
+            <HelperText>{getTypeDescription(formData.attribute_type)}</HelperText>
           </FormGroup>
 
           {supportsValues && (
@@ -185,23 +183,6 @@ const AttributeForm = ({
           <h2>Configuration</h2>
         </CardHeader>
         <CardContent>
-          <FormGroup>
-            <Label>Display Order</Label>
-            <Input
-              name="display_order"
-              type="number"
-              value={formData.display_order}
-              onChange={handleInputChange}
-              className={errors.display_order ? "error" : ""}
-              placeholder="0"
-              min="0"
-            />
-            {errors.display_order && <ErrorMessage>{errors.display_order}</ErrorMessage>}
-            <HelperText>
-              Order in which this attribute appears in forms and filters (0 = first)
-            </HelperText>
-          </FormGroup>
-
           <FormGroup>
             <CheckboxWrapper>
               <Checkbox

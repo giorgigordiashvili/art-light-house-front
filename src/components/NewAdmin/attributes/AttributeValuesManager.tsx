@@ -4,6 +4,7 @@ import { Input } from "@/components/NewAdmin/ui/Form";
 import { Button, ButtonGroup } from "@/components/NewAdmin/ui/Button";
 import { Card, CardHeader, CardContent } from "@/components/NewAdmin/ui/Card";
 import styled from "styled-components";
+import { AdminAttribute, AdminAttributeValue } from "@/api/generated/interfaces";
 
 const ValuesContainer = styled.div`
   max-height: 400px;
@@ -92,34 +93,20 @@ const EmptyState = styled.div`
   }
 `;
 
-interface AttributeValue {
-  id: number;
-  value: string;
-  color_code?: string;
-  display_order: number;
-}
-
-interface Attribute {
-  id: number;
-  name: string;
-  type: "text" | "number" | "boolean" | "choice" | "color" | "size";
-  values?: AttributeValue[];
-}
-
-interface AttributeValuesManagerProps {
-  attribute: Attribute;
-  onSave: (values: AttributeValue[]) => void;
+interface AdminAttributeValuesManagerProps {
+  attribute: AdminAttribute;
+  onSave: (values: AdminAttributeValue[]) => void;
   onCancel: () => void;
   loading?: boolean;
 }
 
-const AttributeValuesManager = ({
+const AdminAttributeValuesManager = ({
   attribute,
   onSave,
   onCancel,
   loading = false,
-}: AttributeValuesManagerProps) => {
-  const [values, setValues] = useState<AttributeValue[]>(attribute.values || []);
+}: AdminAttributeValuesManagerProps) => {
+  const [values, setValues] = useState<AdminAttributeValue[]>(attribute.values || []);
   const [newValue, setNewValue] = useState("");
   const [newColorCode, setNewColorCode] = useState("#000000");
   const [editingId, setEditingId] = useState<number | null>(null);
@@ -130,13 +117,13 @@ const AttributeValuesManager = ({
     if (!newValue.trim()) return;
 
     const newId = Math.max(0, ...values.map((v) => v.id)) + 1;
-    const newValueObj: AttributeValue = {
+    const newValueObj: AdminAttributeValue = {
       id: newId,
       value: newValue.trim(),
-      display_order: values.length,
+      sort_order: values.length,
     };
 
-    if (attribute.type === "color") {
+    if ((attribute.attribute_type as any) === "color") {
       newValueObj.color_code = newColorCode;
     }
 
@@ -145,7 +132,7 @@ const AttributeValuesManager = ({
     setNewColorCode("#000000");
   };
 
-  const handleEditValue = (valueItem: AttributeValue) => {
+  const handleEditValue = (valueItem: AdminAttributeValue) => {
     setEditingId(valueItem.id);
     setEditValue(valueItem.value);
     setEditColorCode(valueItem.color_code || "#000000");
@@ -160,7 +147,9 @@ const AttributeValuesManager = ({
           ? {
               ...v,
               value: editValue.trim(),
-              ...(attribute.type === "color" ? { color_code: editColorCode } : {}),
+              ...((attribute.attribute_type as any) === "color"
+                ? { color_code: editColorCode }
+                : {}),
             }
           : v
       )
@@ -187,8 +176,8 @@ const AttributeValuesManager = ({
     onSave(values);
   };
 
-  const renderValueDisplay = (valueItem: AttributeValue) => {
-    if (attribute.type === "color") {
+  const renderValueDisplay = (valueItem: AdminAttributeValue) => {
+    if ((attribute.attribute_type as any) === "color") {
       return (
         <div className="value-display">
           <div
@@ -219,7 +208,7 @@ const AttributeValuesManager = ({
           placeholder="Value"
           style={{ flex: 1 }}
         />
-        {attribute.type === "color" && (
+        {(attribute.attribute_type as any) === "color" && (
           <Input
             type="color"
             value={editColorCode}
@@ -240,7 +229,7 @@ const AttributeValuesManager = ({
   };
 
   const getPlaceholderText = () => {
-    switch (attribute.type) {
+    switch (attribute.attribute_type as any) {
       case "color":
         return "Color name (e.g., Red, Blue, Green)";
       case "size":
@@ -258,7 +247,8 @@ const AttributeValuesManager = ({
         <CardHeader>
           <h2>Manage Values for &quot;{attribute.name}&quot;</h2>
           <p style={{ margin: "4px 0 0 0", fontSize: "0.875rem", color: "#6c757d" }}>
-            Type: {attribute.type} • Add and organize the available values for this attribute
+            Type: {attribute.attribute_type as any} • Add and organize the available values for this
+            attribute
           </p>
         </CardHeader>
         <CardContent>
@@ -271,7 +261,7 @@ const AttributeValuesManager = ({
                 onKeyPress={(e) => e.key === "Enter" && handleAddValue()}
               />
             </div>
-            {attribute.type === "color" && (
+            {(attribute.attribute_type as any) === "color" && (
               <Input
                 type="color"
                 value={newColorCode}
@@ -292,7 +282,7 @@ const AttributeValuesManager = ({
               </EmptyState>
             ) : (
               values
-                .sort((a, b) => a.display_order - b.display_order)
+                .sort((a, b) => (a.sort_order || 0) - (b.sort_order || 0))
                 .map((valueItem) => (
                   <ValueItem key={valueItem.id}>
                     <div className="drag-handle">
@@ -343,4 +333,4 @@ const AttributeValuesManager = ({
   );
 };
 
-export default AttributeValuesManager;
+export default AdminAttributeValuesManager;
