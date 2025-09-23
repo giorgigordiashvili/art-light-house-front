@@ -167,7 +167,7 @@ const StyledActions = styled.div`
   }
 `;
 
-const NewProductCard = ({ product, dictionary }: { product: ProductList; dictionary: any }) => {
+const NewProductCard = ({ product }: { product: ProductList; dictionary: any }) => {
   const isMobile = useIsMobile();
   const router = useRouter();
 

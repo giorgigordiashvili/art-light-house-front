@@ -82,7 +82,7 @@ export interface CartItem {
 export interface Category {
   id: number;
   name: string;
-  description?: string;
+  description: string;
   slug: string;
   parent?: number;
   full_path: string;
@@ -160,15 +160,6 @@ export interface PatchedUserUpdateRequest {
   date_of_birth?: string;
 }
 
-export interface ProductAttribute {
-  id: number;
-  attribute: number;
-  attribute_name: string;
-  attribute_type: string;
-  value: string;
-  attribute_value?: number;
-}
-
 export interface ProductAttributeRequest {
   attribute: number;
   value: string;
@@ -209,11 +200,11 @@ export interface ProductDetail {
   stock_quantity?: number;
   track_inventory?: boolean;
   allow_backorder?: boolean;
-  meta_title?: string;
-  meta_description?: string;
+  meta_title: string;
+  meta_description: string;
   category?: number;
-  category_details: Category;
-  tags?: string;
+  category_details: string;
+  tags: string;
   tags_list: string;
   is_active?: boolean;
   is_featured?: boolean;
@@ -221,8 +212,8 @@ export interface ProductDetail {
   review_count: number;
   discount_percentage: string;
   is_in_stock: string;
-  images: ProductImage[];
-  product_attributes: ProductAttribute[];
+  images: string;
+  product_attributes: string;
   is_favorite: string;
   created_at: string;
   updated_at: string;
@@ -231,7 +222,7 @@ export interface ProductDetail {
 export interface ProductImage {
   id: number;
   image: string;
-  alt_text?: string;
+  alt_text: string;
   is_primary?: boolean;
   sort_order?: number;
 }
@@ -262,7 +253,6 @@ export interface ProductList {
 }
 
 export interface ProductListRequest {
-  title: string;
   slug: string;
   price: string;
   compare_price?: string;

@@ -7,7 +7,6 @@ import AuthToggleButtons from "./AuthToggleButtons";
 import ModalInput from "./ModalInput";
 import InputTitle from "./InputTitle";
 import AdditionalAction from "./AdditionalAction";
-import { useSignIn, useSignUp } from "@clerk/nextjs";
 import { useAuth } from "@/contexts/AuthContext";
 import { UserLoginRequest, UserRegistrationRequest } from "@/api/generated/interfaces";
 import { userRegister } from "@/api/generated/api";
@@ -151,8 +150,6 @@ const AuthorizationModal: React.FC<AuthorizationModalProps> = ({
   const [error, setError] = useState("");
 
   const { login } = useAuth();
-  const { isLoaded: isSignInLoaded, signIn } = useSignIn();
-  const { isLoaded: isSignUpLoaded, signUp } = useSignUp();
 
   const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setEmail(e.target.value);
@@ -273,46 +270,9 @@ const AuthorizationModal: React.FC<AuthorizationModalProps> = ({
     }
   };
 
-  const handleSocialSignIn = async (provider: "google" | "facebook") => {
-    try {
-      // Map the provider to the correct Clerk strategy
-      const strategy = provider === "google" ? "oauth_google" : "oauth_facebook";
-
-      console.log(`Using OAuth strategy: ${strategy} for provider: ${provider}`);
-
-      // Get the current URL to return to after authentication
-      const currentUrl = window.location.pathname + window.location.search;
-
-      if (activeTab === "auth") {
-        if (isSignInLoaded) {
-          console.log("Initiating sign-in with redirect...");
-          await signIn?.authenticateWithRedirect({
-            strategy,
-            redirectUrl: "/sso-callback",
-            redirectUrlComplete: currentUrl || "/", // Return to current page
-          });
-        } else {
-          console.error("Sign-in component not loaded yet");
-        }
-      } else {
-        if (isSignUpLoaded) {
-          console.log("Initiating sign-up with redirect...");
-          await signUp?.authenticateWithRedirect({
-            strategy,
-            redirectUrl: "/sso-callback",
-            redirectUrlComplete: currentUrl || "/", // Return to current page
-          });
-        } else {
-          console.error("Sign-up component not loaded yet");
-        }
-      }
-    } catch (error) {
-      console.error(`Failed to authenticate with ${provider}:`, error);
-      // Display more detailed error information in development
-      if (process.env.NODE_ENV === "development") {
-        console.error("Full error:", JSON.stringify(error, null, 2));
-      }
-    }
+  const handleSocialSignIn = async () => {
+    // Social authentication removed - only basic auth is supported
+    setError("Social authentication is not available. Please use email and password.");
   };
 
   return (
@@ -461,13 +421,13 @@ const AuthorizationModal: React.FC<AuthorizationModalProps> = ({
         </StyledPrimaryButton>
 
         <SocialButtons>
-          <SocialButton onClick={() => handleSocialSignIn("google")}>
+          <SocialButton onClick={() => handleSocialSignIn()}>
             <Image src="/assets/icons/google-icon.svg" width={20} height={20} alt="Google" />
             {activeTab === "auth"
               ? dictionary?.authorizationModal?.loginWithGoogle
               : dictionary?.authorizationModal?.registerWithGoogle}
           </SocialButton>
-          <SocialButton onClick={() => handleSocialSignIn("facebook")}>
+          <SocialButton onClick={() => handleSocialSignIn()}>
             <Image src="/assets/icons/facebook-icon.svg" width={20} height={20} alt="Facebook" />
             {activeTab === "auth"
               ? dictionary?.authorizationModal?.loginWithFacebook

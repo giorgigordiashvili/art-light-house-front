@@ -50,13 +50,7 @@ const Description = styled.p`
   }
 `;
 
-const DetailDescription = ({
-  dictionary,
-  product,
-}: {
-  dictionary: any;
-  product: ProductDetail;
-}) => {
+const DetailDescription = ({ product }: { dictionary: any; product: ProductDetail }) => {
   return (
     <Wrapper>
       <Title>{product.title}</Title>

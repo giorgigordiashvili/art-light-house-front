@@ -1,19 +1,8 @@
 "use server";
 
-import { auth } from "@clerk/nextjs/server";
-
-// Example of a server action that checks authentication
+// Simple server-side auth helper
 export async function getAuthenticatedUserData() {
-  const { userId } = await auth();
-
-  // If no userId, the user is not logged in
-  if (!userId) {
-    return { authenticated: false };
-  }
-
-  // User is authenticated
-  return {
-    authenticated: true,
-    userId,
-  };
+  // For basic auth, this would typically check JWT tokens or session data
+  // Currently returns false since we're using client-side only auth
+  return { authenticated: false };
 }

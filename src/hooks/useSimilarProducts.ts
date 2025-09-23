@@ -32,7 +32,7 @@ export const useSimilarProducts = (
         // Fetch products from the same category
         const products = await productList(
           undefined, // attributes
-          categoryId, // category
+          categoryId?.toString(), // category
           undefined, // inStock
           undefined, // isFeatured
           undefined, // maxPrice

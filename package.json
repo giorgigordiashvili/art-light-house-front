@@ -4,23 +4,17 @@
   "private": true,
   "scripts": {
     "dev": "next dev --turbopack",
-    "build": "prisma generate && next build && ./scripts/prisma-postbuild.sh",
+    "build": "next build",
     "start": "next start",
     "lint": "next lint",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "prepare": "husky",
-    "postinstall": "prisma generate",
-    "seed:translations": "tsx prisma/seed/translations.ts",
-    "seed:attributes": "tsx prisma/seed/attributes.ts",
-    "seed:all": "tsx prisma/seed/index.ts",
     "generate:api": "gordela-api-gen"
   },
   "dependencies": {
-    "@clerk/nextjs": "^6.20.1",
     "@formatjs/intl-localematcher": "^0.6.1",
     "@gordela/api-generator": "^1.2.0",
-    "@prisma/client": "^6.8.2",
     "@react-google-maps/api": "^2.20.7",
     "@vis.gl/react-google-maps": "^1.5.2",
     "axios": "^1.12.2",
@@ -44,7 +38,6 @@
     "husky": "^9.1.7",
     "lint-staged": "^15.5.1",
     "prettier": "^3.5.3",
-    "prisma": "^6.8.2",
     "tsx": "^4.19.4",
     "typescript": "^5"
   },

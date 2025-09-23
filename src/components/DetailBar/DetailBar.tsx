@@ -2,7 +2,6 @@
 import styled from "styled-components";
 import Image from "next/image";
 import { useRouter, usePathname } from "next/navigation";
-import { useClerk } from "@clerk/nextjs";
 import { useAuth } from "@/contexts/AuthContext";
 
 const Container = styled.div`
@@ -68,7 +67,6 @@ const IconWrapper = styled.div`
 const DetailBar = ({ dictionary }: any) => {
   const router = useRouter();
   const pathname = usePathname();
-  const { signOut } = useClerk();
   const { logout, isAuthenticated } = useAuth();
   const parts = (pathname || "/").split("/");
   const currentLocale = parts[1];
@@ -109,7 +107,6 @@ const DetailBar = ({ dictionary }: any) => {
       if (isAuthenticated) {
         await logout();
       }
-      await signOut();
       router.push(homePath);
     } catch (error) {
       console.error("Logout error:", error);

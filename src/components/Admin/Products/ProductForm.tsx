@@ -1,805 +1,490 @@
 "use client";
-import React, { useState, useEffect } from "react";
+import { useState } from "react";
+import {
+  Form,
+  FormGroup,
+  FormRow,
+  Label,
+  Input,
+  Textarea,
+  Select,
+  CheckboxWrapper,
+  Checkbox,
+  CheckboxLabel,
+  ErrorMessage,
+} from "@/components/admin/ui/Form";
+import { Button } from "@/components/admin/ui/Button";
+import { Card, CardHeader, CardContent } from "@/components/admin/ui/Card";
 import styled from "styled-components";
-import ImageUpload from "@/components/shared/ImageUpload";
 
-const FormContainer = styled.div`
-  background: white;
+const ImageUploadArea = styled.div`
+  border: 2px dashed #dee2e6;
   border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  overflow: hidden;
-`;
-
-const FormContent = styled.div`
-  padding: 2rem;
-`;
-
-const FormSection = styled.div`
-  margin-bottom: 2rem;
-
-  &:last-child {
-    margin-bottom: 0;
-  }
-`;
-
-const SectionTitle = styled.h3`
-  font-size: 1.2rem;
-  font-weight: 600;
-  color: #2b3445;
-  margin: 0 0 1rem 0;
-  padding-bottom: 0.5rem;
-  border-bottom: 1px solid #e5e5e5;
-`;
-
-const FormRow = styled.div`
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 1rem;
-  margin-bottom: 1rem;
-
-  @media (max-width: 768px) {
-    grid-template-columns: 1fr;
-  }
-`;
-
-const FormGroup = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-`;
-
-const Label = styled.label`
-  font-size: 0.9rem;
-  font-weight: 500;
-  color: #2b3445;
-`;
-
-const Input = styled.input`
-  padding: 0.8rem;
-  border: 1px solid #e5e5e5;
-  border-radius: 6px;
-  font-size: 0.9rem;
-  transition: border-color 0.2s;
-
-  &:focus {
-    outline: none;
-    border-color: #2b3445;
-  }
-
-  &::placeholder {
-    color: #7d879c;
-  }
-`;
-
-const TextArea = styled.textarea`
-  padding: 0.8rem;
-  border: 1px solid #e5e5e5;
-  border-radius: 6px;
-  font-size: 0.9rem;
-  min-height: 100px;
-  resize: vertical;
-  transition: border-color 0.2s;
-
-  &:focus {
-    outline: none;
-    border-color: #2b3445;
-  }
-
-  &::placeholder {
-    color: #7d879c;
-  }
-`;
-
-const Select = styled.select`
-  padding: 0.8rem;
-  border: 1px solid #e5e5e5;
-  border-radius: 6px;
-  font-size: 0.9rem;
-  background: white;
-  cursor: pointer;
-  transition: border-color 0.2s;
-
-  &:focus {
-    outline: none;
-    border-color: #2b3445;
-  }
-`;
-
-const CheckboxGroup = styled.div`
-  display: flex;
-  gap: 1rem;
-  margin-top: 0.5rem;
-`;
-
-const CheckboxLabel = styled.label`
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  font-size: 0.9rem;
-  color: #2b3445;
-  cursor: pointer;
-`;
-
-const Checkbox = styled.input`
-  width: 16px;
-  height: 16px;
-`;
-
-const AttributeSection = styled.div`
-  border: 1px solid #e5e5e5;
-  border-radius: 6px;
-  padding: 1rem;
-  margin-bottom: 1rem;
-`;
-
-const AttributeHeader = styled.div`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 1rem;
-`;
-
-const AttributeTitle = styled.h4`
-  font-size: 1rem;
-  font-weight: 500;
-  color: #2b3445;
-  margin: 0;
-`;
-
-const AddAttributeButton = styled.button`
-  background: #e3f2fd;
-  color: #1976d2;
-  border: 1px solid #bbdefb;
-  padding: 0.5rem 1rem;
-  border-radius: 4px;
-  cursor: pointer;
-  font-size: 0.8rem;
-  transition: all 0.2s;
-
-  &:hover {
-    background: #bbdefb;
-  }
-`;
-
-const AttributeItem = styled.div`
-  display: grid;
-  grid-template-columns: 1fr 1fr auto;
-  gap: 1rem;
-  align-items: end;
-  margin-bottom: 1rem;
-  padding: 1rem;
-  background: #f8f9fa;
-  border-radius: 4px;
-`;
-
-const RemoveButton = styled.button`
-  background: #ffebee;
-  color: #d32f2f;
-  border: 1px solid #ffcdd2;
-  padding: 0.5rem;
-  border-radius: 4px;
-  cursor: pointer;
-  font-size: 0.8rem;
-  transition: all 0.2s;
-
-  &:hover {
-    background: #ffcdd2;
-  }
-`;
-
-const ColorInput = styled.input`
-  padding: 0.4rem;
-  border: 1px solid #e5e5e5;
-  border-radius: 6px;
-  width: 100px;
-  height: 40px;
-`;
-
-const ErrorMessage = styled.div`
-  color: #d23f57;
-  font-size: 0.9rem;
-  margin-top: 0.5rem;
-`;
-
-const ButtonGroup = styled.div`
-  display: flex;
-  gap: 1rem;
-  justify-content: flex-end;
-  padding: 1.5rem 2rem;
-  background: #f8f9fa;
-  border-top: 1px solid #e5e5e5;
-`;
-
-const Button = styled.button<{ $variant?: "primary" | "secondary" }>`
-  padding: 0.8rem 1.5rem;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-  font-size: 0.9rem;
-  font-weight: 500;
-  transition: all 0.2s;
-
-  ${(props) =>
-    props.$variant === "primary"
-      ? `
-    background: #2b3445;
-    color: white;
-    
-    &:hover {
-      background: #1e2633;
-    }
-    
-    &:disabled {
-      background: #ccc;
-      cursor: not-allowed;
-    }
-  `
-      : `
-    background: #f8f9fa;
-    color: #2b3445;
-    border: 1px solid #e5e5e5;
-    
-    &:hover {
-      background: #e9ecef;
-    }
-  `}
-`;
-
-const LoadingState = styled.div`
-  padding: 1rem;
+  padding: 24px;
   text-align: center;
-  color: #7d879c;
+  cursor: pointer;
+  transition: border-color 0.2s ease;
+
+  &:hover {
+    border-color: #007bff;
+  }
+
+  &.dragover {
+    border-color: #007bff;
+    background: #f8f9ff;
+  }
+
+  input[type="file"] {
+    display: none;
+  }
+
+  .upload-text {
+    margin: 0;
+    color: #6c757d;
+  }
+
+  .upload-icon {
+    margin-bottom: 16px;
+    color: #dee2e6;
+  }
 `;
 
-interface Product {
-  id: string;
-  name: string;
-  description?: string;
-  price: number;
-  sku?: string;
-  categoryId?: string;
-  isActive: boolean;
-  isFeatured: boolean;
-  stockQuantity: number;
-  category?: { id: string; name: string };
-  productImages: Array<{
-    id: string;
-    imageUrl: string;
-    altText?: string;
-    isPrimary: boolean;
-    sortOrder: number;
-  }>;
-  productAttributes: Array<{
-    id: string;
-    attributeTypeId: string;
-    attributeId?: string;
-    customValue?: string;
-    attributeType: {
-      id: string;
-      name: string;
-      inputType: string;
-    };
-    attribute?: {
-      id: string;
-      value: string;
-      hexColor?: string;
-    };
-  }>;
+const ImagePreview = styled.div`
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  gap: 12px;
+  margin-top: 16px;
+`;
+
+const ImageCard = styled.div`
+  position: relative;
+  border-radius: 8px;
+  overflow: hidden;
+  aspect-ratio: 1;
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .remove-btn {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    background: rgba(220, 53, 69, 0.9);
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 24px;
+    height: 24px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .primary-indicator {
+    position: absolute;
+    bottom: 8px;
+    left: 8px;
+    background: rgba(0, 123, 255, 0.9);
+    color: white;
+    padding: 2px 6px;
+    border-radius: 12px;
+    font-size: 0.75rem;
+  }
+`;
+
+interface FormData {
+  title: string;
+  description: string;
+  price: string;
+  compare_price: string;
+  stock_quantity: string;
+  category_id: string;
+  is_active: boolean;
+  is_featured: boolean;
+  track_inventory: boolean;
+  allow_backorder: boolean;
+  meta_title: string;
+  meta_description: string;
+  sku: string;
+  barcode: string;
 }
 
 interface Category {
-  id: string;
+  id: number;
   name: string;
-}
-
-interface AttributeType {
-  id: string;
-  name: string;
-  inputType: string;
-  translations: Array<{
-    languageId: string;
-    displayName: string;
-    language: { code: string; name: string };
-  }>;
-  attributes: Array<{
-    id: string;
-    value: string;
-    hexColor?: string;
-    translations: Array<{
-      languageId: string;
-      displayValue: string;
-      language: { code: string; name: string };
-    }>;
-  }>;
-}
-
-interface ProductAttribute {
-  attributeTypeId: string;
-  attributeId?: string;
-  customValue?: string;
-}
-
-interface ProductImage {
-  fileId?: string;
-  imageUrl: string;
-  altText?: string;
-  isPrimary: boolean;
-  sortOrder: number;
-}
-
-interface UploadedImage {
-  fileId: string;
-  url: string;
-  name: string;
-  size: number;
 }
 
 interface ProductFormProps {
-  product?: Product | null;
-  onSubmit: (data: any) => Promise<void>;
+  initialData?: Partial<FormData>;
+  categories: Category[];
+  onSubmit: (data: FormData, images: File[]) => void;
   onCancel: () => void;
+  loading?: boolean;
 }
 
-const ProductForm: React.FC<ProductFormProps> = ({ product, onSubmit, onCancel }) => {
-  const [formData, setFormData] = useState({
-    name: "",
+const ProductForm = ({
+  initialData,
+  categories,
+  onSubmit,
+  onCancel,
+  loading = false,
+}: ProductFormProps) => {
+  const [formData, setFormData] = useState<FormData>({
+    title: "",
     description: "",
     price: "",
+    compare_price: "",
+    stock_quantity: "0",
+    category_id: "",
+    is_active: true,
+    is_featured: false,
+    track_inventory: true,
+    allow_backorder: false,
+    meta_title: "",
+    meta_description: "",
     sku: "",
-    categoryId: "",
-    isActive: true,
-    isFeatured: false,
-    stockQuantity: 0,
+    barcode: "",
+    ...initialData,
   });
 
-  const [attributes, setAttributes] = useState<ProductAttribute[]>([]);
-  const [images, setImages] = useState<ProductImage[]>([]);
-  const [categories, setCategories] = useState<Category[]>([]);
-  const [attributeTypes, setAttributeTypes] = useState<AttributeType[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [submitting, setSubmitting] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [images, setImages] = useState<File[]>([]);
+  const [errors, setErrors] = useState<Record<string, string>>({});
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        setLoading(true);
+  const validateForm = (): boolean => {
+    const newErrors: Record<string, string> = {};
 
-        // Fetch categories and attribute types
-        const [categoriesRes, attributeTypesRes] = await Promise.all([
-          fetch("/api/admin/categories"),
-          fetch("/api/admin/attribute-types"),
-        ]);
+    if (!formData.title.trim()) {
+      newErrors.title = "Title is required";
+    }
 
-        if (categoriesRes.ok) {
-          const categoriesData = await categoriesRes.json();
-          setCategories(categoriesData);
-        }
+    if (!formData.description.trim()) {
+      newErrors.description = "Description is required";
+    }
 
-        if (attributeTypesRes.ok) {
-          const attributeTypesData = await attributeTypesRes.json();
-          setAttributeTypes(attributeTypesData);
-        }
+    if (!formData.price || parseFloat(formData.price) <= 0) {
+      newErrors.price = "Valid price is required";
+    }
 
-        // If editing, populate form data
-        if (product) {
-          setFormData({
-            name: product.name,
-            description: product.description || "",
-            price: product.price.toString(),
-            sku: product.sku || "",
-            categoryId: product.categoryId || "",
-            isActive: product.isActive,
-            isFeatured: product.isFeatured,
-            stockQuantity: product.stockQuantity,
-          });
+    if (
+      formData.compare_price &&
+      parseFloat(formData.compare_price) <= parseFloat(formData.price)
+    ) {
+      newErrors.compare_price = "Compare price must be higher than regular price";
+    }
 
-          setAttributes(
-            product.productAttributes.map((attr) => ({
-              attributeTypeId: attr.attributeTypeId,
-              attributeId: attr.attributeId,
-              customValue: attr.customValue,
-            }))
-          );
+    if (
+      formData.track_inventory &&
+      (!formData.stock_quantity || parseInt(formData.stock_quantity) < 0)
+    ) {
+      newErrors.stock_quantity = "Valid stock quantity is required";
+    }
 
-          setImages(
-            product.productImages.map((img) => ({
-              imageUrl: img.imageUrl,
-              altText: img.altText,
-              isPrimary: img.isPrimary,
-              sortOrder: img.sortOrder,
-            }))
-          );
-        }
-      } catch (error) {
-        console.error("Failed to load form data:", error);
-        setError("Failed to load form data");
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchData();
-  }, [product]);
-
-  const handleInputChange = (field: string, value: any) => {
-    setFormData((prev) => ({
-      ...prev,
-      [field]: value,
-    }));
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
   };
 
-  const addAttribute = () => {
-    setAttributes((prev) => [
-      ...prev,
-      {
-        attributeTypeId: "",
-        attributeId: "",
-        customValue: "",
-      },
-    ]);
-  };
-
-  const updateAttribute = (index: number, field: keyof ProductAttribute, value: string) => {
-    setAttributes((prev) =>
-      prev.map((attr, i) => (i === index ? { ...attr, [field]: value } : attr))
-    );
-  };
-
-  const removeAttribute = (index: number) => {
-    setAttributes((prev) => prev.filter((_, i) => i !== index));
-  };
-
-  const handleImagesChange = (uploadedImages: UploadedImage[]) => {
-    const productImages: ProductImage[] = uploadedImages.map((img, index) => ({
-      fileId: img.fileId,
-      imageUrl: img.url,
-      altText: img.name,
-      isPrimary: index === 0, // First image is primary by default
-      sortOrder: index,
-    }));
-    setImages(productImages);
-  };
-
-  const updateImage = (index: number, field: keyof ProductImage, value: any) => {
-    setImages((prev) =>
-      prev.map((img, i) => {
-        if (i === index) {
-          const updated = { ...img, [field]: value };
-          // If setting as primary, unset others
-          if (field === "isPrimary" && value) {
-            return updated;
-          }
-          return updated;
-        }
-        // If another image is set as primary, unset this one
-        if (field === "isPrimary" && value) {
-          return { ...img, isPrimary: false };
-        }
-        return img;
-      })
-    );
-  };
-
-  const getDisplayName = (translations: any[], fallback: string) => {
-    const englishTranslation = translations.find((t) => t.language.code === "en");
-    return englishTranslation?.displayName || englishTranslation?.displayValue || fallback;
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-
-    try {
-      setSubmitting(true);
-      setError(null);
-
-      // Validate required fields
-      if (!formData.name || !formData.price) {
-        throw new Error("Name and price are required");
-      }
-
-      // Filter out empty attributes and clean them up
-      const validAttributes = attributes
-        .filter((attr) => attr.attributeTypeId && (attr.attributeId || attr.customValue))
-        .map((attr) => ({
-          attributeTypeId: attr.attributeTypeId,
-          attributeId: attr.attributeId || null,
-          customValue: attr.customValue || null,
-        }));
-
-      // Filter out empty images
-      const validImages = images.filter((img) => img.imageUrl);
-
-      const submitData = {
-        ...formData,
-        price: parseFloat(formData.price),
-        attributes: validAttributes,
-        images: validImages,
-      };
-
-      await onSubmit(submitData);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to save product");
-    } finally {
-      setSubmitting(false);
+    if (validateForm()) {
+      onSubmit(formData, images);
     }
   };
 
-  if (loading) {
-    return (
-      <FormContainer>
-        <FormContent>
-          <LoadingState>Loading form data...</LoadingState>
-        </FormContent>
-      </FormContainer>
-    );
-  }
+  const handleInputChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
+  ) => {
+    const { name, value, type } = e.target;
+    const checked = type === "checkbox" ? (e.target as HTMLInputElement).checked : undefined;
+
+    setFormData((prev) => ({
+      ...prev,
+      [name]: type === "checkbox" ? checked : value,
+    }));
+
+    // Auto-generate SKU from title
+    if (name === "title" && !initialData) {
+      const sku = value
+        .toLowerCase()
+        .replace(/[^a-z0-9\s]/g, "")
+        .replace(/\s+/g, "-")
+        .substring(0, 50);
+      setFormData((prev) => ({ ...prev, sku }));
+    }
+  };
+
+  const handleImageUpload = (files: FileList | null) => {
+    if (files) {
+      const newImages = Array.from(files).filter(
+        (file) => file.type.startsWith("image/") && file.size <= 5 * 1024 * 1024 // 5MB limit
+      );
+      setImages((prev) => [...prev, ...newImages]);
+    }
+  };
+
+  const removeImage = (index: number) => {
+    setImages((prev) => prev.filter((_, i) => i !== index));
+  };
 
   return (
-    <FormContainer>
-      <form onSubmit={handleSubmit}>
-        <FormContent>
-          {error && <ErrorMessage>{error}</ErrorMessage>}
+    <Form onSubmit={handleSubmit}>
+      <Card>
+        <CardHeader>
+          <h2>Basic Information</h2>
+        </CardHeader>
+        <CardContent>
+          <FormGroup>
+            <Label>Product Title *</Label>
+            <Input
+              name="title"
+              value={formData.title}
+              onChange={handleInputChange}
+              className={errors.title ? "error" : ""}
+              placeholder="Enter product title"
+              required
+            />
+            {errors.title && <ErrorMessage>{errors.title}</ErrorMessage>}
+          </FormGroup>
 
-          {/* Basic Information */}
-          <FormSection>
-            <SectionTitle>Basic Information</SectionTitle>
-            <FormRow>
-              <FormGroup>
-                <Label>Product Name *</Label>
-                <Input
-                  type="text"
-                  value={formData.name}
-                  onChange={(e) => handleInputChange("name", e.target.value)}
-                  placeholder="Enter product name"
-                  required
-                />
-              </FormGroup>
-              <FormGroup>
-                <Label>SKU</Label>
-                <Input
-                  type="text"
-                  value={formData.sku}
-                  onChange={(e) => handleInputChange("sku", e.target.value)}
-                  placeholder="Enter product SKU"
-                />
-              </FormGroup>
-            </FormRow>
+          <FormGroup>
+            <Label>Description *</Label>
+            <Textarea
+              name="description"
+              value={formData.description}
+              onChange={handleInputChange}
+              className={errors.description ? "error" : ""}
+              placeholder="Describe your product..."
+              rows={5}
+              required
+            />
+            {errors.description && <ErrorMessage>{errors.description}</ErrorMessage>}
+          </FormGroup>
 
+          <FormRow>
             <FormGroup>
-              <Label>Description</Label>
-              <TextArea
-                value={formData.description}
-                onChange={(e) => handleInputChange("description", e.target.value)}
-                placeholder="Enter product description"
+              <Label>SKU</Label>
+              <Input
+                name="sku"
+                value={formData.sku}
+                onChange={handleInputChange}
+                placeholder="Product SKU"
               />
             </FormGroup>
 
+            <FormGroup>
+              <Label>Barcode</Label>
+              <Input
+                name="barcode"
+                value={formData.barcode}
+                onChange={handleInputChange}
+                placeholder="Product barcode"
+              />
+            </FormGroup>
+          </FormRow>
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <h2>Pricing & Inventory</h2>
+        </CardHeader>
+        <CardContent>
+          <FormRow>
+            <FormGroup>
+              <Label>Price *</Label>
+              <Input
+                name="price"
+                type="number"
+                step="0.01"
+                value={formData.price}
+                onChange={handleInputChange}
+                className={errors.price ? "error" : ""}
+                placeholder="0.00"
+                required
+              />
+              {errors.price && <ErrorMessage>{errors.price}</ErrorMessage>}
+            </FormGroup>
+
+            <FormGroup>
+              <Label>Compare Price</Label>
+              <Input
+                name="compare_price"
+                type="number"
+                step="0.01"
+                value={formData.compare_price}
+                onChange={handleInputChange}
+                className={errors.compare_price ? "error" : ""}
+                placeholder="0.00"
+              />
+              {errors.compare_price && <ErrorMessage>{errors.compare_price}</ErrorMessage>}
+            </FormGroup>
+          </FormRow>
+
+          <CheckboxWrapper>
+            <Checkbox
+              name="track_inventory"
+              checked={formData.track_inventory}
+              onChange={handleInputChange}
+            />
+            <CheckboxLabel>Track inventory for this product</CheckboxLabel>
+          </CheckboxWrapper>
+
+          {formData.track_inventory && (
             <FormRow>
-              <FormGroup>
-                <Label>Price *</Label>
-                <Input
-                  type="number"
-                  step="0.01"
-                  value={formData.price}
-                  onChange={(e) => handleInputChange("price", e.target.value)}
-                  placeholder="0.00"
-                  required
-                />
-              </FormGroup>
               <FormGroup>
                 <Label>Stock Quantity</Label>
                 <Input
+                  name="stock_quantity"
                   type="number"
-                  value={formData.stockQuantity}
-                  onChange={(e) =>
-                    handleInputChange("stockQuantity", parseInt(e.target.value) || 0)
-                  }
+                  value={formData.stock_quantity}
+                  onChange={handleInputChange}
+                  className={errors.stock_quantity ? "error" : ""}
                   placeholder="0"
                 />
+                {errors.stock_quantity && <ErrorMessage>{errors.stock_quantity}</ErrorMessage>}
+              </FormGroup>
+
+              <FormGroup>
+                <CheckboxWrapper style={{ marginTop: "32px" }}>
+                  <Checkbox
+                    name="allow_backorder"
+                    checked={formData.allow_backorder}
+                    onChange={handleInputChange}
+                  />
+                  <CheckboxLabel>Allow backorders when out of stock</CheckboxLabel>
+                </CheckboxWrapper>
               </FormGroup>
             </FormRow>
+          )}
+        </CardContent>
+      </Card>
 
-            <FormRow>
-              <FormGroup>
-                <Label>Category</Label>
-                <Select
-                  value={formData.categoryId}
-                  onChange={(e) => handleInputChange("categoryId", e.target.value)}
-                >
-                  <option value="">Select a category</option>
-                  {categories.map((category) => (
-                    <option key={category.id} value={category.id}>
-                      {category.name}
-                    </option>
-                  ))}
-                </Select>
-              </FormGroup>
-              <FormGroup>
-                <Label>Status & Options</Label>
-                <CheckboxGroup>
-                  <CheckboxLabel>
-                    <Checkbox
-                      type="checkbox"
-                      checked={formData.isActive}
-                      onChange={(e) => handleInputChange("isActive", e.target.checked)}
-                    />
-                    Active
-                  </CheckboxLabel>
-                  <CheckboxLabel>
-                    <Checkbox
-                      type="checkbox"
-                      checked={formData.isFeatured}
-                      onChange={(e) => handleInputChange("isFeatured", e.target.checked)}
-                    />
-                    Featured
-                  </CheckboxLabel>
-                </CheckboxGroup>
-              </FormGroup>
-            </FormRow>
-          </FormSection>
+      <Card>
+        <CardHeader>
+          <h2>Organization</h2>
+        </CardHeader>
+        <CardContent>
+          <FormGroup>
+            <Label>Category</Label>
+            <Select name="category_id" value={formData.category_id} onChange={handleInputChange}>
+              <option value="">Select a category</option>
+              {categories.map((category) => (
+                <option key={category.id} value={category.id}>
+                  {category.name}
+                </option>
+              ))}
+            </Select>
+          </FormGroup>
 
-          {/* Attributes */}
-          <FormSection>
-            <AttributeSection>
-              <AttributeHeader>
-                <AttributeTitle>Product Attributes</AttributeTitle>
-                <AddAttributeButton type="button" onClick={addAttribute}>
-                  Add Attribute
-                </AddAttributeButton>
-              </AttributeHeader>
-
-              {attributes.map((attr, index) => {
-                const selectedType = attributeTypes.find((t) => t.id === attr.attributeTypeId);
-
-                return (
-                  <AttributeItem key={index}>
-                    <FormGroup>
-                      <Label>Attribute Type</Label>
-                      <Select
-                        value={attr.attributeTypeId}
-                        onChange={(e) => {
-                          updateAttribute(index, "attributeTypeId", e.target.value);
-                          // Reset values when type changes
-                          updateAttribute(index, "attributeId", "");
-                          updateAttribute(index, "customValue", "");
-                        }}
-                      >
-                        <option value="">Select attribute type</option>
-                        {attributeTypes.map((type) => (
-                          <option key={type.id} value={type.id}>
-                            {getDisplayName(type.translations, type.name)}
-                          </option>
-                        ))}
-                      </Select>
-                    </FormGroup>
-
-                    <FormGroup>
-                      <Label>Value</Label>
-                      {selectedType?.inputType === "select" ? (
-                        <Select
-                          value={attr.attributeId || ""}
-                          onChange={(e) => {
-                            updateAttribute(index, "attributeId", e.target.value);
-                            updateAttribute(index, "customValue", "");
-                          }}
-                        >
-                          <option value="">Select value</option>
-                          {selectedType.attributes.map((attrValue) => (
-                            <option key={attrValue.id} value={attrValue.id}>
-                              {getDisplayName(attrValue.translations, attrValue.value)}
-                            </option>
-                          ))}
-                        </Select>
-                      ) : selectedType?.inputType === "color" ? (
-                        <div style={{ display: "flex", gap: "0.5rem", alignItems: "center" }}>
-                          <ColorInput
-                            type="color"
-                            value={attr.customValue || "#000000"}
-                            onChange={(e) => updateAttribute(index, "customValue", e.target.value)}
-                          />
-                          <Input
-                            type="text"
-                            value={attr.customValue || ""}
-                            onChange={(e) => updateAttribute(index, "customValue", e.target.value)}
-                            placeholder="#000000"
-                          />
-                        </div>
-                      ) : (
-                        <Input
-                          type={selectedType?.inputType === "number" ? "number" : "text"}
-                          value={attr.customValue || ""}
-                          onChange={(e) => updateAttribute(index, "customValue", e.target.value)}
-                          placeholder="Enter value"
-                        />
-                      )}
-                    </FormGroup>
-
-                    <RemoveButton type="button" onClick={() => removeAttribute(index)}>
-                      Remove
-                    </RemoveButton>
-                  </AttributeItem>
-                );
-              })}
-
-              {attributes.length === 0 && (
-                <div style={{ textAlign: "center", color: "#7d879c", padding: "2rem" }}>
-                  No attributes added. Click &quot;Add Attribute&quot; to start.
-                </div>
-              )}
-            </AttributeSection>
-          </FormSection>
-
-          {/* Images */}
-          <FormSection>
-            <SectionTitle>Product Images</SectionTitle>
-            <ImageUpload
-              onImagesChange={handleImagesChange}
-              initialImages={images.map((img) => ({
-                fileId: img.fileId || "",
-                url: img.imageUrl,
-                name: img.altText || "Product image",
-                size: 0, // Size not available for existing images
-              }))}
-              maxFiles={10}
-              folder="products"
-              disabled={loading}
+          <CheckboxWrapper>
+            <Checkbox
+              name="is_featured"
+              checked={formData.is_featured}
+              onChange={handleInputChange}
             />
+            <CheckboxLabel>Feature this product</CheckboxLabel>
+          </CheckboxWrapper>
+        </CardContent>
+      </Card>
 
-            {images.length > 0 && (
-              <div style={{ marginTop: "1rem" }}>
-                <Label style={{ marginBottom: "0.5rem", display: "block" }}>Image Settings</Label>
-                {images.map((img, index) => (
-                  <div
-                    key={index}
-                    style={{
-                      marginBottom: "1rem",
-                      padding: "1rem",
-                      border: "1px solid #e5e5e5",
-                      borderRadius: "6px",
-                    }}
-                  >
-                    <FormRow>
-                      <FormGroup>
-                        <Label>Alt Text</Label>
-                        <Input
-                          type="text"
-                          value={img.altText || ""}
-                          onChange={(e) => updateImage(index, "altText", e.target.value)}
-                          placeholder="Describe the image"
-                        />
-                      </FormGroup>
-                      <FormGroup style={{ display: "flex", alignItems: "end" }}>
-                        <CheckboxLabel>
-                          <Checkbox
-                            type="checkbox"
-                            checked={img.isPrimary}
-                            onChange={(e) => updateImage(index, "isPrimary", e.target.checked)}
-                          />
-                          Primary Image
-                        </CheckboxLabel>
-                      </FormGroup>
-                    </FormRow>
-                    <div style={{ fontSize: "0.8rem", color: "#7d879c", marginTop: "0.5rem" }}>
-                      Image {index + 1}: {img.imageUrl}
-                    </div>
-                  </div>
-                ))}
-              </div>
-            )}
-          </FormSection>
-        </FormContent>
+      <Card>
+        <CardHeader>
+          <h2>Images</h2>
+        </CardHeader>
+        <CardContent>
+          <ImageUploadArea onClick={() => document.getElementById("image-upload")?.click()}>
+            <input
+              id="image-upload"
+              type="file"
+              multiple
+              accept="image/*"
+              onChange={(e) => handleImageUpload(e.target.files)}
+            />
+            <svg
+              className="upload-icon"
+              width="48"
+              height="48"
+              viewBox="0 0 24 24"
+              fill="currentColor"
+            >
+              <path d="M14,2H6A2,2 0 0,0 4,4V20A2,2 0 0,0 6,22H18A2,2 0 0,0 20,20V8L14,2M18,20H6V4H13V9H18V20Z" />
+            </svg>
+            <p className="upload-text">
+              Click to upload images or drag and drop
+              <br />
+              <small>PNG, JPG up to 5MB each</small>
+            </p>
+          </ImageUploadArea>
 
-        <ButtonGroup>
-          <Button type="button" $variant="secondary" onClick={onCancel}>
-            Cancel
-          </Button>
-          <Button type="submit" $variant="primary" disabled={submitting}>
-            {submitting ? "Saving..." : product ? "Update Product" : "Create Product"}
-          </Button>
-        </ButtonGroup>
-      </form>
-    </FormContainer>
+          {images.length > 0 && (
+            <ImagePreview>
+              {images.map((file, index) => (
+                <ImageCard key={index}>
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img src={URL.createObjectURL(file)} alt={`Preview ${index}`} />
+                  <button type="button" className="remove-btn" onClick={() => removeImage(index)}>
+                    ×
+                  </button>
+                  {index === 0 && <div className="primary-indicator">Primary</div>}
+                </ImageCard>
+              ))}
+            </ImagePreview>
+          )}
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <h2>SEO Settings</h2>
+        </CardHeader>
+        <CardContent>
+          <FormGroup>
+            <Label>Meta Title</Label>
+            <Input
+              name="meta_title"
+              value={formData.meta_title}
+              onChange={handleInputChange}
+              placeholder="SEO title for search engines"
+            />
+          </FormGroup>
+
+          <FormGroup>
+            <Label>Meta Description</Label>
+            <Textarea
+              name="meta_description"
+              value={formData.meta_description}
+              onChange={handleInputChange}
+              placeholder="SEO description for search engines"
+              rows={3}
+            />
+          </FormGroup>
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <h2>Visibility</h2>
+        </CardHeader>
+        <CardContent>
+          <CheckboxWrapper>
+            <Checkbox name="is_active" checked={formData.is_active} onChange={handleInputChange} />
+            <CheckboxLabel>Product is active and visible to customers</CheckboxLabel>
+          </CheckboxWrapper>
+        </CardContent>
+      </Card>
+
+      <div style={{ display: "flex", gap: "12px", justifyContent: "flex-end" }}>
+        <Button type="button" $variant="secondary" onClick={onCancel}>
+          Cancel
+        </Button>
+        <Button type="submit" disabled={loading}>
+          {loading ? "Saving..." : initialData ? "Update Product" : "Create Product"}
+        </Button>
+      </div>
+    </Form>
   );
 };
 

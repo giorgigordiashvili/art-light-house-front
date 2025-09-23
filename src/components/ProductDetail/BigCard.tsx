@@ -57,7 +57,8 @@ const InnerWrapper = styled.div`
 
 const BigCard = ({ product }: { product: ProductDetail }) => {
   // Get the primary image or first image
-  const primaryImage = product.images.find((img) => img.is_primary) || product.images[0];
+  const primaryImage =
+    (product.images as any)?.find((img: any) => img.is_primary) || (product.images as any)?.[0];
   // Check if we have a valid image URL
   const hasValidImage =
     primaryImage &&
@@ -91,9 +92,9 @@ const BigCard = ({ product }: { product: ProductDetail }) => {
       )}
 
       <InnerWrapper>
-        {product.images.slice(0, 3).map((image) => (
-          <SmallCard key={image.id} image={image} />
-        ))}
+        {(product.images as any)
+          ?.slice(0, 3)
+          .map((image: any) => <SmallCard key={image.id} image={image} />)}
       </InnerWrapper>
     </StyleBigCard>
   );

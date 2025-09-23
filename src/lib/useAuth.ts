@@ -1,30 +1,28 @@
 "use client";
 
-import { useUser } from "@clerk/nextjs";
 import { useCallback } from "react";
+import { useAuth as useCustomAuth } from "@/contexts/AuthContext";
 
 export function useAuth() {
-  const { user, isLoaded, isSignedIn } = useUser();
+  const { user, isAuthenticated } = useCustomAuth();
 
-  const isAuthenticated = isLoaded && isSignedIn;
-
-  // Get user display name (first name or full name or email)
+  // Get user display name
   const getDisplayName = useCallback(() => {
     if (!user) return "";
-    return user.firstName || user.fullName || user.primaryEmailAddress?.emailAddress || "";
+    return `${user.first_name} ${user.last_name}`.trim() || user.email || "";
   }, [user]);
 
   // Get user profile image
   const getProfileImage = useCallback(() => {
-    return user?.imageUrl || "/assets/user.svg";
-  }, [user]);
+    return "/assets/user.svg"; // Using default image for basic auth
+  }, []);
 
   return {
     user,
-    isLoaded,
+    isLoaded: true, // Always loaded for basic auth
     isAuthenticated,
     getDisplayName,
     getProfileImage,
-    userId: user?.id,
+    userId: user?.id.toString(),
   };
 }
