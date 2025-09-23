@@ -13,6 +13,7 @@ type Props = {
   dictionary?: any;
   title?: string;
   price?: string;
+  imageSrc?: string;
   quantity?: number;
   onIncrease?: () => void;
   onDecrease?: () => void;
@@ -134,6 +135,7 @@ const FavoriteCard = ({
   dictionary,
   title,
   price,
+  imageSrc,
   quantity = 1,
   onIncrease,
   onDecrease,
@@ -156,22 +158,18 @@ const FavoriteCard = ({
     <StyledContainer cardType={card}>
       <StyledContent cardType={card}>
         <Image
-          src={"/assets/ProductImageContainer.svg"}
+          src={imageSrc || "/assets/ProductImageContainer.svg"}
           width={120}
           height={120}
           alt={dictionary?.cart?.favorites?.imageAlt || "პროდუქტის სურათი"}
         />
         <StyledText>
           <ProductTitle
-            text={
-              card === "cart"
-                ? title || dictionary?.cart?.favorites?.cardTitle || ""
-                : dictionary?.cart?.favorites?.cardTitle || "ლურჯი ვარსკვლავის ჭაღი"
-            }
+            text={title || dictionary?.cart?.favorites?.cardTitle || "ლურჯი ვარსკვლავის ჭაღი"}
             size="large"
           />
           <ProductPrice
-            text={card === "cart" ? price || "" : dictionary?.productDetails?.price || "199,99 ₾"}
+            text={price || dictionary?.productDetails?.price || "199,99 ₾"}
             size="large"
           />
         </StyledText>
@@ -191,7 +189,7 @@ const FavoriteCard = ({
                 card={true}
               />
             )}
-            <StyledRemoveIconWrapper cardType={card}>
+            <StyledRemoveIconWrapper cardType={card} onClick={onRemove}>
               <Image
                 src={isMobile ? "/assets/DeleteIcon.svg" : "/assets/RemoveProduct.svg"}
                 width={isMobile ? 18 : 34}

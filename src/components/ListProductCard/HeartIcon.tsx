@@ -31,6 +31,12 @@ const HeartIcon = ({ productId, defaultIsFavorite, size = 30 }: Props) => {
     if (productId == null) return;
     if (isSubmitting || isFilled) return;
 
+    const hasToken = typeof window !== "undefined" && !!localStorage.getItem("auth_access_token");
+    if (!hasToken) {
+      // not authorized; ignore silently
+      return;
+    }
+
     try {
       setIsSubmitting(true);
       const payload: AddToFavoritesRequest = { product_id: productId };
@@ -41,7 +47,12 @@ const HeartIcon = ({ productId, defaultIsFavorite, size = 30 }: Props) => {
           window.dispatchEvent(new CustomEvent("favoritesUpdated", { detail: { hasAny: true } }));
         }
       } catch {}
-    } catch (err) {
+    } catch (err: any) {
+      if (err?.response?.status === 401) {
+        // unauthorized, ensure it's unfilled and exit quietly
+        setIsFilled(false);
+        return;
+      }
       console.error("Failed to add to favorites", err);
     } finally {
       setIsSubmitting(false);
@@ -55,6 +66,12 @@ const HeartIcon = ({ productId, defaultIsFavorite, size = 30 }: Props) => {
 
     const syncFavorites = async () => {
       try {
+        const hasToken =
+          typeof window !== "undefined" && !!localStorage.getItem("auth_access_token");
+        if (!hasToken) {
+          if (isMounted) setIsFilled(false);
+          return;
+        }
         const list = await favoritesList();
         if (isMounted) setIsFilled(Array.isArray(list) && list.length > 0);
       } catch {
