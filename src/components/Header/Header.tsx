@@ -5,6 +5,7 @@ import Container from "../ui/Container";
 import Logo from "../Logo/Logo";
 import NavItem from "./NavItem";
 import ShoppingCartIcon from "./ShoppingCartIcon";
+import HeartIcon from "../ListProductCard/HeartIcon";
 import AuthorizationButton from "./AuthorizationButton";
 import BurgerIcon from "./BurgerIcon";
 import BurgerMenu from "./BurgerMenu";
@@ -394,6 +395,7 @@ const Header = ({ header, dictionary }: HeaderProps) => {
                   onClick={handleCartClick}
                   color={cartIconColor}
                 />
+                <HeartIcon />
                 <ResponsiveGapWrapper>
                   <div ref={authButtonRef}>
                     <AuthorizationButton

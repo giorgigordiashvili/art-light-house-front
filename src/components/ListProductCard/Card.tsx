@@ -70,6 +70,12 @@ const ClickableArea = styled.div`
   flex-direction: column;
 `;
 
+const StyledHeartIcon = styled.div`
+  position: absolute;
+  right: 20px;
+  top: 20px;
+`;
+
 function Card({ product, dictionary }: { product: ProductList; dictionary: any }) {
   const router = useRouter();
 
@@ -87,7 +93,9 @@ function Card({ product, dictionary }: { product: ProductList; dictionary: any }
   return (
     <StyledRectangle onClick={handleCardClick}>
       <ClickableArea>
-        <HeartIcon />
+        <StyledHeartIcon>
+          <HeartIcon />
+        </StyledHeartIcon>
         <LampaImage product={product} />
         <ProductText product={product} />
         <AddButton product={product} dictionary={dictionary} />
