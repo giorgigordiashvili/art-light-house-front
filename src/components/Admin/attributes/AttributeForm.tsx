@@ -11,9 +11,9 @@ import {
   CheckboxLabel,
   ErrorMessage,
   HelperText,
-} from "@/components/admin/ui/Form";
-import { Button } from "@/components/admin/ui/Button";
-import { Card, CardHeader, CardContent } from "@/components/admin/ui/Card";
+} from "@/components/Admin/ui/Form";
+import { Button } from "@/components/Admin/ui/Button";
+import { Card, CardHeader, CardContent } from "@/components/Admin/ui/Card";
 
 interface FormData {
   name: string;

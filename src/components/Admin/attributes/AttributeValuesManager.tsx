@@ -1,8 +1,8 @@
 "use client";
 import { useState, Fragment } from "react";
-import { Input } from "@/components/admin/ui/Form";
-import { Button, ButtonGroup } from "@/components/admin/ui/Button";
-import { Card, CardHeader, CardContent } from "@/components/admin/ui/Card";
+import { Input } from "@/components/Admin/ui/Form";
+import { Button, ButtonGroup } from "@/components/Admin/ui/Button";
+import { Card, CardHeader, CardContent } from "@/components/Admin/ui/Card";
 import styled from "styled-components";
 
 const ValuesContainer = styled.div`

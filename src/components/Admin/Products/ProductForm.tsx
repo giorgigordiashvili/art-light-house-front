@@ -12,9 +12,9 @@ import {
   Checkbox,
   CheckboxLabel,
   ErrorMessage,
-} from "@/components/admin/ui/Form";
-import { Button } from "@/components/admin/ui/Button";
-import { Card, CardHeader, CardContent } from "@/components/admin/ui/Card";
+} from "@/components/Admin/ui/Form";
+import { Button } from "@/components/Admin/ui/Button";
+import { Card, CardHeader, CardContent } from "@/components/Admin/ui/Card";
 import styled from "styled-components";
 
 const ImageUploadArea = styled.div`

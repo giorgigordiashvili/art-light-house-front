@@ -9,8 +9,8 @@ import {
   TableActions,
   EmptyState,
   LoadingSpinner,
-} from "@/components/admin/ui/Table";
-import { Button } from "@/components/admin/ui/Button";
+} from "@/components/Admin/ui/Table";
+import { Button } from "@/components/Admin/ui/Button";
 import styled from "styled-components";
 
 const ProductImage = styled.img`

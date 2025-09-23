@@ -23,13 +23,6 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Debug - Check admin components exist
-        run: |
-          echo "Checking if admin components exist..."
-          ls -la src/components/admin/layout/
-          ls -la src/components/admin/ui/
-          ls -la src/components/admin/attributes/
-
       - name: Run linting
         run: npm run lint
 
