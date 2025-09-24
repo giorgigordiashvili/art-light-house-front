@@ -84,7 +84,7 @@ import Image from "next/image";
 import PlusButton from "./PlusButton";
 import CardText from "./CardText";
 import { ProductList } from "@/api/generated/interfaces";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 
 const useIsMobile = (breakpoint = 1080) => {
   const [isMobile, setIsMobile] = useState(false);
@@ -127,6 +127,9 @@ const StyledContainer = styled.div`
       padding: 1px;
       border-radius: 19px;
       background: linear-gradient(180deg, #f2c754 0%, rgba(242, 199, 84, 0) 100%);
+      mask:
+        linear-gradient(#fff 0 0) content-box,
+        linear-gradient(#fff 0 0);
       -webkit-mask:
         linear-gradient(#fff 0 0) content-box,
         linear-gradient(#fff 0 0);
@@ -170,6 +173,8 @@ const StyledActions = styled.div`
 const NewProductCard = ({ product }: { product: ProductList; dictionary: any }) => {
   const isMobile = useIsMobile();
   const router = useRouter();
+  const pathname = usePathname();
+  const locale = (pathname?.split("/")[1] || "ge").toLowerCase();
 
   // Check if we have a valid image URL
   const hasValidImage =
@@ -178,14 +183,11 @@ const NewProductCard = ({ product }: { product: ProductList; dictionary: any }) 
     product.primary_image.trim() !== "";
 
   const handleCardClick = (e: React.MouseEvent) => {
-    // Don't navigate if the click is on the plus button
     const target = e.target as HTMLElement;
     if (target.closest("[data-plus-button]")) {
       return;
     }
-
-    // Navigate to product detail page
-    router.push(`/products/${product.id}`);
+    router.push(`/${locale}/products/${product.id}`);
   };
 
   return (

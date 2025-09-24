@@ -94,25 +94,36 @@ const NewProducts = ({ dictionary }: any) => {
   const { featuredProducts, loading, error } = useFeaturedProducts();
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const [isDragging, setIsDragging] = useState(false);
+  const [isPointerDown, setIsPointerDown] = useState(false);
   const [startX, setStartX] = useState(0);
   const [scrollLeft, setScrollLeft] = useState(0);
+  const DRAG_THRESHOLD = 6; // px before we consider it a drag
 
   // Add global mouse event listeners for better drag experience
   useEffect(() => {
     const handleGlobalMouseUp = () => {
       setIsDragging(false);
+      setIsPointerDown(false);
     };
 
     const handleGlobalMouseMove = (e: MouseEvent) => {
-      if (!isDragging || !scrollContainerRef.current) return;
+      if (!isPointerDown || !scrollContainerRef.current) return;
 
-      e.preventDefault();
       const x = e.pageX - scrollContainerRef.current.offsetLeft;
-      const walk = (x - startX) * 2; // Multiply by 2 for faster scrolling
-      scrollContainerRef.current.scrollLeft = scrollLeft - walk;
+      const dx = x - startX;
+
+      if (!isDragging && Math.abs(dx) > DRAG_THRESHOLD) {
+        setIsDragging(true);
+      }
+
+      if (isDragging) {
+        e.preventDefault();
+        const walk = dx * 2; // Multiply by 2 for faster scrolling
+        scrollContainerRef.current.scrollLeft = scrollLeft - walk;
+      }
     };
 
-    if (isDragging) {
+    if (isPointerDown) {
       document.addEventListener("mousemove", handleGlobalMouseMove);
       document.addEventListener("mouseup", handleGlobalMouseUp);
     }
@@ -121,7 +132,7 @@ const NewProducts = ({ dictionary }: any) => {
       document.removeEventListener("mousemove", handleGlobalMouseMove);
       document.removeEventListener("mouseup", handleGlobalMouseUp);
     };
-  }, [isDragging, startX, scrollLeft]);
+  }, [isPointerDown, isDragging, startX, scrollLeft]);
 
   const handleMouseDown = (e: React.MouseEvent) => {
     if (!scrollContainerRef.current) return;
@@ -132,12 +143,10 @@ const NewProducts = ({ dictionary }: any) => {
       return;
     }
 
-    setIsDragging(true);
+    setIsPointerDown(true);
     setStartX(e.pageX - scrollContainerRef.current.offsetLeft);
     setScrollLeft(scrollContainerRef.current.scrollLeft);
-
-    // Prevent text selection and default drag behavior
-    e.preventDefault();
+    // Do not prevent default here; only when dragging actually starts
   };
 
   // Touch events for mobile drag scrolling
@@ -149,23 +158,33 @@ const NewProducts = ({ dictionary }: any) => {
       return;
     }
 
-    setIsDragging(true);
+    setIsPointerDown(true);
     const touch = e.touches[0];
     setStartX(touch.pageX - scrollContainerRef.current.offsetLeft);
     setScrollLeft(scrollContainerRef.current.scrollLeft);
   };
 
   const handleTouchMove = (e: React.TouchEvent) => {
-    if (!isDragging || !scrollContainerRef.current) return;
+    if (!isPointerDown || !scrollContainerRef.current) return;
 
     const touch = e.touches[0];
     const x = touch.pageX - scrollContainerRef.current.offsetLeft;
-    const walk = (x - startX) * 2;
-    scrollContainerRef.current.scrollLeft = scrollLeft - walk;
+    const dx = x - startX;
+
+    if (!isDragging && Math.abs(dx) > DRAG_THRESHOLD) {
+      setIsDragging(true);
+    }
+
+    if (isDragging) {
+      e.preventDefault();
+      const walk = dx * 2;
+      scrollContainerRef.current.scrollLeft = scrollLeft - walk;
+    }
   };
 
   const handleTouchEnd = () => {
     setIsDragging(false);
+    setIsPointerDown(false);
   };
 
   const handleMouseLeave = () => {

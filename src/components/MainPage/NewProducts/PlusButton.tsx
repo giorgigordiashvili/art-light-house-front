@@ -27,6 +27,7 @@ const StyledButton = styled.button`
 
 const PlusButton = ({ product }: { product?: ProductList }) => {
   const handleClick = async (e: React.MouseEvent) => {
+    e.preventDefault();
     e.stopPropagation();
     if (!product) return;
     try {
@@ -46,7 +47,7 @@ const PlusButton = ({ product }: { product?: ProductList }) => {
   };
 
   return (
-    <StyledButton onClick={handleClick} data-plus-button="true">
+    <StyledButton type="button" onClick={handleClick} data-plus-button="true">
       <Image src={"/assets/BlackPlus.svg"} width={28} height={28} alt="plus-icon" />
     </StyledButton>
   );
