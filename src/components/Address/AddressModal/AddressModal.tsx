@@ -216,7 +216,7 @@ const AddressModal = ({ onClose, onSave, initialData, dictionary }: Props) => {
             }
           }}
         />
-        {coordinates && (
+        {/* {coordinates && (
           <div
             style={{
               marginTop: "8px",
@@ -229,7 +229,7 @@ const AddressModal = ({ onClose, onSave, initialData, dictionary }: Props) => {
           >
             📍 Coordinates: {coordinates.lat.toFixed(6)}, {coordinates.lng.toFixed(6)}
           </div>
-        )}
+        )} */}
       </StyledMap>
       {error && (
         <div style={{ color: "#ff4444", fontSize: "14px", marginTop: "10px", textAlign: "center" }}>
