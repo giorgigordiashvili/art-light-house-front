@@ -1,5 +1,6 @@
 "use client";
 import React, { useEffect, useState } from "react";
+import { usePathname, useRouter } from "next/navigation";
 import ContactTitle from "../Contact/ContactTitle";
 import FavoriteCard from "./FavoriteCard";
 import styled from "styled-components";
@@ -31,6 +32,8 @@ const StyledCards = styled.div`
 
 const Favorites = ({ dictionary }: { dictionary: any }) => {
   const [items, setItems] = useState<Favorite[]>([]);
+  const router = useRouter();
+  const pathname = usePathname();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -127,6 +130,11 @@ const Favorites = ({ dictionary }: { dictionary: any }) => {
               }
             }
           };
+          const onDetails = () => {
+            const seg = (pathname?.split("/")[1] || "").toLowerCase();
+            const locale = seg === "en" ? "en" : "ge";
+            router.push(`/${locale}/products/${productId}`);
+          };
           return (
             <FavoriteCard
               key={fav.id}
@@ -136,6 +144,7 @@ const Favorites = ({ dictionary }: { dictionary: any }) => {
               price={price}
               imageSrc={imageSrc}
               onRemove={onRemove}
+              onDetails={onDetails}
             />
           );
         })}

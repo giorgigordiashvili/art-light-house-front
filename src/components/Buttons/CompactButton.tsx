@@ -24,10 +24,11 @@ const StyledButton = styled.div`
 `;
 type Props = {
   text: string;
+  onClick?: () => void;
 };
 
 const CompactButton = (props: Props) => {
-  return <StyledButton>{props.text}</StyledButton>;
+  return <StyledButton onClick={props.onClick}>{props.text}</StyledButton>;
 };
 
 export default CompactButton;

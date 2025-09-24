@@ -18,6 +18,7 @@ type Props = {
   onIncrease?: () => void;
   onDecrease?: () => void;
   onRemove?: () => void;
+  onDetails?: () => void;
 };
 
 const StyledContainer = styled.div.withConfig({
@@ -140,6 +141,7 @@ const FavoriteCard = ({
   onIncrease,
   onDecrease,
   onRemove,
+  onDetails,
 }: Props) => {
   const [isMobile, setIsMobile] = useState(false);
 
@@ -179,7 +181,10 @@ const FavoriteCard = ({
         {card === "favorite" ? (
           <>
             {isMobile ? (
-              <CompactButton text={dictionary?.cart?.favorites?.button || "დეტალურად"} />
+              <CompactButton
+                text={dictionary?.cart?.favorites?.button || "დეტალურად"}
+                onClick={onDetails}
+              />
             ) : (
               <PrimaryButton
                 height="55px"
@@ -187,6 +192,7 @@ const FavoriteCard = ({
                 text={dictionary?.cart?.favorites?.button || "დეტალურად"}
                 media="no"
                 card={true}
+                onClick={onDetails}
               />
             )}
             <StyledRemoveIconWrapper cardType={card} onClick={onRemove}>
