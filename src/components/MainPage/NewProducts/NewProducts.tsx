@@ -33,15 +33,15 @@ const StyledActions = styled.div`
   }
 `;
 
-const StyledCards = styled.div<{ isDragging: boolean }>`
+const StyledCards = styled.div<{ $isDragging: boolean }>`
   display: flex;
   gap: 20px;
   margin-top: 39px;
   overflow-x: auto;
   overflow-y: hidden;
   scrollbar-width: none;
-  scroll-behavior: ${({ isDragging }) => (isDragging ? "auto" : "smooth")};
-  cursor: ${({ isDragging }) => (isDragging ? "grabbing" : "grab")};
+  scroll-behavior: ${({ $isDragging }) => ($isDragging ? "auto" : "smooth")};
+  cursor: ${({ $isDragging }) => ($isDragging ? "grabbing" : "grab")};
   user-select: none;
 
   &::-webkit-scrollbar {
@@ -50,7 +50,7 @@ const StyledCards = styled.div<{ isDragging: boolean }>`
 
   & > * {
     flex-shrink: 0;
-    pointer-events: ${({ isDragging }) => (isDragging ? "none" : "auto")};
+    pointer-events: ${({ $isDragging }) => ($isDragging ? "none" : "auto")};
   }
 
   &:active {
@@ -164,13 +164,13 @@ const NewProducts = ({ dictionary }: any) => {
 
   const scrollLeftArrow = () => {
     if (scrollContainerRef.current) {
-      scrollContainerRef.current.scrollBy({ left: -504, behavior: "smooth" });
+      scrollContainerRef.current.scrollBy({ left: -1300, behavior: "smooth" });
     }
   };
 
   const scrollRightArrow = () => {
     if (scrollContainerRef.current) {
-      scrollContainerRef.current.scrollBy({ left: 504, behavior: "smooth" });
+      scrollContainerRef.current.scrollBy({ left: 1300, behavior: "smooth" });
     }
   };
 
@@ -218,7 +218,7 @@ const NewProducts = ({ dictionary }: any) => {
         </StyledTitleAndActions>
         <StyledCards
           ref={scrollContainerRef}
-          isDragging={isDragging}
+          $isDragging={isDragging}
           onMouseDown={handleMouseDown}
           onMouseLeave={handleMouseLeave}
           onTouchStart={handleTouchStart}
