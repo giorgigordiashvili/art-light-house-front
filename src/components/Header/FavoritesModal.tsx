@@ -14,12 +14,12 @@ type Props = {
   dictionary: any;
 };
 
-const StyledContainer = styled.div`
+const StyledContainer = styled.div<{ $isEmpty: boolean }>`
   width: 349px;
-  height: 415px;
+  height: ${({ $isEmpty }) => ($isEmpty ? "300px" : "415px")};
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
+  justify-content: ${({ $isEmpty }) => ($isEmpty ? "center" : "space-between")};
   position: fixed;
   top: 99px;
   background-color: #1a1a1a96;
@@ -164,6 +164,7 @@ const FavoritesModal = ({ onClose, dictionary }: Props) => {
   }, []);
 
   const count = useMemo(() => items.length, [items]);
+  const isEmpty = count === 0;
 
   const handleRedirect = () => {
     router.push("/favorites");
@@ -173,13 +174,15 @@ const FavoritesModal = ({ onClose, dictionary }: Props) => {
   return (
     <ModalLayoutWrapper>
       <ModalLayout>
-        <StyledContainer>
+        <StyledContainer $isEmpty={isEmpty}>
           <StyledDivider>
-            <StyledSpanContainer>
-              <StyledSpan>
-                {count} {dictionary?.cart?.cartModal?.itemCount}
-              </StyledSpan>
-            </StyledSpanContainer>
+            {!isEmpty && (
+              <StyledSpanContainer>
+                <StyledSpan>
+                  {count} {dictionary?.cart?.cartModal?.itemCount}
+                </StyledSpan>
+              </StyledSpanContainer>
+            )}
             <ProductList>
               {!loading && items?.length ? (
                 items.map((fav) => (
@@ -215,15 +218,17 @@ const FavoritesModal = ({ onClose, dictionary }: Props) => {
               )}
             </ProductList>
           </StyledDivider>
-          <StyledButton>
-            <PrimaryButton
-              text={dictionary?.cart?.favorites?.button || "დეტალურად"}
-              height="50px"
-              width="317px"
-              media="full"
-              onClick={handleRedirect}
-            />
-          </StyledButton>
+          {!isEmpty && (
+            <StyledButton>
+              <PrimaryButton
+                text={dictionary?.cart?.favorites?.button || "დეტალურად"}
+                height="50px"
+                width="317px"
+                media="full"
+                onClick={handleRedirect}
+              />
+            </StyledButton>
+          )}
         </StyledContainer>
       </ModalLayout>
     </ModalLayoutWrapper>
