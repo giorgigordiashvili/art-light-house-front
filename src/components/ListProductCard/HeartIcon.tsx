@@ -1,7 +1,7 @@
 "use client";
 import React, { useEffect, useMemo, useState } from "react";
 import Image from "next/image";
-import { favoritesAdd, favoritesList } from "@/api/generated/api";
+import { favoritesAdd, favoritesList, favoritesRemove } from "@/api/generated/api";
 import type { AddToFavoritesRequest } from "@/api/generated/interfaces";
 
 type Props = {
@@ -29,7 +29,7 @@ const HeartIcon = ({ productId, defaultIsFavorite, size = 30 }: Props) => {
     e.stopPropagation();
     // Header mode: no productId -> do nothing on click
     if (productId == null) return;
-    if (isSubmitting || isFilled) return;
+    if (isSubmitting) return;
 
     const hasToken = typeof window !== "undefined" && !!localStorage.getItem("auth_access_token");
     if (!hasToken) {
@@ -39,12 +39,34 @@ const HeartIcon = ({ productId, defaultIsFavorite, size = 30 }: Props) => {
 
     try {
       setIsSubmitting(true);
-      const payload: AddToFavoritesRequest = { product_id: productId };
-      await favoritesAdd(payload);
-      setIsFilled(true);
+      // Determine current favorite state; prefer local, fallback to list
+      let currentlyFavorite = isFilled;
+      if (!currentlyFavorite) {
+        try {
+          const list = await favoritesList();
+          currentlyFavorite = Array.isArray(list) && list.some((f: any) => f.product === productId);
+        } catch {}
+      }
+
+      if (currentlyFavorite) {
+        // Remove from favorites
+        await favoritesRemove(productId);
+        setIsFilled(false);
+      } else {
+        // Add to favorites
+        const payload: AddToFavoritesRequest = { product_id: productId };
+        await favoritesAdd(payload);
+        setIsFilled(true);
+      }
+
+      // Sync header by dispatching updated count
       try {
+        const list = await favoritesList();
+        const count = Array.isArray(list) ? list.length : 0;
         if (typeof window !== "undefined") {
-          window.dispatchEvent(new CustomEvent("favoritesUpdated", { detail: { hasAny: true } }));
+          window.dispatchEvent(
+            new CustomEvent("favoritesUpdated", { detail: { count, hasAny: count > 0 } })
+          );
         }
       } catch {}
     } catch (err: any) {
@@ -53,7 +75,7 @@ const HeartIcon = ({ productId, defaultIsFavorite, size = 30 }: Props) => {
         setIsFilled(false);
         return;
       }
-      console.error("Failed to add to favorites", err);
+      console.error("Failed to toggle favorites", err);
     } finally {
       setIsSubmitting(false);
     }
