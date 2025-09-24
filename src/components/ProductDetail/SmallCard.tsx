@@ -2,7 +2,7 @@ import styled from "styled-components";
 import Image from "next/image";
 import { ProductImage } from "@/api/generated/interfaces";
 
-const StyleSmallCard = styled.div`
+const StyleSmallCard = styled.div<{ $isSelected?: boolean }>`
   width: 120px;
   height: 120px;
   background: #1a1a1a96;
@@ -12,9 +12,14 @@ const StyleSmallCard = styled.div`
   justify-content: center;
   position: relative;
   cursor: pointer;
-  border: 1px solid #ffffff12;
+  border: 1px solid ${(props) => (props.$isSelected ? "#ffffff" : "#ffffff12")};
   backdrop-filter: blur(114px);
   overflow: hidden;
+  transition: border-color 0.2s ease;
+
+  &:hover {
+    border-color: ${(props) => (props.$isSelected ? "#ffffff" : "#ffffff40")};
+  }
 
   img {
     object-fit: cover;
@@ -27,13 +32,21 @@ const StyleSmallCard = styled.div`
   }
 `;
 
-const SmallCard = ({ image }: { image: ProductImage }) => {
+const SmallCard = ({
+  image,
+  onClick,
+  isSelected = false,
+}: {
+  image: ProductImage;
+  onClick?: () => void;
+  isSelected?: boolean;
+}) => {
   // Check if we have a valid image URL
   const hasValidImage = image.image && typeof image.image === "string" && image.image.trim() !== "";
 
   if (!hasValidImage) {
     return (
-      <StyleSmallCard>
+      <StyleSmallCard onClick={onClick} $isSelected={isSelected}>
         <div
           style={{
             color: "#ffffff40",
@@ -52,7 +65,7 @@ const SmallCard = ({ image }: { image: ProductImage }) => {
   }
 
   return (
-    <StyleSmallCard>
+    <StyleSmallCard onClick={onClick} $isSelected={isSelected}>
       <Image
         src={image.image}
         alt={image.alt_text || "Product image"}

@@ -1,4 +1,5 @@
 "use client";
+import { useState, useEffect } from "react";
 import styled from "styled-components";
 import Container from "@/components/ui/Container";
 import MenuBar from "./MenuBar";
@@ -111,6 +112,7 @@ const CardGrid = styled.div`
 
 function DetailMain({ dictionary, productId }: { dictionary: any; productId: number }) {
   const { product, loading, error } = useProductDetail(productId);
+  const [selectedImage, setSelectedImage] = useState<any>(null);
 
   // Fetch similar products based on the current product's category
   const {
@@ -118,6 +120,15 @@ function DetailMain({ dictionary, productId }: { dictionary: any; productId: num
     loading: similarLoading,
     error: similarError,
   } = useSimilarProducts(product?.category, productId, 4);
+
+  // Set the selected image to primary image when product loads
+  useEffect(() => {
+    if (product && product.images) {
+      const primaryImage =
+        (product.images as any)?.find((img: any) => img.is_primary) || (product.images as any)?.[0];
+      setSelectedImage(primaryImage);
+    }
+  }, [product]);
 
   if (loading) {
     return (
@@ -175,7 +186,11 @@ function DetailMain({ dictionary, productId }: { dictionary: any; productId: num
       <Container>
         <MenuBar dictionary={dictionary} />
         <FlexRow>
-          <BigCard product={product} />
+          <BigCard
+            product={product}
+            selectedImage={selectedImage}
+            setSelectedImage={setSelectedImage}
+          />
           <RightColumn>
             <DetailDescription dictionary={dictionary} product={product} />
             <ButtonRow>

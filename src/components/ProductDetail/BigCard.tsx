@@ -55,24 +55,35 @@ const InnerWrapper = styled.div`
   }
 `;
 
-const BigCard = ({ product }: { product: ProductDetail }) => {
-  // Get the primary image or first image
-  const primaryImage =
-    (product.images as any)?.find((img: any) => img.is_primary) || (product.images as any)?.[0];
+const BigCard = ({
+  product,
+  selectedImage,
+  setSelectedImage,
+}: {
+  product: ProductDetail;
+  selectedImage: any;
+  setSelectedImage: (image: any) => void;
+}) => {
+  // Use selectedImage if available, otherwise fallback to primary image
+  const displayImage =
+    selectedImage ||
+    (product.images as any)?.find((img: any) => img.is_primary) ||
+    (product.images as any)?.[0];
+
   // Check if we have a valid image URL
   const hasValidImage =
-    primaryImage &&
-    primaryImage.image &&
-    typeof primaryImage.image === "string" &&
-    primaryImage.image.trim() !== "";
+    displayImage &&
+    displayImage.image &&
+    typeof displayImage.image === "string" &&
+    displayImage.image.trim() !== "";
 
   return (
     <StyleBigCard>
       {hasValidImage ? (
         <MainImageWrapper>
           <Image
-            src={primaryImage.image}
-            alt={primaryImage.alt_text || product.title}
+            src={displayImage.image}
+            alt={displayImage.alt_text || product.title}
             fill
             style={{ objectFit: "contain" }}
           />
@@ -94,7 +105,14 @@ const BigCard = ({ product }: { product: ProductDetail }) => {
       <InnerWrapper>
         {(product.images as any)
           ?.slice(0, 3)
-          .map((image: any) => <SmallCard key={image.id} image={image} />)}
+          .map((image: any) => (
+            <SmallCard
+              key={image.id}
+              image={image}
+              onClick={() => setSelectedImage(image)}
+              isSelected={displayImage?.id === image.id}
+            />
+          ))}
       </InnerWrapper>
     </StyleBigCard>
   );
