@@ -11,6 +11,11 @@ const nextConfig: NextConfig = {
         hostname: "testapi.artlighthouse.ge",
         pathname: "**",
       },
+      {
+        protocol: "https",
+        hostname: "art-light-house-images.fra1.cdn.digitaloceanspaces.com",
+        pathname: "**",
+      },
     ],
   },
 };

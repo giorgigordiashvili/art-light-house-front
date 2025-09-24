@@ -37,36 +37,27 @@ const MobileOnlyIcons = styled.div`
 `;
 
 const LampaImage = ({ product }: { product: ProductList }) => {
+  // Extract image URL from primary_image object
+  const imageUrl =
+    product.primary_image && typeof product.primary_image === "object"
+      ? (product.primary_image as any).image
+      : product.primary_image;
+
   // Check if we have a valid primary image (not null, undefined, or empty string)
-  const hasValidImage =
-    product.primary_image &&
-    typeof product.primary_image === "string" &&
-    product.primary_image.trim() !== "";
+  const hasValidImage = imageUrl && typeof imageUrl === "string" && imageUrl.trim() !== "";
 
   return (
     <StyledLampaImage>
       <MobileOnlyIcons>
         {hasValidImage ? (
-          <Image
-            src={product.primary_image}
-            alt={product.title}
-            layout="fill"
-            objectFit="contain"
-            priority
-          />
+          <Image src={imageUrl} alt={product.title} layout="fill" objectFit="contain" priority />
         ) : (
           <Image src={mobilelampa} alt="Mobile Lampa" layout="fill" objectFit="contain" priority />
         )}
       </MobileOnlyIcons>
       <DesktopOnlyIcons>
         {hasValidImage ? (
-          <Image
-            src={product.primary_image}
-            alt={product.title}
-            layout="fill"
-            objectFit="contain"
-            priority
-          />
+          <Image src={imageUrl} alt={product.title} layout="fill" objectFit="contain" priority />
         ) : (
           <Image
             src={Desktoplampa}
