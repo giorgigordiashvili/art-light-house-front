@@ -405,6 +405,12 @@ const Header = ({ header, dictionary }: HeaderProps) => {
                     closeCartModal();
                     closeLanguageSwitcherModal();
                   }}
+                  style={{
+                    cursor: "pointer",
+                    height: "24px",
+                    display: "flex",
+                    alignItems: "center",
+                  }}
                 >
                   <HeartIcon />
                 </div>
