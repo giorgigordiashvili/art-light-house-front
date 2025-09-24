@@ -126,6 +126,12 @@ const NewProducts = ({ dictionary }: any) => {
   const handleMouseDown = (e: React.MouseEvent) => {
     if (!scrollContainerRef.current) return;
 
+    // Don't initiate drag when interacting with plus button (or other interactive elements later)
+    const target = e.target as HTMLElement;
+    if (target.closest("[data-plus-button]")) {
+      return;
+    }
+
     setIsDragging(true);
     setStartX(e.pageX - scrollContainerRef.current.offsetLeft);
     setScrollLeft(scrollContainerRef.current.scrollLeft);
@@ -137,6 +143,11 @@ const NewProducts = ({ dictionary }: any) => {
   // Touch events for mobile drag scrolling
   const handleTouchStart = (e: React.TouchEvent) => {
     if (!scrollContainerRef.current) return;
+
+    const target = e.target as HTMLElement;
+    if (target.closest("[data-plus-button]")) {
+      return;
+    }
 
     setIsDragging(true);
     const touch = e.touches[0];
@@ -164,13 +175,13 @@ const NewProducts = ({ dictionary }: any) => {
 
   const scrollLeftArrow = () => {
     if (scrollContainerRef.current) {
-      scrollContainerRef.current.scrollBy({ left: -1300, behavior: "smooth" });
+      scrollContainerRef.current.scrollBy({ left: -1310, behavior: "smooth" });
     }
   };
 
   const scrollRightArrow = () => {
     if (scrollContainerRef.current) {
-      scrollContainerRef.current.scrollBy({ left: 1300, behavior: "smooth" });
+      scrollContainerRef.current.scrollBy({ left: 1310, behavior: "smooth" });
     }
   };
 
