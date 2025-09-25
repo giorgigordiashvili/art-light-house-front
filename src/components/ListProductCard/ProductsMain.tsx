@@ -27,12 +27,28 @@ const PageTitle = styled.h1`
   line-height: 33.8px;
   color: white;
   margin-top: 167px;
-  margin-bottom: 54px;
+  margin-bottom: 30px;
 
   @media (max-width: 1080px) {
     font-size: 34px;
     line-height: 24px;
     margin-bottom: 47px;
+  }
+`;
+
+const ResultsTitle = styled.h2`
+  position: sticky;
+  z-index: 2;
+  font-family: "Helvetica";
+  font-weight: 400;
+  font-size: 18px;
+  line-height: 24px;
+  color: #ffffff90;
+
+  @media (max-width: 1080px) {
+    font-size: 16px;
+    margin-top: -10px;
+    margin-bottom: 32px;
   }
 `;
 
@@ -72,7 +88,6 @@ const PaginationWrapper = styled.div`
   display: flex;
   justify-content: center;
   margin-top: 70px;
-  margin-bottom: 183px;
 `;
 
 function ProductsMain({ dictionary }: any) {
@@ -91,6 +106,15 @@ function ProductsMain({ dictionary }: any) {
     fetchPage,
     applyFilters,
   } = useProducts();
+
+  const isReady = !loading && !error;
+  const zeroResultsText = dictionary?.results?.zero ?? "0 products found";
+  const countResultsTemplate = dictionary?.results?.count ?? "{count} products found";
+  const resultsTitleMessage = isReady
+    ? products.length === 0
+      ? zeroResultsText
+      : countResultsTemplate.replace("{count}", products.length.toString())
+    : null;
 
   // Register immediate filter callback
   useEffect(() => {
@@ -163,6 +187,7 @@ function ProductsMain({ dictionary }: any) {
     <StyledComponent>
       <Container>
         <PageTitle>{dictionary.title}</PageTitle>
+        {resultsTitleMessage && <ResultsTitle>{resultsTitleMessage}</ResultsTitle>}
         <SortWrapper>
           <OnMobile>
             <FilterButton onClick={toggleMobileFilterDropdown} dictionary={dictionary} />

@@ -7,6 +7,7 @@ const PaginationWrapper = styled.div`
   display: flex;
   align-items: center;
   gap: 34px;
+  z-index: 1;
 `;
 
 const PageNumber = styled.button<{ active?: boolean }>`

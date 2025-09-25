@@ -171,6 +171,10 @@
     "sortOption4": "დასახელება: Z-A",
     "placeholder1": "დან",
     "placeholder2": "მდე",
+    "results": {
+      "zero": "0 პროდუქტი ნაპოვნია",
+      "count": "{count} პროდუქტი ნაპოვნია"
+    },
     "filter": {
       "title": "ფილტრი",
       "subTitle1": "კატეგორია",
