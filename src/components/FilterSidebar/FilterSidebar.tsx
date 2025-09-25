@@ -3,8 +3,7 @@ import React from "react";
 import styled from "styled-components";
 import CategoryFilter from "./CategoryFilter";
 import Line from "./Line";
-import StyleFilter from "./StyleFilter";
-import TypeFilter from "./TypeFilter";
+import AttributeFilter from "./AttributeFilter";
 import PriceFilter from "./PriceFilter";
 
 const SidebarWrapper = styled.div`
@@ -43,9 +42,9 @@ function FilterSidebar({ dictionary }: FilterSidebarProps) {
       <Line />
       <PriceFilter dictionary={dictionary} />
       <Line />
-      <StyleFilter dictionary={dictionary} />
+      <AttributeFilter attributeName="სტილი" title={dictionary.subTitle3} />
       <Line />
-      <TypeFilter dictionary={dictionary} />
+      <AttributeFilter attributeName="განათების ტიპი" title={dictionary.subTitle4} />
     </SidebarWrapper>
   );
 }

@@ -3,8 +3,7 @@ import React from "react";
 import styled, { keyframes } from "styled-components";
 import CategoryFilter from "../FilterSidebar/CategoryFilter";
 import Line from "../FilterSidebar/Line";
-import StyleFilter from "../FilterSidebar/StyleFilter";
-import TypeFilter from "../FilterSidebar/TypeFilter";
+import AttributeFilter from "../FilterSidebar/AttributeFilter";
 import PriceFilter from "../FilterSidebar/PriceFilter";
 import ButtonFilter from "./ButtonFilter";
 
@@ -98,9 +97,9 @@ const MobileFilterDropdown: React.FC<MobileFilterDropdownProps> = ({ onClose, di
           <Line />
           <PriceFilter dictionary={dictionary.filter} />
           <Line />
-          <StyleFilter dictionary={dictionary.filter} />
+          <AttributeFilter attributeName="სტილი" title={dictionary.filter.subTitle3} />
           <Line />
-          <TypeFilter dictionary={dictionary.filter} />
+          <AttributeFilter attributeName="განათების ტიპი" title={dictionary.filter.subTitle4} />
         </ScrollArea>
 
         <BottomBar>

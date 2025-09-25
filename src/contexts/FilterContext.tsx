@@ -58,6 +58,10 @@ export const FilterProvider: React.FC<FilterProviderProps> = ({ children }) => {
       selectedAttributes: attributes,
     };
     setFilters(newFilters);
+    // Trigger immediate filtering when attributes change
+    if (onFilterChangeRef.current) {
+      onFilterChangeRef.current(newFilters);
+    }
   };
 
   const clearFilters = () => {
