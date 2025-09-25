@@ -120,6 +120,7 @@ const StyledContainer = styled.div`
   }
 
   &:hover {
+    transform: translateY(-5px);
     &::before {
       content: "";
       position: absolute;

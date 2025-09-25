@@ -36,7 +36,7 @@ const StyledActions = styled.div`
 const StyledCards = styled.div<{ $isDragging: boolean }>`
   display: flex;
   gap: 20px;
-  margin-top: 39px;
+  padding-top: 39px;
   overflow-x: auto;
   overflow-y: hidden;
   scrollbar-width: none;
