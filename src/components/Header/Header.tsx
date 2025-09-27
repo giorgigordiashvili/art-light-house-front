@@ -5,7 +5,7 @@ import Container from "../ui/Container";
 import Logo from "../Logo/Logo";
 import NavItem from "./NavItem";
 import ShoppingCartIcon from "./ShoppingCartIcon";
-import HeartIcon from "../ListProductCard/HeartIcon";
+import HeaderHeartIcon from "./HeaderHeartIcon";
 import AuthorizationButton from "./AuthorizationButton";
 import BurgerIcon from "./BurgerIcon";
 import BurgerMenu from "./BurgerMenu";
@@ -412,7 +412,7 @@ const Header = ({ header, dictionary }: HeaderProps) => {
                     alignItems: "center",
                   }}
                 >
-                  <HeartIcon />
+                  <HeaderHeartIcon />
                 </div>
                 <ResponsiveGapWrapper>
                   <div ref={authButtonRef}>

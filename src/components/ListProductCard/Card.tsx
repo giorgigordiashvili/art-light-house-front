@@ -3,7 +3,7 @@ import styled from "styled-components";
 import AddButton from "./AddButton";
 import LampaImage from "./Image";
 import ProductText from "./Text";
-import HeartIcon from "./HeartIcon";
+import ProductHeartIcon from "./ProductHeartIcon";
 import { ProductList } from "@/api/generated/interfaces";
 import { useRouter } from "next/navigation";
 
@@ -99,7 +99,7 @@ function Card({ product, dictionary }: { product: ProductList; dictionary: any }
   return (
     <StyledRectangle onClick={handleCardClick}>
       <ClickableArea>
-        <HeartIcon productId={product.id} defaultIsFavorite={product.is_favorite} />
+        <ProductHeartIcon productId={product.id} defaultIsFavorite={product.is_favorite} />
         <LampaImage product={product} />
         <ProductText product={product} />
         <AddButton product={product} dictionary={dictionary} />
