@@ -14,6 +14,8 @@ import NewCircle from "../ui/NewCircle";
 import Circle from "../ui/Circle";
 import { useProductDetail } from "@/hooks/useProductDetail";
 import { useSimilarProducts } from "@/hooks/useSimilarProducts";
+import { useAuthModal } from "@/contexts/AuthModalContext";
+import { cartAddItem } from "@/api/generated/api";
 
 const StyledComponent = styled.div`
   background: black;
@@ -112,6 +114,7 @@ const CardGrid = styled.div`
 
 function DetailMain({ dictionary, productId }: { dictionary: any; productId: number }) {
   const { product, loading, error } = useProductDetail(productId);
+  const { openAuthModal } = useAuthModal();
   const [selectedImage, setSelectedImage] = useState<any>(null);
 
   // Fetch similar products based on the current product's category
@@ -120,6 +123,36 @@ function DetailMain({ dictionary, productId }: { dictionary: any; productId: num
     loading: similarLoading,
     error: similarError,
   } = useSimilarProducts(product?.category, productId, 4);
+
+  const handleAddToCart = async () => {
+    if (!product) return;
+
+    // Check if user is authenticated
+    const hasToken = typeof window !== "undefined" && !!localStorage.getItem("auth_access_token");
+    if (!hasToken) {
+      // User is not authenticated - open auth modal instead
+      openAuthModal();
+      return;
+    }
+
+    try {
+      const payload = { product_id: product.id, quantity: 1 };
+      const cart = await cartAddItem(payload);
+      console.log("✅ Added to cart:", payload, "→ Cart:", cart);
+
+      // Update cart count in header
+      try {
+        const count = Array.isArray(cart?.items)
+          ? cart.items.reduce((acc: number, it: any) => acc + (it.quantity || 0), 0)
+          : 0;
+        if (typeof window !== "undefined") {
+          window.dispatchEvent(new CustomEvent("cartUpdated", { detail: { count, cart } }));
+        }
+      } catch {}
+    } catch (error) {
+      console.error("❌ Failed to add to cart", error);
+    }
+  };
 
   // Set the selected image to primary image when product loads
   useEffect(() => {
@@ -195,7 +228,7 @@ function DetailMain({ dictionary, productId }: { dictionary: any; productId: num
             <DetailDescription dictionary={dictionary} product={product} />
             <ButtonRow>
               <BuyButton dictionary={dictionary} />
-              <AddToCartButton dictionary={dictionary} />
+              <AddToCartButton onClick={handleAddToCart} dictionary={dictionary} />
             </ButtonRow>
           </RightColumn>
         </FlexRow>

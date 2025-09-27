@@ -21,6 +21,7 @@ import FavoritesModal from "./FavoritesModal";
 import LanguageSwitcher from "./LanguageSwitcher/LanguageSwitcher";
 import LanguageSwitcherModal from "./LanguageSwitcher/LanguageSwitcherModal";
 import { useAuth } from "@/contexts/AuthContext";
+import { useAuthModal } from "@/contexts/AuthModalContext";
 import { usePathname, useRouter } from "next/navigation";
 import { cartGet } from "@/api/generated/api";
 import { Locale, i18n } from "@/config/i18n";
@@ -140,6 +141,7 @@ interface HeaderProps {
 const Header = ({ header, dictionary }: HeaderProps) => {
   const pathname = usePathname();
   const router = useRouter();
+  const { isAuthModalOpen, closeAuthModal } = useAuthModal();
 
   const [cartItemCount, setCartItemCount] = useState<number>(0);
   const [isBurgerMenuOpen, setIsBurgerMenuOpen] = useState(false);
@@ -596,6 +598,31 @@ const Header = ({ header, dictionary }: HeaderProps) => {
                 id="languageSwitcherModal"
                 onLanguageChange={handleLanguageChange}
                 currentLanguage={ensureValidLanguage(pathname?.split("/")[1] || "ge")}
+              />
+            </StyledTest>
+          </StyledTestWrapper>
+        </>
+      )}
+
+      {/* Global Auth Modal triggered by context */}
+      {isAuthModalOpen && (
+        <>
+          <Overlay onClick={closeAuthModal} />
+          <StyledTestWrapper>
+            <StyledTest>
+              <AuthorizationModal
+                onClose={closeAuthModal}
+                onRecoverPasswordClick={() => {
+                  closeAuthModal();
+                  setIsRecoverPasswordOpen(true);
+                }}
+                onRegisterSuccess={(email?: string) => {
+                  closeAuthModal();
+                  setIsRegistrationCodeOpen(true);
+                  // Store email temporarily on window for passing to code modal
+                  if (email) (window as any).__reg_email = email;
+                }}
+                dictionary={header}
               />
             </StyledTest>
           </StyledTestWrapper>

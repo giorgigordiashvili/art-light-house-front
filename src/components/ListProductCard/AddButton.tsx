@@ -3,6 +3,7 @@ import Image from "next/image";
 import styled from "styled-components";
 import { ProductList } from "@/api/generated/interfaces";
 import { cartAddItem } from "@/api/generated/api";
+import { useAuthModal } from "@/contexts/AuthModalContext";
 
 const StyledAddButton = styled.div`
   position: absolute;
@@ -42,8 +43,19 @@ const AddButton = ({
   product,
   dictionary,
 }: Props & { product: ProductList; dictionary?: any }) => {
+  const { openAuthModal } = useAuthModal();
+
   const handleClick = async (e: React.MouseEvent) => {
     e.stopPropagation();
+
+    // Check if user is authenticated
+    const hasToken = typeof window !== "undefined" && !!localStorage.getItem("auth_access_token");
+    if (!hasToken) {
+      // User is not authenticated - open auth modal instead
+      openAuthModal();
+      return;
+    }
+
     try {
       const payload = { product_id: product.id, quantity: 1 };
       const cart = await cartAddItem(payload);

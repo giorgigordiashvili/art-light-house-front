@@ -3,6 +3,7 @@ import React, { useMemo, useState } from "react";
 import Image from "next/image";
 import { favoritesAdd, favoritesList, favoritesRemove } from "@/api/generated/api";
 import type { AddToFavoritesRequest } from "@/api/generated/interfaces";
+import { useAuthModal } from "@/contexts/AuthModalContext";
 
 type Props = {
   productId: number;
@@ -11,6 +12,8 @@ type Props = {
 };
 
 const ProductHeartIcon = ({ productId, defaultIsFavorite, size = 30 }: Props) => {
+  const { openAuthModal } = useAuthModal();
+
   const initialFilled = useMemo(() => {
     if (typeof defaultIsFavorite === "string") {
       const v = defaultIsFavorite.trim().toLowerCase();
@@ -28,7 +31,8 @@ const ProductHeartIcon = ({ productId, defaultIsFavorite, size = 30 }: Props) =>
 
     const hasToken = typeof window !== "undefined" && !!localStorage.getItem("auth_access_token");
     if (!hasToken) {
-      // not authorized; ignore silently
+      // User is not authenticated - open auth modal instead
+      openAuthModal();
       return;
     }
 
