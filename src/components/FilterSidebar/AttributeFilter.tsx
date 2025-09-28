@@ -34,11 +34,19 @@ function AttributeFilter({ attributeName, title }: AttributeFilterProps) {
         );
 
         if (targetAttributes.length > 0) {
-          const attributeOptions: CheckboxOption[] = targetAttributes.map((attr: Attribute) => ({
-            label: attr.name, // The actual attribute name (like "EDISON", "LED", etc.)
-            value: `${attr.id}:${attr.values[0].id}`, // format: attr_id:value_id
-            checked: false,
-          }));
+          // Get currently selected attributes from filter context
+          const selectedPairs = filters.selectedAttributes
+            ? filters.selectedAttributes.split(",")
+            : [];
+
+          const attributeOptions: CheckboxOption[] = targetAttributes.map((attr: Attribute) => {
+            const value = `${attr.id}:${attr.values[0].id}`;
+            return {
+              label: attr.name, // The actual attribute name (like "EDISON", "LED", etc.)
+              value, // format: attr_id:value_id
+              checked: selectedPairs.includes(value), // Preserve checked state from filter context
+            };
+          });
           setOptions(attributeOptions);
         }
       } catch (error) {
@@ -49,56 +57,37 @@ function AttributeFilter({ attributeName, title }: AttributeFilterProps) {
     };
 
     fetchAttributes();
-  }, [attributeName]);
-
-  // Parse current selected attributes to determine which checkboxes should be checked
-  useEffect(() => {
-    if (filters.selectedAttributes) {
-      const selectedPairs = filters.selectedAttributes.split(",");
-      setOptions((prev) =>
-        prev.map((option) => ({
-          ...option,
-          checked: selectedPairs.includes(option.value),
-        }))
-      );
-    } else {
-      setOptions((prev) =>
-        prev.map((option) => ({
-          ...option,
-          checked: false,
-        }))
-      );
-    }
-  }, [filters.selectedAttributes]);
+  }, [attributeName, filters.selectedAttributes]); // Add filters.selectedAttributes as dependency
 
   const handleOptionChange = (value: string) => {
-    const updatedOptions = options.map((option) =>
-      option.value === value ? { ...option, checked: !option.checked } : option
+    // Find the current checked state for this value
+    const currentOption = options.find((opt) => opt.value === value);
+    const newCheckedState = !currentOption?.checked;
+
+    // Update local state immediately for responsive UI
+    setOptions((prev) =>
+      prev.map((option) =>
+        option.value === value ? { ...option, checked: newCheckedState } : option
+      )
     );
-    setOptions(updatedOptions);
 
     // Build the attributes string in the format: attr_id:value_id,attr_id:value_id
-    const selectedValues = updatedOptions
-      .filter((option) => option.checked)
-      .map((option) => option.value);
-
-    // Combine with existing attributes from other AttributeFilter components
     const currentAttributes = filters.selectedAttributes
-      ? filters.selectedAttributes.split(",")
+      ? filters.selectedAttributes.split(",").filter((attr) => attr.trim())
       : [];
 
-    // Remove old values for this attribute type by checking if any current options match
-    const currentOptionValues = options.map((opt) => opt.value);
-    const otherAttributeValues = currentAttributes.filter(
-      (attr) => !currentOptionValues.includes(attr)
-    );
+    let updatedAttributes: string[];
 
-    // Combine with new selected values for this attribute
-    const allSelectedValues = [...otherAttributeValues, ...selectedValues].filter(
-      (v) => v.length > 0
-    );
+    if (newCheckedState) {
+      // Add the value if it's being checked
+      updatedAttributes = [...currentAttributes, value];
+    } else {
+      // Remove the value if it's being unchecked
+      updatedAttributes = currentAttributes.filter((attr) => attr !== value);
+    }
 
-    const attributesString = allSelectedValues.length > 0 ? allSelectedValues.join(",") : undefined;
+    // Update the filter context
+    const attributesString = updatedAttributes.length > 0 ? updatedAttributes.join(",") : undefined;
     updateAttributeFilter(attributesString);
   };
 
