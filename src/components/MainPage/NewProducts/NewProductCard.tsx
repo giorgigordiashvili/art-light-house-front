@@ -85,6 +85,7 @@ import PlusButton from "./PlusButton";
 import CardText from "./CardText";
 import { ProductList } from "@/api/generated/interfaces";
 import { usePathname, useRouter } from "next/navigation";
+import ProductHeartIcon from "@/components/ListProductCard/ProductHeartIcon";
 
 const useIsMobile = (breakpoint = 1080) => {
   const [isMobile, setIsMobile] = useState(false);
@@ -211,6 +212,7 @@ const NewProductCard = ({ product }: { product: ProductList; dictionary: any }) 
         )}
       </StyledImageWrapper>
       <StyledActions>
+        <ProductHeartIcon productId={product.id} defaultIsFavorite={product.is_favorite} />
         <CardText name={product.title} price={`${product.price} ₾`} />
         <PlusButton product={product} />
       </StyledActions>
