@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import { favoritesList } from "@/api/generated/api";
 import HeartIcon from "@/app/icons/HeartIcon";
 import FilledHeartIcon from "@/app/icons/FilledHeartIcon";
+import { useAuth } from "@/contexts/AuthContext";
 
 type Props = {
   size?: number;
@@ -11,6 +12,7 @@ type Props = {
 
 const HeaderHeartIcon = ({ size = 30, isModalOpen = false }: Props) => {
   const [isFilled, setIsFilled] = useState<boolean>(false);
+  const { isAuthenticated } = useAuth();
 
   // Keep icon in sync with favorites list and updates
   useEffect(() => {
@@ -20,7 +22,7 @@ const HeaderHeartIcon = ({ size = 30, isModalOpen = false }: Props) => {
       try {
         const hasToken =
           typeof window !== "undefined" && !!localStorage.getItem("auth_access_token");
-        if (!hasToken) {
+        if (!hasToken || !isAuthenticated) {
           if (isMounted) setIsFilled(false);
           return;
         }
@@ -47,7 +49,9 @@ const HeaderHeartIcon = ({ size = 30, isModalOpen = false }: Props) => {
       }
     };
 
+    // Sync favorites when component mounts or authentication state changes
     syncFavorites();
+
     if (typeof window !== "undefined") {
       window.addEventListener("favoritesUpdated", onFavoritesUpdated as EventListener);
     }
@@ -57,7 +61,7 @@ const HeaderHeartIcon = ({ size = 30, isModalOpen = false }: Props) => {
         window.removeEventListener("favoritesUpdated", onFavoritesUpdated as EventListener);
       }
     };
-  }, []);
+  }, [isAuthenticated]); // Add isAuthenticated as dependency
 
   const IconComponent = isFilled ? FilledHeartIcon : HeartIcon;
   const alt = isFilled ? "favorite" : "add to favorites";
