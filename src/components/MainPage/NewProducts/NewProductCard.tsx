@@ -201,6 +201,7 @@ const NewProductCard = ({ product }: { product: ProductList; dictionary: any }) 
             alt={product.title}
             width={isMobile ? 175 : 239}
             height={isMobile ? 188 : 257}
+            draggable="false"
           />
         ) : (
           <ZoomedImage
@@ -208,6 +209,7 @@ const NewProductCard = ({ product }: { product: ProductList; dictionary: any }) 
             alt="Default light"
             width={isMobile ? 175 : 239}
             height={isMobile ? 188 : 257}
+            draggable="false"
           />
         )}
       </StyledImageWrapper>
