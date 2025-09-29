@@ -4,7 +4,7 @@ import SmallCard from "./SmallCard";
 import { ProductDetail } from "@/api/generated/interfaces";
 import ReturnIcon from "../Header/ReturnIcon";
 import RightSlide from "../MainPage/NewProducts/RightSlide";
-import { useRef } from "react";
+import { useRef, useState, useEffect } from "react";
 
 const StyleBigCard = styled.div`
   /* max-width: 100%; */
@@ -56,6 +56,8 @@ const InnerWrapper = styled.div`
   overflow-y: hidden;
   scrollbar-width: none;
   -ms-overflow-style: none;
+  scroll-behavior: smooth;
+  transition: scroll-behavior 0.3s ease;
 
   &::-webkit-scrollbar {
     display: none;
@@ -88,6 +90,10 @@ const BigCard = ({
   setSelectedImage: (image: any) => void;
 }) => {
   const thumbnailScrollRef = useRef<HTMLDivElement>(null);
+  const [isDragging, setIsDragging] = useState(false);
+  const [startX, setStartX] = useState(0);
+  const [scrollLeft, setScrollLeft] = useState(0);
+  const [dragDistance, setDragDistance] = useState(0);
 
   // Use selectedImage if available, otherwise fallback to primary image
   const displayImage =
@@ -155,6 +161,75 @@ const BigCard = ({
     }
   };
 
+  // Drag scrolling handlers for thumbnails
+  const handleMouseDown = (e: React.MouseEvent) => {
+    if (!thumbnailScrollRef.current) return;
+    setIsDragging(true);
+    setStartX(e.pageX - thumbnailScrollRef.current.offsetLeft);
+    setScrollLeft(thumbnailScrollRef.current.scrollLeft);
+    setDragDistance(0);
+    thumbnailScrollRef.current.style.cursor = "grabbing";
+  };
+
+  const handleMouseLeave = () => {
+    setIsDragging(false);
+    if (thumbnailScrollRef.current) {
+      thumbnailScrollRef.current.style.cursor = "grab";
+    }
+  };
+
+  const handleMouseUp = () => {
+    setIsDragging(false);
+    if (thumbnailScrollRef.current) {
+      thumbnailScrollRef.current.style.cursor = "grab";
+    }
+  };
+
+  const handleMouseMove = (e: React.MouseEvent) => {
+    if (!isDragging || !thumbnailScrollRef.current) return;
+    e.preventDefault();
+    const x = e.pageX - thumbnailScrollRef.current.offsetLeft;
+    const walk = (x - startX) * 0.1; // Reduced multiplier for slower, smoother scrolling
+    setDragDistance(Math.abs(walk));
+    thumbnailScrollRef.current.scrollLeft = scrollLeft - walk;
+  };
+
+  const handleThumbnailClick = (image: any) => {
+    // Only trigger click if we haven't dragged much (less than 5px)
+    if (dragDistance < 5) {
+      setSelectedImage(image);
+    }
+  };
+
+  // Add effect to handle global mouse events
+  useEffect(() => {
+    const handleGlobalMouseUp = () => {
+      setIsDragging(false);
+      if (thumbnailScrollRef.current) {
+        thumbnailScrollRef.current.style.cursor = "grab";
+      }
+    };
+
+    const handleGlobalMouseMove = (e: MouseEvent) => {
+      if (!isDragging || !thumbnailScrollRef.current) return;
+      e.preventDefault();
+      const x = e.pageX - thumbnailScrollRef.current.offsetLeft;
+      const walk = (x - startX) * 1.2; // Reduced multiplier for slower, smoother scrolling
+      setDragDistance(Math.abs(walk));
+      thumbnailScrollRef.current.scrollLeft = scrollLeft - walk;
+    };
+
+    if (isDragging) {
+      document.addEventListener("mouseup", handleGlobalMouseUp);
+      document.addEventListener("mousemove", handleGlobalMouseMove);
+    }
+
+    return () => {
+      document.removeEventListener("mouseup", handleGlobalMouseUp);
+      document.removeEventListener("mousemove", handleGlobalMouseMove);
+    };
+  }, [isDragging, startX, scrollLeft]);
+
   return (
     <StyleBigCard>
       <StyledActions>
@@ -189,12 +264,19 @@ const BigCard = ({
         </MainImageWrapper>
       )}
 
-      <InnerWrapper ref={thumbnailScrollRef}>
+      <InnerWrapper
+        ref={thumbnailScrollRef}
+        onMouseDown={handleMouseDown}
+        onMouseLeave={handleMouseLeave}
+        onMouseUp={handleMouseUp}
+        onMouseMove={handleMouseMove}
+        style={{ cursor: "grab", userSelect: "none" }}
+      >
         {sortedImages.map((image: any) => (
           <SmallCard
             key={image.id}
             image={image}
-            onClick={() => setSelectedImage(image)}
+            onClick={() => handleThumbnailClick(image)}
             isSelected={displayImage?.id === image.id}
           />
         ))}

@@ -47,7 +47,7 @@ const SmallCard = ({
 
   if (!hasValidImage) {
     return (
-      <StyleSmallCard onClick={onClick} $isSelected={isSelected}>
+      <StyleSmallCard onClick={onClick} $isSelected={isSelected} draggable="false">
         <div
           style={{
             color: "#ffffff40",
@@ -66,12 +66,13 @@ const SmallCard = ({
   }
 
   return (
-    <StyleSmallCard onClick={onClick} $isSelected={isSelected}>
+    <StyleSmallCard onClick={onClick} $isSelected={isSelected} draggable="false">
       <Image
         src={image.image}
         alt={image.alt_text || "Product image"}
         fill
         style={{ objectFit: "cover" }}
+        draggable={false}
       />
     </StyleSmallCard>
   );
