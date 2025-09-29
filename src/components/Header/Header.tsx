@@ -141,7 +141,7 @@ interface HeaderProps {
 const Header = ({ header, dictionary }: HeaderProps) => {
   const pathname = usePathname();
   const router = useRouter();
-  const { isAuthModalOpen, closeAuthModal } = useAuthModal();
+  const { isAuthModalOpen, closeAuthModal, openAuthModal } = useAuthModal();
   const [cartItemCount, setCartItemCount] = useState<number>(0);
   const [isBurgerMenuOpen, setIsBurgerMenuOpen] = useState(false);
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
@@ -181,7 +181,8 @@ const Header = ({ header, dictionary }: HeaderProps) => {
       isEmptyCartModalOpen ||
       isCartModalOpen ||
       isFavoritesModalOpen ||
-      isLanguageSwitcherModalOpen
+      isLanguageSwitcherModalOpen ||
+      isAuthModalOpen
         ? "hidden"
         : "visible";
     return () => {
@@ -196,6 +197,7 @@ const Header = ({ header, dictionary }: HeaderProps) => {
     isCartModalOpen,
     isFavoritesModalOpen,
     isLanguageSwitcherModalOpen,
+    isAuthModalOpen,
   ]);
 
   useEffect(() => {
@@ -300,14 +302,8 @@ const Header = ({ header, dictionary }: HeaderProps) => {
   const handleCartClick = async () => {
     const hasToken = typeof window !== "undefined" && !!localStorage.getItem("auth_access_token");
     if (!hasToken) {
-      setCartItemCount(0);
-      if (isEmptyCartModalOpen) {
-        closeEmptyCartModal();
-      } else {
-        setIsEmptyCartModalOpen(true);
-        setCartIconColor("#FFCB40");
-      }
-      closeFavoritesModal();
+      // User is not authenticated - open auth modal instead
+      openAuthModal();
       return;
     }
 
@@ -405,6 +401,13 @@ const Header = ({ header, dictionary }: HeaderProps) => {
                 />
                 <div
                   onClick={() => {
+                    const hasToken =
+                      typeof window !== "undefined" && !!localStorage.getItem("auth_access_token");
+                    if (!hasToken) {
+                      // User is not authenticated - open auth modal instead
+                      openAuthModal();
+                      return;
+                    }
                     setIsFavoritesModalOpen((prev) => !prev);
                     closeEmptyCartModal();
                     closeCartModal();
