@@ -142,7 +142,6 @@ const Header = ({ header, dictionary }: HeaderProps) => {
   const pathname = usePathname();
   const router = useRouter();
   const { isAuthModalOpen, closeAuthModal } = useAuthModal();
-
   const [cartItemCount, setCartItemCount] = useState<number>(0);
   const [isBurgerMenuOpen, setIsBurgerMenuOpen] = useState(false);
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
@@ -308,6 +307,7 @@ const Header = ({ header, dictionary }: HeaderProps) => {
         setIsEmptyCartModalOpen(true);
         setCartIconColor("#FFCB40");
       }
+      closeFavoritesModal();
       return;
     }
 
@@ -330,6 +330,7 @@ const Header = ({ header, dictionary }: HeaderProps) => {
           setCartIconColor("#FFCB40");
         }
       }
+      closeFavoritesModal();
     } catch {
       setCartItemCount(0);
       if (isEmptyCartModalOpen) {
@@ -338,6 +339,7 @@ const Header = ({ header, dictionary }: HeaderProps) => {
         setIsEmptyCartModalOpen(true);
         setCartIconColor("#FFCB40");
       }
+      closeFavoritesModal();
     }
   };
 
@@ -367,6 +369,7 @@ const Header = ({ header, dictionary }: HeaderProps) => {
     setIsLanguageSwitcherModalOpen((prev) => !prev);
     closeEmptyCartModal();
     closeCartModal();
+    closeFavoritesModal();
   };
 
   const handleLanguageChange = (language: "ge" | "en") => {
@@ -430,6 +433,7 @@ const Header = ({ header, dictionary }: HeaderProps) => {
                         closeEmptyCartModal();
                         closeCartModal();
                         closeLanguageSwitcherModal();
+                        closeFavoritesModal();
                       }}
                     />
                   </div>
@@ -441,6 +445,7 @@ const Header = ({ header, dictionary }: HeaderProps) => {
                         closeEmptyCartModal();
                         closeCartModal();
                         closeLanguageSwitcherModal();
+                        closeFavoritesModal();
                       }}
                     />
                   </div>
