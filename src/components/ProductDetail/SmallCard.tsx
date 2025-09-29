@@ -5,6 +5,7 @@ import { ProductImage } from "@/api/generated/interfaces";
 const StyleSmallCard = styled.div<{ $isSelected?: boolean }>`
   width: 120px;
   height: 120px;
+  flex-shrink: 0;
   background: #1a1a1a96;
   border-radius: 17px;
   display: flex;
