@@ -414,7 +414,7 @@ const Header = ({ header, dictionary }: HeaderProps) => {
                     alignItems: "center",
                   }}
                 >
-                  <HeaderHeartIcon />
+                  <HeaderHeartIcon isModalOpen={isFavoritesModalOpen} />
                 </div>
                 <ResponsiveGapWrapper>
                   <div ref={authButtonRef}>

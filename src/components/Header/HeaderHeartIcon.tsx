@@ -1,13 +1,15 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import Image from "next/image";
 import { favoritesList } from "@/api/generated/api";
+import HeartIcon from "@/app/icons/HeartIcon";
+import FilledHeartIcon from "@/app/icons/FilledHeartIcon";
 
 type Props = {
   size?: number;
+  isModalOpen?: boolean;
 };
 
-const HeaderHeartIcon = ({ size = 30 }: Props) => {
+const HeaderHeartIcon = ({ size = 30, isModalOpen = false }: Props) => {
   const [isFilled, setIsFilled] = useState<boolean>(false);
 
   // Keep icon in sync with favorites list and updates
@@ -57,12 +59,13 @@ const HeaderHeartIcon = ({ size = 30 }: Props) => {
     };
   }, []);
 
-  const src = isFilled ? "/assets/icons/filled-heart.png" : "/assets/icons/heart.png";
+  const IconComponent = isFilled ? FilledHeartIcon : HeartIcon;
   const alt = isFilled ? "favorite" : "add to favorites";
+  const iconColor = isModalOpen ? "#FFCB40" : "#ffffff"; // Yellow when modal open, white when closed
 
   return (
-    <span style={{ display: "inline-flex" }}>
-      <Image src={src} alt={alt} width={size} height={size} />
+    <span style={{ display: "inline-flex" }} title={alt}>
+      <IconComponent width={size} height={size} color={iconColor} />
     </span>
   );
 };
