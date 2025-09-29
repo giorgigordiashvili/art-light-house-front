@@ -75,6 +75,7 @@ const StyledActions = styled.div`
   display: flex;
   justify-content: space-between;
   width: 100%;
+  padding-inline: 20px;
 `;
 
 const BigCard = ({
@@ -103,12 +104,20 @@ const BigCard = ({
 
   // Get current image index and total images
   const images = (product.images as any) || [];
+
+  // Sort images to put primary image first
+  const sortedImages = [...images].sort((a, b) => {
+    if (a.is_primary) return -1;
+    if (b.is_primary) return 1;
+    return 0;
+  });
+
   const currentImageIndex = displayImage
-    ? images.findIndex((img: any) => img.id === displayImage.id)
+    ? sortedImages.findIndex((img: any) => img.id === displayImage.id)
     : 0;
 
   const scrollThumbnailsToIndex = (index: number) => {
-    if (thumbnailScrollRef.current && images.length > 0) {
+    if (thumbnailScrollRef.current && sortedImages.length > 0) {
       const container = thumbnailScrollRef.current;
       const containerWidth = container.offsetWidth;
       const scrollLeft = container.scrollLeft;
@@ -131,17 +140,17 @@ const BigCard = ({
   };
 
   const scrollToPreviousImage = () => {
-    if (images.length > 0) {
-      const previousIndex = currentImageIndex > 0 ? currentImageIndex - 1 : images.length - 1;
-      setSelectedImage(images[previousIndex]);
+    if (sortedImages.length > 0) {
+      const previousIndex = currentImageIndex > 0 ? currentImageIndex - 1 : sortedImages.length - 1;
+      setSelectedImage(sortedImages[previousIndex]);
       scrollThumbnailsToIndex(previousIndex);
     }
   };
 
   const scrollToNextImage = () => {
-    if (images.length > 0) {
-      const nextIndex = currentImageIndex < images.length - 1 ? currentImageIndex + 1 : 0;
-      setSelectedImage(images[nextIndex]);
+    if (sortedImages.length > 0) {
+      const nextIndex = currentImageIndex < sortedImages.length - 1 ? currentImageIndex + 1 : 0;
+      setSelectedImage(sortedImages[nextIndex]);
       scrollThumbnailsToIndex(nextIndex);
     }
   };
@@ -181,16 +190,14 @@ const BigCard = ({
       )}
 
       <InnerWrapper ref={thumbnailScrollRef}>
-        {(product.images as any)
-          ?.slice(0, 10)
-          .map((image: any) => (
-            <SmallCard
-              key={image.id}
-              image={image}
-              onClick={() => setSelectedImage(image)}
-              isSelected={displayImage?.id === image.id}
-            />
-          ))}
+        {sortedImages.map((image: any) => (
+          <SmallCard
+            key={image.id}
+            image={image}
+            onClick={() => setSelectedImage(image)}
+            isSelected={displayImage?.id === image.id}
+          />
+        ))}
       </InnerWrapper>
     </StyleBigCard>
   );
