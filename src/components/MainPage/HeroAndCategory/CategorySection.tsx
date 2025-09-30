@@ -77,7 +77,7 @@ const Card = styled.div<{
   align-items: flex-end;
   justify-content: flex-start;
   backdrop-filter: blur(114px);
-  z-index: 0;
+  z-index: 1;
   cursor: pointer;
   overflow: hidden;
   transition: box-shadow 0.3s ease;
