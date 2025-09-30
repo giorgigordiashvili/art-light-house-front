@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import FilterSidebar from "@/components/FilterSidebar/FilterSidebar";
 import CardGrid from "@/components/ListProductCard/CardGrid";
 import styled from "styled-components";
@@ -10,6 +10,8 @@ import MobileFilterDropdown from "../FilterDropdown/MobileFilterDropdown";
 import PaginationWithArrows from "@/components/PagesButton/PaginationWithArrows";
 import { useProducts } from "@/hooks/useProducts";
 import { useFilterContext } from "@/contexts/FilterContext";
+import { useUrlParams } from "@/hooks/useUrlParams";
+import { useSearchParams } from "next/navigation";
 
 const StyledComponent = styled.div`
   background: black;
@@ -92,7 +94,10 @@ const PaginationWrapper = styled.div`
 
 function ProductsMain({ dictionary }: any) {
   const [isMobileFilterDropdownVisible, setMobileFilterDropdownVisible] = useState(false);
-  const { setOnFilterChange } = useFilterContext();
+  const { setOnFilterChange, filters, isInitialized } = useFilterContext();
+  const { updateUrlParams } = useUrlParams();
+  const hasAppliedInitialFilters = useRef(false);
+  const searchParams = useSearchParams();
 
   // Fetch products without automatic filtering - filtering is manual now
   const {
@@ -105,7 +110,7 @@ function ProductsMain({ dictionary }: any) {
     hasPreviousPage,
     fetchPage,
     applyFilters,
-  } = useProducts();
+  } = useProducts({ skipInitialFetch: true }); // Skip initial fetch to wait for URL filters
 
   const isReady = !loading && !error;
   const zeroResultsText = dictionary?.results?.zero ?? "0 products found";
@@ -135,11 +140,52 @@ function ProductsMain({ dictionary }: any) {
     };
   }, [applyFilters, setOnFilterChange]);
 
+  // Apply initial filters from URL when ready, or fetch products if no filters
+  useEffect(() => {
+    if (!isInitialized || hasAppliedInitialFilters.current) return;
+
+    const hasFilters =
+      filters.selectedCategoryIds.length > 0 ||
+      filters.minPrice ||
+      filters.maxPrice ||
+      filters.selectedAttributes;
+
+    if (hasFilters) {
+      // Apply URL filters
+      applyFilters({
+        categoryIds: filters.selectedCategoryIds,
+        minPrice: filters.minPrice,
+        maxPrice: filters.maxPrice,
+        attributes: filters.selectedAttributes,
+      });
+    } else {
+      // No filters from URL, fetch all products
+      applyFilters({});
+    }
+
+    hasAppliedInitialFilters.current = true;
+  }, [isInitialized, filters, applyFilters]);
+
+  // Handle page synchronization from URL (initial load and pagination changes)
+  useEffect(() => {
+    if (!isInitialized) return;
+
+    const pageFromUrl = searchParams.get("page") ? parseInt(searchParams.get("page")!, 10) : 1;
+
+    // Sync page if URL page differs from current page state
+    if (pageFromUrl !== currentPage) {
+      fetchPage(pageFromUrl);
+    }
+  }, [isInitialized, searchParams, currentPage, fetchPage]);
+
   const toggleMobileFilterDropdown = () => {
     setMobileFilterDropdownVisible(!isMobileFilterDropdownVisible);
   };
 
   const handlePageChange = async (page: number) => {
+    // Update URL first to ensure state consistency
+    updateUrlParams({ page: page.toString() });
+    // Then fetch the page data
     await fetchPage(page);
   };
 

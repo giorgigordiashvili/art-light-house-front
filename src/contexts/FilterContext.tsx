@@ -1,4 +1,5 @@
-import React, { createContext, useContext, useState, ReactNode, useRef } from "react";
+import React, { createContext, useContext, useState, ReactNode, useRef, useEffect } from "react";
+import { useUrlParams } from "@/hooks/useUrlParams";
 
 interface FilterState {
   selectedCategoryIds: number[];
@@ -17,6 +18,7 @@ interface FilterContextType {
   updateAttributeFilter: (attributes?: string) => void;
   clearFilters: () => void;
   setOnFilterChange: (callback: ((filters: FilterState) => void) | null) => void;
+  isInitialized: boolean;
 }
 
 const FilterContext = createContext<FilterContextType | undefined>(undefined);
@@ -26,10 +28,59 @@ interface FilterProviderProps {
 }
 
 export const FilterProvider: React.FC<FilterProviderProps> = ({ children }) => {
+  const { updateUrlParams } = useUrlParams();
   const [filters, setFilters] = useState<FilterState>({
     selectedCategoryIds: [],
   });
+  const [isInitialized, setIsInitialized] = useState(false);
   const onFilterChangeRef = useRef<((filters: FilterState) => void) | null>(null);
+
+  // Initialize filters from URL on mount (only once)
+  useEffect(() => {
+    // Use direct URL parsing to avoid dependency on getFilterParams
+    const urlSearchParams = new URLSearchParams(window.location.search);
+    const initialFilters: FilterState = {
+      selectedCategoryIds: urlSearchParams.get("categories")
+        ? urlSearchParams
+            .get("categories")!
+            .split(",")
+            .map((id) => parseInt(id, 10))
+            .filter((id) => !isNaN(id))
+        : [],
+      minPrice: urlSearchParams.get("minPrice")
+        ? parseFloat(urlSearchParams.get("minPrice")!)
+        : undefined,
+      maxPrice: urlSearchParams.get("maxPrice")
+        ? parseFloat(urlSearchParams.get("maxPrice")!)
+        : undefined,
+      selectedAttributes: urlSearchParams.get("attributes") || undefined,
+      search: urlSearchParams.get("search") || undefined,
+      ordering: urlSearchParams.get("ordering") || undefined,
+    };
+
+    setFilters(initialFilters);
+    setIsInitialized(true);
+  }, []); // No dependencies - run only once on mount
+
+  // Update URL when filters change (but only after initialization)
+  const syncFiltersToUrl = (newFilters: FilterState) => {
+    if (!isInitialized) return;
+
+    updateUrlParams(
+      {
+        categories:
+          newFilters.selectedCategoryIds.length > 0
+            ? newFilters.selectedCategoryIds.join(",")
+            : undefined,
+        minPrice: newFilters.minPrice?.toString(),
+        maxPrice: newFilters.maxPrice?.toString(),
+        attributes: newFilters.selectedAttributes,
+        search: newFilters.search,
+        ordering: newFilters.ordering,
+      },
+      true
+    ); // Use replace: true to avoid adding history entries for every filter change
+  };
 
   const updateCategoryFilter = (categoryIds: number[]) => {
     const newFilters = {
@@ -37,6 +88,7 @@ export const FilterProvider: React.FC<FilterProviderProps> = ({ children }) => {
       selectedCategoryIds: categoryIds,
     };
     setFilters(newFilters);
+    syncFiltersToUrl(newFilters);
     // Trigger immediate filtering when categories change
     if (onFilterChangeRef.current) {
       onFilterChangeRef.current(newFilters);
@@ -50,6 +102,11 @@ export const FilterProvider: React.FC<FilterProviderProps> = ({ children }) => {
       maxPrice,
     };
     setFilters(newFilters);
+    syncFiltersToUrl(newFilters);
+    // Trigger immediate filtering when price changes
+    if (onFilterChangeRef.current) {
+      onFilterChangeRef.current(newFilters);
+    }
   };
 
   const updateAttributeFilter = (attributes?: string) => {
@@ -58,6 +115,7 @@ export const FilterProvider: React.FC<FilterProviderProps> = ({ children }) => {
       selectedAttributes: attributes,
     };
     setFilters(newFilters);
+    syncFiltersToUrl(newFilters);
     // Trigger immediate filtering when attributes change
     if (onFilterChangeRef.current) {
       onFilterChangeRef.current(newFilters);
@@ -67,8 +125,18 @@ export const FilterProvider: React.FC<FilterProviderProps> = ({ children }) => {
   const clearFilters = () => {
     const newFilters = {
       selectedCategoryIds: [],
+      minPrice: undefined,
+      maxPrice: undefined,
+      selectedAttributes: undefined,
+      search: undefined,
+      ordering: undefined,
     };
     setFilters(newFilters);
+    syncFiltersToUrl(newFilters);
+    // Trigger immediate filtering when clearing
+    if (onFilterChangeRef.current) {
+      onFilterChangeRef.current(newFilters);
+    }
   };
 
   const setOnFilterChange = (callback: ((filters: FilterState) => void) | null) => {
@@ -84,6 +152,7 @@ export const FilterProvider: React.FC<FilterProviderProps> = ({ children }) => {
         updateAttributeFilter,
         clearFilters,
         setOnFilterChange,
+        isInitialized,
       }}
     >
       {children}
