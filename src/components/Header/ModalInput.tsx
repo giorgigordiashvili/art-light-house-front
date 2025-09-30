@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import styled from "styled-components";
 import Image from "next/image";
 
@@ -29,6 +29,20 @@ const StyledContainer = styled.div<{ $hasIcon: boolean }>`
       font-family: Helvetica;
     }
 
+    /* Hide native date picker indicator and style for custom calendar icon */
+    &[type="date"]::-webkit-calendar-picker-indicator {
+      opacity: 0;
+      position: absolute;
+      right: 0;
+      width: 20px;
+      height: 20px;
+      cursor: pointer;
+    }
+
+    &[type="date"]::-moz-calendar-picker-indicator {
+      opacity: 0;
+    }
+
     @media (max-width: 1080px) {
       width: 100%;
     }
@@ -43,6 +57,7 @@ const StyledIconWrapper = styled.div`
   display: flex;
   align-items: center;
   cursor: pointer;
+  z-index: 1;
 `;
 
 type Props = {
@@ -55,6 +70,7 @@ type Props = {
   value?: string;
   name?: string;
   isPasswordField?: boolean;
+  isDateField?: boolean;
 };
 
 const ModalInput = ({
@@ -67,8 +83,10 @@ const ModalInput = ({
   value,
   name,
   isPasswordField = false,
+  isDateField = false,
 }: Props) => {
   const [showPassword, setShowPassword] = useState(false);
+  const dateInputRef = useRef<HTMLInputElement>(null);
 
   // Determine the actual input type based on password visibility and provided type
   let inputType = type;
@@ -83,17 +101,28 @@ const ModalInput = ({
       : "/assets/eye.svg"
     : iconSrc;
 
-  const hasIcon = Boolean(displayIcon);
+  const displayDateIcon = isDateField ? "/assets/icons/calendar.png" : null;
+
+  const hasIcon = Boolean(displayIcon || displayDateIcon);
 
   const handleIconClick = () => {
     if (isPasswordField) {
       setShowPassword(!showPassword);
+    } else if (isDateField && dateInputRef.current) {
+      // Trigger the date picker when calendar icon is clicked
+      try {
+        dateInputRef.current.showPicker?.();
+      } catch {
+        // Fallback: focus the input if showPicker is not supported
+        dateInputRef.current.focus();
+      }
     }
   };
 
   return (
     <StyledContainer $hasIcon={hasIcon}>
       <input
+        ref={isDateField ? dateInputRef : undefined}
         type={inputType}
         placeholder={placeholder}
         onChange={onChange}
@@ -103,6 +132,11 @@ const ModalInput = ({
       {displayIcon && (
         <StyledIconWrapper onClick={handleIconClick}>
           <Image src={displayIcon} alt={iconAlt} width={iconSize} height={iconSize} />
+        </StyledIconWrapper>
+      )}
+      {displayDateIcon && (
+        <StyledIconWrapper onClick={handleIconClick}>
+          <Image src={displayDateIcon} alt={iconAlt} width={iconSize} height={iconSize} />
         </StyledIconWrapper>
       )}
     </StyledContainer>

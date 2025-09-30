@@ -327,6 +327,7 @@ const AuthorizationModal: React.FC<AuthorizationModalProps> = ({
                     type="date"
                     value={birthDate}
                     onChange={handleBirthDateChange}
+                    isDateField
                   />
                 </StyledModalInput>
                 <StyledModalInput>
