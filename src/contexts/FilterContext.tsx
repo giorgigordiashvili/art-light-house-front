@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, ReactNode, useRef, useEffect } from "react";
-import { useUrlParams } from "@/hooks/useUrlParams";
+import { useRouter, usePathname } from "next/navigation";
 
 interface FilterState {
   selectedCategoryIds: number[];
@@ -28,7 +28,8 @@ interface FilterProviderProps {
 }
 
 export const FilterProvider: React.FC<FilterProviderProps> = ({ children }) => {
-  const { updateUrlParams } = useUrlParams();
+  const router = useRouter();
+  const pathname = usePathname();
   const [filters, setFilters] = useState<FilterState>({
     selectedCategoryIds: [],
   });
@@ -64,22 +65,49 @@ export const FilterProvider: React.FC<FilterProviderProps> = ({ children }) => {
 
   // Update URL when filters change (but only after initialization)
   const syncFiltersToUrl = (newFilters: FilterState) => {
-    if (!isInitialized) return;
+    if (!isInitialized || typeof window === "undefined") return;
 
-    updateUrlParams(
-      {
-        categories:
-          newFilters.selectedCategoryIds.length > 0
-            ? newFilters.selectedCategoryIds.join(",")
-            : undefined,
-        minPrice: newFilters.minPrice?.toString(),
-        maxPrice: newFilters.maxPrice?.toString(),
-        attributes: newFilters.selectedAttributes,
-        search: newFilters.search,
-        ordering: newFilters.ordering,
-      },
-      true
-    ); // Use replace: true to avoid adding history entries for every filter change
+    const current = new URLSearchParams(window.location.search);
+
+    // Update parameters
+    if (newFilters.selectedCategoryIds.length > 0) {
+      current.set("categories", newFilters.selectedCategoryIds.join(","));
+    } else {
+      current.delete("categories");
+    }
+
+    if (newFilters.minPrice) {
+      current.set("minPrice", newFilters.minPrice.toString());
+    } else {
+      current.delete("minPrice");
+    }
+
+    if (newFilters.maxPrice) {
+      current.set("maxPrice", newFilters.maxPrice.toString());
+    } else {
+      current.delete("maxPrice");
+    }
+
+    if (newFilters.selectedAttributes) {
+      current.set("attributes", newFilters.selectedAttributes);
+    } else {
+      current.delete("attributes");
+    }
+
+    if (newFilters.search) {
+      current.set("search", newFilters.search);
+    } else {
+      current.delete("search");
+    }
+
+    if (newFilters.ordering) {
+      current.set("ordering", newFilters.ordering);
+    } else {
+      current.delete("ordering");
+    }
+
+    const newUrl = `${pathname}?${current.toString()}`;
+    router.replace(newUrl, { scroll: false });
   };
 
   const updateCategoryFilter = (categoryIds: number[]) => {

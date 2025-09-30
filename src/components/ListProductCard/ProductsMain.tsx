@@ -10,8 +10,7 @@ import MobileFilterDropdown from "../FilterDropdown/MobileFilterDropdown";
 import PaginationWithArrows from "@/components/PagesButton/PaginationWithArrows";
 import { useProducts } from "@/hooks/useProducts";
 import { useFilterContext } from "@/contexts/FilterContext";
-import { useUrlParams } from "@/hooks/useUrlParams";
-import { useSearchParams } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 
 const StyledComponent = styled.div`
   background: black;
@@ -95,9 +94,9 @@ const PaginationWrapper = styled.div`
 function ProductsMain({ dictionary }: any) {
   const [isMobileFilterDropdownVisible, setMobileFilterDropdownVisible] = useState(false);
   const { setOnFilterChange, filters, isInitialized } = useFilterContext();
-  const { updateUrlParams } = useUrlParams();
+  const router = useRouter();
+  const pathname = usePathname();
   const hasAppliedInitialFilters = useRef(false);
-  const searchParams = useSearchParams();
 
   // Fetch products without automatic filtering - filtering is manual now
   const {
@@ -170,21 +169,26 @@ function ProductsMain({ dictionary }: any) {
   useEffect(() => {
     if (!isInitialized) return;
 
-    const pageFromUrl = searchParams.get("page") ? parseInt(searchParams.get("page")!, 10) : 1;
+    // Use direct URL parsing to avoid SSR issues with useSearchParams
+    const urlParams = new URLSearchParams(window.location.search);
+    const pageFromUrl = urlParams.get("page") ? parseInt(urlParams.get("page")!, 10) : 1;
 
     // Sync page if URL page differs from current page state
     if (pageFromUrl !== currentPage) {
       fetchPage(pageFromUrl);
     }
-  }, [isInitialized, searchParams, currentPage, fetchPage]);
-
+  }, [isInitialized, currentPage, fetchPage]);
   const toggleMobileFilterDropdown = () => {
     setMobileFilterDropdownVisible(!isMobileFilterDropdownVisible);
   };
 
   const handlePageChange = async (page: number) => {
     // Update URL first to ensure state consistency
-    updateUrlParams({ page: page.toString() });
+    const current = new URLSearchParams(window.location.search);
+    current.set("page", page.toString());
+    const newUrl = `${pathname}?${current.toString()}`;
+    router.replace(newUrl, { scroll: false });
+
     // Then fetch the page data
     await fetchPage(page);
   };
