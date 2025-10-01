@@ -50,14 +50,35 @@ const LampaImage = ({ product }: { product: ProductList }) => {
     <StyledLampaImage>
       <MobileOnlyIcons>
         {hasValidImage ? (
-          <Image src={imageUrl} alt={product.title} layout="fill" objectFit="contain" priority />
+          <Image
+            src={imageUrl}
+            alt={product.title}
+            layout="fill"
+            objectFit="contain"
+            priority
+            draggable="false"
+          />
         ) : (
-          <Image src={mobilelampa} alt="Mobile Lampa" layout="fill" objectFit="contain" priority />
+          <Image
+            src={mobilelampa}
+            alt="Mobile Lampa"
+            layout="fill"
+            objectFit="contain"
+            priority
+            draggable="false"
+          />
         )}
       </MobileOnlyIcons>
       <DesktopOnlyIcons>
         {hasValidImage ? (
-          <Image src={imageUrl} alt={product.title} layout="fill" objectFit="contain" priority />
+          <Image
+            src={imageUrl}
+            alt={product.title}
+            layout="fill"
+            objectFit="contain"
+            priority
+            draggable="false"
+          />
         ) : (
           <Image
             src={Desktoplampa}
@@ -65,6 +86,7 @@ const LampaImage = ({ product }: { product: ProductList }) => {
             layout="fill"
             objectFit="contain"
             priority
+            draggable="false"
           />
         )}
       </DesktopOnlyIcons>
