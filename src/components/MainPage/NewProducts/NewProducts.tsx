@@ -177,8 +177,8 @@ const NewProducts = ({ dictionary }: any) => {
 
     if (isDragging) {
       e.preventDefault();
-      const walk = dx * 2;
-      scrollContainerRef.current.scrollLeft = scrollLeft - walk;
+      // On mobile, use 1:1 ratio for natural scrolling feel
+      scrollContainerRef.current.scrollLeft = scrollLeft - dx;
     }
   };
 
