@@ -114,12 +114,29 @@ const DetailBar = ({ dictionary }: any) => {
     }
   };
 
+  const handleMenuItemClick = (route: string) => (e: React.MouseEvent) => {
+    // Check for Ctrl+click (Windows/Linux) or Cmd+click (Mac) or middle-click
+    if (e.ctrlKey || e.metaKey || e.button === 1) {
+      window.open(`${localePrefix}${route}`, "_blank");
+      return;
+    }
+    router.push(`${localePrefix}${route}`);
+  };
+
+  const handleMenuItemMouseDown = (route: string) => (e: React.MouseEvent) => {
+    // Handle middle-click (mouse wheel click)
+    if (e.button === 1) {
+      e.preventDefault(); // Prevent default middle-click behavior
+      window.open(`${localePrefix}${route}`, "_blank");
+    }
+  };
+
   return (
     <Container>
       {menuItems.map(({ label, icon, route }, index) => (
         <div key={label}>
           {index !== 0 && <Divider />}
-          <Item onClick={() => router.push(`${localePrefix}${route}`)}>
+          <Item onClick={handleMenuItemClick(route)} onMouseDown={handleMenuItemMouseDown(route)}>
             <IconWrapper>
               <Image src={icon} alt={label} width={24} height={24} />
             </IconWrapper>

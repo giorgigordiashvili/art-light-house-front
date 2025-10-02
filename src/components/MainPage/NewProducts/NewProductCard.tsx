@@ -189,11 +189,29 @@ const NewProductCard = ({ product }: { product: ProductList; dictionary: any }) 
     if (target.closest("[data-plus-button]")) {
       return;
     }
+
+    // Check for Ctrl+click (Windows/Linux) or Cmd+click (Mac) or middle-click
+    if (e.ctrlKey || e.metaKey || e.button === 1) {
+      window.open(`/${locale}/products/${product.id}`, "_blank");
+      return;
+    }
+
     router.push(`/${locale}/products/${product.id}`);
   };
 
+  const handleMouseDown = (e: React.MouseEvent) => {
+    // Handle middle-click (mouse wheel click)
+    if (e.button === 1) {
+      const target = e.target as HTMLElement;
+      if (!target.closest("[data-plus-button]")) {
+        e.preventDefault(); // Prevent default middle-click behavior
+        window.open(`/${locale}/products/${product.id}`, "_blank");
+      }
+    }
+  };
+
   return (
-    <StyledContainer onClick={handleCardClick}>
+    <StyledContainer onClick={handleCardClick} onMouseDown={handleMouseDown}>
       <StyledImageWrapper>
         {hasValidImage ? (
           <ZoomedImage

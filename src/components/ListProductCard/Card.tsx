@@ -86,12 +86,29 @@ function Card({ product, dictionary }: { product: ProductList; dictionary: any }
       return;
     }
 
+    // Check for Ctrl+click (Windows/Linux) or Cmd+click (Mac) or middle-click
+    if (e.ctrlKey || e.metaKey || e.button === 1) {
+      window.open(`/products/${product.id}`, "_blank");
+      return;
+    }
+
     // Navigate to product detail page
     router.push(`/products/${product.id}`);
   };
 
+  const handleMouseDown = (e: React.MouseEvent) => {
+    // Handle middle-click (mouse wheel click)
+    if (e.button === 1) {
+      const target = e.target as HTMLElement;
+      if (!target.closest("[data-add-button]") && !target.closest("[data-heart-button]")) {
+        e.preventDefault(); // Prevent default middle-click behavior
+        window.open(`/products/${product.id}`, "_blank");
+      }
+    }
+  };
+
   return (
-    <StyledRectangle onClick={handleCardClick}>
+    <StyledRectangle onClick={handleCardClick} onMouseDown={handleMouseDown}>
       <ClickableArea>
         <ProductHeartIcon productId={product.id} defaultIsFavorite={product.is_favorite} />
         <LampaImage product={product} />
