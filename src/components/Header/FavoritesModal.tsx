@@ -85,6 +85,10 @@ const ProductList = styled.div`
   max-height: 242px;
   box-sizing: border-box;
   scrollbar-width: none;
+
+  @media (max-width: 1080px) {
+    margin-inline: 12px;
+  }
 `;
 
 const ProductWrapper = styled.div`

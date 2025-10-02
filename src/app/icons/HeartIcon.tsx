@@ -7,12 +7,12 @@ type Props = {
   color?: string;
 };
 
-const HeartIcon: React.FC<Props> = ({ width = 20, height = 20, color = "white" }) => {
+const HeartIcon: React.FC<Props> = ({ width = 24, height = 24, color = "white" }) => {
   return (
     <svg
       width={width}
       height={height}
-      viewBox="0 0 20 20"
+      viewBox="0 0 24 24"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
     >
