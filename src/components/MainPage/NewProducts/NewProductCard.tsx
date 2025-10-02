@@ -178,11 +178,14 @@ const NewProductCard = ({ product }: { product: ProductList; dictionary: any }) 
   const pathname = usePathname();
   const locale = (pathname?.split("/")[1] || "ge").toLowerCase();
 
+  // Extract image URL from primary_image (same as LampaImage component in products page)
+  const imageUrl =
+    product.primary_image && typeof product.primary_image === "object"
+      ? (product.primary_image as any).image
+      : product.primary_image;
+
   // Check if we have a valid image URL
-  const hasValidImage =
-    product.primary_image &&
-    typeof product.primary_image === "string" &&
-    product.primary_image.trim() !== "";
+  const hasValidImage = imageUrl && typeof imageUrl === "string" && imageUrl.trim() !== "";
 
   const handleCardClick = (e: React.MouseEvent) => {
     const target = e.target as HTMLElement;
@@ -215,7 +218,7 @@ const NewProductCard = ({ product }: { product: ProductList; dictionary: any }) 
       <StyledImageWrapper>
         {hasValidImage ? (
           <ZoomedImage
-            src={product.primary_image}
+            src={imageUrl}
             alt={product.title}
             width={isMobile ? 175 : 239}
             height={isMobile ? 188 : 257}
@@ -223,7 +226,7 @@ const NewProductCard = ({ product }: { product: ProductList; dictionary: any }) 
           />
         ) : (
           <ZoomedImage
-            src={isMobile ? "/assets/desktopLampa.svg" : "/assets/desktopLampa.svg"}
+            src="/assets/desktopLampa.svg"
             alt="Default light"
             width={isMobile ? 175 : 239}
             height={isMobile ? 188 : 257}
