@@ -10,3 +10,11 @@ export default function Layout({ children }: { children: React.ReactNode }) {
     </html>
   );
 }
+
+export const metadata = {
+  title: "Art Light House",
+  description: "This is my Next.js app",
+  icons: {
+    icon: "/favicon.png",
+  },
+};
