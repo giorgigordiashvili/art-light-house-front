@@ -12,9 +12,15 @@ const StyledName = styled.p`
   line-height: 24px;
   letter-spacing: 0%;
   color: #ffffff;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 140px;
+
   @media (max-width: 1080px) {
     font-size: 12px;
     line-height: 17.6px;
+    max-width: 90px;
   }
 `;
 
