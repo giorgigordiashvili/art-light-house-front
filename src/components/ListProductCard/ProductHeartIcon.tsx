@@ -93,6 +93,7 @@ const ProductHeartIcon = ({ productId, defaultIsFavorite, size = 30 }: Props) =>
         cursor: isSubmitting ? "not-allowed" : "pointer",
         right: 8,
         top: 8,
+        zIndex: 1,
       }}
     >
       <Image src={src} alt={alt} width={size} height={size} />
