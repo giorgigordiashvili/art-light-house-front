@@ -82,8 +82,8 @@ const StyledUserActions = styled.div`
   margin-left: 18px;
 
   @media (max-width: 1080px) {
-    gap: 20px;
     margin-left: 0;
+    gap: 0;
   }
 `;
 
@@ -95,6 +95,17 @@ const ResponsiveGapWrapper = styled.div`
     gap: 20px;
     align-items: center;
   }
+`;
+
+const StyledCartAndFavoritesWrapper = styled.div`
+  display: flex;
+  gap: 18px;
+`;
+
+const StyledIconsAndAuthwrapper = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 20px;
 `;
 
 const Overlay = styled.div`
@@ -394,65 +405,72 @@ const Header = ({ header, dictionary }: HeaderProps) => {
               </StyledNavigation>
               <StyledUserActions>
                 <StyledVerticalLine />
-                <ShoppingCartIcon
-                  itemCount={cartItemCount}
-                  onClick={handleCartClick}
-                  color={cartIconColor}
-                />
-                <div
-                  onClick={() => {
-                    const hasToken =
-                      typeof window !== "undefined" && !!localStorage.getItem("auth_access_token");
-                    if (!hasToken) {
-                      // User is not authenticated - open auth modal instead
-                      openAuthModal();
-                      return;
-                    }
-                    setIsFavoritesModalOpen((prev) => !prev);
-                    closeEmptyCartModal();
-                    closeCartModal();
-                    closeLanguageSwitcherModal();
-                  }}
-                  style={{
-                    cursor: "pointer",
-                    height: "24px",
-                    display: "flex",
-                    alignItems: "center",
-                  }}
-                >
-                  <HeaderHeartIcon isModalOpen={isFavoritesModalOpen} />
-                </div>
-                <ResponsiveGapWrapper>
-                  <div ref={authButtonRef}>
-                    <AuthorizationButton
-                      isAuthorized={isUserAuthorized}
-                      username={currentUser.username}
-                      userImage={currentUser.userImage}
-                      text={header.authorize}
+                <StyledIconsAndAuthwrapper>
+                  <StyledCartAndFavoritesWrapper>
+                    <ShoppingCartIcon
+                      itemCount={cartItemCount}
+                      onClick={handleCartClick}
+                      color={cartIconColor}
+                    />
+                    <div
                       onClick={() => {
-                        if (isRegistrationCodeOpen) setIsRegistrationCodeOpen(false);
-                        if (isRegistrationSuccessOpen) setIsRegistrationSuccessOpen(false);
-                        setIsUserMenuOpen(true);
+                        const hasToken =
+                          typeof window !== "undefined" &&
+                          !!localStorage.getItem("auth_access_token");
+                        if (!hasToken) {
+                          // User is not authenticated - open auth modal instead
+                          openAuthModal();
+                          return;
+                        }
+                        setIsFavoritesModalOpen((prev) => !prev);
                         closeEmptyCartModal();
                         closeCartModal();
                         closeLanguageSwitcherModal();
-                        closeFavoritesModal();
                       }}
-                    />
-                  </div>
-                  <div ref={burgerIconRef}>
-                    <BurgerIcon
-                      isOpen={isBurgerMenuOpen}
-                      onClick={() => {
-                        toggleBurgerMenu();
-                        closeEmptyCartModal();
-                        closeCartModal();
-                        closeLanguageSwitcherModal();
-                        closeFavoritesModal();
+                      style={{
+                        cursor: "pointer",
+                        height: "24px",
+                        display: "flex",
+                        alignItems: "center",
                       }}
-                    />
-                  </div>
-                </ResponsiveGapWrapper>
+                    >
+                      <HeaderHeartIcon isModalOpen={isFavoritesModalOpen} />
+                    </div>
+                  </StyledCartAndFavoritesWrapper>
+
+                  <ResponsiveGapWrapper>
+                    <div ref={authButtonRef}>
+                      <AuthorizationButton
+                        isAuthorized={isUserAuthorized}
+                        username={currentUser.username}
+                        userImage={currentUser.userImage}
+                        text={header.authorize}
+                        onClick={() => {
+                          if (isRegistrationCodeOpen) setIsRegistrationCodeOpen(false);
+                          if (isRegistrationSuccessOpen) setIsRegistrationSuccessOpen(false);
+                          setIsUserMenuOpen(true);
+                          closeEmptyCartModal();
+                          closeCartModal();
+                          closeLanguageSwitcherModal();
+                          closeFavoritesModal();
+                        }}
+                      />
+                    </div>
+                    <div ref={burgerIconRef}>
+                      <BurgerIcon
+                        isOpen={isBurgerMenuOpen}
+                        onClick={() => {
+                          toggleBurgerMenu();
+                          closeEmptyCartModal();
+                          closeCartModal();
+                          closeLanguageSwitcherModal();
+                          closeFavoritesModal();
+                        }}
+                      />
+                    </div>
+                  </ResponsiveGapWrapper>
+                </StyledIconsAndAuthwrapper>
+
                 <div id="languageSwitcher" onClick={handleLanguageSwitcherClick}>
                   <LanguageSwitcher
                     language={ensureValidLanguage(pathname.split("/")[1])}
