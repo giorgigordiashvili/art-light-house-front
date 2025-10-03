@@ -15,7 +15,7 @@ const StyledCount = styled.div`
   background-color: red;
   color: white;
   border-radius: 50%;
-  padding: 2.5px 5.6px;
+  padding: 2.4px 5.7px;
   font-size: 14px;
   font-weight: 700;
   line-height: 100%;

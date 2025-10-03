@@ -401,5 +401,59 @@
     "detailBar4": "Payment methods",
     "detailBar5": "Settings",
     "detailBar6": "Logout"
+  },
+  "metadata": {
+    "main": {
+      "title": "Main Page - Art Lighthouse",
+      "subTitle": "Learn more about our company and values."
+    },
+    "products": {
+      "title": "Products - Art Lighthouse",
+      "subTitle": "Browse our complete collection of products."
+    },
+    "cart": {
+      "title": "Cart - Art Lighthouse",
+      "subTitle": "Manage your shopping cart."
+    },
+    "favorites": {
+      "title": "Favorites - Art Lighthouse",
+      "subTitle": "View your saved products."
+    },
+    "profile": {
+      "title": "Profile - Art Lighthouse",
+      "subTitle": "Manage your profile information."
+    },
+    "details": {
+      "title": "My Details - Art Lighthouse",
+      "subTitle": "Manage your personal details."
+    },
+    "address": {
+      "title": "Addresses - Art Lighthouse",
+      "subTitle": "Manage your delivery addresses."
+    },
+    "orders": {
+      "title": "My Orders - Art Lighthouse",
+      "subTitle": "View your order history."
+    },
+    "orderDetail": {
+      "title": "Order Details - Art Lighthouse",
+      "subTitle": "View complete order information."
+    },
+    "settings": {
+      "title": "Settings - Art Lighthouse",
+      "subTitle": "Manage your account settings."
+    },
+    "checkout": {
+      "title": "Checkout - Art Lighthouse",
+      "subTitle": "Complete your order."
+    },
+    "contact": {
+      "title": "Contact - Art Lighthouse",
+      "subTitle": "Get in touch with us for any questions."
+    },
+    "success": {
+      "title": "Order Success - Art Lighthouse",
+      "subTitle": "Your order has been completed successfully."
+    }
   }
 }
