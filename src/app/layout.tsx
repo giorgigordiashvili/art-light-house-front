@@ -13,7 +13,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
 
 export const metadata = {
   title: "Art Light House",
-  description: "This is my Next.js app",
+  description: "This is Art Light House shop website",
   icons: {
     icon: "/favicon.png",
   },

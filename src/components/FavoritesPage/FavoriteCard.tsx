@@ -28,6 +28,7 @@ const StyledContainer = styled.div.withConfig({
   width: 100%;
   height: 160px;
   display: flex;
+  justify-content: space-between;
   align-items: center;
   gap: ${({ cardType }) => (cardType === "cart" ? "130px" : "20px")};
   background-color: #1a1a1a96;
@@ -100,7 +101,6 @@ const StyledText = styled.div`
   display: flex;
   flex-direction: column;
   gap: 17px;
-  min-width: 197px;
 
   @media (max-width: 1220px) {
     max-width: 140px;
