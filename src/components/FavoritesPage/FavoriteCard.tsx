@@ -156,11 +156,23 @@ const FavoriteCard = ({
     return () => window.removeEventListener("resize", checkMobile);
   }, []);
 
+  const getImageSrc = () => {
+    if (!imageSrc) return "/assets/ProductImageContainer.svg";
+
+    // Handle if primary_image is an object with 'image' property
+    if (typeof imageSrc === "object" && imageSrc !== null) {
+      return (imageSrc as any).image || "/assets/ProductImageContainer.svg";
+    }
+
+    // Handle if primary_image is a string
+    return imageSrc;
+  };
+
   return (
     <StyledContainer cardType={card}>
       <StyledContent cardType={card}>
         <Image
-          src={imageSrc || "/assets/ProductImageContainer.svg"}
+          src={getImageSrc()}
           width={120}
           height={120}
           alt={dictionary?.cart?.favorites?.imageAlt || "პროდუქტის სურათი"}

@@ -190,6 +190,7 @@ const Cart = ({ dictionary }: any) => {
                   title={it.product_details?.title}
                   price={`${it.product_details?.price} ₾`}
                   quantity={it.quantity || 1}
+                  imageSrc={it.product_details?.primary_image}
                   onIncrease={() => handleIncrease(it.id, it.quantity || 1)}
                   onDecrease={() => handleDecrease(it.id, it.quantity || 1)}
                   onRemove={() => handleRemove(it.id)}
@@ -203,6 +204,7 @@ const Cart = ({ dictionary }: any) => {
                   title={it.product_details?.title}
                   price={`${it.product_details?.price} ₾`}
                   quantity={it.quantity || 1}
+                  imageSrc={it.product_details?.primary_image}
                   onIncrease={() => handleIncrease(it.id, it.quantity || 1)}
                   onDecrease={() => handleDecrease(it.id, it.quantity || 1)}
                   onRemove={() => handleRemove(it.id)}
