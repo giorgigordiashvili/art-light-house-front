@@ -180,9 +180,28 @@ const FavoritesModal = ({ onClose, dictionary }: Props) => {
   const count = useMemo(() => items.length, [items]);
   const isEmpty = count === 0;
 
-  const handleRedirect = () => {
+  const handleRedirect = (e?: React.MouseEvent) => {
+    if (e && (e.ctrlKey || e.metaKey)) {
+      // Ctrl+click or Cmd+click - open in new tab
+      const pathname = typeof window !== "undefined" ? window.location.pathname : "";
+      const locale = pathname.split("/")[1] || "ge";
+      window.open(`/${locale}/favorites`, "_blank");
+      onClose();
+      return;
+    }
     router.push("/favorites");
     onClose();
+  };
+
+  const handleRedirectMouseDown = (e: React.MouseEvent) => {
+    if (e.button === 1) {
+      // Middle mouse button
+      e.preventDefault();
+      const pathname = typeof window !== "undefined" ? window.location.pathname : "";
+      const locale = pathname.split("/")[1] || "ge";
+      window.open(`/${locale}/favorites`, "_blank");
+      onClose();
+    }
   };
 
   const handleRemove = async (productId: number) => {
@@ -256,13 +275,12 @@ const FavoritesModal = ({ onClose, dictionary }: Props) => {
             </ProductList>
           </StyledDivider>
           {!isEmpty && (
-            <StyledButton>
+            <StyledButton onClick={handleRedirect} onMouseDown={handleRedirectMouseDown}>
               <PrimaryButton
                 text={dictionary?.cart?.favorites?.button || "დეტალურად"}
                 height="50px"
                 width="317px"
                 media="full"
-                onClick={handleRedirect}
               />
             </StyledButton>
           )}

@@ -1,5 +1,7 @@
+"use client";
 import React from "react";
 import styled from "styled-components";
+import { useRouter, usePathname } from "next/navigation";
 import ProductTitle from "../Header/ProductTitle";
 import ProductPrice from "../Header/ProductPrice";
 import PrimaryButton from "../Buttons/PrimaryButton";
@@ -44,6 +46,25 @@ const StyledButton = styled.div`
 `;
 
 const Summary = ({ dictionary }: any) => {
+  const router = useRouter();
+  const pathname = usePathname();
+  const locale = pathname.split("/")[1];
+
+  const handleCheckout = (e?: React.MouseEvent) => {
+    if (e && (e.ctrlKey || e.metaKey)) {
+      window.open(`/${locale}/checkout`, "_blank");
+    } else {
+      router.push(`/${locale}/checkout`);
+    }
+  };
+
+  const handleCheckoutMouseDown = (e: React.MouseEvent) => {
+    if (e.button === 1) {
+      e.preventDefault();
+      window.open(`/${locale}/checkout`, "_blank");
+    }
+  };
+
   return (
     <StyledContainer>
       <StyledSummary>
@@ -66,7 +87,7 @@ const Summary = ({ dictionary }: any) => {
         </StyledPrice>
       </StyledPrices>
       <DividerLine variant="dark" />
-      <StyledButton>
+      <StyledButton onClick={handleCheckout} onMouseDown={handleCheckoutMouseDown}>
         <PrimaryButton height="55px" width="432px" text={dictionary?.button2} />
       </StyledButton>
     </StyledContainer>
