@@ -28,12 +28,13 @@ type Props = {
   title?: string;
   price?: string;
   dictionary?: any;
+  imageSrc?: string;
 };
 
-const ProductContent = ({ title, price, dictionary }: Props) => {
+const ProductContent = ({ title, price, dictionary, imageSrc }: Props) => {
   return (
     <StyledContainer>
-      <ProductImage />
+      <ProductImage imageSrc={imageSrc} />
       <StyledTextContent>
         <ProductTitle text={title || dictionary?.cart?.cartModal.cardTitle1} />
         <ProductPrice text={price || dictionary?.cart?.cartModal.price} />

@@ -228,6 +228,7 @@ const FavoritesModal = ({ onClose, dictionary }: Props) => {
                         dictionary={dictionary}
                         title={fav.product_details?.title}
                         price={`${fav.product_details?.price} ₾`}
+                        imageSrc={fav.product_details?.primary_image}
                       />
                     </ContentPadding>
                   </ProductWrapper>
