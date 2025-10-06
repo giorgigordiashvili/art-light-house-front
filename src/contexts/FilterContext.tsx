@@ -69,6 +69,9 @@ export const FilterProvider: React.FC<FilterProviderProps> = ({ children }) => {
 
     const current = new URLSearchParams(window.location.search);
 
+    // Reset to page 1 when filters change
+    current.delete("page");
+
     // Update parameters
     if (newFilters.selectedCategoryIds.length > 0) {
       current.set("categories", newFilters.selectedCategoryIds.join(","));

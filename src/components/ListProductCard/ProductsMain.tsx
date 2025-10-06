@@ -123,6 +123,7 @@ function ProductsMain({ dictionary }: any) {
   // Register immediate filter callback
   useEffect(() => {
     const handleImmediateFilter = async (filters: any) => {
+      // Reset to page 1 when filters change
       await applyFilters({
         categoryIds: filters.selectedCategoryIds,
         minPrice: filters.minPrice,
