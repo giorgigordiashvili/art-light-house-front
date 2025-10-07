@@ -243,7 +243,14 @@
     "serviceCommision": "სერვისის საკომისიო",
     "button1": "შეცვლა",
     "button2": "გადახდა",
-    "price": "499,99 ₾"
+    "price": "499,99 ₾",
+    "changeButton": "შეცვლა",
+    "selectAddress": "მისამართის არჩევა",
+    "noAddresses": "მისამართები არ მოიძებნა",
+    "defaultAddress": "ძირითადი",
+    "addressTypeWork": "სამსახური",
+    "addressTypeHome": "სახლი",
+    "addressTypeOther": "სხვა"
   },
   "succsessOrder": {
     "title": "შეკვეთა გაფორმდა",

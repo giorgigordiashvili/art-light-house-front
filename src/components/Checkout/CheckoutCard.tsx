@@ -73,6 +73,7 @@ const Desc = styled.span`
 `;
 const Mobile = styled.div`
   display: none;
+  cursor: pointer;
   @media (max-width: 1080px) {
     display: flex;
   }
@@ -97,9 +98,20 @@ type CheckoutCardProps = {
   method: string;
   desc: string;
   imageSrc: string;
+  onChangeClick?: () => void;
+  showChangeButton?: boolean;
+  dictionary?: any;
 };
 
-const CheckoutCard = ({ label, method, desc, imageSrc }: CheckoutCardProps) => {
+const CheckoutCard = ({
+  label,
+  method,
+  desc,
+  imageSrc,
+  onChangeClick,
+  showChangeButton = false,
+  dictionary,
+}: CheckoutCardProps) => {
   return (
     <Wrapper>
       <Label>{label}</Label>
@@ -111,12 +123,18 @@ const CheckoutCard = ({ label, method, desc, imageSrc }: CheckoutCardProps) => {
           <Method>{method}</Method>
           <Desc>{desc}</Desc>
         </InfoWrapper>
-        <ChangeButton>შეცვლა</ChangeButton>
-        <Mobile>
-          <IconWrapper>
-            <Image src="/assets/icons/edit.svg" alt="icon" width={24} height={24} />
-          </IconWrapper>
-        </Mobile>
+        {showChangeButton && (
+          <>
+            <ChangeButton onClick={onChangeClick}>
+              {dictionary?.changeButton || "შეცვლა"}
+            </ChangeButton>
+            <Mobile onClick={onChangeClick}>
+              <IconWrapper>
+                <Image src="/assets/icons/edit.svg" alt="icon" width={24} height={24} />
+              </IconWrapper>
+            </Mobile>
+          </>
+        )}
       </DeliveryCard>
     </Wrapper>
   );

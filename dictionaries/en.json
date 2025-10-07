@@ -244,7 +244,14 @@
     "serviceCommision": "Service commission",
     "button1": "Change",
     "button2": "Pay",
-    "price": "499,99 ₾"
+    "price": "499,99 ₾",
+    "changeButton": "Change",
+    "selectAddress": "Select Address",
+    "noAddresses": "No addresses found",
+    "defaultAddress": "Default",
+    "addressTypeWork": "Work",
+    "addressTypeHome": "Home",
+    "addressTypeOther": "Other"
   },
   "succsessOrder": {
     "title": "Order successfully placed",

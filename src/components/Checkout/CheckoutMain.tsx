@@ -1,11 +1,14 @@
 "use client";
 import styled from "styled-components";
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import CheckoutCard from "@/components/Checkout/CheckoutCard";
 import DeliveryOptionCard from "@/components/Checkout/DeliveryOptionCard";
 import InputWithLabel from "@/components/Profile/Input";
 import TextContainer from "@/components/Checkout/TextContainer";
 import Summery from "@/components/CartPage/Summary";
+import AddressSelectionModal from "@/components/Checkout/AddressSelectionModal";
+import { useAddresses } from "@/hooks/useAddresses";
+import { Address } from "@/api/generated/interfaces";
 
 const Container = styled.div`
   width: 100%;
@@ -118,12 +121,39 @@ interface CheckoutProps {
       cardDescription4?: string;
       placeholder1?: string;
       placeholder2?: string;
+      changeButton?: string;
+      selectAddress?: string;
+      noAddresses?: string;
+      defaultAddress?: string;
+      addressTypeWork?: string;
+      addressTypeHome?: string;
+      addressTypeOther?: string;
     };
   };
 }
 
 const Checkout: React.FC<CheckoutProps> = ({ dictionary }) => {
   const [selectedDelivery, setSelectedDelivery] = useState<string | null>(null);
+  const [isAddressModalOpen, setIsAddressModalOpen] = useState(false);
+  const [selectedAddress, setSelectedAddress] = useState<Address | null>(null);
+
+  // Fetch addresses
+  const { addresses } = useAddresses();
+
+  // Get default address or first address
+  const defaultAddress = useMemo(() => {
+    if (addresses.length === 0) return null;
+
+    // Find default address
+    const foundDefault = addresses.find((addr) => addr.is_default === true);
+    if (foundDefault) return foundDefault;
+
+    // If no default, return first address
+    return addresses[0];
+  }, [addresses]);
+
+  // Use selected address or default address
+  const currentAddress = selectedAddress || defaultAddress;
 
   const toggleDelivery = (method: string) => {
     setSelectedDelivery(selectedDelivery === method ? null : method);
@@ -132,6 +162,33 @@ const Checkout: React.FC<CheckoutProps> = ({ dictionary }) => {
   const getDeliverySelected = (method?: string) => selectedDelivery === method;
   const getDeliveryDisabled = (method?: string) =>
     selectedDelivery !== null && selectedDelivery !== method;
+
+  const handleAddressSelect = (address: Address) => {
+    setSelectedAddress(address);
+    setIsAddressModalOpen(false);
+  };
+
+  const getAddressTypeIcon = (type?: string) => {
+    switch (type) {
+      case "work":
+        return "/assets/icons/job.svg";
+      case "home":
+        return "/assets/home.svg";
+      default:
+        return "/assets/addressIcon.svg";
+    }
+  };
+
+  const getAddressTypeName = (type?: string) => {
+    switch (type) {
+      case "work":
+        return dictionary?.checkout?.addressTypeWork || "სამსახური";
+      case "home":
+        return dictionary?.checkout?.addressTypeHome || "სახლი";
+      default:
+        return dictionary?.checkout?.addressTypeOther || "სხვა";
+    }
+  };
 
   return (
     <Container>
@@ -142,9 +199,24 @@ const Checkout: React.FC<CheckoutProps> = ({ dictionary }) => {
           <LeftSection>
             <CheckoutCard
               label={dictionary?.checkout?.subTitle1 || "მისამართი"}
-              method={dictionary?.checkout?.cardTitle1 || "სამსახური"}
-              desc={dictionary?.checkout?.cardDescription1 || "5 Petre Kavtaradze Street"}
-              imageSrc="/assets/icons/job.svg"
+              method={
+                currentAddress
+                  ? getAddressTypeName(currentAddress.address_type as any)
+                  : dictionary?.checkout?.cardTitle1 || "სამსახური"
+              }
+              desc={
+                currentAddress?.address_string ||
+                dictionary?.checkout?.cardDescription1 ||
+                "5 Petre Kavtaradze Street"
+              }
+              imageSrc={
+                currentAddress
+                  ? getAddressTypeIcon(currentAddress.address_type as any)
+                  : "/assets/icons/job.svg"
+              }
+              showChangeButton={true}
+              onChangeClick={() => setIsAddressModalOpen(true)}
+              dictionary={dictionary?.checkout}
             />
 
             <CheckoutCard
@@ -155,6 +227,8 @@ const Checkout: React.FC<CheckoutProps> = ({ dictionary }) => {
                 "ტრანზაქციის შემდეგ თქვენი ბარათის მონაცემები შეინახება ბანკის დაცულ სერვერზე"
               }
               imageSrc="/assets/icons/gadaxda.svg"
+              showChangeButton={false}
+              dictionary={dictionary?.checkout}
             />
           </LeftSection>
 
@@ -201,9 +275,24 @@ const Checkout: React.FC<CheckoutProps> = ({ dictionary }) => {
 
         <CheckoutCard
           label={dictionary?.checkout?.subTitle1 || "მისამართი"}
-          method={dictionary?.checkout?.cardTitle1 || "სამსახური"}
-          desc={dictionary?.checkout?.cardDescription1 || "5 Petre Kavtaradze Street"}
-          imageSrc="/assets/icons/job.svg"
+          method={
+            currentAddress
+              ? getAddressTypeName(currentAddress.address_type as any)
+              : dictionary?.checkout?.cardTitle1 || "სამსახური"
+          }
+          desc={
+            currentAddress?.address_string ||
+            dictionary?.checkout?.cardDescription1 ||
+            "5 Petre Kavtaradze Street"
+          }
+          imageSrc={
+            currentAddress
+              ? getAddressTypeIcon(currentAddress.address_type as any)
+              : "/assets/icons/job.svg"
+          }
+          showChangeButton={true}
+          onChangeClick={() => setIsAddressModalOpen(true)}
+          dictionary={dictionary?.checkout}
         />
 
         <CheckoutCard
@@ -214,6 +303,8 @@ const Checkout: React.FC<CheckoutProps> = ({ dictionary }) => {
             "ტრანზაქციის შემდეგ თქვენი ბარათის მონაცემები შეინახება ბანკის დაცულ სერვერზე"
           }
           imageSrc="/assets/icons/gadaxda.svg"
+          showChangeButton={false}
+          dictionary={dictionary?.checkout}
         />
 
         <RightSection>
@@ -252,6 +343,17 @@ const Checkout: React.FC<CheckoutProps> = ({ dictionary }) => {
           placeholder={dictionary?.checkout?.placeholder2 || "დამატებითი ინფორმაცია"}
         />
       </MobileWrapper>
+
+      {/* Address Selection Modal */}
+      {isAddressModalOpen && (
+        <AddressSelectionModal
+          addresses={addresses}
+          currentAddressId={currentAddress?.id || null}
+          onSelect={handleAddressSelect}
+          onClose={() => setIsAddressModalOpen(false)}
+          dictionary={dictionary?.checkout}
+        />
+      )}
     </Container>
   );
 };
