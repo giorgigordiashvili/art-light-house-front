@@ -232,7 +232,16 @@ const AddressModal = ({ onClose, onSave, initialData, dictionary }: Props) => {
         )} */}
       </StyledMap>
       {error && (
-        <div style={{ color: "#ff4444", fontSize: "14px", marginTop: "10px", textAlign: "center" }}>
+        <div
+          style={{
+            color: "#ff4444",
+            fontSize: "14px",
+            marginTop: "20px",
+            textAlign: "center",
+            position: "absolute",
+            maxWidth: "120px",
+          }}
+        >
           {error}
         </div>
       )}
