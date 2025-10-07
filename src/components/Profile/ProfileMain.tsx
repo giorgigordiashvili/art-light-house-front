@@ -190,12 +190,6 @@ const MyDetails = ({ dictionary }: any) => {
                 isLoading={isLoading}
                 variant="data"
               />
-              <Personal
-                dictionary={dictionary?.profile}
-                profileData={profileData}
-                isLoading={isLoading}
-                variant="password"
-              />
             </RightSection>
           </ContentWrapper>
         </DesktopWrapper>
