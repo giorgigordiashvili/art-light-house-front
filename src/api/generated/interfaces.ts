@@ -185,6 +185,10 @@ export interface CategoryTranslationRequest {
   description?: string;
 }
 
+export interface DeliveryMethodEnum {
+  [key: string]: any;
+}
+
 export interface EmailVerificationRequest {
   email: string;
   code: string;
@@ -199,6 +203,77 @@ export interface Favorite {
 
 export interface LanguageCodeEnum {
   [key: string]: any;
+}
+
+export interface Order {
+  id: string;
+  order_number: string;
+  user: number;
+  status?: StatusEnum;
+  status_display: string;
+  payment_status?: PaymentStatusEnum;
+  payment_status_display: string;
+  delivery_address?: number;
+  delivery_address_data: Address;
+  phone_number: string;
+  delivery_method?: DeliveryMethodEnum;
+  delivery_method_display: string;
+  delivery_notes?: string;
+  subtotal: string;
+  delivery_fee?: string;
+  tax_amount?: string;
+  discount_amount?: string;
+  total_amount: string;
+  payment_method?: string;
+  payment_transaction_id?: string;
+  created_at: string;
+  updated_at: string;
+  confirmed_at: string;
+  shipped_at: string;
+  delivered_at: string;
+  items: OrderItem[];
+  total_items: string;
+}
+
+export interface OrderCreate {
+  delivery_address?: number;
+  phone_number: string;
+  delivery_method?: DeliveryMethodEnum;
+  delivery_notes?: string;
+  payment_method?: string;
+}
+
+export interface OrderCreateItem {
+  product: number;
+  quantity: number;
+}
+
+export interface OrderCreateItemRequest {
+  product: number;
+  quantity: number;
+}
+
+export interface OrderCreateRequest {
+  delivery_address?: number;
+  phone_number: string;
+  delivery_method?: DeliveryMethodEnum;
+  delivery_notes?: string;
+  payment_method?: string;
+  items: OrderCreateItemRequest[];
+  from_cart?: boolean;
+}
+
+export interface OrderItem {
+  id: number;
+  product: number;
+  product_data: ProductList;
+  quantity: number;
+  unit_price: string;
+  total_price: string;
+  product_title: string;
+  product_sku: string;
+  product_image_url: string;
+  created_at: string;
 }
 
 export interface PasswordChangeRequest {
@@ -282,6 +357,10 @@ export interface PatchedUserUpdateRequest {
   last_name?: string;
   phone_number?: string;
   date_of_birth?: string;
+}
+
+export interface PaymentStatusEnum {
+  [key: string]: any;
 }
 
 export interface ProductAttributeRequest {
@@ -389,6 +468,10 @@ export interface ProductListRequest {
 
 export interface ResendVerificationCodeRequest {
   email: string;
+}
+
+export interface StatusEnum {
+  [key: string]: any;
 }
 
 export interface User {
