@@ -336,6 +336,33 @@
       "changeFailed": "Failed to change password. Please try again."
     }
   },
+  "paymentMethods": {
+    "title": "Payment Methods",
+    "detailBar1": "My details",
+    "detailBar2": "My addresses",
+    "detailBar3": "My orders",
+    "detailBar4": "Payment methods",
+    "detailBar5": "Settings",
+    "detailBar6": "Logout",
+    "paymentBarTitle": "Payment Methods",
+    "cardTitle1": "Add New Card",
+    "cardTitle2": "Card",
+    "modalText1": "Edit",
+    "modalText2": "Delete",
+    "modalTitle": "Add Card",
+    "cardTypeLabel": "Select Card Type",
+    "cardTypeVisa": "Visa",
+    "cardTypeMastercard": "Mastercard",
+    "cardTypeAmex": "American Express",
+    "inputTitle1": "Card Number",
+    "inputTitle2": "CVV Code",
+    "placeholder1": "•••• •••• •••• ••••",
+    "placeholder2": "•••",
+    "button1": "Cancel",
+    "button2": "Save",
+    "cardNumberError": "Card number must be 12 digits",
+    "cvvError": "CVV must be 4 digits"
+  },
   "orders": {
     "title": "My orders",
     "title2": "My profile",
@@ -437,6 +464,10 @@
     "address": {
       "title": "Addresses - Art Lighthouse",
       "subTitle": "Manage your delivery addresses."
+    },
+    "paymentMethods": {
+      "title": "Payment Methods - Art Lighthouse",
+      "subTitle": "Manage your payment cards."
     },
     "orders": {
       "title": "My Orders - Art Lighthouse",

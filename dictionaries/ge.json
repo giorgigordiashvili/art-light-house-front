@@ -335,6 +335,33 @@
       "changeFailed": "პაროლის შეცვლა ვერ მოხერხდა. სცადეთ თავიდან."
     }
   },
+  "paymentMethods": {
+    "title": "გადახდის მეთოდები",
+    "detailBar1": "ჩემი დეტალები",
+    "detailBar2": "ჩემი მისამართები",
+    "detailBar3": "ჩემი შეკვეთები",
+    "detailBar4": "გადახდის მეთოდები",
+    "detailBar5": "პარამეტრები",
+    "detailBar6": "გასვლა",
+    "paymentBarTitle": "გადახდის მეთოდები",
+    "cardTitle1": "ახალი ბარათის დამატება",
+    "cardTitle2": "ბარათი",
+    "modalText1": "რედაქტირება",
+    "modalText2": "წაშლა",
+    "modalTitle": "ბარათის დამატება",
+    "cardTypeLabel": "აირჩიეთ ბარათის ტიპი",
+    "cardTypeVisa": "Visa",
+    "cardTypeMastercard": "Mastercard",
+    "cardTypeAmex": "American Express",
+    "inputTitle1": "ბარათის ნომერი",
+    "inputTitle2": "CVV კოდი",
+    "placeholder1": "•••• •••• •••• ••••",
+    "placeholder2": "•••",
+    "button1": "გაუქმება",
+    "button2": "შენახვა",
+    "cardNumberError": "ბარათის ნომერი უნდა იყოს 12 ციფრი",
+    "cvvError": "CVV უნდა იყოს 4 ციფრი"
+  },
   "orders": {
     "title": "ჩემი შეკვეთები",
     "title2": "ჩემი პროფილი",
@@ -436,6 +463,10 @@
     "address": {
       "title": "მისამართები - არტ ლაითჰაუსი",
       "subTitle": "მართეთ თქვენი მიწოდების მისამართები."
+    },
+    "paymentMethods": {
+      "title": "გადახდის მეთოდები - არტ ლაითჰაუსი",
+      "subTitle": "მართეთ თქვენი გადახდის ბარათები."
     },
     "orders": {
       "title": "ჩემი შეკვეთები - არტ ლაითჰაუსი",
