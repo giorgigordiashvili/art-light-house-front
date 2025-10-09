@@ -16,6 +16,7 @@ interface FilterContextType {
   updateCategoryFilter: (categoryIds: number[]) => void;
   updatePriceFilter: (minPrice?: number, maxPrice?: number) => void;
   updateAttributeFilter: (attributes?: string) => void;
+  updateOrdering: (ordering?: string) => void;
   clearFilters: () => void;
   setOnFilterChange: (callback: ((filters: FilterState) => void) | null) => void;
   isInitialized: boolean;
@@ -153,6 +154,19 @@ export const FilterProvider: React.FC<FilterProviderProps> = ({ children }) => {
     }
   };
 
+  const updateOrdering = (ordering?: string) => {
+    const newFilters = {
+      ...filters,
+      ordering,
+    };
+    setFilters(newFilters);
+    syncFiltersToUrl(newFilters);
+    // Trigger immediate filtering when ordering changes
+    if (onFilterChangeRef.current) {
+      onFilterChangeRef.current(newFilters);
+    }
+  };
+
   const clearFilters = () => {
     const newFilters = {
       selectedCategoryIds: [],
@@ -181,6 +195,7 @@ export const FilterProvider: React.FC<FilterProviderProps> = ({ children }) => {
         updateCategoryFilter,
         updatePriceFilter,
         updateAttributeFilter,
+        updateOrdering,
         clearFilters,
         setOnFilterChange,
         isInitialized,
