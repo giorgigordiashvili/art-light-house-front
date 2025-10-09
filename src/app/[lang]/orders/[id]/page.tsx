@@ -48,6 +48,6 @@ export default async function OrderDetailPage({ params }: OrderDetailsPageProps)
   const { lang, id } = await params;
   const dictionary = await getDictionary(isLocale(lang) ? lang : "ge");
   const orderId = id;
-
+  // test
   return <OrderDetailScreen dictionary={dictionary} orderId={orderId} />;
 }
