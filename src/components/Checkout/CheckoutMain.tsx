@@ -1,6 +1,6 @@
 "use client";
 import styled from "styled-components";
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import CheckoutCard from "@/components/Checkout/CheckoutCard";
 import DeliveryOptionCard from "@/components/Checkout/DeliveryOptionCard";
 import InputWithLabel from "@/components/Profile/Input";
@@ -8,7 +8,9 @@ import TextContainer from "@/components/Checkout/TextContainer";
 import Summery from "@/components/CartPage/Summary";
 import AddressSelectionModal from "@/components/Checkout/AddressSelectionModal";
 import { useAddresses } from "@/hooks/useAddresses";
-import { Address } from "@/api/generated/interfaces";
+import { Address, Cart, OrderCreateRequest } from "@/api/generated/interfaces";
+import { cartGet, ordersCreate } from "@/api/generated/api";
+import { useRouter, usePathname } from "next/navigation";
 
 const Container = styled.div`
   width: 100%;
@@ -133,12 +135,38 @@ interface CheckoutProps {
 }
 
 const Checkout: React.FC<CheckoutProps> = ({ dictionary }) => {
+  const router = useRouter();
+  const pathname = usePathname();
+  const locale = pathname.split("/")[1];
+
   const [selectedDelivery, setSelectedDelivery] = useState<string | null>(null);
   const [isAddressModalOpen, setIsAddressModalOpen] = useState(false);
   const [selectedAddress, setSelectedAddress] = useState<Address | null>(null);
+  const [phoneNumber, setPhoneNumber] = useState("");
+  const [deliveryNotes, setDeliveryNotes] = useState("");
+  const [cart, setCart] = useState<Cart | null>(null);
+  const [loadingCart, setLoadingCart] = useState(true);
+  const [submitting, setSubmitting] = useState(false);
 
   // Fetch addresses
   const { addresses } = useAddresses();
+
+  // Fetch cart data
+  useEffect(() => {
+    const fetchCart = async () => {
+      try {
+        setLoadingCart(true);
+        const cartData = await cartGet();
+        setCart(cartData);
+      } catch (error) {
+        console.error("Failed to fetch cart:", error);
+      } finally {
+        setLoadingCart(false);
+      }
+    };
+
+    fetchCart();
+  }, []);
 
   // Get default address or first address
   const defaultAddress = useMemo(() => {
@@ -190,6 +218,68 @@ const Checkout: React.FC<CheckoutProps> = ({ dictionary }) => {
     }
   };
 
+  // Handle payment/order creation
+  const handlePayment = async () => {
+    if (!currentAddress) {
+      alert("Please select a delivery address");
+      return;
+    }
+
+    if (!phoneNumber.trim()) {
+      alert("Please enter a phone number");
+      return;
+    }
+
+    if (!selectedDelivery) {
+      alert("Please select a delivery method");
+      return;
+    }
+
+    if (!cart || cart.items.length === 0) {
+      alert("Your cart is empty");
+      return;
+    }
+
+    try {
+      setSubmitting(true);
+
+      // Map delivery method from Georgian to API value
+      const deliveryMethodMap: Record<string, string> = {
+        "ექსპრეს მოტანა": "express",
+        "შემდეგ დღეს მოტანა": "standard",
+      };
+
+      const deliveryMethod = deliveryMethodMap[selectedDelivery] || "express";
+
+      // Prepare order data
+      const orderData: OrderCreateRequest = {
+        delivery_address: currentAddress.id,
+        phone_number: phoneNumber,
+        delivery_method: deliveryMethod as any,
+        delivery_notes: deliveryNotes || "",
+        payment_method: "card", // Default to card as per requirement
+        items: cart.items.map((item) => ({
+          product: item.product,
+          quantity: item.quantity || 1,
+        })),
+        from_cart: true, // User is ordering from cart
+      };
+
+      // Create order
+      const response = await ordersCreate(orderData);
+
+      console.log("Order created successfully:", response);
+
+      // Redirect to success page
+      router.push(`/${locale}/succsess`);
+    } catch (error) {
+      console.error("Failed to create order:", error);
+      alert("Failed to create order. Please try again.");
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
   return (
     <Container>
       <DesktopWrapper>
@@ -233,7 +323,12 @@ const Checkout: React.FC<CheckoutProps> = ({ dictionary }) => {
           </LeftSection>
 
           <RightSection>
-            <Summery dictionary={dictionary?.checkout} />
+            <Summery
+              dictionary={dictionary?.checkout}
+              cart={cart}
+              onPayment={handlePayment}
+              submitting={submitting || loadingCart}
+            />
           </RightSection>
         </CheckoutContent>
 
@@ -262,11 +357,15 @@ const Checkout: React.FC<CheckoutProps> = ({ dictionary }) => {
           label={dictionary?.checkout?.subTitle4 || "ტელეფონი"}
           placeholder={dictionary?.checkout?.placeholder1 || "შეიყვანეთ ტელეფონის ნომერი"}
           gap={18}
+          value={phoneNumber}
+          onChange={setPhoneNumber}
         />
 
         <Label>{dictionary?.checkout?.subTitle5 || "დამატებითი ინფორმაცია"}</Label>
         <TextContainer
           placeholder={dictionary?.checkout?.placeholder2 || "დამატებითი ინფორმაცია"}
+          value={deliveryNotes}
+          onChange={(e) => setDeliveryNotes(e.target.value)}
         />
       </DesktopWrapper>
 
@@ -308,7 +407,12 @@ const Checkout: React.FC<CheckoutProps> = ({ dictionary }) => {
         />
 
         <RightSection>
-          <Summery dictionary={dictionary?.checkout} />
+          <Summery
+            dictionary={dictionary?.checkout}
+            cart={cart}
+            onPayment={handlePayment}
+            submitting={submitting || loadingCart}
+          />
         </RightSection>
 
         <Label>{dictionary?.checkout?.subTitle3 || "მიწოდება"}</Label>
@@ -336,11 +440,15 @@ const Checkout: React.FC<CheckoutProps> = ({ dictionary }) => {
           label={dictionary?.checkout?.subTitle4 || "ტელეფონი"}
           placeholder={dictionary?.checkout?.placeholder1 || "შეიყვანეთ ტელეფონის ნომერი"}
           gap={18}
+          value={phoneNumber}
+          onChange={setPhoneNumber}
         />
 
         <Label>{dictionary?.checkout?.subTitle5 || "დამატებითი ინფორმაცია"}</Label>
         <TextContainer
           placeholder={dictionary?.checkout?.placeholder2 || "დამატებითი ინფორმაცია"}
+          value={deliveryNotes}
+          onChange={(e) => setDeliveryNotes(e.target.value)}
         />
       </MobileWrapper>
 

@@ -222,6 +222,7 @@ const Cart = ({ dictionary }: any) => {
                 ...dictionary.cart.cart,
                 price: `${cart?.total_price ?? "0"} ₾`,
               }}
+              cart={cart}
             />
           </StyledSummary>
         ) : null}
