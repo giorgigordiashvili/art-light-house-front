@@ -106,7 +106,7 @@ const SummaryBlock = ({ dictionary, order }: SummaryBlockProps) => {
       </DetailRow>
       <DetailRow>
         <DetailLabel>{dictionary?.succsessOrder?.deliveryCost || "Delivery"}</DetailLabel>
-        <DetailPrice>{order.delivery_fee || "0.00"} ₾</DetailPrice>
+        <DetailPrice>{order.delivery_fee ? order.delivery_fee : "10.00"} ₾</DetailPrice>
       </DetailRow>
       {order.tax_amount && parseFloat(order.tax_amount) > 0 && (
         <DetailRow>

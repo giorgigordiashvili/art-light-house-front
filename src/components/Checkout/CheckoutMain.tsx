@@ -9,7 +9,7 @@ import Summery from "@/components/CartPage/Summary";
 import AddressSelectionModal from "@/components/Checkout/AddressSelectionModal";
 import { useAddresses } from "@/hooks/useAddresses";
 import { Address, Cart, OrderCreateRequest } from "@/api/generated/interfaces";
-import { cartGet, ordersCreate } from "@/api/generated/api";
+import { cartGet, ordersCreate, cartClear } from "@/api/generated/api";
 import { useRouter, usePathname } from "next/navigation";
 
 const Container = styled.div`
@@ -269,6 +269,33 @@ const Checkout: React.FC<CheckoutProps> = ({ dictionary }) => {
       const response = await ordersCreate(orderData);
 
       console.log("Order created successfully:", response);
+
+      // Clear the cart after successful order
+      try {
+        await cartClear();
+
+        // Dispatch cart update event to update cart icon/modal
+        if (typeof window !== "undefined") {
+          window.dispatchEvent(
+            new CustomEvent("cartUpdated", {
+              detail: {
+                count: 0,
+                cart: {
+                  id: 0,
+                  items: [],
+                  total_items: "0",
+                  total_price: "0",
+                  created_at: "",
+                  updated_at: "",
+                },
+              },
+            })
+          );
+        }
+      } catch (clearError) {
+        console.error("Failed to clear cart:", clearError);
+        // Continue to success page even if cart clear fails
+      }
 
       // Redirect to success page
       router.push(`/${locale}/succsess`);

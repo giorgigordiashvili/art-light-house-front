@@ -1,8 +1,12 @@
+"use client";
 import styled from "styled-components";
 import Products from "@/OrderDetail/Products";
 import SummaryBlock from "@/OrderDetail/SummaryBlock";
 import Address from "@/OrderDetail/Address";
 import Delivery from "@/OrderDetail/Delivery";
+import { useEffect, useState } from "react";
+import { ordersList } from "@/api/generated/api";
+import type { Order } from "@/api/generated/interfaces";
 
 const StyleContainer = styled.div`
   width: calc(100% - 148px);
@@ -58,7 +62,8 @@ const SectionTitle = styled.p`
 `;
 
 const ProductsWrapper = styled.div`
-  display: flex;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
   gap: 20px;
   flex-wrap: nowrap;
   width: 100%;
@@ -93,6 +98,37 @@ const Center = styled.div`
   }
 `;
 const Container = ({ dictionary }: { dictionary: any }) => {
+  const [latestOrder, setLatestOrder] = useState<Order | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchLatestOrder = async () => {
+      try {
+        setLoading(true);
+        const orders = await ordersList();
+        // Get the most recent order (first in the array, assuming sorted by date)
+        if (orders.length > 0) {
+          setLatestOrder(orders[0]);
+        }
+      } catch (error) {
+        console.error("Failed to fetch latest order:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchLatestOrder();
+  }, []);
+
+  if (loading) {
+    return (
+      <StyleContainer>
+        <CheckIcon src="/assets/icons/checkmob.svg" alt="Checkmark" />
+        <Title>Loading...</Title>
+      </StyleContainer>
+    );
+  }
+
   return (
     <StyleContainer>
       <CheckIcon src="/assets/icons/checkmob.svg" alt="Checkmark" />
@@ -102,14 +138,15 @@ const Container = ({ dictionary }: { dictionary: any }) => {
       <Center>
         <SectionTitle>{dictionary?.succsessOrder?.products}</SectionTitle>
         <ProductsWrapper>
-          <Products dictionary={dictionary} />
-          <Products dictionary={dictionary} />
+          {latestOrder?.items.map((item) => (
+            <Products key={item.id} dictionary={dictionary} orderItem={item} />
+          ))}
         </ProductsWrapper>
         <SectionTitle>{dictionary?.succsessOrder?.address}</SectionTitle>
-        <Address dictionary={dictionary} />
+        <Address dictionary={dictionary} address={latestOrder?.delivery_address_data} />
         <SectionTitle>{dictionary?.succsessOrder?.delivery}</SectionTitle>
-        <Delivery dictionary={dictionary} />
-        <SummaryBlock dictionary={dictionary} />
+        <Delivery dictionary={dictionary} order={latestOrder || undefined} />
+        <SummaryBlock dictionary={dictionary} order={latestOrder || undefined} />
       </Center>
     </StyleContainer>
   );
