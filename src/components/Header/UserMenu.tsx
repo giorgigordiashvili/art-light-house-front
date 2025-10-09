@@ -120,7 +120,7 @@ const UserMenu = ({ closeModal, dictionary }: UserMenuProps) => {
               <UserMenuItem
                 text={dictionary?.header?.detailBar4}
                 icon="/assets/paymentIcon.svg"
-                route="/checkout"
+                route="/paymentMethods"
                 onClick={closeModal}
               />
             </StyledUserMenuItem>

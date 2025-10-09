@@ -37,7 +37,7 @@ const StyledCardOption = styled.div<{ isSelected: boolean }>`
 `;
 
 const CardLabel = styled.p<{ isSelected: boolean }>`
-  font-family: Helvetica Neue LT GEO;
+  font-family: Helvetica;
   font-weight: ${(props) => (props.isSelected ? "700" : "400")};
   font-size: 14px;
   line-height: 19.12px;

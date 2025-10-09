@@ -71,55 +71,62 @@ const PaymentMethodModal = ({ onClose, onSave, initialData, dictionary }: Props)
   const [cvv, setCvv] = useState(initialData?.cvv || "");
   const [error, setError] = useState<string | null>(null);
 
-  // Format card number with spaces every 4 digits and mask with dots
-  const formatCardNumber = (value: string) => {
-    // Remove all non-digit characters
-    const digitsOnly = value.replace(/\D/g, "");
-
-    // Limit to 12 digits
-    const limited = digitsOnly.slice(0, 12);
-
-    // Add spaces every 4 characters
-    const formatted = limited.replace(/(\d{4})(?=\d)/g, "$1 ");
-
-    return formatted;
-  };
-
-  // Mask card number with dots except for display
-  const maskCardNumber = (value: string) => {
-    const digitsOnly = value.replace(/\D/g, "");
-    const masked = digitsOnly.replace(/\d/g, "•");
-    return masked.replace(/(\d{4})(?=\d)/g, "$1 ");
+  // Mask helpers
+  const maskCardNumber = (digits: string) => {
+    // Create bullets same length as digits, then insert space after every 4 chars
+    return "•".repeat(digits.length).replace(/(.{4})(?=.)/g, "$1 ");
   };
 
   const handleCardNumberChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value;
-    const digitsOnly = value.replace(/\D/g, "");
+    const nativeEvt = e.nativeEvent as any;
 
-    if (digitsOnly.length <= 12) {
-      setCardNumber(digitsOnly);
+    // Handle backspace
+    if ((nativeEvt as any)?.inputType === "deleteContentBackward") {
+      setCardNumber((prev) => prev.slice(0, -1));
+      return;
     }
+
+    // Handle normal digit insert
+    const data = nativeEvt?.data as string | null;
+    if (data && /\d/.test(data)) {
+      setCardNumber((prev) => (prev + data).slice(0, 16));
+      return;
+    }
+
+    // Ignore other non-digit changes coming from masking
   };
+
+  // Pasting is not explicitly handled because ModalInput does not expose onPaste prop.
+  // Users can still type digits; if needed, we can extend ModalInput later to support paste.
 
   const handleCvvChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value.replace(/\D/g, "");
+    const nativeEvt = e.nativeEvent as any;
 
-    if (value.length <= 4) {
-      setCvv(value);
+    if ((nativeEvt as any)?.inputType === "deleteContentBackward") {
+      setCvv((prev) => prev.slice(0, -1));
+      return;
+    }
+
+    const data = nativeEvt?.data as string | null;
+    if (data && /\d/.test(data)) {
+      setCvv((prev) => (prev + data).slice(0, 3));
+      return;
     }
   };
+
+  // See note above about paste handling.
 
   const handleSave = () => {
     setError(null);
 
-    // Validate card number (12 digits)
-    if (cardNumber.length !== 12) {
+    // Validate card number (16 digits)
+    if (cardNumber.length !== 16) {
       setError(dictionary.cardNumberError);
       return;
     }
 
-    // Validate CVV (4 digits)
-    if (cvv.length !== 4) {
+    // Validate CVV (3 digits)
+    if (cvv.length !== 3) {
       setError(dictionary.cvvError);
       return;
     }
@@ -136,7 +143,7 @@ const PaymentMethodModal = ({ onClose, onSave, initialData, dictionary }: Props)
   };
 
   // Display value with masking
-  const displayCardNumber = cardNumber ? maskCardNumber(formatCardNumber(cardNumber)) : "";
+  const displayCardNumber = cardNumber ? maskCardNumber(cardNumber) : "";
 
   return (
     <StyledContainer>

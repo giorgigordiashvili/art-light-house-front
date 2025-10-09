@@ -92,7 +92,7 @@ const DetailBar = ({ dictionary }: any) => {
     {
       label: dictionary?.detailBar4 || "Payment methods",
       icon: "/assets/icons/gadaxda.svg",
-      route: "/checkout",
+      route: "/paymentMethods",
     },
     {
       label: dictionary?.detailBar5 || "Settings",

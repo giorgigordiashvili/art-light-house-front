@@ -10,7 +10,7 @@ const StyledCard = styled.div`
   backdrop-filter: blur(114px);
   border-radius: 17px;
   width: 364px;
-  height: 143px;
+  height: 100px;
   padding: 21px 22px;
   display: flex;
   flex-direction: column;
@@ -79,7 +79,7 @@ const DotsButton = styled.button`
 `;
 
 const CardNumber = styled.p`
-  font-family: Helvetica Neue LT GEO;
+  font-family: Helvetica;
   font-weight: 400;
   font-size: 14px;
   line-height: 19.12px;
