@@ -59,6 +59,7 @@ const CardTypeSelector = ({ selectedCardType, onSelect, dictionary }: Props) => 
       logo: "/assets/mastercard-logo.svg",
       label: dictionary.cardTypeMastercard,
     },
+    // Use our custom vector AMEX logo to match Visa/Mastercard style
     { type: "amex", logo: "/assets/amex-logo.svg", label: dictionary.cardTypeAmex },
   ];
 

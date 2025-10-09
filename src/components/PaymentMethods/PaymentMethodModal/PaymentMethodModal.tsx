@@ -56,6 +56,21 @@ const MaskedInput = styled(ModalInput)`
   letter-spacing: 2px;
 `;
 
+const InlineRow = styled.div`
+  display: flex;
+  gap: 12px;
+  @media (max-width: 1080px) {
+    flex-direction: column;
+    gap: 20px;
+  }
+`;
+
+const SmallModalInput = styled(ModalInput)`
+  input {
+    width: 100%;
+  }
+`;
+
 type Props = {
   onClose: () => void;
   onSave: (paymentMethod: PaymentMethodData) => void;
@@ -69,6 +84,7 @@ const PaymentMethodModal = ({ onClose, onSave, initialData, dictionary }: Props)
   );
   const [cardNumber, setCardNumber] = useState(initialData?.cardNumber || "");
   const [cvv, setCvv] = useState(initialData?.cvv || "");
+  const [expiry, setExpiry] = useState(initialData?.expiry || ""); // digits only MMYY
   const [error, setError] = useState<string | null>(null);
 
   // Mask helpers
@@ -116,6 +132,12 @@ const PaymentMethodModal = ({ onClose, onSave, initialData, dictionary }: Props)
 
   // See note above about paste handling.
 
+  const handleExpiryChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    // Accept digits only, max 4 (MMYY)
+    const digits = e.target.value.replace(/\D/g, "").slice(0, 4);
+    setExpiry(digits);
+  };
+
   const handleSave = () => {
     setError(null);
 
@@ -136,6 +158,7 @@ const PaymentMethodModal = ({ onClose, onSave, initialData, dictionary }: Props)
       cardType: selectedCardType,
       cardNumber,
       cvv,
+      expiry,
       lastFourDigits: cardNumber.slice(-4),
     };
 
@@ -144,6 +167,11 @@ const PaymentMethodModal = ({ onClose, onSave, initialData, dictionary }: Props)
 
   // Display value with masking
   const displayCardNumber = cardNumber ? maskCardNumber(cardNumber) : "";
+  const formattedExpiry = expiry
+    ? expiry.length <= 2
+      ? expiry
+      : `${expiry.slice(0, 2)}/${expiry.slice(2)}`
+    : "";
 
   return (
     <StyledContainer>
@@ -163,16 +191,32 @@ const PaymentMethodModal = ({ onClose, onSave, initialData, dictionary }: Props)
           value={displayCardNumber}
           onChange={handleCardNumberChange}
           type="text"
+          fullWidth
         />
       </StyledInputWrapper>
       <StyledInputWrapper>
-        <InputTitle text={dictionary.inputTitle2} />
-        <ModalInput
-          placeholder={dictionary.placeholder2}
-          value={cvv.replace(/\d/g, "•")}
-          onChange={handleCvvChange}
-          type="text"
-        />
+        <InlineRow>
+          <div style={{ flex: 1 }}>
+            <InputTitle text={dictionary.inputTitle3 || "Expiration Date"} />
+            <SmallModalInput
+              placeholder={dictionary.placeholder3 || "MM/YY"}
+              value={formattedExpiry}
+              onChange={handleExpiryChange}
+              type="text"
+              fullWidth
+            />
+          </div>
+          <div style={{ flex: 1 }}>
+            <InputTitle text={dictionary.inputTitle2} />
+            <SmallModalInput
+              placeholder={dictionary.placeholder2}
+              value={cvv.replace(/\d/g, "•")}
+              onChange={handleCvvChange}
+              type="text"
+              fullWidth
+            />
+          </div>
+        </InlineRow>
       </StyledInputWrapper>
       {error && <ErrorMessage>{error}</ErrorMessage>}
       <StyledButton>

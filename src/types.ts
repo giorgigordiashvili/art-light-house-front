@@ -16,5 +16,6 @@ export type PaymentMethodData = {
   cardType: "visa" | "mastercard" | "amex";
   cardNumber: string; // 12 digits, masked
   cvv: string; // 4 digits
+  expiry?: string; // MMYY digits only
   lastFourDigits?: string; // For display purposes
 };

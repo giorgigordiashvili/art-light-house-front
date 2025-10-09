@@ -2,12 +2,12 @@ import React, { useState, useRef } from "react";
 import styled from "styled-components";
 import Image from "next/image";
 
-const StyledContainer = styled.div<{ $hasIcon: boolean }>`
+const StyledContainer = styled.div<{ $hasIcon: boolean; $fullWidth?: boolean }>`
   position: relative;
   margin-top: 12px;
 
   input {
-    width: 460px;
+    width: ${({ $fullWidth }) => ($fullWidth ? "100%" : "460px")};
     height: 50px;
     border: 1px solid #ffffff12;
     border-radius: 10px;
@@ -71,6 +71,7 @@ type Props = {
   name?: string;
   isPasswordField?: boolean;
   isDateField?: boolean;
+  fullWidth?: boolean;
 };
 
 const ModalInput = ({
@@ -84,6 +85,7 @@ const ModalInput = ({
   name,
   isPasswordField = false,
   isDateField = false,
+  fullWidth = false,
 }: Props) => {
   const [showPassword, setShowPassword] = useState(false);
   const dateInputRef = useRef<HTMLInputElement>(null);
@@ -120,7 +122,7 @@ const ModalInput = ({
   };
 
   return (
-    <StyledContainer $hasIcon={hasIcon}>
+    <StyledContainer $hasIcon={hasIcon} $fullWidth={fullWidth}>
       <input
         ref={isDateField ? dateInputRef : undefined}
         type={inputType}

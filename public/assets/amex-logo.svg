@@ -1,5 +1,13 @@
-<svg width="48" height="32" viewBox="0 0 48 32" fill="none" xmlns="http://www.w3.org/2000/svg">
-<rect width="48" height="32" rx="4" fill="#006FCF"/>
-<path d="M18.5 12.5L17 19.5H19L20.5 12.5H18.5ZM27.5 12.6C27 12.4 26.3 12.2 25.4 12.2C23.3 12.2 21.9 13.3 21.9 14.8C21.9 15.9 22.9 16.5 23.6 16.9C24.4 17.3 24.7 17.5 24.7 17.9C24.7 18.4 24.1 18.7 23.5 18.7C22.7 18.7 22.2 18.6 21.6 18.3L21.3 18.2L21 20C21.5 20.2 22.4 20.4 23.3 20.4C25.5 20.4 26.9 19.3 26.9 17.7C26.9 16.9 26.4 16.3 25.3 15.8C24.6 15.5 24.2 15.2 24.2 14.8C24.2 14.5 24.5 14.1 25.3 14.1C26 14.1 26.5 14.2 26.9 14.4L27.1 14.5L27.5 12.6ZM31.8 12.5H30.2C29.6 12.5 29.2 12.7 28.9 13.2L26 19.5H28.2L28.6 18.4H31.2L31.5 19.5H33.5L31.8 12.5ZM29.3 16.8L30.2 14.2L30.7 16.8H29.3ZM16.5 12.5L14.3 17.3L14.1 16.2C13.7 14.8 12.4 13.3 11 12.5L12.9 19.5H15.1L18.7 12.5H16.5Z" fill="white"/>
-<path d="M12.5 12.5H9.5L9.5 12.7C12.1 13.4 13.9 15 14.5 16.8L13.8 13.3C13.7 12.8 13.3 12.5 12.8 12.5H12.5Z" fill="#FFA500"/>
+<svg width="48" height="32" viewBox="0 0 48 32" xmlns="http://www.w3.org/2000/svg">
+	<!-- Blue rounded background -->
+	<rect width="48" height="32" rx="5" fill="#0078C7"/>
+
+	<!-- Inner white rounded border (custom, not official) -->
+	<rect x="10.5" y="2.5" width="27" height="27" rx="4" fill="none" stroke="#FFFFFF" stroke-width="2"/>
+
+	<!-- Stacked AM / EX monogram (custom) -->
+	<g fill="#FFFFFF" font-family="Helvetica, Arial, sans-serif" font-weight="800">
+		<text x="14" y="15" font-size="10" letter-spacing="0.5">AM</text>
+		<text x="22" y="25" font-size="10" letter-spacing="0.5">EX</text>
+	</g>
 </svg>
