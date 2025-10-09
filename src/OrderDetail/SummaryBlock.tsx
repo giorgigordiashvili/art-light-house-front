@@ -2,7 +2,7 @@ import styled from "styled-components";
 import type { Order } from "@/api/generated/interfaces";
 
 const SummaryContainer = styled.div`
-  max-width: 532px;
+  /* max-width: 532px; */
   width: 100%;
   display: flex;
   flex-direction: column;
@@ -31,7 +31,7 @@ const TotalPrice = styled.span`
 `;
 
 const Divider = styled.hr`
-  max-width: 532px;
+  /* max-width: 532px; */
   width: 100%;
   border: 1px solid #242424;
   margin-bottom: 20px;

@@ -15,6 +15,9 @@ const ProductsCard = styled.div`
   height: 113px;
   position: relative;
   gap: 24px;
+  @media (max-width: 1080px) {
+    max-width: none;
+  }
 `;
 
 const ImagePlaceholder = styled.div`

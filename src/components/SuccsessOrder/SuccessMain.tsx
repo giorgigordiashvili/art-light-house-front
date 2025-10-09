@@ -25,7 +25,7 @@ const StyleContainer = styled.div`
   @media (max-width: 1080px) {
     width: calc(100% - 32px);
     padding: 16px;
-    align-items: flex-start;
+    /* align-items: flex-start; */
     justify-content: center;
   }
 `;
@@ -43,8 +43,8 @@ const Title = styled.p`
     font-size: 16px;
     font-weight: 400;
     margin-bottom: -5px;
-    margin-top: 4px;
-    margin: 0 auto;
+    margin-top: 50px;
+    /* margin: 0 auto; */
   }
 `;
 
@@ -71,7 +71,8 @@ const ProductsWrapper = styled.div`
 
   @media (max-width: 1080px) {
     flex-wrap: wrap;
-    max-width: 532px;
+    /* max-width: 532px; */
+    grid-template-columns: 1fr;
   }
 `;
 const CheckIcon = styled.img`
@@ -92,7 +93,7 @@ const CheckIcon = styled.img`
 const Center = styled.div`
   @media (max-width: 1080px) {
     display: flex;
-    margin: 0 auto;
+    /* margin: 0 auto; */
     justify-content: center;
     flex-direction: column;
   }

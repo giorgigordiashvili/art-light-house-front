@@ -53,6 +53,7 @@ const ProductsWrapper = styled.div`
 
   @media (max-width: 1080px) {
     flex-wrap: wrap;
+    grid-template-columns: 1fr;
   }
 `;
 
