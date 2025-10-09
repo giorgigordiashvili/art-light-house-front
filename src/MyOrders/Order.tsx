@@ -1,5 +1,8 @@
 import styled from "styled-components";
 import OrderCard from "@/MyOrders/OrderCard";
+import { useEffect, useState } from "react";
+import { ordersList } from "@/api/generated/api";
+import type { Order as OrderType } from "@/api/generated/interfaces";
 
 const StylePass = styled.div`
   width: 100%;
@@ -67,19 +70,53 @@ const Title = styled.p`
   } */
 `;
 
+const LoadingText = styled.p`
+  color: white;
+  text-align: center;
+  padding: 20px;
+`;
+
+const EmptyText = styled.p`
+  color: #999;
+  text-align: center;
+  padding: 20px;
+`;
+
 const Order = ({ dictionary }: any) => {
+  const [orders, setOrders] = useState<OrderType[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchOrders = async () => {
+      try {
+        setLoading(true);
+        const ordersData = await ordersList();
+        setOrders(ordersData);
+      } catch (err) {
+        setError("Failed to fetch orders");
+        console.error("Error fetching orders:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchOrders();
+  }, []);
+
   return (
     <StylePass>
       <Title>{dictionary?.orderBarTitle || "Orders"}</Title>
       <InputsWrapper>
-        <OrderCard dictionary={dictionary} />
-        <OrderCard dictionary={dictionary} />
-        <OrderCard dictionary={dictionary} />
-        <OrderCard dictionary={dictionary} />
-        <OrderCard dictionary={dictionary} />
-        <OrderCard dictionary={dictionary} />
-        <OrderCard dictionary={dictionary} />
-        <OrderCard dictionary={dictionary} />
+        {loading ? (
+          <LoadingText>Loading orders...</LoadingText>
+        ) : error ? (
+          <EmptyText>{error}</EmptyText>
+        ) : orders.length === 0 ? (
+          <EmptyText>No orders found</EmptyText>
+        ) : (
+          orders.map((order) => <OrderCard key={order.id} dictionary={dictionary} order={order} />)
+        )}
       </InputsWrapper>
     </StylePass>
   );

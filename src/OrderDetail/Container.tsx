@@ -3,6 +3,7 @@ import Products from "@/OrderDetail/Products";
 import SummaryBlock from "@/OrderDetail/SummaryBlock";
 import Address from "@/OrderDetail/Address";
 import Delivery from "./Delivery";
+import type { Order } from "@/api/generated/interfaces";
 
 const StyleContainer = styled.div`
   width: calc(100% - 148px);
@@ -56,24 +57,28 @@ const ProductsWrapper = styled.div`
 
 interface ContainerProps {
   dictionary: any;
+  order: Order;
 }
 
-const Container = ({ dictionary }: ContainerProps) => {
+const Container = ({ dictionary, order }: ContainerProps) => {
   return (
     <StyleContainer>
-      <Title>{dictionary?.succsessOrder?.title}</Title>
+      <Title>
+        {dictionary?.succsessOrder?.title || "Order"} #{order.order_number}
+      </Title>
 
       <SectionTitle>{dictionary?.succsessOrder?.products}</SectionTitle>
       <ProductsWrapper>
-        <Products dictionary={dictionary} />
-        <Products dictionary={dictionary} />
+        {order.items.map((item) => (
+          <Products key={item.id} dictionary={dictionary} orderItem={item} />
+        ))}
       </ProductsWrapper>
       <SectionTitle>{dictionary?.succsessOrder?.address}</SectionTitle>
-      <Address dictionary={dictionary} />
+      <Address dictionary={dictionary} address={order.delivery_address_data} />
       <SectionTitle>{dictionary?.succsessOrder?.delivery}</SectionTitle>
 
-      <Delivery dictionary={dictionary}></Delivery>
-      <SummaryBlock dictionary={dictionary} />
+      <Delivery dictionary={dictionary} order={order} />
+      <SummaryBlock dictionary={dictionary} order={order} />
     </StyleContainer>
   );
 };
