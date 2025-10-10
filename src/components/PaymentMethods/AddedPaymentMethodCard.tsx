@@ -8,7 +8,7 @@ const StyledCard = styled.div`
   background-color: #1a1a1a96;
   border: 1px solid #ffffff12;
   backdrop-filter: blur(114px);
-  border-radius: 17px;
+  border-radius: 10px;
   width: 364px;
   height: 100px;
   padding: 21px 22px;

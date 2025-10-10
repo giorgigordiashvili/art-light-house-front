@@ -89,8 +89,9 @@ const PaymentMethodModal = ({ onClose, onSave, initialData, dictionary }: Props)
 
   // Mask helpers
   const maskCardNumber = (digits: string) => {
-    // Create bullets same length as digits, then insert space after every 4 chars
-    return "•".repeat(digits.length).replace(/(.{4})(?=.)/g, "$1 ");
+    // Show actual digits with space after every 4 chars
+    // return "•".repeat(digits.length).replace(/(.{4})(?=.)/g, "$1 ");
+    return digits.replace(/(.{4})(?=.)/g, "$1 ");
   };
 
   const handleCardNumberChange = (e: React.ChangeEvent<HTMLInputElement>) => {
