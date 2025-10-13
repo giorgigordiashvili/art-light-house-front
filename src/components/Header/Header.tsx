@@ -448,7 +448,7 @@ const Header = ({ header, dictionary }: HeaderProps) => {
                         onClick={() => {
                           if (isRegistrationCodeOpen) setIsRegistrationCodeOpen(false);
                           if (isRegistrationSuccessOpen) setIsRegistrationSuccessOpen(false);
-                          setIsUserMenuOpen(true);
+                          setIsUserMenuOpen((prev) => !prev);
                           closeEmptyCartModal();
                           closeCartModal();
                           closeLanguageSwitcherModal();
