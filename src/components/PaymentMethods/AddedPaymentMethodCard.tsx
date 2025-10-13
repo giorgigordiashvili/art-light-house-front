@@ -149,7 +149,7 @@ const AddedPaymentMethodCard = ({
   };
 
   // Format card number to show last 4 digits
-  const maskedCardNumber = `•••• •••• •••• ${data.lastFourDigits || data.cardNumber.slice(-4)}`;
+  const maskedCardNumber = `✲✲✲✲ ✲✲✲✲ ✲✲✲✲  ${data.lastFourDigits || data.cardNumber.slice(-4)}`;
 
   return (
     <StyledCard>
