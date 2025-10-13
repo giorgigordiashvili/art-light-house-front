@@ -297,7 +297,8 @@
     "placeholder1": "Street and number",
     "placeholder2": "E.g. Entrance 2, Floor 4, Apartment 17",
     "button1": "Cancel",
-    "button2": "Save"
+    "button2": "Save",
+    "button3": "default location"
   },
   "profile": {
     "title": "My Profile",

@@ -25,7 +25,7 @@ const StyledContainer = styled.div`
     border-radius: 0;
     border-top-left-radius: 20px;
     border-top-right-radius: 20px;
-    padding: 20px 16px 63px 16px;
+    padding: 20px 16px 15px 16px;
   }
 `;
 
@@ -234,7 +234,7 @@ const AddressModal = ({ onClose, onSave, initialData, dictionary }: Props) => {
         )} */}
       </StyledMap>
       <StyledButton>
-        <ToggleDefaultButton text="Default location" isActive={isDefault} onToggle={setIsDefault} />
+        <ToggleDefaultButton dictionary={dictionary} isActive={isDefault} onToggle={setIsDefault} />
         <CancelButton onClick={onClose} dictionary={dictionary} disabled={isLoading} />
         <SaveButton
           onSave={handleSave}

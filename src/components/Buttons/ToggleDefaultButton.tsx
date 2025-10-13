@@ -2,35 +2,34 @@ import React, { useState } from "react";
 import styled from "styled-components";
 
 type Props = {
-  text: string;
   onClick?: () => void;
   isActive?: boolean;
   onToggle?: (isActive: boolean) => void;
+  dictionary?: any;
 };
 
 type StyledProps = {
   $isActive: boolean;
 };
 
-const StyledButton = styled.p<StyledProps>`
+const StyledButton = styled.div<StyledProps>`
   display: flex;
   justify-content: center;
   align-items: center;
-  font-family: Helvetica;
-  font-weight: 400;
-  font-size: 14px;
-  line-height: 28px;
-  letter-spacing: 0%;
-  color: ${(props) => (props.$isActive ? "#000000" : "#ffcb40")};
   border: 1px solid #ffcb401a;
   cursor: pointer;
   transition: all 0.2s ease-in-out;
+  color: ${(props) => (props.$isActive ? "#000000" : "#ffcb40")};
   border-radius: 10px;
   background-color: ${(props) => (props.$isActive ? "#ffcb40" : "#1c1c1c")};
   width: 150px;
+  &:hover {
+    color: ${(props) => (props.$isActive ? "#000000" : "#fbe4a7")};
+  }
 
   @media (max-width: 1080px) {
-    font-size: 14px;
+    width: 100%;
+    height: 48px;
   }
 
   &:hover {
@@ -38,7 +37,22 @@ const StyledButton = styled.p<StyledProps>`
   }
 `;
 
-const ToggleDefaultButton = ({ text, onClick, isActive: controlledIsActive, onToggle }: Props) => {
+const StyledText = styled.p<StyledProps>`
+  max-width: 120px;
+  font-family: Helvetica;
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 18px;
+  text-align: center;
+  letter-spacing: 0%;
+`;
+
+const ToggleDefaultButton = ({
+  dictionary,
+  onClick,
+  isActive: controlledIsActive,
+  onToggle,
+}: Props) => {
   const [internalIsActive, setInternalIsActive] = useState(false);
 
   // Use controlled state if provided, otherwise use internal state
@@ -63,7 +77,7 @@ const ToggleDefaultButton = ({ text, onClick, isActive: controlledIsActive, onTo
 
   return (
     <StyledButton $isActive={isActive} onClick={handleClick}>
-      {text}
+      <StyledText $isActive={isActive}>{dictionary?.button3 || "default location"}</StyledText>
     </StyledButton>
   );
 };
