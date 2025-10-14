@@ -5,10 +5,7 @@ const StyledRectangle = styled.div`
   width: 308px;
   height: 417px;
   border-radius: 17px;
-  border: 1px solid #ffffff06;
-  background: #1a1a1a30;
   z-index: 2;
-  backdrop-filter: blur(114px);
   opacity: 0.3;
   position: relative;
   display: flex;
