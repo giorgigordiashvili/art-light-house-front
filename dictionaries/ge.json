@@ -143,6 +143,10 @@
     "button": "Google Maps",
     "googleMapClusterAddress": "ბახტრიონის N23"
   },
+  "notFound": {
+    "message": "გვერდი ვერ მოიძებნა",
+    "button": "დაბრუნება მთავარზე"
+  },
   "footer": {
     "description": "ჩვენი განათება ქმნის განსაკუთრებულ გარემოს, რომელიც ვიზუალურად მიმზიდველია და ემოციურ გამოცდილებას ქმნის. ",
     "copyright": "© 2025. All rights reserved.",

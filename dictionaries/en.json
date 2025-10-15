@@ -161,6 +161,10 @@
       "GitHub": "GitHub"
     }
   },
+  "notFound": {
+    "message": "the page has not been found",
+    "button": "Back to main page"
+  },
   "products": {
     "title": "Products",
     "addToCartAlt": "Add to cart",
