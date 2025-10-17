@@ -1,13 +1,14 @@
 import React from "react";
 import styled, { css } from "styled-components";
 
-type Size = "small" | "medium" | "large";
+type Size = "mobile" | "small" | "medium" | "large";
 
 interface StyledContainerProps {
   size: Size;
 }
 
 const sizeMap = {
+  mobile: "140px",
   small: "284px",
   medium: "307px",
   large: "374px",

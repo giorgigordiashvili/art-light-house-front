@@ -12,6 +12,9 @@ const StyledContainer = styled.div`
   @media (max-width: 1080px) {
     margin-top: 91px;
   }
+  @media (max-width: 522px) {
+    margin-top: 0;
+  }
 `;
 
 const StyledTitleAndActions = styled.div`
