@@ -51,8 +51,16 @@ const Contact: React.FC<ContactProps> = ({ variant = "1", dictionary }) => {
           </StyledSectionTitle>
         )}
         <StyledContactCard $variant={variant}>
-          <ContactCard side="left" dictionary={dictionary} />
-          <ContactCard side="right" dictionary={dictionary} />
+          <ContactCard
+            side="left"
+            dictionary={dictionary}
+            location={{ lat: 41.720542, lng: 44.764789 }}
+          />
+          <ContactCard
+            side="right"
+            dictionary={dictionary}
+            location={{ lat: 41.703998, lng: 44.791769 }}
+          />
         </StyledContactCard>
       </Container>
     </StyledContainer>

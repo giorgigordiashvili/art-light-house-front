@@ -67,13 +67,17 @@ const StyledAction = styled.div`
 type Props = {
   side?: "left" | "right";
   dictionary?: any;
+  location?: { lat: number; lng: number };
 };
 
-const ContactCard = ({ side = "left", dictionary }: Props) => {
+const ContactCard = ({ side = "left", dictionary, location }: Props) => {
+  const defaultPosition = { lat: 41.720542, lng: 44.764789 };
+  const mapPosition = location ?? defaultPosition;
+
   return (
     <OuterContainer side={side}>
       <StyledContainer>
-        <GoogleMap dictionary={dictionary} />
+        <GoogleMap dictionary={dictionary} location={mapPosition} />
         <StyledAction>
           <div style={{ flex: 1, minWidth: 0 }}>
             <Data
