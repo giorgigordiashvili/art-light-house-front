@@ -26,7 +26,23 @@ const StyledCircle = styled.div`
 const ScrollableWrapper = styled.div`
   @media (max-width: 1332px) {
     overflow-x: auto;
-    scrollbar-width: none;
+    overflow-y: hidden;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none; /* Firefox */
+    padding-inline: 20px;
+    /* padding-left: 20px;
+    padding-right: 20px; */
+    margin-left: -20px; /* reach full-bleed like NewProducts */
+
+    &::-webkit-scrollbar {
+      display: none; /* WebKit */
+    }
+  }
+
+  @media (max-width: 1080px) {
+    width: calc(100vw);
+    padding-inline: 20px;
+    margin-left: -20px;
   }
 `;
 
@@ -35,7 +51,7 @@ const RowWrapper = styled.div`
   flex-direction: column;
   gap: 20px;
   min-width: max-content;
-  @media (max-width: 1292px) {
+  @media (max-width: 1332px) {
     padding-inline: 20px;
   }
   @media (max-width: 1080px) {
@@ -67,6 +83,7 @@ const Card = styled.div<{
   $backgroundImage?: string;
 }>`
   position: relative;
+  flex: 0 0 auto; /* prevent shrinking so horizontal overflow can occur */
   width: ${(props) => props.width}px;
   height: ${(props) => props.height}px;
   background-color: #101010;
