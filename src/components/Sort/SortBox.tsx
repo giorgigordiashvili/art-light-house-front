@@ -44,11 +44,11 @@ const SortBox = ({ onSortChange, dictionary, currentOrdering }: Props) => {
     } else if (currentOrdering === "price") {
       return dictionary.sortOption2; // Price: Ascending
     }
-    // Default to ascending
-    return dictionary.sortOption2;
+    // No default selection - return null when no ordering is applied
+    return null;
   };
 
-  const [selected, setSelected] = useState(initializeSelected());
+  const [selected, setSelected] = useState<string | null>(initializeSelected());
 
   // Update selected when currentOrdering changes (e.g., from URL)
   useEffect(() => {
@@ -57,7 +57,8 @@ const SortBox = ({ onSortChange, dictionary, currentOrdering }: Props) => {
     } else if (currentOrdering === "price") {
       setSelected(dictionary.sortOption2);
     } else {
-      setSelected(dictionary.sortOption2);
+      // Clear selection when no ordering
+      setSelected(null);
     }
   }, [currentOrdering, dictionary.sortOption1, dictionary.sortOption2]);
 

@@ -29,6 +29,16 @@ const SortDropdown: React.FC<SortDropdownProps> = ({ dictionary }) => {
     setIsOpen((prev) => !prev);
   };
 
+  // Get the current selected text based on ordering
+  const getSelectedText = () => {
+    if (filters.ordering === "-price") {
+      return dictionary.sortOption1;
+    } else if (filters.ordering === "price") {
+      return dictionary.sortOption2;
+    }
+    return null;
+  };
+
   const handleSortChange = (sortType: string) => {
     setIsOpen(false);
 
@@ -48,7 +58,11 @@ const SortDropdown: React.FC<SortDropdownProps> = ({ dictionary }) => {
 
   return (
     <Wrapper>
-      <SortButton onClick={toggleDropdown} dictionary={dictionary} />
+      <SortButton
+        onClick={toggleDropdown}
+        dictionary={dictionary}
+        selectedText={getSelectedText()}
+      />
       {isOpen && (
         <DropdownWrapper>
           <SortBox

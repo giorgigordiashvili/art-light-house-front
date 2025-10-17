@@ -14,7 +14,6 @@ const Button = styled.button`
   font-weight: 500;
   cursor: pointer;
   transition: background-color 0.2s ease;
-  width: 138px;
   height: 52px;
 
   &:hover {
@@ -50,6 +49,7 @@ interface SortButtonProps {
   iconSrc?: string;
   dictionary: any;
   iconAlt?: string;
+  selectedText?: string | null;
 }
 
 const SortButton: React.FC<SortButtonProps> = ({
@@ -57,11 +57,12 @@ const SortButton: React.FC<SortButtonProps> = ({
   onClick,
   iconSrc = "/assets/icons/Sort Icon.svg",
   iconAlt = "sort icon",
+  selectedText,
 }) => {
   return (
     <Button onClick={onClick}>
       {iconSrc && <SortIcon src={iconSrc} alt={iconAlt} />}
-      <Label>{dictionary.sort}</Label>
+      <Label>{selectedText || dictionary.sort}</Label>
     </Button>
   );
 };
