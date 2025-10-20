@@ -84,7 +84,8 @@ import Image from "next/image";
 import PlusButton from "./PlusButton";
 import CardText from "./CardText";
 import { ProductList } from "@/api/generated/interfaces";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
+import ProductHeartIcon from "@/components/ListProductCard/ProductHeartIcon";
 
 const useIsMobile = (breakpoint = 1080) => {
   const [isMobile, setIsMobile] = useState(false);
@@ -120,6 +121,7 @@ const StyledContainer = styled.div`
   }
 
   &:hover {
+    transform: translateY(-5px);
     &::before {
       content: "";
       position: absolute;
@@ -127,6 +129,9 @@ const StyledContainer = styled.div`
       padding: 1px;
       border-radius: 19px;
       background: linear-gradient(180deg, #f2c754 0%, rgba(242, 199, 84, 0) 100%);
+      mask:
+        linear-gradient(#fff 0 0) content-box,
+        linear-gradient(#fff 0 0);
       -webkit-mask:
         linear-gradient(#fff 0 0) content-box,
         linear-gradient(#fff 0 0);
@@ -170,44 +175,67 @@ const StyledActions = styled.div`
 const NewProductCard = ({ product }: { product: ProductList; dictionary: any }) => {
   const isMobile = useIsMobile();
   const router = useRouter();
+  const pathname = usePathname();
+  const locale = (pathname?.split("/")[1] || "ge").toLowerCase();
+
+  // Extract image URL from primary_image (same as LampaImage component in products page)
+  const imageUrl =
+    product.primary_image && typeof product.primary_image === "object"
+      ? (product.primary_image as any).image
+      : product.primary_image;
 
   // Check if we have a valid image URL
-  const hasValidImage =
-    product.primary_image &&
-    typeof product.primary_image === "string" &&
-    product.primary_image.trim() !== "";
+  const hasValidImage = imageUrl && typeof imageUrl === "string" && imageUrl.trim() !== "";
 
   const handleCardClick = (e: React.MouseEvent) => {
-    // Don't navigate if the click is on the plus button
     const target = e.target as HTMLElement;
     if (target.closest("[data-plus-button]")) {
       return;
     }
 
-    // Navigate to product detail page
-    router.push(`/products/${product.id}`);
+    // Check for Ctrl+click (Windows/Linux) or Cmd+click (Mac) or middle-click
+    if (e.ctrlKey || e.metaKey || e.button === 1) {
+      window.open(`/${locale}/products/${product.id}`, "_blank");
+      return;
+    }
+
+    router.push(`/${locale}/products/${product.id}`);
+  };
+
+  const handleMouseDown = (e: React.MouseEvent) => {
+    // Handle middle-click (mouse wheel click)
+    if (e.button === 1) {
+      const target = e.target as HTMLElement;
+      if (!target.closest("[data-plus-button]")) {
+        e.preventDefault(); // Prevent default middle-click behavior
+        window.open(`/${locale}/products/${product.id}`, "_blank");
+      }
+    }
   };
 
   return (
-    <StyledContainer onClick={handleCardClick}>
+    <StyledContainer onClick={handleCardClick} onMouseDown={handleMouseDown}>
       <StyledImageWrapper>
         {hasValidImage ? (
           <ZoomedImage
-            src={product.primary_image}
+            src={imageUrl}
             alt={product.title}
             width={isMobile ? 175 : 239}
             height={isMobile ? 188 : 257}
+            draggable="false"
           />
         ) : (
           <ZoomedImage
-            src={isMobile ? "/assets/desktopLampa.svg" : "/assets/desktopLampa.svg"}
+            src="/assets/desktopLampa.svg"
             alt="Default light"
             width={isMobile ? 175 : 239}
             height={isMobile ? 188 : 257}
+            draggable="false"
           />
         )}
       </StyledImageWrapper>
       <StyledActions>
+        <ProductHeartIcon productId={product.id} defaultIsFavorite={product.is_favorite} />
         <CardText name={product.title} price={`${product.price} ₾`} />
         <PlusButton product={product} />
       </StyledActions>

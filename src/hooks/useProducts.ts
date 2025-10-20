@@ -10,6 +10,7 @@ interface UseProductsOptions {
   inStock?: boolean;
   search?: string;
   ordering?: string;
+  skipInitialFetch?: boolean; // Add option to skip initial fetch
 }
 
 interface UseProductsResult {
@@ -119,12 +120,15 @@ export const useProducts = (options: UseProductsOptions = {}): UseProductsResult
   );
 
   useEffect(() => {
+    // Skip initial fetch if requested (for URL filter scenarios)
+    if (options.skipInitialFetch) return;
+
     // Initial fetch with current active filters (defaults to options)
     const timeoutId = setTimeout(() => {
       fetchProducts(1, activeFilters);
     }, 0);
     return () => clearTimeout(timeoutId);
-  }, [fetchProducts, activeFilters]);
+  }, [fetchProducts, activeFilters, options.skipInitialFetch]);
 
   return {
     products,

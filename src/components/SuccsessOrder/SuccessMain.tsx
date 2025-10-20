@@ -1,8 +1,12 @@
+"use client";
 import styled from "styled-components";
 import Products from "@/OrderDetail/Products";
 import SummaryBlock from "@/OrderDetail/SummaryBlock";
 import Address from "@/OrderDetail/Address";
 import Delivery from "@/OrderDetail/Delivery";
+import { useEffect, useState } from "react";
+import { ordersList } from "@/api/generated/api";
+import type { Order } from "@/api/generated/interfaces";
 
 const StyleContainer = styled.div`
   width: calc(100% - 148px);
@@ -21,7 +25,7 @@ const StyleContainer = styled.div`
   @media (max-width: 1080px) {
     width: calc(100% - 32px);
     padding: 16px;
-    align-items: flex-start;
+    /* align-items: flex-start; */
     justify-content: center;
   }
 `;
@@ -39,8 +43,8 @@ const Title = styled.p`
     font-size: 16px;
     font-weight: 400;
     margin-bottom: -5px;
-    margin-top: 4px;
-    margin: 0 auto;
+    margin-top: 50px;
+    /* margin: 0 auto; */
   }
 `;
 
@@ -58,7 +62,8 @@ const SectionTitle = styled.p`
 `;
 
 const ProductsWrapper = styled.div`
-  display: flex;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
   gap: 20px;
   flex-wrap: nowrap;
   width: 100%;
@@ -66,7 +71,8 @@ const ProductsWrapper = styled.div`
 
   @media (max-width: 1080px) {
     flex-wrap: wrap;
-    max-width: 532px;
+    /* max-width: 532px; */
+    grid-template-columns: 1fr;
   }
 `;
 const CheckIcon = styled.img`
@@ -87,12 +93,43 @@ const CheckIcon = styled.img`
 const Center = styled.div`
   @media (max-width: 1080px) {
     display: flex;
-    margin: 0 auto;
+    /* margin: 0 auto; */
     justify-content: center;
     flex-direction: column;
   }
 `;
 const Container = ({ dictionary }: { dictionary: any }) => {
+  const [latestOrder, setLatestOrder] = useState<Order | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchLatestOrder = async () => {
+      try {
+        setLoading(true);
+        const orders = await ordersList();
+        // Get the most recent order (first in the array, assuming sorted by date)
+        if (orders.length > 0) {
+          setLatestOrder(orders[0]);
+        }
+      } catch (error) {
+        console.error("Failed to fetch latest order:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchLatestOrder();
+  }, []);
+
+  if (loading) {
+    return (
+      <StyleContainer>
+        <CheckIcon src="/assets/icons/checkmob.svg" alt="Checkmark" />
+        <Title>Loading...</Title>
+      </StyleContainer>
+    );
+  }
+
   return (
     <StyleContainer>
       <CheckIcon src="/assets/icons/checkmob.svg" alt="Checkmark" />
@@ -102,14 +139,15 @@ const Container = ({ dictionary }: { dictionary: any }) => {
       <Center>
         <SectionTitle>{dictionary?.succsessOrder?.products}</SectionTitle>
         <ProductsWrapper>
-          <Products dictionary={dictionary} />
-          <Products dictionary={dictionary} />
+          {latestOrder?.items.map((item) => (
+            <Products key={item.id} dictionary={dictionary} orderItem={item} />
+          ))}
         </ProductsWrapper>
         <SectionTitle>{dictionary?.succsessOrder?.address}</SectionTitle>
-        <Address dictionary={dictionary} />
+        <Address dictionary={dictionary} address={latestOrder?.delivery_address_data} />
         <SectionTitle>{dictionary?.succsessOrder?.delivery}</SectionTitle>
-        <Delivery dictionary={dictionary} />
-        <SummaryBlock dictionary={dictionary} />
+        <Delivery dictionary={dictionary} order={latestOrder || undefined} />
+        <SummaryBlock dictionary={dictionary} order={latestOrder || undefined} />
       </Center>
     </StyleContainer>
   );

@@ -1,7 +1,7 @@
 "use client";
 import styled from "styled-components";
 import Image from "next/image";
-import { useState } from "react";
+import { useState, useRef } from "react";
 
 interface InputWithLabelProps {
   label: string;
@@ -60,6 +60,20 @@ const StyledInput = styled.input`
   &::placeholder {
     color: #777;
   }
+
+  /* Hide native date picker indicator for custom calendar icon */
+  &[type="date"]::-webkit-calendar-picker-indicator {
+    opacity: 0;
+    position: absolute;
+    right: 0;
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+  }
+
+  &[type="date"]::-moz-calendar-picker-indicator {
+    opacity: 0;
+  }
 `;
 
 const ToggleIcon = styled(Image)`
@@ -80,6 +94,9 @@ const InputWithLabel: React.FC<InputWithLabelProps> = ({
   isPasswordField = false,
 }: InputWithLabelProps) => {
   const [showPassword, setShowPassword] = useState(false);
+  const dateInputRef = useRef<HTMLInputElement>(null);
+
+  const isDateField = type === "date";
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (onChange && !readOnly) {
@@ -87,16 +104,34 @@ const InputWithLabel: React.FC<InputWithLabelProps> = ({
     }
   };
 
+  const handleIconClick = () => {
+    if (isPasswordField) {
+      setShowPassword((prev) => !prev);
+    } else if (isDateField && dateInputRef.current) {
+      // Trigger the date picker when calendar icon is clicked
+      try {
+        dateInputRef.current.showPicker?.();
+      } catch {
+        // Fallback: focus the input if showPicker is not supported
+        dateInputRef.current.focus();
+      }
+    }
+  };
+
   const effectiveType = isPasswordField ? (showPassword ? "text" : "password") : type;
   const toggleSrc = showPassword ? "/assets/icons/eye-off.png" : "/assets/eye.svg";
   const toggleAlt = showPassword ? "Hide password" : "Show password";
+
+  // Use white calendar icon for date fields
+  const displayIcon = isDateField ? "/assets/icons/calendar.png" : icon;
 
   return (
     <Wrapper $gap={gap}>
       <Label>{label}</Label>
       <InputWrapper>
-        {icon && <StyledIcon src={icon} alt="icon" width={24} height={24} />}
+        {displayIcon && <StyledIcon src={displayIcon} alt="icon" width={24} height={24} />}
         <StyledInput
+          ref={isDateField ? dateInputRef : undefined}
           placeholder={placeholder}
           value={value || ""}
           onChange={handleInputChange}
@@ -109,8 +144,18 @@ const InputWithLabel: React.FC<InputWithLabelProps> = ({
             alt={toggleAlt}
             width={20}
             height={20}
-            onClick={() => setShowPassword((prev) => !prev)}
+            onClick={handleIconClick}
             title={toggleAlt}
+          />
+        )}
+        {isDateField && (
+          <ToggleIcon
+            src="/assets/icons/calendar.png"
+            alt="calendar"
+            width={20}
+            height={20}
+            onClick={handleIconClick}
+            title="Select date"
           />
         )}
       </InputWrapper>

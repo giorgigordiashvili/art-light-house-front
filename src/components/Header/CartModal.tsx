@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import CartProduct from "./CartProduct";
 import PrimaryButton from "../Buttons/PrimaryButton";
 import SummaryPrice from "./SummaryPrice";
+import EmptyCartModal from "./EmptyCartModal";
 import { cartGet, cartRemoveItem, cartUpdateItem } from "@/api/generated/api";
 import type { Cart } from "@/api/generated/interfaces";
 import { useAuth } from "@/contexts/AuthContext";
@@ -15,11 +16,12 @@ type Props = {
   dictionary: any;
 };
 
-const StyledContainer = styled.div`
+const StyledContainer = styled.div<{ $isEmpty: boolean }>`
   width: 349px;
-  height: 415px;
+  height: ${({ $isEmpty }) => ($isEmpty ? "300px" : "415px")};
   display: flex;
   flex-direction: column;
+  /* justify-content: ${({ $isEmpty }) => ($isEmpty ? "center" : "space-between")}; */
   position: fixed;
   top: 99px;
   background-color: #1a1a1a96;
@@ -28,6 +30,7 @@ const StyledContainer = styled.div`
   border-radius: 17px;
   padding: 0;
   z-index: 1001;
+  padding-bottom: ${({ $isEmpty }) => ($isEmpty ? "0" : "16px")};
 
   @media (max-width: 1332px) {
     right: 20px;
@@ -103,6 +106,17 @@ const StyledButton = styled.div`
   }
 `;
 
+const StyledCartContent = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 100%;
+`;
+
+const StyledCardWrapper = styled.div``;
+
+const StyledButtonAndSummaryWrapper = styled.div``;
+
 const CartModal = ({ onClose, dictionary }: Props) => {
   const router = useRouter();
   const [cart, setCart] = useState<Cart | null>(null);
@@ -144,9 +158,28 @@ const CartModal = ({ onClose, dictionary }: Props) => {
     fetchCart();
   }, [isAuthenticated]);
 
-  const handleRedirect = () => {
+  const handleRedirect = (e?: React.MouseEvent) => {
+    if (e && (e.ctrlKey || e.metaKey)) {
+      // Ctrl+click or Cmd+click - open in new tab
+      const pathname = typeof window !== "undefined" ? window.location.pathname : "";
+      const locale = pathname.split("/")[1] || "ge";
+      window.open(`/${locale}/cart`, "_blank");
+      onClose();
+      return;
+    }
     router.push("/cart");
     onClose();
+  };
+
+  const handleRedirectMouseDown = (e: React.MouseEvent) => {
+    if (e.button === 1) {
+      // Middle mouse button
+      e.preventDefault();
+      const pathname = typeof window !== "undefined" ? window.location.pathname : "";
+      const locale = pathname.split("/")[1] || "ge";
+      window.open(`/${locale}/cart`, "_blank");
+      onClose();
+    }
   };
 
   const totalPrice = useMemo(() => {
@@ -161,6 +194,10 @@ const CartModal = ({ onClose, dictionary }: Props) => {
     const sum = cart.items.reduce((acc, it) => acc + (it.quantity || 0), 0);
     return sum;
   }, [cart]);
+
+  const isEmpty = useMemo(() => {
+    return !loading && (!cart?.items || cart.items.length === 0);
+  }, [loading, cart]);
 
   const handleIncrease = async (itemId: number, current: number) => {
     try {
@@ -223,44 +260,48 @@ const CartModal = ({ onClose, dictionary }: Props) => {
   return (
     <ModalLayoutWrapper>
       <ModalLayout>
-        <StyledContainer>
-          <StyledSpanContainer>
-            <StyledSpan>
-              {totalItems} {dictionary?.cart?.cartModal.itemCount}
-            </StyledSpan>
-          </StyledSpanContainer>
-          <ProductList>
-            {!loading && cart?.items?.length ? (
-              cart.items.map((it) => (
-                <ProductWrapper key={it.id}>
-                  <CartProduct
-                    dictionary={dictionary}
-                    title={it.product_details?.title}
-                    price={`${it.product_details?.price} ₾`}
-                    quantity={it.quantity || 1}
-                    onIncrease={() => handleIncrease(it.id, it.quantity || 1)}
-                    onDecrease={() => handleDecrease(it.id, it.quantity || 1)}
-                    onRemove={() => handleRemove(it.id)}
+        {isEmpty ? (
+          <EmptyCartModal dictionary={dictionary} />
+        ) : (
+          <StyledContainer $isEmpty={isEmpty}>
+            <StyledCartContent>
+              <StyledCardWrapper>
+                <StyledSpanContainer>
+                  <StyledSpan>
+                    {totalItems} {dictionary?.cart?.cartModal.itemCount}
+                  </StyledSpan>
+                </StyledSpanContainer>
+                <ProductList>
+                  {cart?.items?.map((it) => (
+                    <ProductWrapper key={it.id}>
+                      <CartProduct
+                        dictionary={dictionary}
+                        title={it.product_details?.title}
+                        price={`${it.product_details?.price} ₾`}
+                        quantity={it.quantity || 1}
+                        imageSrc={it.product_details?.primary_image}
+                        onIncrease={() => handleIncrease(it.id, it.quantity || 1)}
+                        onDecrease={() => handleDecrease(it.id, it.quantity || 1)}
+                        onRemove={() => handleRemove(it.id)}
+                      />
+                    </ProductWrapper>
+                  ))}
+                </ProductList>
+              </StyledCardWrapper>
+              <StyledButtonAndSummaryWrapper>
+                <SummaryPrice dictionary={dictionary} text={`${totalPrice}`} />
+                <StyledButton onClick={handleRedirect} onMouseDown={handleRedirectMouseDown}>
+                  <PrimaryButton
+                    text={dictionary?.cart?.cartModal.button}
+                    height="50px"
+                    width="317px"
+                    media="full"
                   />
-                </ProductWrapper>
-              ))
-            ) : (
-              <div style={{ color: "#8e8e8e", padding: "16px" }}>
-                {loading ? "იტვირთება..." : dictionary?.cart?.emptyCart?.subTitle}
-              </div>
-            )}
-          </ProductList>
-          <SummaryPrice dictionary={dictionary} text={`${totalPrice}`} />
-          <StyledButton>
-            <PrimaryButton
-              text={dictionary?.cart?.cartModal.button}
-              height="50px"
-              width="317px"
-              media="full"
-              onClick={handleRedirect}
-            />
-          </StyledButton>
-        </StyledContainer>
+                </StyledButton>
+              </StyledButtonAndSummaryWrapper>
+            </StyledCartContent>
+          </StyledContainer>
+        )}
       </ModalLayout>
     </ModalLayoutWrapper>
   );

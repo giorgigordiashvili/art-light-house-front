@@ -41,6 +41,7 @@ type Props = {
   dictionary?: any;
   onLocationSelect?: (address: string, coordinates?: { lat: number; lng: number }) => void;
   searchedAddress?: string;
+  location?: { lat: number; lng: number };
 };
 
 export default function GoogleMap({
@@ -48,9 +49,21 @@ export default function GoogleMap({
   dictionary,
   onLocationSelect,
   searchedAddress,
+  location,
 }: Props) {
-  const defaultPosition = { lat: 41.720542, lng: 44.764789 };
+  const defaultPosition2 = { lat: 41.703998, lng: 44.791769 };
   const [open, setOpen] = useState(false);
+
+  const isValidCoord = (p?: { lat: number; lng: number }) =>
+    p &&
+    typeof p.lat === "number" &&
+    typeof p.lng === "number" &&
+    isFinite(p.lat) &&
+    isFinite(p.lng);
+
+  const centerPosition = isValidCoord(location)
+    ? (location as { lat: number; lng: number })
+    : defaultPosition2;
 
   const handleMapClick = (event: MapMouseEvent) => {
     const lat = event.detail?.latLng?.lat;
@@ -88,7 +101,7 @@ export default function GoogleMap({
       <StyledMap $variant={variant}>
         <Map
           defaultZoom={17}
-          defaultCenter={defaultPosition}
+          defaultCenter={centerPosition}
           mapId={process.env.NEXT_PUBLIC_MAP_ID}
           gestureHandling="auto"
           disableDefaultUI={true}
@@ -100,11 +113,11 @@ export default function GoogleMap({
         >
           {variant !== 2 && (
             <>
-              <AdvancedMarker position={defaultPosition} onClick={() => setOpen(true)}>
+              <AdvancedMarker position={centerPosition} onClick={() => setOpen(true)}>
                 <CustomPin />
               </AdvancedMarker>
               {open && (
-                <InfoWindow position={defaultPosition} onCloseClick={() => setOpen(false)}>
+                <InfoWindow position={centerPosition} onCloseClick={() => setOpen(false)}>
                   <p>{dictionary?.googleMapClusterAddress || "ბახტრიონის N23"}</p>
                 </InfoWindow>
               )}

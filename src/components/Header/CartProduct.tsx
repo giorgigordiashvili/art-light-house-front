@@ -28,6 +28,7 @@ type Props = {
   title: string;
   price: string;
   quantity: number;
+  imageSrc?: string;
   onIncrease: () => void;
   onDecrease: () => void;
   onRemove: () => void;
@@ -38,6 +39,7 @@ const CartProduct = ({
   title,
   price,
   quantity,
+  imageSrc,
   onIncrease,
   onDecrease,
   onRemove,
@@ -47,7 +49,7 @@ const CartProduct = ({
       <StyledTrashButton onClick={onRemove}>
         <TrashIcon />
       </StyledTrashButton>
-      <ProductContent dictionary={dictionary} title={title} price={price} />
+      <ProductContent dictionary={dictionary} title={title} price={price} imageSrc={imageSrc} />
       <QuantitySelector quantity={quantity} onIncrease={onIncrease} onDecrease={onDecrease} />
     </StyledContainer>
   );

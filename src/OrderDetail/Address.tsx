@@ -1,5 +1,6 @@
 import styled from "styled-components";
 import Image from "next/image";
+import type { Address as AddressType } from "@/api/generated/interfaces";
 
 const AddressCard = styled.div`
   display: flex;
@@ -50,7 +51,7 @@ const Add = styled.span`
 `;
 
 interface AddressProps {
-  dictionary: {
+  dictionary?: {
     succsessOrder?: {
       cardTitle1?: string;
       cardDescription1?: string;
@@ -60,23 +61,53 @@ interface AddressProps {
       cardDescription1?: string;
     };
   };
+  address?: AddressType;
 }
 
-const Address = ({ dictionary }: AddressProps) => {
+const Address = ({ dictionary, address }: AddressProps) => {
+  // If no address provided, show placeholder
+  if (!address) {
+    return (
+      <AddressCard>
+        <IconWrapper>
+          <Image src={"/assets/addressIcon.svg"} alt="icon" width={24} height={24} />
+        </IconWrapper>
+        <InfoWrapper>
+          <Title>
+            {dictionary?.succsessOrder?.cardTitle1 || dictionary?.address?.cardTitle3 || "Work"}
+          </Title>
+          <Add>
+            {dictionary?.succsessOrder?.cardDescription1 ||
+              dictionary?.address?.cardDescription1 ||
+              "5 Petre Kavtaradze Street"}
+          </Add>
+        </InfoWrapper>
+      </AddressCard>
+    );
+  }
+
+  const getAddressTypeLabel = (type?: unknown) => {
+    const typeStr = type as string;
+    switch (typeStr) {
+      case "home":
+        return "Home";
+      case "work":
+        return "Work";
+      case "other":
+        return "Other";
+      default:
+        return "Address";
+    }
+  };
+
   return (
     <AddressCard>
       <IconWrapper>
         <Image src={"/assets/addressIcon.svg"} alt="icon" width={24} height={24} />
       </IconWrapper>
       <InfoWrapper>
-        <Title>
-          {dictionary?.succsessOrder?.cardTitle1 || dictionary?.address?.cardTitle3 || "Work"}
-        </Title>
-        <Add>
-          {dictionary?.succsessOrder?.cardDescription1 ||
-            dictionary?.address?.cardDescription1 ||
-            "5 Petre Kavtaradze Street"}
-        </Add>
+        <Title>{getAddressTypeLabel(address.address_type)}</Title>
+        <Add>{address.address_string}</Add>
       </InfoWrapper>
     </AddressCard>
   );

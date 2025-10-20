@@ -1,3 +1,5 @@
+"use client";
+import { useRouter, usePathname } from "next/navigation";
 import styled from "styled-components";
 
 const StyleBuyButton = styled.div`
@@ -34,8 +36,35 @@ type Props = {
 };
 
 const BuyButton = ({ onClick, dictionary }: Props & { dictionary: any }) => {
+  const router = useRouter();
+  const pathname = usePathname();
+  const locale = pathname.split("/")[1];
+
+  const handleBuy = (e?: React.MouseEvent) => {
+    if (onClick) {
+      onClick();
+    } else {
+      if (e && (e.ctrlKey || e.metaKey)) {
+        window.open(`/${locale}/checkout`, "_blank");
+      } else {
+        router.push(`/${locale}/checkout`);
+      }
+    }
+  };
+
+  const handleBuyMouseDown = (e: React.MouseEvent) => {
+    if (e.button === 1) {
+      e.preventDefault();
+      if (onClick) {
+        onClick();
+      } else {
+        window.open(`/${locale}/checkout`, "_blank");
+      }
+    }
+  };
+
   return (
-    <StyleBuyButton onClick={onClick}>
+    <StyleBuyButton onClick={handleBuy} onMouseDown={handleBuyMouseDown}>
       <ButtonText>{dictionary?.productDetails?.buy || "Buy"}</ButtonText>
     </StyleBuyButton>
   );

@@ -12,6 +12,9 @@ const StyledContainer = styled.div`
   @media (max-width: 1080px) {
     margin-top: 91px;
   }
+  @media (max-width: 522px) {
+    margin-top: 0;
+  }
 `;
 
 const StyledTitleAndActions = styled.div`
@@ -33,15 +36,15 @@ const StyledActions = styled.div`
   }
 `;
 
-const StyledCards = styled.div<{ isDragging: boolean }>`
+const StyledCards = styled.div<{ $isDragging: boolean }>`
   display: flex;
   gap: 20px;
-  margin-top: 39px;
+  padding-top: 39px;
   overflow-x: auto;
   overflow-y: hidden;
   scrollbar-width: none;
-  scroll-behavior: ${({ isDragging }) => (isDragging ? "auto" : "smooth")};
-  cursor: ${({ isDragging }) => (isDragging ? "grabbing" : "grab")};
+  scroll-behavior: ${({ $isDragging }) => ($isDragging ? "auto" : "smooth")};
+  cursor: ${({ $isDragging }) => ($isDragging ? "grabbing" : "grab")};
   user-select: none;
 
   &::-webkit-scrollbar {
@@ -50,7 +53,7 @@ const StyledCards = styled.div<{ isDragging: boolean }>`
 
   & > * {
     flex-shrink: 0;
-    pointer-events: ${({ isDragging }) => (isDragging ? "none" : "auto")};
+    pointer-events: ${({ $isDragging }) => ($isDragging ? "none" : "auto")};
   }
 
   &:active {
@@ -94,25 +97,36 @@ const NewProducts = ({ dictionary }: any) => {
   const { featuredProducts, loading, error } = useFeaturedProducts();
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const [isDragging, setIsDragging] = useState(false);
+  const [isPointerDown, setIsPointerDown] = useState(false);
   const [startX, setStartX] = useState(0);
   const [scrollLeft, setScrollLeft] = useState(0);
+  const DRAG_THRESHOLD = 6; // px before we consider it a drag
 
   // Add global mouse event listeners for better drag experience
   useEffect(() => {
     const handleGlobalMouseUp = () => {
       setIsDragging(false);
+      setIsPointerDown(false);
     };
 
     const handleGlobalMouseMove = (e: MouseEvent) => {
-      if (!isDragging || !scrollContainerRef.current) return;
+      if (!isPointerDown || !scrollContainerRef.current) return;
 
-      e.preventDefault();
       const x = e.pageX - scrollContainerRef.current.offsetLeft;
-      const walk = (x - startX) * 2; // Multiply by 2 for faster scrolling
-      scrollContainerRef.current.scrollLeft = scrollLeft - walk;
+      const dx = x - startX;
+
+      if (!isDragging && Math.abs(dx) > DRAG_THRESHOLD) {
+        setIsDragging(true);
+      }
+
+      if (isDragging) {
+        e.preventDefault();
+        const walk = dx * 2; // Multiply by 2 for faster scrolling
+        scrollContainerRef.current.scrollLeft = scrollLeft - walk;
+      }
     };
 
-    if (isDragging) {
+    if (isPointerDown) {
       document.addEventListener("mousemove", handleGlobalMouseMove);
       document.addEventListener("mouseup", handleGlobalMouseUp);
     }
@@ -121,40 +135,59 @@ const NewProducts = ({ dictionary }: any) => {
       document.removeEventListener("mousemove", handleGlobalMouseMove);
       document.removeEventListener("mouseup", handleGlobalMouseUp);
     };
-  }, [isDragging, startX, scrollLeft]);
+  }, [isPointerDown, isDragging, startX, scrollLeft]);
 
   const handleMouseDown = (e: React.MouseEvent) => {
     if (!scrollContainerRef.current) return;
 
-    setIsDragging(true);
+    // Don't initiate drag when interacting with plus button (or other interactive elements later)
+    const target = e.target as HTMLElement;
+    if (target.closest("[data-plus-button]")) {
+      return;
+    }
+
+    setIsPointerDown(true);
     setStartX(e.pageX - scrollContainerRef.current.offsetLeft);
     setScrollLeft(scrollContainerRef.current.scrollLeft);
-
-    // Prevent text selection and default drag behavior
-    e.preventDefault();
+    // Do not prevent default here; only when dragging actually starts
   };
 
   // Touch events for mobile drag scrolling
   const handleTouchStart = (e: React.TouchEvent) => {
     if (!scrollContainerRef.current) return;
 
-    setIsDragging(true);
+    const target = e.target as HTMLElement;
+    if (target.closest("[data-plus-button]")) {
+      return;
+    }
+
+    setIsPointerDown(true);
     const touch = e.touches[0];
     setStartX(touch.pageX - scrollContainerRef.current.offsetLeft);
     setScrollLeft(scrollContainerRef.current.scrollLeft);
   };
 
   const handleTouchMove = (e: React.TouchEvent) => {
-    if (!isDragging || !scrollContainerRef.current) return;
+    if (!isPointerDown || !scrollContainerRef.current) return;
 
     const touch = e.touches[0];
     const x = touch.pageX - scrollContainerRef.current.offsetLeft;
-    const walk = (x - startX) * 2;
-    scrollContainerRef.current.scrollLeft = scrollLeft - walk;
+    const dx = x - startX;
+
+    if (!isDragging && Math.abs(dx) > DRAG_THRESHOLD) {
+      setIsDragging(true);
+    }
+
+    if (isDragging) {
+      e.preventDefault();
+      // On mobile, use 1:1 ratio for natural scrolling feel
+      scrollContainerRef.current.scrollLeft = scrollLeft - dx;
+    }
   };
 
   const handleTouchEnd = () => {
     setIsDragging(false);
+    setIsPointerDown(false);
   };
 
   const handleMouseLeave = () => {
@@ -164,13 +197,13 @@ const NewProducts = ({ dictionary }: any) => {
 
   const scrollLeftArrow = () => {
     if (scrollContainerRef.current) {
-      scrollContainerRef.current.scrollBy({ left: -504, behavior: "smooth" });
+      scrollContainerRef.current.scrollBy({ left: -1310, behavior: "smooth" });
     }
   };
 
   const scrollRightArrow = () => {
     if (scrollContainerRef.current) {
-      scrollContainerRef.current.scrollBy({ left: 504, behavior: "smooth" });
+      scrollContainerRef.current.scrollBy({ left: 1310, behavior: "smooth" });
     }
   };
 
@@ -218,7 +251,7 @@ const NewProducts = ({ dictionary }: any) => {
         </StyledTitleAndActions>
         <StyledCards
           ref={scrollContainerRef}
-          isDragging={isDragging}
+          $isDragging={isDragging}
           onMouseDown={handleMouseDown}
           onMouseLeave={handleMouseLeave}
           onTouchStart={handleTouchStart}

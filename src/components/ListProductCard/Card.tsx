@@ -3,7 +3,7 @@ import styled from "styled-components";
 import AddButton from "./AddButton";
 import LampaImage from "./Image";
 import ProductText from "./Text";
-import HeartIcon from "./HeartIcon";
+import ProductHeartIcon from "./ProductHeartIcon";
 import { ProductList } from "@/api/generated/interfaces";
 import { useRouter } from "next/navigation";
 
@@ -76,12 +76,6 @@ const ClickableArea = styled.div`
   flex-direction: column;
 `;
 
-// const StyledHeartIcon = styled.div`
-//   position: absolute;
-//   right: 20px;
-//   top: 20px;
-// `;
-
 function Card({ product, dictionary }: { product: ProductList; dictionary: any }) {
   const router = useRouter();
 
@@ -92,14 +86,31 @@ function Card({ product, dictionary }: { product: ProductList; dictionary: any }
       return;
     }
 
+    // Check for Ctrl+click (Windows/Linux) or Cmd+click (Mac) or middle-click
+    if (e.ctrlKey || e.metaKey || e.button === 1) {
+      window.open(`/products/${product.id}`, "_blank");
+      return;
+    }
+
     // Navigate to product detail page
     router.push(`/products/${product.id}`);
   };
 
+  const handleMouseDown = (e: React.MouseEvent) => {
+    // Handle middle-click (mouse wheel click)
+    if (e.button === 1) {
+      const target = e.target as HTMLElement;
+      if (!target.closest("[data-add-button]") && !target.closest("[data-heart-button]")) {
+        e.preventDefault(); // Prevent default middle-click behavior
+        window.open(`/products/${product.id}`, "_blank");
+      }
+    }
+  };
+
   return (
-    <StyledRectangle onClick={handleCardClick}>
+    <StyledRectangle onClick={handleCardClick} onMouseDown={handleMouseDown}>
       <ClickableArea>
-        <HeartIcon productId={product.id} defaultIsFavorite={product.is_favorite} />
+        <ProductHeartIcon productId={product.id} defaultIsFavorite={product.is_favorite} />
         <LampaImage product={product} />
         <ProductText product={product} />
         <AddButton product={product} dictionary={dictionary} />

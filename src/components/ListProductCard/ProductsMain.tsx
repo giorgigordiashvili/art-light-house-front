@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import FilterSidebar from "@/components/FilterSidebar/FilterSidebar";
 import CardGrid from "@/components/ListProductCard/CardGrid";
 import styled from "styled-components";
@@ -10,6 +10,7 @@ import MobileFilterDropdown from "../FilterDropdown/MobileFilterDropdown";
 import PaginationWithArrows from "@/components/PagesButton/PaginationWithArrows";
 import { useProducts } from "@/hooks/useProducts";
 import { useFilterContext } from "@/contexts/FilterContext";
+import { useRouter, usePathname } from "next/navigation";
 
 const StyledComponent = styled.div`
   background: black;
@@ -27,12 +28,28 @@ const PageTitle = styled.h1`
   line-height: 33.8px;
   color: white;
   margin-top: 167px;
-  margin-bottom: 54px;
+  margin-bottom: 30px;
 
   @media (max-width: 1080px) {
     font-size: 34px;
     line-height: 24px;
     margin-bottom: 47px;
+  }
+`;
+
+const ResultsTitle = styled.h2`
+  position: sticky;
+  z-index: 2;
+  font-family: "Helvetica";
+  font-weight: 400;
+  font-size: 18px;
+  line-height: 24px;
+  color: #ffffff90;
+
+  @media (max-width: 1080px) {
+    font-size: 16px;
+    margin-top: -10px;
+    margin-bottom: 32px;
   }
 `;
 
@@ -72,12 +89,14 @@ const PaginationWrapper = styled.div`
   display: flex;
   justify-content: center;
   margin-top: 70px;
-  margin-bottom: 183px;
 `;
 
 function ProductsMain({ dictionary }: any) {
   const [isMobileFilterDropdownVisible, setMobileFilterDropdownVisible] = useState(false);
-  const { setOnFilterChange } = useFilterContext();
+  const { setOnFilterChange, filters, isInitialized } = useFilterContext();
+  const router = useRouter();
+  const pathname = usePathname();
+  const hasAppliedInitialFilters = useRef(false);
 
   // Fetch products without automatic filtering - filtering is manual now
   const {
@@ -90,16 +109,27 @@ function ProductsMain({ dictionary }: any) {
     hasPreviousPage,
     fetchPage,
     applyFilters,
-  } = useProducts();
+  } = useProducts({ skipInitialFetch: true }); // Skip initial fetch to wait for URL filters
+
+  const isReady = !loading && !error;
+  const zeroResultsText = dictionary?.results?.zero ?? "0 products found";
+  const countResultsTemplate = dictionary?.results?.count ?? "{count} products found";
+  const resultsTitleMessage = isReady
+    ? products.length === 0
+      ? zeroResultsText
+      : countResultsTemplate.replace("{count}", products.length.toString())
+    : null;
 
   // Register immediate filter callback
   useEffect(() => {
     const handleImmediateFilter = async (filters: any) => {
+      // Reset to page 1 when filters change
       await applyFilters({
         categoryIds: filters.selectedCategoryIds,
         minPrice: filters.minPrice,
         maxPrice: filters.maxPrice,
         attributes: filters.selectedAttributes,
+        ordering: filters.ordering,
       });
     };
 
@@ -111,11 +141,59 @@ function ProductsMain({ dictionary }: any) {
     };
   }, [applyFilters, setOnFilterChange]);
 
+  // Apply initial filters from URL when ready, or fetch products if no filters
+  useEffect(() => {
+    if (!isInitialized || hasAppliedInitialFilters.current) return;
+
+    const hasFilters =
+      filters.selectedCategoryIds.length > 0 ||
+      filters.minPrice ||
+      filters.maxPrice ||
+      filters.selectedAttributes ||
+      filters.ordering;
+
+    if (hasFilters) {
+      // Apply URL filters
+      applyFilters({
+        categoryIds: filters.selectedCategoryIds,
+        minPrice: filters.minPrice,
+        maxPrice: filters.maxPrice,
+        attributes: filters.selectedAttributes,
+        ordering: filters.ordering,
+      });
+    } else {
+      // No filters from URL, fetch all products
+      applyFilters({});
+    }
+
+    hasAppliedInitialFilters.current = true;
+  }, [isInitialized, filters, applyFilters]);
+
+  // Handle page synchronization from URL (initial load and pagination changes)
+  useEffect(() => {
+    if (!isInitialized) return;
+
+    // Use direct URL parsing to avoid SSR issues with useSearchParams
+    const urlParams = new URLSearchParams(window.location.search);
+    const pageFromUrl = urlParams.get("page") ? parseInt(urlParams.get("page")!, 10) : 1;
+
+    // Sync page if URL page differs from current page state
+    if (pageFromUrl !== currentPage) {
+      fetchPage(pageFromUrl);
+    }
+  }, [isInitialized, currentPage, fetchPage]);
   const toggleMobileFilterDropdown = () => {
     setMobileFilterDropdownVisible(!isMobileFilterDropdownVisible);
   };
 
   const handlePageChange = async (page: number) => {
+    // Update URL first to ensure state consistency
+    const current = new URLSearchParams(window.location.search);
+    current.set("page", page.toString());
+    const newUrl = `${pathname}?${current.toString()}`;
+    router.replace(newUrl, { scroll: false });
+
+    // Then fetch the page data
     await fetchPage(page);
   };
 
@@ -163,6 +241,7 @@ function ProductsMain({ dictionary }: any) {
     <StyledComponent>
       <Container>
         <PageTitle>{dictionary.title}</PageTitle>
+        {resultsTitleMessage && <ResultsTitle>{resultsTitleMessage}</ResultsTitle>}
         <SortWrapper>
           <OnMobile>
             <FilterButton onClick={toggleMobileFilterDropdown} dictionary={dictionary} />

@@ -161,6 +161,10 @@
       "GitHub": "GitHub"
     }
   },
+  "notFound": {
+    "message": "the page has not been found",
+    "button": "Back to main page"
+  },
   "products": {
     "title": "Products",
     "addToCartAlt": "Add to cart",
@@ -171,6 +175,10 @@
     "sortOption4": "Name: Z-A",
     "placeholder1": "From",
     "placeholder2": "To",
+    "results": {
+      "zero": "0 products found",
+      "count": "{count} products found"
+    },
     "filter": {
       "title": "Filter",
       "subTitle1": "Category",
@@ -240,7 +248,14 @@
     "serviceCommision": "Service commission",
     "button1": "Change",
     "button2": "Pay",
-    "price": "499,99 ₾"
+    "price": "499,99 ₾",
+    "changeButton": "Change",
+    "selectAddress": "Select Address",
+    "noAddresses": "No addresses found",
+    "defaultAddress": "Default",
+    "addressTypeWork": "Work",
+    "addressTypeHome": "Home",
+    "addressTypeOther": "Other"
   },
   "succsessOrder": {
     "title": "Order successfully placed",
@@ -286,7 +301,8 @@
     "placeholder1": "Street and number",
     "placeholder2": "E.g. Entrance 2, Floor 4, Apartment 17",
     "button1": "Cancel",
-    "button2": "Save"
+    "button2": "Save",
+    "button3": "default location"
   },
   "profile": {
     "title": "My Profile",
@@ -324,6 +340,33 @@
       "changeSuccess": "Password changed successfully!",
       "changeFailed": "Failed to change password. Please try again."
     }
+  },
+  "paymentMethods": {
+    "title": "Payment Methods",
+    "detailBar1": "My details",
+    "detailBar2": "My addresses",
+    "detailBar3": "My orders",
+    "detailBar4": "Payment methods",
+    "detailBar5": "Settings",
+    "detailBar6": "Logout",
+    "paymentBarTitle": "Payment Methods",
+    "cardTitle1": "Add New Card",
+    "cardTitle2": "Card",
+    "modalText1": "Edit",
+    "modalText2": "Delete",
+    "modalTitle": "Add Card",
+    "cardTypeLabel": "Select Card Type",
+    "cardTypeVisa": "Visa",
+    "cardTypeMastercard": "Mastercard",
+    "cardTypeAmex": "American Express",
+    "inputTitle1": "Card Number",
+    "inputTitle2": "CVV Code",
+    "placeholder1": "•••• •••• •••• ••••",
+    "placeholder2": "•••",
+    "button1": "Cancel",
+    "button2": "Save",
+    "cardNumberError": "Card number must be 12 digits",
+    "cvvError": "CVV must be 4 digits"
   },
   "orders": {
     "title": "My orders",
@@ -397,5 +440,63 @@
     "detailBar4": "Payment methods",
     "detailBar5": "Settings",
     "detailBar6": "Logout"
+  },
+  "metadata": {
+    "main": {
+      "title": "Main Page - Art Lighthouse",
+      "subTitle": "Learn more about our company and values."
+    },
+    "products": {
+      "title": "Products - Art Lighthouse",
+      "subTitle": "Browse our complete collection of products."
+    },
+    "cart": {
+      "title": "Cart - Art Lighthouse",
+      "subTitle": "Manage your shopping cart."
+    },
+    "favorites": {
+      "title": "Favorites - Art Lighthouse",
+      "subTitle": "View your saved products."
+    },
+    "profile": {
+      "title": "Profile - Art Lighthouse",
+      "subTitle": "Manage your profile information."
+    },
+    "details": {
+      "title": "My Details - Art Lighthouse",
+      "subTitle": "Manage your personal details."
+    },
+    "address": {
+      "title": "Addresses - Art Lighthouse",
+      "subTitle": "Manage your delivery addresses."
+    },
+    "paymentMethods": {
+      "title": "Payment Methods - Art Lighthouse",
+      "subTitle": "Manage your payment cards."
+    },
+    "orders": {
+      "title": "My Orders - Art Lighthouse",
+      "subTitle": "View your order history."
+    },
+    "orderDetail": {
+      "title": "Order Details - Art Lighthouse",
+      "subTitle": "View complete order information."
+    },
+    "settings": {
+      "title": "Settings - Art Lighthouse",
+      "subTitle": "Manage your account settings."
+    },
+    "checkout": {
+      "title": "Checkout - Art Lighthouse",
+      "subTitle": "Complete your order."
+    },
+    "contact": {
+      "title": "Contact - Art Lighthouse",
+      "subTitle": "Get in touch with us for any questions."
+    },
+    "success": {
+      "title": "Order Success - Art Lighthouse",
+      "subTitle": "Your order has been completed successfully."
+    }
   }
 }

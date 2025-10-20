@@ -1,9 +1,11 @@
+"use client";
 import React from "react";
 import styled from "styled-components";
 import PrimaryButton from "../Buttons/PrimaryButton";
 import CartTitle from "../Cart/CartTitle";
 import CartSubTitle from "../Cart/CartSubTitle";
 import CartImage from "../Cart/CartImage";
+import { usePathname, useRouter } from "next/navigation";
 
 const StyledContainer = styled.div`
   display: flex;
@@ -45,6 +47,10 @@ const StyledButton = styled.div`
 `;
 
 const EmptyFavoritesCard = ({ dictionary }: any) => {
+  const router = useRouter();
+  const pathname = usePathname();
+  const seg = (pathname?.split("/")[1] || "").toLowerCase();
+  const locale = seg === "en" ? "en" : "ge";
   return (
     <StyledContainer>
       <StyledContent>
@@ -66,6 +72,7 @@ const EmptyFavoritesCard = ({ dictionary }: any) => {
             width="205px"
             height="55px"
             media="no"
+            onClick={() => router.push(`/${locale}/products`)}
           />
         </StyledButton>
       </StyledContent>

@@ -7,6 +7,7 @@ import CancelButton from "@/ProfileButton/Cancel";
 import PlaceSelector from "./PlaceSelector";
 import ModalTitle from "./ModalTitle";
 import GoogleMap from "@/components/Contact/GoogleMap";
+import ToggleDefaultButton from "@/components/Buttons/ToggleDefaultButton";
 import { AddressData } from "@/types";
 import { addressCreate, addressUpdate } from "@/api/generated/api";
 import { AddressRequest, PatchedAddressUpdateRequest } from "@/api/generated/interfaces";
@@ -24,7 +25,7 @@ const StyledContainer = styled.div`
     border-radius: 0;
     border-top-left-radius: 20px;
     border-top-right-radius: 20px;
-    padding: 20px 16px 63px 16px;
+    padding: 20px 16px 15px 16px;
   }
 `;
 
@@ -69,6 +70,7 @@ const AddressModal = ({ onClose, onSave, initialData, dictionary }: Props) => {
       ? { lat: parseFloat(initialData.latitude), lng: parseFloat(initialData.longitude) }
       : null
   );
+  const [isDefault, setIsDefault] = useState(initialData?.is_default || false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -121,7 +123,7 @@ const AddressModal = ({ onClose, onSave, initialData, dictionary }: Props) => {
           extra_details: additionalInfo || undefined,
           latitude: roundedLat,
           longitude: roundedLng,
-          is_default: initialData.is_default || false,
+          is_default: isDefault,
         };
 
         console.log("📝 Updating address with data:", {
@@ -144,7 +146,7 @@ const AddressModal = ({ onClose, onSave, initialData, dictionary }: Props) => {
           extra_details: additionalInfo || undefined,
           latitude: roundedLat,
           longitude: roundedLng,
-          is_default: false, // You can make this configurable if needed
+          is_default: isDefault,
         };
 
         console.log("📤 Creating address with data:", {
@@ -216,7 +218,7 @@ const AddressModal = ({ onClose, onSave, initialData, dictionary }: Props) => {
             }
           }}
         />
-        {coordinates && (
+        {/* {coordinates && (
           <div
             style={{
               marginTop: "8px",
@@ -229,14 +231,10 @@ const AddressModal = ({ onClose, onSave, initialData, dictionary }: Props) => {
           >
             📍 Coordinates: {coordinates.lat.toFixed(6)}, {coordinates.lng.toFixed(6)}
           </div>
-        )}
+        )} */}
       </StyledMap>
-      {error && (
-        <div style={{ color: "#ff4444", fontSize: "14px", marginTop: "10px", textAlign: "center" }}>
-          {error}
-        </div>
-      )}
       <StyledButton>
+        <ToggleDefaultButton dictionary={dictionary} isActive={isDefault} onToggle={setIsDefault} />
         <CancelButton onClick={onClose} dictionary={dictionary} disabled={isLoading} />
         <SaveButton
           onSave={handleSave}
@@ -245,6 +243,22 @@ const AddressModal = ({ onClose, onSave, initialData, dictionary }: Props) => {
           isLoading={isLoading}
         />
       </StyledButton>
+      {error && (
+        <div
+          style={{
+            color: "#ff4444",
+            fontSize: "14px",
+            marginTop: "20px",
+            textAlign: "center",
+            position: "absolute",
+            left: "59%",
+            top: "28px",
+            maxWidth: "120px",
+          }}
+        >
+          {error}
+        </div>
+      )}
     </StyledContainer>
   );
 };

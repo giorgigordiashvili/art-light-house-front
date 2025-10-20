@@ -33,8 +33,13 @@ const UserMenuItem = ({ text, icon, color, route, onClick }: Props) => {
   const router = useRouter();
   const textcolor = color === "white" ? "white" : color === "red" ? "#FF4545" : undefined;
 
-  const handleClick = () => {
+  const handleClick = (e: React.MouseEvent) => {
     if (route) {
+      // Check for Ctrl+click (Windows/Linux) or Cmd+click (Mac) or middle-click
+      if (e.ctrlKey || e.metaKey || e.button === 1) {
+        window.open(route, "_blank");
+        return;
+      }
       router.push(route);
     }
     if (onClick) {
@@ -42,8 +47,16 @@ const UserMenuItem = ({ text, icon, color, route, onClick }: Props) => {
     }
   };
 
+  const handleMouseDown = (e: React.MouseEvent) => {
+    // Handle middle-click (mouse wheel click) only for routes
+    if (e.button === 1 && route) {
+      e.preventDefault(); // Prevent default middle-click behavior
+      window.open(route, "_blank");
+    }
+  };
+
   return (
-    <StyledContainer textcolor={textcolor} onClick={handleClick}>
+    <StyledContainer textcolor={textcolor} onClick={handleClick} onMouseDown={handleMouseDown}>
       <Image src={icon} alt="menu icon" width={24} height={24} />
       <p>{text}</p>
     </StyledContainer>

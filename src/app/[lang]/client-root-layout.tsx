@@ -6,6 +6,7 @@ import StyledComponentsRegistry from "../../../lib/registry";
 import "../globals.css";
 import { usePathname } from "next/navigation";
 import { AuthProvider } from "@/contexts/AuthContext";
+import { AuthModalProvider } from "@/contexts/AuthModalContext";
 import { ReactNode, useEffect } from "react";
 import { Dictionary } from "@/config/get-dictionary";
 
@@ -38,11 +39,13 @@ export default function ClientRootLayout({ children, dictionary }: ClientRootLay
 
   return (
     <AuthProvider>
-      <StyledComponentsRegistry>
-        {!isAdminRoute && <Header header={dictionary.header} dictionary={dictionary} />}
-        {children}
-        {!isAdminRoute && <Footer footer={dictionary.footer} />}
-      </StyledComponentsRegistry>
+      <AuthModalProvider>
+        <StyledComponentsRegistry>
+          {!isAdminRoute && <Header header={dictionary.header} dictionary={dictionary} />}
+          {children}
+          {!isAdminRoute && <Footer footer={dictionary.footer} />}
+        </StyledComponentsRegistry>
+      </AuthModalProvider>
     </AuthProvider>
   );
 }

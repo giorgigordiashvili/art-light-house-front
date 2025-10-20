@@ -17,6 +17,9 @@ import type {
   ResendVerificationCodeRequest,
   PasswordResetConfirmRequest,
   EmailVerificationRequest,
+  Order,
+  OrderCreateRequest,
+  OrderCreate,
   ProductList,
   ProductDetail,
   ProductImage,
@@ -124,6 +127,66 @@ export async function resetPassword(
 
 export async function verifyEmail(data: EmailVerificationRequest): Promise<Record<string, any>> {
   const response = await axios.post(`/api/auth/verify-email/`, data);
+  return response.data;
+}
+
+export async function ordersList(): Promise<Order[]> {
+  const response = await axios.get(`/api/orders/`);
+  return response.data;
+}
+
+export async function ordersCreate(data: OrderCreateRequest): Promise<OrderCreate> {
+  const response = await axios.post(`/api/orders/`, data);
+  return response.data;
+}
+
+export async function ordersRetrieve(id: string): Promise<Order> {
+  const response = await axios.get(`/api/orders/${id}/`);
+  return response.data;
+}
+
+export async function ordersPaymentHistoryRetrieve(orderId: string): Promise<any> {
+  const response = await axios.get(`/api/orders/${orderId}/payment-history/`);
+  return response.data;
+}
+
+export async function ordersSimulatePaymentCreate(orderId: string): Promise<any> {
+  const response = await axios.post(`/api/orders/${orderId}/simulate-payment/`);
+  return response.data;
+}
+
+export async function ordersStatusHistoryRetrieve(orderId: string): Promise<any> {
+  const response = await axios.get(`/api/orders/${orderId}/status-history/`);
+  return response.data;
+}
+
+export async function ordersAdminOrdersList(): Promise<Order[]> {
+  const response = await axios.get(`/api/orders/admin/orders/`);
+  return response.data;
+}
+
+export async function ordersAdminOrdersRetrieve(orderId: string): Promise<Order> {
+  const response = await axios.get(`/api/orders/admin/orders/${orderId}/`);
+  return response.data;
+}
+
+export async function ordersAdminOrdersPaymentPartialUpdate(orderId: string): Promise<any> {
+  const response = await axios.patch(`/api/orders/admin/orders/${orderId}/payment/`);
+  return response.data;
+}
+
+export async function ordersAdminOrdersStatusPartialUpdate(orderId: string): Promise<any> {
+  const response = await axios.patch(`/api/orders/admin/orders/${orderId}/status/`);
+  return response.data;
+}
+
+export async function ordersAdminStatisticsRetrieve(): Promise<any> {
+  const response = await axios.get(`/api/orders/admin/statistics/`);
+  return response.data;
+}
+
+export async function ordersNumberRetrieve(orderNumber: string): Promise<Order> {
+  const response = await axios.get(`/api/orders/number/${orderNumber}/`);
   return response.data;
 }
 

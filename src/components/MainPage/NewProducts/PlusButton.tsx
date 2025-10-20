@@ -1,7 +1,9 @@
 import React from "react";
 import styled from "styled-components";
 import Image from "next/image";
-import { ProductList } from "@/api/generated/interfaces";
+import { ProductList, AddToCartRequest } from "@/api/generated/interfaces";
+import { cartAddItem } from "@/api/generated/api";
+import { useAuthModal } from "@/contexts/AuthModalContext";
 
 const StyledButton = styled.button`
   width: 55px;
@@ -25,16 +27,39 @@ const StyledButton = styled.button`
 `;
 
 const PlusButton = ({ product }: { product?: ProductList }) => {
-  const handleClick = (e: React.MouseEvent) => {
-    e.stopPropagation(); // Prevent card click navigation
-    if (product) {
-      console.log("🛒 Adding featured product to cart:", product);
-      // Add to cart logic here
+  const { openAuthModal } = useAuthModal();
+
+  const handleClick = async (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (!product) return;
+
+    // Check if user is authenticated
+    const hasToken = typeof window !== "undefined" && !!localStorage.getItem("auth_access_token");
+    if (!hasToken) {
+      // User is not authenticated - open auth modal instead
+      openAuthModal();
+      return;
+    }
+
+    try {
+      const payload: AddToCartRequest = { product_id: product.id, quantity: 1 };
+      const cart = await cartAddItem(payload);
+      try {
+        const count = Array.isArray(cart?.items)
+          ? cart.items.reduce((acc: number, it: any) => acc + (it.quantity || 0), 0)
+          : 0;
+        if (typeof window !== "undefined") {
+          window.dispatchEvent(new CustomEvent("cartUpdated", { detail: { count, cart } }));
+        }
+      } catch {}
+    } catch (error) {
+      console.error("❌ Failed to add to cart", error);
     }
   };
 
   return (
-    <StyledButton onClick={handleClick} data-plus-button="true">
+    <StyledButton type="button" onClick={handleClick} data-plus-button="true">
       <Image src={"/assets/BlackPlus.svg"} width={28} height={28} alt="plus-icon" />
     </StyledButton>
   );

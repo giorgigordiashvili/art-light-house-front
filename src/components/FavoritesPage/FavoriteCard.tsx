@@ -18,6 +18,7 @@ type Props = {
   onIncrease?: () => void;
   onDecrease?: () => void;
   onRemove?: () => void;
+  onDetails?: () => void;
 };
 
 const StyledContainer = styled.div.withConfig({
@@ -27,6 +28,7 @@ const StyledContainer = styled.div.withConfig({
   width: 100%;
   height: 160px;
   display: flex;
+  justify-content: space-between;
   align-items: center;
   gap: ${({ cardType }) => (cardType === "cart" ? "130px" : "20px")};
   background-color: #1a1a1a96;
@@ -101,6 +103,10 @@ const StyledText = styled.div`
   gap: 17px;
   min-width: 197px;
 
+  @media (max-width: 1128px) {
+    min-width: 140px;
+  }
+
   @media (max-width: 1220px) {
     max-width: 140px;
   }
@@ -140,6 +146,7 @@ const FavoriteCard = ({
   onIncrease,
   onDecrease,
   onRemove,
+  onDetails,
 }: Props) => {
   const [isMobile, setIsMobile] = useState(false);
 
@@ -154,11 +161,23 @@ const FavoriteCard = ({
     return () => window.removeEventListener("resize", checkMobile);
   }, []);
 
+  const getImageSrc = () => {
+    if (!imageSrc) return "/assets/ProductImageContainer.svg";
+
+    // Handle if primary_image is an object with 'image' property
+    if (typeof imageSrc === "object" && imageSrc !== null) {
+      return (imageSrc as any).image || "/assets/ProductImageContainer.svg";
+    }
+
+    // Handle if primary_image is a string
+    return imageSrc;
+  };
+
   return (
     <StyledContainer cardType={card}>
       <StyledContent cardType={card}>
         <Image
-          src={imageSrc || "/assets/ProductImageContainer.svg"}
+          src={getImageSrc()}
           width={120}
           height={120}
           alt={dictionary?.cart?.favorites?.imageAlt || "პროდუქტის სურათი"}
@@ -179,7 +198,10 @@ const FavoriteCard = ({
         {card === "favorite" ? (
           <>
             {isMobile ? (
-              <CompactButton text={dictionary?.cart?.favorites?.button || "დეტალურად"} />
+              <CompactButton
+                text={dictionary?.cart?.favorites?.button || "დეტალურად"}
+                onClick={onDetails}
+              />
             ) : (
               <PrimaryButton
                 height="55px"
@@ -187,6 +209,7 @@ const FavoriteCard = ({
                 text={dictionary?.cart?.favorites?.button || "დეტალურად"}
                 media="no"
                 card={true}
+                onClick={onDetails}
               />
             )}
             <StyledRemoveIconWrapper cardType={card} onClick={onRemove}>

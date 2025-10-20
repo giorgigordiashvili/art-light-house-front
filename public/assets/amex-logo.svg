@@ -1,0 +1,13 @@
+<svg width="48" height="32" viewBox="0 0 48 32" xmlns="http://www.w3.org/2000/svg">
+	<!-- Blue rounded background -->
+	<rect width="48" height="32" rx="5" fill="#0078C7"/>
+
+	<!-- Inner white rounded border (custom, not official) -->
+	<rect x="10.5" y="2.5" width="27" height="27" rx="4" fill="none" stroke="#FFFFFF" stroke-width="2"/>
+
+	<!-- Stacked AM / EX monogram (custom) -->
+	<g fill="#FFFFFF" font-family="Helvetica, Arial, sans-serif" font-weight="800">
+		<text x="14" y="15" font-size="10" letter-spacing="0.5">AM</text>
+		<text x="22" y="25" font-size="10" letter-spacing="0.5">EX</text>
+	</g>
+</svg>

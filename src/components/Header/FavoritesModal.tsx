@@ -4,22 +4,23 @@ import styled from "styled-components";
 import { useRouter } from "next/navigation";
 import ProductContent from "./ProductContent";
 import PrimaryButton from "../Buttons/PrimaryButton";
-import { favoritesList } from "@/api/generated/api";
+import { favoritesList, favoritesRemove } from "@/api/generated/api";
 import type { Favorite } from "@/api/generated/interfaces";
 import { useAuth } from "@/contexts/AuthContext";
 import Image from "next/image";
+import TrashIcon from "./TrashIcon";
 
 type Props = {
   onClose: () => void;
   dictionary: any;
 };
 
-const StyledContainer = styled.div`
+const StyledContainer = styled.div<{ $isEmpty: boolean }>`
   width: 349px;
-  height: 415px;
+  height: ${({ $isEmpty }) => ($isEmpty ? "300px" : "415px")};
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
+  justify-content: ${({ $isEmpty }) => ($isEmpty ? "center" : "space-between")};
   position: fixed;
   top: 99px;
   background-color: #1a1a1a96;
@@ -85,6 +86,10 @@ const ProductList = styled.div`
   max-height: 242px;
   box-sizing: border-box;
   scrollbar-width: none;
+
+  @media (max-width: 1080px) {
+    margin-inline: 12px;
+  }
 `;
 
 const ProductWrapper = styled.div`
@@ -95,6 +100,7 @@ const ProductWrapper = styled.div`
   border: 1px solid #ffffff12;
   backdrop-filter: blur(114px);
   flex-shrink: 0;
+  position: relative;
   @media (max-width: 1080px) {
     width: 100%;
     padding-inline: 12px;
@@ -118,6 +124,14 @@ const StyledDivider = styled.div`
   display: flex;
   justify-content: space-between;
   flex-direction: column;
+`;
+
+const StyledTrashButton = styled.div`
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  cursor: pointer;
+  z-index: 10;
 `;
 
 const FavoritesModal = ({ onClose, dictionary }: Props) => {
@@ -164,31 +178,76 @@ const FavoritesModal = ({ onClose, dictionary }: Props) => {
   }, []);
 
   const count = useMemo(() => items.length, [items]);
+  const isEmpty = count === 0;
 
-  const handleRedirect = () => {
+  const handleRedirect = (e?: React.MouseEvent) => {
+    if (e && (e.ctrlKey || e.metaKey)) {
+      // Ctrl+click or Cmd+click - open in new tab
+      const pathname = typeof window !== "undefined" ? window.location.pathname : "";
+      const locale = pathname.split("/")[1] || "ge";
+      window.open(`/${locale}/favorites`, "_blank");
+      onClose();
+      return;
+    }
     router.push("/favorites");
     onClose();
+  };
+
+  const handleRedirectMouseDown = (e: React.MouseEvent) => {
+    if (e.button === 1) {
+      // Middle mouse button
+      e.preventDefault();
+      const pathname = typeof window !== "undefined" ? window.location.pathname : "";
+      const locale = pathname.split("/")[1] || "ge";
+      window.open(`/${locale}/favorites`, "_blank");
+      onClose();
+    }
+  };
+
+  const handleRemove = async (productId: number) => {
+    try {
+      await favoritesRemove(productId);
+      // Update local state immediately
+      setItems((prev) => prev.filter((item) => item.product !== productId));
+      // Dispatch event to update other components
+      if (typeof window !== "undefined") {
+        const remaining = items.length - 1;
+        window.dispatchEvent(
+          new CustomEvent("favoritesUpdated", {
+            detail: { count: remaining, hasAny: remaining > 0 },
+          })
+        );
+      }
+    } catch (error) {
+      console.error("Failed to remove favorite", error);
+    }
   };
 
   return (
     <ModalLayoutWrapper>
       <ModalLayout>
-        <StyledContainer>
+        <StyledContainer $isEmpty={isEmpty}>
           <StyledDivider>
-            <StyledSpanContainer>
-              <StyledSpan>
-                {count} {dictionary?.cart?.cartModal?.itemCount}
-              </StyledSpan>
-            </StyledSpanContainer>
+            {!isEmpty && (
+              <StyledSpanContainer>
+                <StyledSpan>
+                  {count} {dictionary?.cart?.cartModal?.itemCount}
+                </StyledSpan>
+              </StyledSpanContainer>
+            )}
             <ProductList>
               {!loading && items?.length ? (
                 items.map((fav) => (
                   <ProductWrapper key={fav.id}>
+                    <StyledTrashButton onClick={() => handleRemove(fav.product)}>
+                      <TrashIcon />
+                    </StyledTrashButton>
                     <ContentPadding>
                       <ProductContent
                         dictionary={dictionary}
                         title={fav.product_details?.title}
                         price={`${fav.product_details?.price} ₾`}
+                        imageSrc={fav.product_details?.primary_image}
                       />
                     </ContentPadding>
                   </ProductWrapper>
@@ -215,15 +274,16 @@ const FavoritesModal = ({ onClose, dictionary }: Props) => {
               )}
             </ProductList>
           </StyledDivider>
-          <StyledButton>
-            <PrimaryButton
-              text={dictionary?.cart?.favorites?.button || "დეტალურად"}
-              height="50px"
-              width="317px"
-              media="full"
-              onClick={handleRedirect}
-            />
-          </StyledButton>
+          {!isEmpty && (
+            <StyledButton onClick={handleRedirect} onMouseDown={handleRedirectMouseDown}>
+              <PrimaryButton
+                text={dictionary?.cart?.favorites?.button || "დეტალურად"}
+                height="50px"
+                width="317px"
+                media="full"
+              />
+            </StyledButton>
+          )}
         </StyledContainer>
       </ModalLayout>
     </ModalLayoutWrapper>

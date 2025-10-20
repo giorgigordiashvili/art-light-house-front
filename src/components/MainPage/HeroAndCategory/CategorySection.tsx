@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import Container from "../../ui/Container";
 import ProductTitle from "./ProductTitle";
@@ -8,6 +8,19 @@ interface Props {
   dictionary: any;
 }
 
+// ✅ Custom hook to detect window width
+function useWindowWidth() {
+  const [width, setWidth] = useState<number>(typeof window !== "undefined" ? window.innerWidth : 0);
+
+  useEffect(() => {
+    const handleResize = () => setWidth(window.innerWidth);
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
+  return width;
+}
+
 const StyledContainer = styled.div`
   position: relative;
   width: 100%;
@@ -15,18 +28,40 @@ const StyledContainer = styled.div`
   @media (max-width: 1080px) {
     padding: 26px 0 0 0;
   }
+  @media (max-width: 522px) {
+    margin-bottom: 91px;
+  }
 `;
 
 const StyledCircle = styled.div`
   position: absolute;
   top: 80px;
   left: 272px;
+
+  @media (max-width: 522px) {
+    top: 40px;
+    left: 100px;
+  }
 `;
 
 const ScrollableWrapper = styled.div`
   @media (max-width: 1332px) {
     overflow-x: auto;
-    scrollbar-width: none;
+    overflow-y: hidden;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none; /* Firefox */
+    padding-inline: 20px;
+    margin-left: -20px;
+
+    &::-webkit-scrollbar {
+      display: none; /* WebKit */
+    }
+  }
+
+  @media (max-width: 1080px) {
+    width: calc(100vw);
+    padding-inline: 20px;
+    margin-left: -20px;
   }
 `;
 
@@ -35,7 +70,7 @@ const RowWrapper = styled.div`
   flex-direction: column;
   gap: 20px;
   min-width: max-content;
-  @media (max-width: 1292px) {
+  @media (max-width: 1332px) {
     padding-inline: 20px;
   }
   @media (max-width: 1080px) {
@@ -67,6 +102,7 @@ const Card = styled.div<{
   $backgroundImage?: string;
 }>`
   position: relative;
+  flex: 0 0 auto;
   width: ${(props) => props.width}px;
   height: ${(props) => props.height}px;
   background-color: #101010;
@@ -77,7 +113,7 @@ const Card = styled.div<{
   align-items: flex-end;
   justify-content: flex-start;
   backdrop-filter: blur(114px);
-  z-index: 0;
+  z-index: 1;
   cursor: pointer;
   overflow: hidden;
   transition: box-shadow 0.3s ease;
@@ -155,11 +191,14 @@ const Card = styled.div<{
 `;
 
 const CategorySection = ({ dictionary }: Props) => {
+  const width = useWindowWidth();
+  const circleSize = width <= 522 ? "mobile" : "medium";
+
   return (
     <Container>
       <StyledContainer>
         <StyledCircle>
-          <Circle size="medium" />
+          <Circle size={circleSize} /> {/* ✅ dynamically changes */}
         </StyledCircle>
         <ScrollableWrapper>
           <RowWrapper>

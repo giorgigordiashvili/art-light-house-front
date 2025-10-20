@@ -32,8 +32,8 @@ const StyledPrice = styled.p`
 const SummaryPrice = ({ dictionary, text }: any) => {
   return (
     <StyledContainer>
-      <StyledText>{dictionary?.cart?.cartModal.summary}</StyledText>
-      <StyledPrice>{text ?? dictionary?.cart?.cartModal.sumPrice}</StyledPrice>
+      <StyledText>{dictionary?.cart?.cartModal.summary + "₾"}</StyledText>
+      <StyledPrice>{(text ?? dictionary?.cart?.cartModal.sumPrice) + " ₾"}</StyledPrice>
     </StyledContainer>
   );
 };

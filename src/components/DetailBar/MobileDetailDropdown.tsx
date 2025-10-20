@@ -1,7 +1,8 @@
 "use client";
 import styled from "styled-components";
-import { useState } from "react";
+import { useState, useEffect, useMemo } from "react";
 import Image from "next/image";
+import { useRouter, usePathname } from "next/navigation";
 
 const Wrapper = styled.div`
   width: 350px;
@@ -35,6 +36,7 @@ const HeaderLeft = styled.div`
 
   span {
     background: linear-gradient(90deg, #f7cb57 0%, #ffd700 100%);
+    background-clip: text;
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     font-weight: 700;
@@ -82,12 +84,14 @@ const MenuItem = styled.div<{ selected: boolean }>`
   color: ${({ selected }) => (selected ? "transparent" : "#edededcc")};
   background: ${({ selected }) =>
     selected ? "linear-gradient(90deg, #F7CB57 0%, #FFD700 100%)" : "none"};
+  background-clip: ${({ selected }) => (selected ? "text" : "unset")};
   -webkit-background-clip: ${({ selected }) => (selected ? "text" : "unset")};
   -webkit-text-fill-color: ${({ selected }) => (selected ? "transparent" : "#edededcc")};
 
   &:hover {
     color: transparent;
     background: linear-gradient(90deg, #f7cb57 0%, #ffd700 100%);
+    background-clip: text;
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
   }
@@ -108,21 +112,87 @@ const MenuItem = styled.div<{ selected: boolean }>`
 `;
 
 const MobileDetailDropdown = ({ dictionary }: any) => {
-  const menuItems = [
-    { label: dictionary?.detailBar1 || "My details", icon: "/assets/icons/Details.svg" },
-    { label: dictionary?.detailBar2 || "My addresses", icon: "/assets/icons/misamarti.svg" },
-    { label: dictionary?.detailBar3 || "My orders", icon: "/assets/icons/Shekvetebi.svg" },
-    { label: dictionary?.detailBar4 || "Payment methods", icon: "/assets/icons/gadaxda.svg" },
-    { label: dictionary?.detailBar5 || "Settings", icon: "/assets/icons/settings.svg" },
-  ];
+  const router = useRouter();
+  const pathname = usePathname();
+  const parts = (pathname || "/").split("/");
+  const currentLocale = parts[1];
+  const supportedLocales = ["ge", "en"];
+  const localePrefix = supportedLocales.includes(currentLocale) ? `/${currentLocale}` : "";
+
+  const menuItems = useMemo(
+    () => [
+      {
+        label: dictionary?.detailBar1 || "My details",
+        icon: "/assets/icons/Details.svg",
+        route: "/profile",
+      },
+      {
+        label: dictionary?.detailBar2 || "My addresses",
+        icon: "/assets/icons/misamarti.svg",
+        route: "/address",
+      },
+      {
+        label: dictionary?.detailBar3 || "My orders",
+        icon: "/assets/icons/Shekvetebi.svg",
+        route: "/orders",
+      },
+      {
+        label: dictionary?.detailBar4 || "Payment methods",
+        icon: "/assets/icons/gadaxda.svg",
+        route: "/paymentMethods",
+      },
+      {
+        label: dictionary?.detailBar5 || "Settings",
+        icon: "/assets/icons/settings.svg",
+        route: "/settings",
+      },
+    ],
+    [dictionary]
+  );
+
+  // Determine current page based on pathname
+  const getCurrentMenuItem = () => {
+    const currentPath = pathname?.replace(`/${currentLocale}`, "") || "";
+    const matchedItem = menuItems.find((item) => currentPath === item.route);
+    return matchedItem || menuItems[0];
+  };
 
   const [open, setOpen] = useState(false);
-  const [selectedItem, setSelectedItem] = useState(menuItems[0]);
+  const [selectedItem, setSelectedItem] = useState(getCurrentMenuItem());
 
-  const handleSelect = (item: { label: string; icon: string }) => {
+  // Update selected item when pathname changes
+  useEffect(() => {
+    const currentPath = pathname?.replace(`/${currentLocale}`, "") || "";
+    const matchedItem = menuItems.find((item) => currentPath === item.route);
+    if (matchedItem) {
+      setSelectedItem(matchedItem);
+    }
+  }, [pathname, currentLocale, menuItems]);
+
+  const handleSelect = (item: { label: string; icon: string; route: string }) => {
     setSelectedItem(item);
     setOpen(false);
+    router.push(`${localePrefix}${item.route}`);
   };
+
+  const handleMenuItemClick =
+    (item: { label: string; icon: string; route: string }) => (e: React.MouseEvent) => {
+      // Check for Ctrl+click (Windows/Linux) or Cmd+click (Mac) or middle-click
+      if (e.ctrlKey || e.metaKey || e.button === 1) {
+        window.open(`${localePrefix}${item.route}`, "_blank");
+        return;
+      }
+      handleSelect(item);
+    };
+
+  const handleMenuItemMouseDown =
+    (item: { label: string; icon: string; route: string }) => (e: React.MouseEvent) => {
+      // Handle middle-click (mouse wheel click)
+      if (e.button === 1) {
+        e.preventDefault(); // Prevent default middle-click behavior
+        window.open(`${localePrefix}${item.route}`, "_blank");
+      }
+    };
 
   return (
     <Wrapper>
@@ -146,7 +216,8 @@ const MobileDetailDropdown = ({ dictionary }: any) => {
           {menuItems.map((item) => (
             <MenuItem
               key={item.label}
-              onClick={() => handleSelect(item)}
+              onClick={handleMenuItemClick(item)}
+              onMouseDown={handleMenuItemMouseDown(item)}
               selected={item.label === selectedItem.label}
             >
               <Image src={item.icon} alt={item.label} width={24} height={24} />

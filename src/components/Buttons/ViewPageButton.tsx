@@ -47,12 +47,25 @@ type Props = {
 const ViewPageButton = (props: Props) => {
   const router = useRouter();
 
-  const handleClick = () => {
+  const handleClick = (e: React.MouseEvent) => {
+    // Check for Ctrl+click (Windows/Linux) or Cmd+click (Mac) or middle-click
+    if (e.ctrlKey || e.metaKey || e.button === 1) {
+      window.open(props.href, "_blank");
+      return;
+    }
     router.push(props.href);
   };
 
+  const handleMouseDown = (e: React.MouseEvent) => {
+    // Handle middle-click (mouse wheel click)
+    if (e.button === 1) {
+      e.preventDefault(); // Prevent default middle-click behavior
+      window.open(props.href, "_blank");
+    }
+  };
+
   return (
-    <StyledButton onClick={handleClick}>
+    <StyledButton onClick={handleClick} onMouseDown={handleMouseDown}>
       <StyledButtonText>{props.text}</StyledButtonText>
       <Image src={"/assets/RightArrow.svg"} width={24} height={24} alt="arrow" />
     </StyledButton>

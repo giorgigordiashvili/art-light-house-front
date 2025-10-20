@@ -1,4 +1,6 @@
 import styled from "styled-components";
+import Image from "next/image";
+import type { OrderItem } from "@/api/generated/interfaces";
 
 const ProductsCard = styled.div`
   display: flex;
@@ -13,6 +15,9 @@ const ProductsCard = styled.div`
   height: 113px;
   position: relative;
   gap: 24px;
+  @media (max-width: 1080px) {
+    max-width: none;
+  }
 `;
 
 const ImagePlaceholder = styled.div`
@@ -26,6 +31,7 @@ const ImagePlaceholder = styled.div`
   font-size: 10px;
   color: #ccc;
   flex-shrink: 0;
+  overflow: hidden;
 `;
 
 const InfoWrapper = styled.div`
@@ -43,6 +49,12 @@ const Title = styled.span`
   margin-bottom: 17px;
 `;
 
+const PriceRow = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 10px;
+`;
+
 const Price = styled.span`
   font-family: Helvetica;
   font-weight: 700;
@@ -50,17 +62,55 @@ const Price = styled.span`
   color: #ffffff;
 `;
 
+const Quantity = styled.span`
+  font-family: Helvetica;
+  font-weight: 300;
+  font-size: 14px;
+  color: #999;
+`;
+
 interface ProductProps {
-  dictionary: any;
+  dictionary?: any;
+  orderItem?: OrderItem;
 }
 
-const Product = ({ dictionary }: ProductProps) => {
+const Product = ({ orderItem }: ProductProps) => {
+  // If no orderItem provided, show placeholder
+  if (!orderItem) {
+    return (
+      <ProductsCard>
+        <ImagePlaceholder>Product image</ImagePlaceholder>
+        <InfoWrapper>
+          <Title>Product Title</Title>
+          <PriceRow>
+            <Price>0.00 ₾</Price>
+            <Quantity>x 1</Quantity>
+          </PriceRow>
+        </InfoWrapper>
+      </ProductsCard>
+    );
+  }
   return (
     <ProductsCard>
-      <ImagePlaceholder>Product image</ImagePlaceholder>
+      <ImagePlaceholder>
+        {orderItem.product_image_url ? (
+          <Image
+            src={orderItem.product_image_url}
+            alt={orderItem.product_title}
+            width={73}
+            height={73}
+            style={{ objectFit: "cover" }}
+          />
+        ) : (
+          "Product image"
+        )}
+      </ImagePlaceholder>
       <InfoWrapper>
-        <Title>{dictionary?.succsessOrder?.productTitle || "Product Title"}</Title>
-        <Price>{dictionary?.succsessOrder?.productPrice || "199.99 ₾"}</Price>
+        <Title>{orderItem.product_title}</Title>
+        <PriceRow>
+          <Price>{orderItem.total_price} ₾</Price>
+          <Quantity>x {orderItem.quantity}</Quantity>
+        </PriceRow>
       </InfoWrapper>
     </ProductsCard>
   );

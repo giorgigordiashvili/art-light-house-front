@@ -1,5 +1,6 @@
 import styled from "styled-components";
 import Image from "next/image";
+import type { Order } from "@/api/generated/interfaces";
 
 const DeliveryCard = styled.div`
   display: flex;
@@ -49,18 +50,34 @@ const Time = styled.span`
 `;
 
 interface DeliveryProps {
-  dictionary: any;
+  dictionary?: any;
+  order?: Order;
 }
 
-const Delivery = ({ dictionary }: DeliveryProps) => {
+const Delivery = ({ dictionary, order }: DeliveryProps) => {
+  // If no order provided, show placeholder
+  if (!order) {
+    return (
+      <DeliveryCard>
+        <IconWrapper>
+          <Image src={"/assets/Delivery Icon.svg"} alt="icon" width={24} height={24} />
+        </IconWrapper>
+        <InfoWrapper>
+          <Title>{dictionary?.succsessOrder?.expressTitle || "Express delivery"}</Title>
+          <Time>{dictionary?.succsessOrder?.expressTime || "40 minutes to 2 hours"}</Time>
+        </InfoWrapper>
+      </DeliveryCard>
+    );
+  }
+
   return (
     <DeliveryCard>
       <IconWrapper>
         <Image src={"/assets/Delivery Icon.svg"} alt="icon" width={24} height={24} />
       </IconWrapper>
       <InfoWrapper>
-        <Title>{dictionary?.succsessOrder?.expressTitle || "Express delivery"}</Title>
-        <Time>{dictionary?.succsessOrder?.expressTime || "40 minutes to 2 hours"}</Time>
+        <Title>{order.delivery_method_display}</Title>
+        <Time>{order.delivery_notes || "No delivery notes"}</Time>
       </InfoWrapper>
     </DeliveryCard>
   );

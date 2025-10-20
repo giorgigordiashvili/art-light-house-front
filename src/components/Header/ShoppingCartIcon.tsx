@@ -15,7 +15,21 @@ const StyledCount = styled.div`
   background-color: red;
   color: white;
   border-radius: 50%;
-  padding: 2.5px 5.6px;
+  padding: 2.4px 5.7px;
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 100%;
+  text-align: center;
+`;
+
+const StyledCountTwoDigit = styled.div`
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  background-color: red;
+  color: white;
+  border-radius: 50%;
+  padding: 2.4px 2.7px;
   font-size: 14px;
   font-weight: 700;
   line-height: 100%;
@@ -32,7 +46,11 @@ const ShoppingCartIcon = ({ itemCount = 0, onClick, color }: Props) => {
   return (
     <StyledContainer onClick={onClick}>
       <CartIcon color={color} />
-      {itemCount > 0 && <StyledCount>{itemCount}</StyledCount>}
+      {itemCount > 0 && itemCount < 10 ? (
+        <StyledCount>{itemCount}</StyledCount>
+      ) : itemCount >= 10 ? (
+        <StyledCountTwoDigit>{itemCount}</StyledCountTwoDigit>
+      ) : null}
     </StyledContainer>
   );
 };

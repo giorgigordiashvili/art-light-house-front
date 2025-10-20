@@ -1,6 +1,6 @@
 "use client";
 import styled from "styled-components";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 const Box = styled.div`
   background: #1a1a1a;
@@ -11,7 +11,7 @@ const Box = styled.div`
   flex-direction: column;
   font-family: inherit;
   color: #fff;
-  height: 178px;
+  height: 100%;
   /* top: 232px;
 left: 96px; */
   border-radius: 17px;
@@ -33,17 +33,36 @@ const Option = styled.div<{ active?: boolean }>`
 type Props = {
   onSortChange: (sortType: string) => void;
   dictionary: any;
+  currentOrdering?: string;
 };
 
-const SortBox = ({ onSortChange, dictionary }: Props) => {
-  const [selected, setSelected] = useState(dictionary.sortOption2);
+const SortBox = ({ onSortChange, dictionary, currentOrdering }: Props) => {
+  // Initialize selected based on currentOrdering
+  const initializeSelected = () => {
+    if (currentOrdering === "-price") {
+      return dictionary.sortOption1; // Price: Descending
+    } else if (currentOrdering === "price") {
+      return dictionary.sortOption2; // Price: Ascending
+    }
+    // No default selection - return null when no ordering is applied
+    return null;
+  };
 
-  const options = [
-    dictionary.sortOption1,
-    dictionary.sortOption2,
-    dictionary.sortOption3,
-    dictionary.sortOption4,
-  ];
+  const [selected, setSelected] = useState<string | null>(initializeSelected());
+
+  // Update selected when currentOrdering changes (e.g., from URL)
+  useEffect(() => {
+    if (currentOrdering === "-price") {
+      setSelected(dictionary.sortOption1);
+    } else if (currentOrdering === "price") {
+      setSelected(dictionary.sortOption2);
+    } else {
+      // Clear selection when no ordering
+      setSelected(null);
+    }
+  }, [currentOrdering, dictionary.sortOption1, dictionary.sortOption2]);
+
+  const options = [dictionary.sortOption1, dictionary.sortOption2];
 
   const handleClick = (option: string) => {
     setSelected(option);

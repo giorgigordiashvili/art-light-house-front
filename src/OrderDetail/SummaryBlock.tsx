@@ -1,7 +1,8 @@
 import styled from "styled-components";
+import type { Order } from "@/api/generated/interfaces";
 
 const SummaryContainer = styled.div`
-  max-width: 532px;
+  /* max-width: 532px; */
   width: 100%;
   display: flex;
   flex-direction: column;
@@ -30,7 +31,7 @@ const TotalPrice = styled.span`
 `;
 
 const Divider = styled.hr`
-  max-width: 532px;
+  /* max-width: 532px; */
   width: 100%;
   border: 1px solid #242424;
   margin-bottom: 20px;
@@ -58,31 +59,67 @@ const DetailPrice = styled.span`
 `;
 
 interface SummaryBlockProps {
-  dictionary: any;
+  dictionary?: any;
+  order?: Order;
 }
 
-const SummaryBlock = ({ dictionary }: SummaryBlockProps) => {
+const SummaryBlock = ({ dictionary, order }: SummaryBlockProps) => {
+  // If no order provided, show placeholder
+  if (!order) {
+    return (
+      <SummaryContainer>
+        <TotalRow>
+          <TotalLabel>{dictionary?.succsessOrder?.summary || "Total"}</TotalLabel>
+          <TotalPrice>{dictionary?.succsessOrder?.totalAmount || "499.99 ₾"}</TotalPrice>
+        </TotalRow>
+
+        <Divider />
+
+        <DetailRow>
+          <DetailLabel>{dictionary?.succsessOrder?.productCost || "Product price"}</DetailLabel>
+          <DetailPrice>{dictionary?.succsessOrder?.productPrice || "499.99 ₾"}</DetailPrice>
+        </DetailRow>
+        <DetailRow>
+          <DetailLabel>{dictionary?.succsessOrder?.deliveryCost || "Delivery service"}</DetailLabel>
+          <DetailPrice>{dictionary?.succsessOrder?.deliveryAmount || "14.99 ₾"}</DetailPrice>
+        </DetailRow>
+        <DetailRow>
+          <DetailLabel>{dictionary?.succsessOrder?.serviceFee || "Service commission"}</DetailLabel>
+          <DetailPrice>{dictionary?.succsessOrder?.serviceFeeAmount || "2.99 ₾"}</DetailPrice>
+        </DetailRow>
+      </SummaryContainer>
+    );
+  }
+
   return (
     <SummaryContainer>
       <TotalRow>
         <TotalLabel>{dictionary?.succsessOrder?.summary || "Total"}</TotalLabel>
-        <TotalPrice>{dictionary?.succsessOrder?.totalAmount || "499,99 ₾"}</TotalPrice>
+        <TotalPrice>{order.total_amount} ₾</TotalPrice>
       </TotalRow>
 
       <Divider />
 
       <DetailRow>
-        <DetailLabel>{dictionary?.succsessOrder?.productCost || "Product price"}</DetailLabel>
-        <DetailPrice>{dictionary?.succsessOrder?.productPrice || "499,99 ₾"}</DetailPrice>
+        <DetailLabel>{dictionary?.succsessOrder?.productCost || "Subtotal"}</DetailLabel>
+        <DetailPrice>{order.subtotal} ₾</DetailPrice>
       </DetailRow>
       <DetailRow>
-        <DetailLabel>{dictionary?.succsessOrder?.deliveryCost || "Delivery service"}</DetailLabel>
-        <DetailPrice>{dictionary?.succsessOrder?.deliveryAmount || "14,99 ₾"}</DetailPrice>
+        <DetailLabel>{dictionary?.succsessOrder?.deliveryCost || "Delivery"}</DetailLabel>
+        <DetailPrice>{order.delivery_fee ? order.delivery_fee : "10.00"} ₾</DetailPrice>
       </DetailRow>
-      <DetailRow>
-        <DetailLabel>{dictionary?.succsessOrder?.serviceFee || "Service commission"}</DetailLabel>
-        <DetailPrice>{dictionary?.succsessOrder?.serviceFeeAmount || "2,99 ₾"}</DetailPrice>
-      </DetailRow>
+      {order.tax_amount && parseFloat(order.tax_amount) > 0 && (
+        <DetailRow>
+          <DetailLabel>{dictionary?.succsessOrder?.tax || "Tax"}</DetailLabel>
+          <DetailPrice>{order.tax_amount} ₾</DetailPrice>
+        </DetailRow>
+      )}
+      {order.discount_amount && parseFloat(order.discount_amount) > 0 && (
+        <DetailRow>
+          <DetailLabel>{dictionary?.succsessOrder?.discount || "Discount"}</DetailLabel>
+          <DetailPrice>-{order.discount_amount} ₾</DetailPrice>
+        </DetailRow>
+      )}
     </SummaryContainer>
   );
 };

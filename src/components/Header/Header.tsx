@@ -5,7 +5,7 @@ import Container from "../ui/Container";
 import Logo from "../Logo/Logo";
 import NavItem from "./NavItem";
 import ShoppingCartIcon from "./ShoppingCartIcon";
-import HeartIcon from "../ListProductCard/HeartIcon";
+import HeaderHeartIcon from "./HeaderHeartIcon";
 import AuthorizationButton from "./AuthorizationButton";
 import BurgerIcon from "./BurgerIcon";
 import BurgerMenu from "./BurgerMenu";
@@ -21,6 +21,7 @@ import FavoritesModal from "./FavoritesModal";
 import LanguageSwitcher from "./LanguageSwitcher/LanguageSwitcher";
 import LanguageSwitcherModal from "./LanguageSwitcher/LanguageSwitcherModal";
 import { useAuth } from "@/contexts/AuthContext";
+import { useAuthModal } from "@/contexts/AuthModalContext";
 import { usePathname, useRouter } from "next/navigation";
 import { cartGet } from "@/api/generated/api";
 import { Locale, i18n } from "@/config/i18n";
@@ -81,8 +82,8 @@ const StyledUserActions = styled.div`
   margin-left: 18px;
 
   @media (max-width: 1080px) {
-    gap: 20px;
     margin-left: 0;
+    gap: 0;
   }
 `;
 
@@ -94,6 +95,17 @@ const ResponsiveGapWrapper = styled.div`
     gap: 20px;
     align-items: center;
   }
+`;
+
+const StyledCartAndFavoritesWrapper = styled.div`
+  display: flex;
+  gap: 18px;
+`;
+
+const StyledIconsAndAuthwrapper = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 20px;
 `;
 
 const Overlay = styled.div`
@@ -140,7 +152,7 @@ interface HeaderProps {
 const Header = ({ header, dictionary }: HeaderProps) => {
   const pathname = usePathname();
   const router = useRouter();
-
+  const { isAuthModalOpen, closeAuthModal, openAuthModal } = useAuthModal();
   const [cartItemCount, setCartItemCount] = useState<number>(0);
   const [isBurgerMenuOpen, setIsBurgerMenuOpen] = useState(false);
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
@@ -180,7 +192,8 @@ const Header = ({ header, dictionary }: HeaderProps) => {
       isEmptyCartModalOpen ||
       isCartModalOpen ||
       isFavoritesModalOpen ||
-      isLanguageSwitcherModalOpen
+      isLanguageSwitcherModalOpen ||
+      isAuthModalOpen
         ? "hidden"
         : "visible";
     return () => {
@@ -195,6 +208,7 @@ const Header = ({ header, dictionary }: HeaderProps) => {
     isCartModalOpen,
     isFavoritesModalOpen,
     isLanguageSwitcherModalOpen,
+    isAuthModalOpen,
   ]);
 
   useEffect(() => {
@@ -299,13 +313,8 @@ const Header = ({ header, dictionary }: HeaderProps) => {
   const handleCartClick = async () => {
     const hasToken = typeof window !== "undefined" && !!localStorage.getItem("auth_access_token");
     if (!hasToken) {
-      setCartItemCount(0);
-      if (isEmptyCartModalOpen) {
-        closeEmptyCartModal();
-      } else {
-        setIsEmptyCartModalOpen(true);
-        setCartIconColor("#FFCB40");
-      }
+      // User is not authenticated - open auth modal instead
+      openAuthModal();
       return;
     }
 
@@ -328,6 +337,7 @@ const Header = ({ header, dictionary }: HeaderProps) => {
           setCartIconColor("#FFCB40");
         }
       }
+      closeFavoritesModal();
     } catch {
       setCartItemCount(0);
       if (isEmptyCartModalOpen) {
@@ -336,6 +346,7 @@ const Header = ({ header, dictionary }: HeaderProps) => {
         setIsEmptyCartModalOpen(true);
         setCartIconColor("#FFCB40");
       }
+      closeFavoritesModal();
     }
   };
 
@@ -365,6 +376,7 @@ const Header = ({ header, dictionary }: HeaderProps) => {
     setIsLanguageSwitcherModalOpen((prev) => !prev);
     closeEmptyCartModal();
     closeCartModal();
+    closeFavoritesModal();
   };
 
   const handleLanguageChange = (language: "ge" | "en") => {
@@ -393,50 +405,72 @@ const Header = ({ header, dictionary }: HeaderProps) => {
               </StyledNavigation>
               <StyledUserActions>
                 <StyledVerticalLine />
-                <ShoppingCartIcon
-                  itemCount={cartItemCount}
-                  onClick={handleCartClick}
-                  color={cartIconColor}
-                />
-                <div
-                  onClick={() => {
-                    setIsFavoritesModalOpen((prev) => !prev);
-                    closeEmptyCartModal();
-                    closeCartModal();
-                    closeLanguageSwitcherModal();
-                  }}
-                >
-                  <HeartIcon />
-                </div>
-                <ResponsiveGapWrapper>
-                  <div ref={authButtonRef}>
-                    <AuthorizationButton
-                      isAuthorized={isUserAuthorized}
-                      username={currentUser.username}
-                      userImage={currentUser.userImage}
-                      text={header.authorize}
+                <StyledIconsAndAuthwrapper>
+                  <StyledCartAndFavoritesWrapper>
+                    <ShoppingCartIcon
+                      itemCount={cartItemCount}
+                      onClick={handleCartClick}
+                      color={cartIconColor}
+                    />
+                    <div
                       onClick={() => {
-                        if (isRegistrationCodeOpen) setIsRegistrationCodeOpen(false);
-                        if (isRegistrationSuccessOpen) setIsRegistrationSuccessOpen(false);
-                        setIsUserMenuOpen(true);
+                        const hasToken =
+                          typeof window !== "undefined" &&
+                          !!localStorage.getItem("auth_access_token");
+                        if (!hasToken) {
+                          // User is not authenticated - open auth modal instead
+                          openAuthModal();
+                          return;
+                        }
+                        setIsFavoritesModalOpen((prev) => !prev);
                         closeEmptyCartModal();
                         closeCartModal();
                         closeLanguageSwitcherModal();
                       }}
-                    />
-                  </div>
-                  <div ref={burgerIconRef}>
-                    <BurgerIcon
-                      isOpen={isBurgerMenuOpen}
-                      onClick={() => {
-                        toggleBurgerMenu();
-                        closeEmptyCartModal();
-                        closeCartModal();
-                        closeLanguageSwitcherModal();
+                      style={{
+                        cursor: "pointer",
+                        height: "24px",
+                        display: "flex",
+                        alignItems: "center",
                       }}
-                    />
-                  </div>
-                </ResponsiveGapWrapper>
+                    >
+                      <HeaderHeartIcon isModalOpen={isFavoritesModalOpen} />
+                    </div>
+                  </StyledCartAndFavoritesWrapper>
+
+                  <ResponsiveGapWrapper>
+                    <div ref={authButtonRef}>
+                      <AuthorizationButton
+                        isAuthorized={isUserAuthorized}
+                        username={currentUser.username}
+                        userImage={currentUser.userImage}
+                        text={header.authorize}
+                        onClick={() => {
+                          if (isRegistrationCodeOpen) setIsRegistrationCodeOpen(false);
+                          if (isRegistrationSuccessOpen) setIsRegistrationSuccessOpen(false);
+                          setIsUserMenuOpen((prev) => !prev);
+                          closeEmptyCartModal();
+                          closeCartModal();
+                          closeLanguageSwitcherModal();
+                          closeFavoritesModal();
+                        }}
+                      />
+                    </div>
+                    <div ref={burgerIconRef}>
+                      <BurgerIcon
+                        isOpen={isBurgerMenuOpen}
+                        onClick={() => {
+                          toggleBurgerMenu();
+                          closeEmptyCartModal();
+                          closeCartModal();
+                          closeLanguageSwitcherModal();
+                          closeFavoritesModal();
+                        }}
+                      />
+                    </div>
+                  </ResponsiveGapWrapper>
+                </StyledIconsAndAuthwrapper>
+
                 <div id="languageSwitcher" onClick={handleLanguageSwitcherClick}>
                   <LanguageSwitcher
                     language={ensureValidLanguage(pathname.split("/")[1])}
@@ -590,6 +624,31 @@ const Header = ({ header, dictionary }: HeaderProps) => {
                 id="languageSwitcherModal"
                 onLanguageChange={handleLanguageChange}
                 currentLanguage={ensureValidLanguage(pathname?.split("/")[1] || "ge")}
+              />
+            </StyledTest>
+          </StyledTestWrapper>
+        </>
+      )}
+
+      {/* Global Auth Modal triggered by context */}
+      {isAuthModalOpen && (
+        <>
+          <Overlay onClick={closeAuthModal} />
+          <StyledTestWrapper>
+            <StyledTest>
+              <AuthorizationModal
+                onClose={closeAuthModal}
+                onRecoverPasswordClick={() => {
+                  closeAuthModal();
+                  setIsRecoverPasswordOpen(true);
+                }}
+                onRegisterSuccess={(email?: string) => {
+                  closeAuthModal();
+                  setIsRegistrationCodeOpen(true);
+                  // Store email temporarily on window for passing to code modal
+                  if (email) (window as any).__reg_email = email;
+                }}
+                dictionary={header}
               />
             </StyledTest>
           </StyledTestWrapper>
