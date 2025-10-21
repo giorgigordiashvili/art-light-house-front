@@ -169,8 +169,6 @@ const AdminLogin = () => {
         setError(errorMsg);
       }
     } catch (err: any) {
-      console.error("Admin login error:", err);
-
       // Handle different error scenarios
       if (err?.response?.status === 400) {
         setError("Invalid email or password format.");

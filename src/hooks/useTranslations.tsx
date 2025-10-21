@@ -42,7 +42,6 @@ export function TranslationProvider({
       // Store language preference in localStorage
       localStorage.setItem("preferredLanguage", language);
     } catch (err) {
-      console.error("Failed to load translations:", err);
       setError(err instanceof Error ? err.message : "Failed to load translations");
 
       // Fallback to empty dictionary on error

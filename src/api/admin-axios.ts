@@ -64,8 +64,6 @@ const createAdminAxiosInstance = (): AxiosInstance => {
       if (error.response?.status === 401) {
         // Handle unauthorized access for admin
         if (typeof window !== "undefined") {
-          console.warn("🔒 Admin access token expired or invalid - logging out admin");
-
           // Clear admin tokens
           localStorage.removeItem("admin_access_token");
           localStorage.removeItem("admin_refresh_token");

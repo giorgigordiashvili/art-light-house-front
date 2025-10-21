@@ -22,7 +22,6 @@ export default function MapController({ searchedAddress }: Props) {
 
         map.panTo({ lat, lng });
       } else {
-        console.warn("Forward geocoding failed:", status);
       }
     });
   }, [searchedAddress, map]);

@@ -172,8 +172,7 @@ const AttributesManagement = () => {
       setLoading(true);
       const response = await adminAxios.get("/api/products/admin/attributes/");
       setAttributes(response.data);
-    } catch (error) {
-      console.error("❌ Error loading attributes:", error);
+    } catch {
     } finally {
       setLoading(false);
     }
@@ -200,8 +199,7 @@ const AttributesManagement = () => {
         setLoading(true);
         await adminAxios.delete(`/api/products/admin/attributes/${attribute.id}/delete/`);
         await loadAttributes();
-      } catch (error) {
-        console.error("❌ Error deleting attribute:", error);
+      } catch {
         alert("Failed to delete attribute. Please try again.");
       } finally {
         setLoading(false);
@@ -241,20 +239,18 @@ const AttributesManagement = () => {
 
       setModalView(null);
       setEditingAttribute(null);
-    } catch (error) {
-      console.error("❌ Error submitting attribute form:", error);
+    } catch {
       alert("Failed to save attribute. Please try again.");
     } finally {
       setLoading(false);
     }
   };
 
-  const handleValuesSubmit = async (values: any[]) => {
+  const handleValuesSubmit = async () => {
     if (!managingValuesFor) return;
 
     try {
       setLoading(true);
-      console.log("📝 Updating attribute values:", values);
 
       // Note: This would need to be implemented based on the specific API
       // for now just reload the attributes
@@ -262,8 +258,7 @@ const AttributesManagement = () => {
 
       setModalView(null);
       setManagingValuesFor(null);
-    } catch (error) {
-      console.error("❌ Error updating attribute values:", error);
+    } catch {
       alert("Failed to update attribute values. Please try again.");
     } finally {
       setLoading(false);

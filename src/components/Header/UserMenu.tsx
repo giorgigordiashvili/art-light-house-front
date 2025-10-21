@@ -79,8 +79,7 @@ const UserMenu = ({ closeModal, dictionary }: UserMenuProps) => {
 
       if (closeModal) closeModal();
       router.push("/");
-    } catch (error) {
-      console.error("Logout error:", error);
+    } catch {
       // Still close modal and redirect even if logout fails
       if (closeModal) closeModal();
       router.push("/");

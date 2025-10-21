@@ -218,9 +218,7 @@ const FavoritesModal = ({ onClose, dictionary }: Props) => {
           })
         );
       }
-    } catch (error) {
-      console.error("Failed to remove favorite", error);
-    }
+    } catch {}
   };
 
   return (

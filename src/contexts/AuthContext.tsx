@@ -41,8 +41,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
           setToken(storedToken);
           setUser(JSON.parse(storedUser));
         }
-      } catch (error) {
-        console.error("Error initializing auth:", error);
+      } catch {
         // Clear corrupted data
         localStorage.removeItem(TOKEN_KEY);
         localStorage.removeItem(REFRESH_KEY);
@@ -53,8 +52,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     };
 
     // Listen for forced logout events from axios interceptor
-    const handleForceLogout = (event: CustomEvent) => {
-      console.warn("🔒 Forced logout triggered:", event.detail?.reason || "unknown");
+    const handleForceLogout = () => {
       // Clear state immediately when forced logout occurs
       setToken(null);
       setUser(null);
@@ -86,7 +84,6 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       setToken(response.access);
       setUser(response.user);
     } catch (error) {
-      console.error("Login error:", error);
       throw error;
     } finally {
       setIsLoading(false);
@@ -98,8 +95,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     try {
       // Call logout API if needed
       await userLogout();
-    } catch (error) {
-      console.error("Logout API error:", error);
+    } catch {
       // Continue with local logout even if API fails
     } finally {
       // Clear localStorage
@@ -121,10 +117,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
       // Update state
       setUser(userData);
-
-      console.log("✅ User data updated in AuthContext:", userData);
-    } catch (error) {
-      console.error("Error updating user data:", error);
+    } catch {
+      // Failed to update user data
     }
   };
 
@@ -135,8 +129,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       localStorage.setItem(USER_KEY, JSON.stringify(userData));
       setToken(access);
       setUser(userData);
-    } catch (error) {
-      console.error("Error storing tokens after verification:", error);
+    } catch {
+      // Failed to store tokens
     }
   };
 

@@ -53,9 +53,7 @@ const PlusButton = ({ product }: { product?: ProductList }) => {
           window.dispatchEvent(new CustomEvent("cartUpdated", { detail: { count, cart } }));
         }
       } catch {}
-    } catch (error) {
-      console.error("❌ Failed to add to cart", error);
-    }
+    } catch {}
   };
 
   return (

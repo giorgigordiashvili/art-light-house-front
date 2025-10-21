@@ -20,8 +20,7 @@ export function LanguageSwitcher({ className = "", showFlag = true }: LanguageSw
       try {
         const languages = await translationService.getLanguages();
         setAvailableLanguages(languages);
-      } catch (error) {
-        console.error("Failed to load languages:", error);
+      } catch {
       } finally {
         setLoadingLanguages(false);
       }
@@ -101,9 +100,7 @@ export function LanguageSwitcherButtons({ className = "" }: { className?: string
       try {
         const languages = await translationService.getLanguages();
         setAvailableLanguages(languages);
-      } catch (error) {
-        console.error("Failed to load languages:", error);
-      }
+      } catch {}
     };
 
     loadLanguages();

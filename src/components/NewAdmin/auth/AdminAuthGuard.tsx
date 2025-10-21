@@ -41,16 +41,7 @@ interface AdminAuthGuardProps {
 }
 
 const AdminAuthGuard = ({ children }: AdminAuthGuardProps) => {
-  const { isAuthenticated, isLoading, user } = useAdminAuth();
-
-  console.log(
-    "🛡️ AdminAuthGuard: isLoading:",
-    isLoading,
-    "isAuthenticated:",
-    isAuthenticated,
-    "user:",
-    user
-  );
+  const { isAuthenticated, isLoading } = useAdminAuth();
 
   // Loading state
   if (isLoading) {

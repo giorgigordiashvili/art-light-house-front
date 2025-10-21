@@ -238,8 +238,6 @@ const AuthorizationModal: React.FC<AuthorizationModalProps> = ({
         }
       }
     } catch (error: any) {
-      console.error(error);
-
       if (activeTab === "auth") {
         // Handle custom API login errors
         let errorMessage =

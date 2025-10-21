@@ -87,8 +87,7 @@ const Cart = ({ dictionary }: any) => {
       setLoading(true);
       const data = await cartGet();
       setCart(data);
-    } catch (e) {
-      console.error("Failed to fetch cart", e);
+    } catch {
       setCart({
         id: 0,
         items: [],
@@ -130,9 +129,7 @@ const Cart = ({ dictionary }: any) => {
           );
         }
       } catch {}
-    } catch (e) {
-      console.error("Failed to increase quantity", e);
-    }
+    } catch {}
   };
 
   const handleDecrease = async (itemId: number, current: number) => {
@@ -152,9 +149,7 @@ const Cart = ({ dictionary }: any) => {
           );
         }
       } catch {}
-    } catch (e) {
-      console.error("Failed to decrease quantity", e);
-    }
+    } catch {}
   };
 
   const handleRemove = async (itemId: number) => {
@@ -170,9 +165,7 @@ const Cart = ({ dictionary }: any) => {
           );
         }
       } catch {}
-    } catch (e) {
-      console.error("Failed to remove item", e);
-    }
+    } catch {}
   };
 
   return (

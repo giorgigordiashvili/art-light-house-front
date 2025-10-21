@@ -166,8 +166,7 @@ const CategoriesManagement = () => {
       setLoading(true);
       const response = await adminAxios.get("/api/products/admin/categories/");
       setCategories(response.data);
-    } catch (error) {
-      console.error("❌ Error loading categories:", error);
+    } catch {
     } finally {
       setLoading(false);
     }
@@ -197,8 +196,7 @@ const CategoriesManagement = () => {
         setLoading(true);
         await adminAxios.delete(`/api/products/admin/categories/${category.id}/delete/`);
         await loadCategories();
-      } catch (error) {
-        console.error("❌ Error deleting category:", error);
+      } catch {
         alert("Failed to delete category. Please try again.");
       } finally {
         setLoading(false);
@@ -213,8 +211,7 @@ const CategoriesManagement = () => {
         is_active: !category.is_active,
       });
       await loadCategories();
-    } catch (error) {
-      console.error("❌ Error updating category status:", error);
+    } catch {
       alert("Failed to update category status. Please try again.");
     } finally {
       setLoading(false);
@@ -255,8 +252,7 @@ const CategoriesManagement = () => {
       setShowForm(false);
       setEditingCategory(null);
       setParentForNewCategory(undefined);
-    } catch (error) {
-      console.error("❌ Error submitting category form:", error);
+    } catch {
       alert("Failed to save category. Please try again.");
     } finally {
       setLoading(false);

@@ -128,8 +128,7 @@ const CartModal = ({ onClose, dictionary }: Props) => {
       setLoading(true);
       const data = await cartGet();
       setCart(data);
-    } catch (e) {
-      console.error("Failed to fetch cart", e);
+    } catch {
       setCart({
         id: 0,
         items: [],
@@ -211,8 +210,7 @@ const CartModal = ({ onClose, dictionary }: Props) => {
           );
         }
       } catch {}
-    } catch (e) {
-      console.error("Failed to increase quantity", e);
+    } catch {
     } finally {
     }
   };
@@ -233,8 +231,7 @@ const CartModal = ({ onClose, dictionary }: Props) => {
           );
         }
       } catch {}
-    } catch (e) {
-      console.error("Failed to decrease quantity", e);
+    } catch {
     } finally {
     }
   };
@@ -251,8 +248,7 @@ const CartModal = ({ onClose, dictionary }: Props) => {
           );
         }
       } catch {}
-    } catch (e) {
-      console.error("Failed to remove item", e);
+    } catch {
     } finally {
     }
   };

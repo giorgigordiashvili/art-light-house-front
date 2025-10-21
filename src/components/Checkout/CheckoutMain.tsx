@@ -158,8 +158,7 @@ const Checkout: React.FC<CheckoutProps> = ({ dictionary }) => {
         setLoadingCart(true);
         const cartData = await cartGet();
         setCart(cartData);
-      } catch (error) {
-        console.error("Failed to fetch cart:", error);
+      } catch {
       } finally {
         setLoadingCart(false);
       }
@@ -266,9 +265,7 @@ const Checkout: React.FC<CheckoutProps> = ({ dictionary }) => {
       };
 
       // Create order
-      const response = await ordersCreate(orderData);
-
-      console.log("Order created successfully:", response);
+      await ordersCreate(orderData);
 
       // Clear the cart after successful order
       try {
@@ -292,15 +289,13 @@ const Checkout: React.FC<CheckoutProps> = ({ dictionary }) => {
             })
           );
         }
-      } catch (clearError) {
-        console.error("Failed to clear cart:", clearError);
+      } catch {
         // Continue to success page even if cart clear fails
       }
 
       // Redirect to success page
       router.push(`/${locale}/succsess`);
-    } catch (error) {
-      console.error("Failed to create order:", error);
+    } catch {
       alert("Failed to create order. Please try again.");
     } finally {
       setSubmitting(false);

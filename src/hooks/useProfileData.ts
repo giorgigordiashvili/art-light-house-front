@@ -31,7 +31,6 @@ export const useProfileData = (): UseProfileDataReturn => {
       const data = await userProfile();
       setProfileData(data);
     } catch (err: any) {
-      console.error("Error fetching profile:", err);
       setError(err?.message || "Failed to fetch profile data");
     } finally {
       setIsLoading(false);

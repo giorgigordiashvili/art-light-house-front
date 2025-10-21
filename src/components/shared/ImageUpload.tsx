@@ -232,8 +232,7 @@ const ImageUpload = ({
       const newImages = images.filter((_, i) => i !== index);
       setImages(newImages);
       onImagesChange(newImages);
-    } catch (err) {
-      console.error("Failed to delete image:", err);
+    } catch {
       setError("Failed to delete image");
     }
   };

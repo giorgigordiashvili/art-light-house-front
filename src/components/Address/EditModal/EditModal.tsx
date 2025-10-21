@@ -33,8 +33,7 @@ const EditModal = ({ onEdit, onDelete, addressId, dictionary }: Props) => {
       await addressDelete(addressId);
 
       onDelete();
-    } catch (error: any) {
-      console.error("❌ Failed to delete address:", error);
+    } catch {
       // You might want to show an error message to the user here
     } finally {
       setIsLoading(false);

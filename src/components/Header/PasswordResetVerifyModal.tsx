@@ -160,7 +160,6 @@ const PasswordResetVerifyModal = ({
         onPasswordResetSuccess();
       }, 1500);
     } catch (err: any) {
-      console.error("Password reset failed:", err);
       setError(err?.response?.data?.message || "Password reset failed. Please try again.");
     } finally {
       setLoading(false);

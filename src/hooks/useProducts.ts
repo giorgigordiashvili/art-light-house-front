@@ -83,7 +83,6 @@ export const useProducts = (options: UseProductsOptions = {}): UseProductsResult
         setCurrentPage(page);
         setTotalPages(Math.ceil(availableProducts.length / PRODUCTS_PER_PAGE));
       } catch (err: any) {
-        console.error("❌ Failed to fetch products:", err);
         setError(err?.response?.data?.message || err?.message || "Failed to fetch products");
       } finally {
         setLoading(false);

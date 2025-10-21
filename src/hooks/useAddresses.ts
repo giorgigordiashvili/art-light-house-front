@@ -22,7 +22,6 @@ export const useAddresses = (): UseAddressesResult => {
       const fetchedAddresses = await addressList();
       setAddresses(fetchedAddresses);
     } catch (err: any) {
-      console.error("❌ Failed to fetch addresses:", err);
       setError(err?.response?.data?.message || err?.message || "Failed to fetch addresses");
     } finally {
       setLoading(false);

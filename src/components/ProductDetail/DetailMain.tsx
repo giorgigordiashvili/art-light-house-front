@@ -287,9 +287,7 @@ function DetailMain({ dictionary, productId }: { dictionary: any; productId: num
           window.dispatchEvent(new CustomEvent("cartUpdated", { detail: { count, cart } }));
         }
       } catch {}
-    } catch (error) {
-      console.error("❌ Failed to add to cart", error);
-    }
+    } catch {}
   };
 
   // Set the selected image to primary image when product loads

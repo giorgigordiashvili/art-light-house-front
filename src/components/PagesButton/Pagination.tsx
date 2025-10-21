@@ -8,9 +8,9 @@ const PaginationWrapper = styled.div`
   justify-content: center;
 `;
 
-const PageNumber = styled.button<{ active?: boolean }>`
-  background: ${({ active }) => (active ? "#F1C654" : "transparent")};
-  color: ${({ active }) => (active ? "#000" : "#fff")};
+const PageNumber = styled.button<{ $active?: boolean }>`
+  background: ${({ $active }) => ($active ? "#F1C654" : "transparent")};
+  color: ${({ $active }) => ($active ? "#000" : "#fff")};
   font-size: 16px;
   width: 9px;
   height: 51px;
@@ -20,7 +20,7 @@ const PageNumber = styled.button<{ active?: boolean }>`
   transition: background 0.2s ease;
 
   &:hover {
-    background: ${({ active }) => (active ? "#F1C654" : "#333")};
+    background: ${({ $active }) => ($active ? "#F1C654" : "#333")};
   }
 `;
 
@@ -31,7 +31,7 @@ const Pagination = () => {
   return (
     <PaginationWrapper>
       {pages.map((page) => (
-        <PageNumber key={page} active={page === currentPage} onClick={() => setCurrentPage(page)}>
+        <PageNumber key={page} $active={page === currentPage} onClick={() => setCurrentPage(page)}>
           {page}
         </PageNumber>
       ))}

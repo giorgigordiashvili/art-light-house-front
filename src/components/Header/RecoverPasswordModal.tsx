@@ -120,7 +120,6 @@ const RecoverPasswordModal = ({
         onPasswordResetRequested(email.trim());
       }, 1500);
     } catch (err: any) {
-      console.error("Password reset request failed:", err);
       setError(err?.response?.data?.message || "Failed to send reset code. Please try again.");
     } finally {
       setLoading(false);

@@ -115,8 +115,7 @@ const AddressModal = ({ onClose, onSave, initialData, dictionary }: Props) => {
           is_default: isDefault,
         };
 
-        const updatedAddress = await addressUpdate(initialData.id!, updateData);
-        console.log("✅ Address updated successfully:", updatedAddress);
+        await addressUpdate(initialData.id!, updateData);
       } else {
         // Create new address
         const addressData: AddressRequest = {
@@ -128,15 +127,13 @@ const AddressModal = ({ onClose, onSave, initialData, dictionary }: Props) => {
           is_default: isDefault,
         };
 
-        const createdAddress = await addressCreate(addressData);
-        console.log("✅ Address created successfully:", createdAddress);
+        await addressCreate(addressData);
       }
 
       // Call the parent callback to trigger refresh
       onSave();
       onClose();
     } catch (err: any) {
-      console.error(`❌ Failed to ${initialData?.id ? "update" : "create"} address:`, err);
       setError(
         err?.response?.data?.message ||
           err?.message ||

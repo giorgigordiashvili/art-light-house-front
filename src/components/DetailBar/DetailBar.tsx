@@ -108,8 +108,7 @@ const DetailBar = ({ dictionary }: any) => {
         await logout();
       }
       router.push(homePath);
-    } catch (error) {
-      console.error("Logout error:", error);
+    } catch {
       router.push(homePath);
     }
   };

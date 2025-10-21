@@ -173,7 +173,6 @@ const MyDetails = ({ dictionary }: any) => {
 
   // Show error state if there's an error
   if (error) {
-    console.error("Profile data error:", error);
   }
 
   return (

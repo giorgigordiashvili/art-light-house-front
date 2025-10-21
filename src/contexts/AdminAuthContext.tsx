@@ -60,24 +60,22 @@ export const AdminAuthProvider = ({ children }: { children: ReactNode }) => {
               localStorage.removeItem(ADMIN_REFRESH_KEY);
               localStorage.removeItem(ADMIN_USER_KEY);
             }
-          } catch (error) {
-            console.log("❌ AdminAuthContext: Token verification failed, clearing tokens:", error);
+          } catch {
             // Token expired or invalid, clear storage
             localStorage.removeItem(ADMIN_TOKEN_KEY);
             localStorage.removeItem(ADMIN_REFRESH_KEY);
             localStorage.removeItem(ADMIN_USER_KEY);
           }
         }
-      } catch (error) {
-        console.error("Error initializing admin auth:", error);
+      } catch {
+        // Error initializing admin auth
       } finally {
         setIsLoading(false);
       }
     };
 
     // Listen for forced admin logout events
-    const handleAdminForceLogout = (event: CustomEvent) => {
-      console.warn("🔒 Admin forced logout triggered:", event.detail?.reason || "unknown");
+    const handleAdminForceLogout = () => {
       setUser(null);
       setIsLoading(false);
     };
@@ -117,8 +115,7 @@ export const AdminAuthProvider = ({ children }: { children: ReactNode }) => {
       setUser(response.user);
 
       return true;
-    } catch (error) {
-      console.error("❌ Admin login error:", error);
+    } catch {
       return false;
     } finally {
       setIsLoading(false);
@@ -130,8 +127,8 @@ export const AdminAuthProvider = ({ children }: { children: ReactNode }) => {
     try {
       // Call logout API
       await userLogout();
-    } catch (error) {
-      console.error("Admin logout error:", error);
+    } catch {
+      // Continue with logout even if API call fails
     } finally {
       // Clear admin tokens and user data
       localStorage.removeItem(ADMIN_TOKEN_KEY);

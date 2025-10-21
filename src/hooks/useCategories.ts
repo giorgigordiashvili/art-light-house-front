@@ -21,7 +21,6 @@ export const useCategories = (): UseCategoriesReturn => {
       const data = await categoryList();
       setCategories(data);
     } catch (err: any) {
-      console.error("Error fetching categories:", err);
       setError(err?.response?.data?.message || err?.message || "Failed to fetch categories");
     } finally {
       setLoading(false);

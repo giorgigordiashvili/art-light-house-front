@@ -68,9 +68,7 @@ const AddButton = ({
         }
       } catch {}
       onClick?.();
-    } catch (error) {
-      console.error("❌ Failed to add to cart", error);
-    }
+    } catch {}
   };
 
   return (

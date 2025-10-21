@@ -77,7 +77,6 @@ export default function GoogleMap({
         // Pass both address and coordinates to the callback
         onLocationSelect(results[0].formatted_address, { lat, lng });
       } else {
-        console.warn("Reverse geocoding failed:", status);
       }
     });
   };

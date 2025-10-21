@@ -139,8 +139,7 @@ const ProductsManagement = () => {
       setLoading(true);
       const productsData = await productList();
       setProducts(productsData);
-    } catch (error) {
-      console.error("❌ Error loading products:", error);
+    } catch {
     } finally {
       setLoading(false);
     }
@@ -150,9 +149,7 @@ const ProductsManagement = () => {
     try {
       const categoriesData = await categoryList();
       setCategories(categoriesData);
-    } catch (error) {
-      console.error("❌ Error loading categories:", error);
-    }
+    } catch {}
   };
 
   const handleCreateProduct = () => {
@@ -172,8 +169,7 @@ const ProductsManagement = () => {
         await productDelete(product.id);
         // Reload products after successful deletion
         await loadProducts();
-      } catch (error) {
-        console.error("❌ Error deleting product:", error);
+      } catch {
         alert("Failed to delete product. Please try again.");
       } finally {
         setLoading(false);
@@ -191,18 +187,16 @@ const ProductsManagement = () => {
 
       // Reload products after successful update
       await loadProducts();
-    } catch (error) {
-      console.error("❌ Error updating product status:", error);
+    } catch {
       alert("Failed to update product status. Please try again.");
     } finally {
       setLoading(false);
     }
   };
 
-  const handleFormSubmit = async (formData: any, images: File[]) => {
+  const handleFormSubmit = async (formData: any) => {
     try {
       setLoading(true);
-      console.log("📝 Submitting product form:", { formData, images });
 
       // Generate slug from title if not provided
       const slug = formData.title
@@ -241,8 +235,7 @@ const ProductsManagement = () => {
 
       setShowForm(false);
       setEditingProduct(null);
-    } catch (error) {
-      console.error("❌ Error submitting product form:", error);
+    } catch {
       alert("Failed to save product. Please try again.");
     } finally {
       setLoading(false);
