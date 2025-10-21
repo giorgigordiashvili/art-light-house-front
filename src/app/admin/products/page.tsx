@@ -137,9 +137,7 @@ const ProductsManagement = () => {
   const loadProducts = async () => {
     try {
       setLoading(true);
-      console.log("🔄 Loading products from API...");
       const productsData = await productList();
-      console.log("✅ Products loaded:", productsData);
       setProducts(productsData);
     } catch (error) {
       console.error("❌ Error loading products:", error);
@@ -150,9 +148,7 @@ const ProductsManagement = () => {
 
   const loadCategories = async () => {
     try {
-      console.log("🔄 Loading categories from API...");
       const categoriesData = await categoryList();
-      console.log("✅ Categories loaded:", categoriesData);
       setCategories(categoriesData);
     } catch (error) {
       console.error("❌ Error loading categories:", error);
@@ -173,9 +169,7 @@ const ProductsManagement = () => {
     if (confirm(`Are you sure you want to delete "${product.title}"?`)) {
       try {
         setLoading(true);
-        console.log("🗑️ Deleting product:", product.id);
         await productDelete(product.id);
-        console.log("✅ Product deleted successfully");
         // Reload products after successful deletion
         await loadProducts();
       } catch (error) {
@@ -190,13 +184,11 @@ const ProductsManagement = () => {
   const handleToggleStatus = async (product: ProductList) => {
     try {
       setLoading(true);
-      console.log("🔄 Toggling product status:", product.id, "to", !product.is_active);
 
       await productUpdate(product.id, {
         is_active: !product.is_active,
       });
 
-      console.log("✅ Product status updated successfully");
       // Reload products after successful update
       await loadProducts();
     } catch (error) {
@@ -239,13 +231,9 @@ const ProductsManagement = () => {
       };
 
       if (editingProduct) {
-        console.log("✏️ Updating existing product:", editingProduct.id);
         await productUpdate(editingProduct.id, productData);
-        console.log("✅ Product updated successfully");
       } else {
-        console.log("🆕 Creating new product");
         await productCreate(productData);
-        console.log("✅ Product created successfully");
       }
 
       // Reload products after successful create/update

@@ -102,17 +102,6 @@ const AddressModal = ({ onClose, onSave, initialData, dictionary }: Props) => {
       const roundedLat = coordinates?.lat ? formatCoordinateForAPI(coordinates.lat) : undefined;
       const roundedLng = coordinates?.lng ? formatCoordinateForAPI(coordinates.lng) : undefined;
 
-      if (coordinates) {
-        console.log("🔧 Coordinate rounding:", {
-          original: { lat: coordinates.lat, lng: coordinates.lng },
-          rounded: { lat: roundedLat, lng: roundedLng },
-          stringLength: {
-            lat: roundedLat?.length,
-            lng: roundedLng?.length,
-          },
-        });
-      }
-
       // Check if we're editing an existing address or creating a new one
       const isEditing = initialData && initialData.id;
 
@@ -126,16 +115,6 @@ const AddressModal = ({ onClose, onSave, initialData, dictionary }: Props) => {
           is_default: isDefault,
         };
 
-        console.log("📝 Updating address with data:", {
-          addressId: initialData.id,
-          ...updateData,
-          coordinates: roundedLat && roundedLng ? `${roundedLat}, ${roundedLng}` : "not available",
-          coordinateStringLengths: {
-            latitude: roundedLat?.length || 0,
-            longitude: roundedLng?.length || 0,
-          },
-        });
-
         const updatedAddress = await addressUpdate(initialData.id!, updateData);
         console.log("✅ Address updated successfully:", updatedAddress);
       } else {
@@ -148,15 +127,6 @@ const AddressModal = ({ onClose, onSave, initialData, dictionary }: Props) => {
           longitude: roundedLng,
           is_default: isDefault,
         };
-
-        console.log("📤 Creating address with data:", {
-          ...addressData,
-          coordinates: roundedLat && roundedLng ? `${roundedLat}, ${roundedLng}` : "not available",
-          coordinateStringLengths: {
-            latitude: roundedLat?.length || 0,
-            longitude: roundedLng?.length || 0,
-          },
-        });
 
         const createdAddress = await addressCreate(addressData);
         console.log("✅ Address created successfully:", createdAddress);
@@ -210,11 +180,9 @@ const AddressModal = ({ onClose, onSave, initialData, dictionary }: Props) => {
           variant={2}
           searchedAddress={address}
           onLocationSelect={(locationName, coords) => {
-            console.log("🗺️ Location selected:", { locationName, coords });
             setAddress(locationName);
             if (coords) {
               setCoordinates(coords);
-              console.log("📍 Coordinates updated:", coords);
             }
           }}
         />

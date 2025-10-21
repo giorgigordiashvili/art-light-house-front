@@ -170,9 +170,7 @@ const AttributesManagement = () => {
   const loadAttributes = async () => {
     try {
       setLoading(true);
-      console.log("🔄 Loading attributes from API...");
       const response = await adminAxios.get("/api/products/admin/attributes/");
-      console.log("✅ Attributes loaded:", response.data);
       setAttributes(response.data);
     } catch (error) {
       console.error("❌ Error loading attributes:", error);
@@ -200,9 +198,7 @@ const AttributesManagement = () => {
     if (confirm(`Are you sure you want to delete "${attribute.name}"?`)) {
       try {
         setLoading(true);
-        console.log("🗑️ Deleting attribute:", attribute.id);
         await adminAxios.delete(`/api/products/admin/attributes/${attribute.id}/delete/`);
-        console.log("✅ Attribute deleted successfully");
         await loadAttributes();
       } catch (error) {
         console.error("❌ Error deleting attribute:", error);
@@ -220,7 +216,6 @@ const AttributesManagement = () => {
   const handleFormSubmit = async (formData: any) => {
     try {
       setLoading(true);
-      console.log("📝 Submitting attribute form:", { formData, editingAttribute });
 
       // Prepare API data
       const attributeData: AdminAttributeRequest = {
@@ -233,16 +228,12 @@ const AttributesManagement = () => {
       };
 
       if (editingAttribute) {
-        console.log("✏️ Updating existing attribute:", editingAttribute.id);
         await adminAxios.patch(
           `/api/products/admin/attributes/${editingAttribute.id}/update/`,
           attributeData
         );
-        console.log("✅ Attribute updated successfully");
       } else {
-        console.log("🆕 Creating new attribute");
         await adminAxios.post("/api/products/admin/attributes/create/", attributeData);
-        console.log("✅ Attribute created successfully");
       }
 
       // Reload attributes after successful create/update

@@ -164,9 +164,7 @@ const CategoriesManagement = () => {
   const loadCategories = async () => {
     try {
       setLoading(true);
-      console.log("🔄 Loading categories from API...");
       const response = await adminAxios.get("/api/products/admin/categories/");
-      console.log("✅ Categories loaded:", response.data);
       setCategories(response.data);
     } catch (error) {
       console.error("❌ Error loading categories:", error);
@@ -197,9 +195,7 @@ const CategoriesManagement = () => {
     if (confirm(`Are you sure you want to delete "${category.name}"?`)) {
       try {
         setLoading(true);
-        console.log("🗑️ Deleting category:", category.id);
         await adminAxios.delete(`/api/products/admin/categories/${category.id}/delete/`);
-        console.log("✅ Category deleted successfully");
         await loadCategories();
       } catch (error) {
         console.error("❌ Error deleting category:", error);
@@ -213,11 +209,9 @@ const CategoriesManagement = () => {
   const handleToggleStatus = async (category: AdminCategory) => {
     try {
       setLoading(true);
-      console.log("🔄 Toggling category status:", category.id, "to", !category.is_active);
       await adminAxios.patch(`/api/products/admin/categories/${category.id}/update/`, {
         is_active: !category.is_active,
       });
-      console.log("✅ Category status updated successfully");
       await loadCategories();
     } catch (error) {
       console.error("❌ Error updating category status:", error);
@@ -230,7 +224,6 @@ const CategoriesManagement = () => {
   const handleFormSubmit = async (formData: any) => {
     try {
       setLoading(true);
-      console.log("📝 Submitting category form:", { formData, editingCategory });
 
       // Prepare API data
       const categoryData: AdminCategoryRequest = {
@@ -248,16 +241,12 @@ const CategoriesManagement = () => {
       };
 
       if (editingCategory) {
-        console.log("✏️ Updating existing category:", editingCategory.id);
         await adminAxios.patch(
           `/api/products/admin/categories/${editingCategory.id}/update/`,
           categoryData
         );
-        console.log("✅ Category updated successfully");
       } else {
-        console.log("🆕 Creating new category");
         await adminAxios.post("/api/products/admin/categories/create/", categoryData);
-        console.log("✅ Category created successfully");
       }
 
       // Reload categories after successful create/update

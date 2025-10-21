@@ -69,25 +69,11 @@ export default function GoogleMap({
     const lat = event.detail?.latLng?.lat;
     const lng = event.detail?.latLng?.lng;
 
-    // Console log the coordinates when user clicks on map
-    if (lat && lng) {
-      console.log("📍 Map clicked - Coordinates:", {
-        latitude: lat,
-        longitude: lng,
-        coordinates: `${lat}, ${lng}`,
-      });
-    }
-
     if (!lat || !lng || !onLocationSelect) return;
 
     const geocoder = new window.google.maps.Geocoder();
     geocoder.geocode({ location: { lat, lng } }, (results, status) => {
       if (status === "OK" && results && results[0]) {
-        console.log("🏠 Address found for coordinates:", {
-          latitude: lat,
-          longitude: lng,
-          address: results[0].formatted_address,
-        });
         // Pass both address and coordinates to the callback
         onLocationSelect(results[0].formatted_address, { lat, lng });
       } else {

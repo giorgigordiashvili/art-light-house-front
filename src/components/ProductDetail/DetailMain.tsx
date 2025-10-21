@@ -277,7 +277,6 @@ function DetailMain({ dictionary, productId }: { dictionary: any; productId: num
     try {
       const payload = { product_id: product.id, quantity: 1 };
       const cart = await cartAddItem(payload);
-      console.log("✅ Added to cart:", payload, "→ Cart:", cart);
 
       // Update cart count in header
       try {

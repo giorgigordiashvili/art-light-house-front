@@ -26,13 +26,6 @@ const createAdminAxiosInstance = (): AxiosInstance => {
         config.baseURL = getApiUrl();
       }
 
-      // Log API calls in development
-      if (process.env.NODE_ENV === "development") {
-        console.log(
-          `🔐 Admin API Request: ${config.method?.toUpperCase()} ${config.baseURL}${config.url}`
-        );
-      }
-
       // Use admin token instead of regular user token
       const adminToken =
         typeof window !== "undefined" ? localStorage.getItem("admin_access_token") : null;

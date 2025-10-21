@@ -82,13 +82,6 @@ export const useProducts = (options: UseProductsOptions = {}): UseProductsResult
         setProducts(paginatedProducts);
         setCurrentPage(page);
         setTotalPages(Math.ceil(availableProducts.length / PRODUCTS_PER_PAGE));
-
-        console.log(`✅ Products fetched successfully:`, {
-          total: availableProducts.length,
-          page,
-          productsOnPage: paginatedProducts.length,
-          totalPages: Math.ceil(availableProducts.length / PRODUCTS_PER_PAGE),
-        });
       } catch (err: any) {
         console.error("❌ Failed to fetch products:", err);
         setError(err?.response?.data?.message || err?.message || "Failed to fetch products");
