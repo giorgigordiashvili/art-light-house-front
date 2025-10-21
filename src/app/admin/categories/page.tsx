@@ -235,6 +235,10 @@ const CategoriesManagement = () => {
         parent:
           parentForNewCategory || (formData.parent_id ? parseInt(formData.parent_id) : undefined),
         is_active: formData.is_active ?? true,
+        translations:
+          formData.translations && formData.translations.length > 0
+            ? formData.translations
+            : undefined,
       };
 
       if (editingCategory) {
