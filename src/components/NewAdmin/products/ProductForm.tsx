@@ -1,6 +1,6 @@
 "use client";
-import { useState } from "react";
-import { ProductList } from "@/api/generated/interfaces";
+import { useState, useEffect } from "react";
+import { ProductList, AdminAttribute, AdminAttributeValue } from "@/api/generated/interfaces";
 import {
   Form,
   FormGroup,
@@ -13,10 +13,12 @@ import {
   Checkbox,
   CheckboxLabel,
   ErrorMessage,
+  HelperText,
 } from "@/components/NewAdmin/ui/Form";
 import { Button } from "@/components/NewAdmin/ui/Button";
 import { Card, CardHeader, CardContent } from "@/components/NewAdmin/ui/Card";
 import styled from "styled-components";
+import adminAxios from "@/api/admin-axios";
 
 const ImageUploadArea = styled.div`
   border: 2px dashed #dee2e6;
@@ -55,6 +57,75 @@ const ImagePreview = styled.div`
   grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
   gap: 12px;
   margin-top: 16px;
+`;
+
+const TranslationCard = styled.div`
+  background: #f8f9fa;
+  padding: 16px;
+  border-radius: 8px;
+  border: 1px solid #dee2e6;
+  margin-bottom: 16px;
+`;
+
+const TranslationHeader = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+`;
+
+const TranslationTitle = styled.h4`
+  margin: 0;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #495057;
+`;
+
+const RemoveButton = styled.button`
+  background: none;
+  border: none;
+  color: #dc3545;
+  font-size: 1.5rem;
+  cursor: pointer;
+  padding: 0;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  &:hover {
+    color: #c82333;
+  }
+`;
+
+const AddButton = styled(Button)`
+  margin-top: 8px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+`;
+
+const AttributeCard = styled.div`
+  background: #f8f9fa;
+  padding: 16px;
+  border-radius: 8px;
+  border: 1px solid #dee2e6;
+  margin-bottom: 16px;
+`;
+
+const AttributeHeader = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+`;
+
+const AttributeTitle = styled.h4`
+  margin: 0;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #495057;
 `;
 
 const ImageCard = styled.div`
@@ -97,6 +168,18 @@ const ImageCard = styled.div`
   }
 `;
 
+interface ProductTranslation {
+  language_code: string;
+  title: string;
+  description: string;
+}
+
+interface ProductAttribute {
+  attribute: number;
+  value: string;
+  attribute_value?: number;
+}
+
 interface FormData {
   title: string;
   description: string;
@@ -112,6 +195,8 @@ interface FormData {
   meta_description: string;
   sku: string;
   barcode: string;
+  translations: ProductTranslation[];
+  attributes: ProductAttribute[];
 }
 
 interface Category {
@@ -152,6 +237,8 @@ const ProductForm = ({
         meta_description: "",
         sku: initialData.slug || "",
         barcode: "",
+        translations: [],
+        attributes: [],
       };
     }
 
@@ -170,11 +257,53 @@ const ProductForm = ({
       meta_description: "",
       sku: "",
       barcode: "",
+      translations: [],
+      attributes: [],
     };
   });
 
+  const [attributes, setAttributes] = useState<AdminAttribute[]>([]);
+  const [attributeValues, setAttributeValues] = useState<AdminAttributeValue[]>([]);
+  const [selectedAttributeId, setSelectedAttributeId] = useState<string>("");
+
   const [images, setImages] = useState<File[]>([]);
   const [errors, setErrors] = useState<Record<string, string>>({});
+
+  // Fetch attributes on component mount
+  useEffect(() => {
+    const fetchAttributes = async () => {
+      try {
+        const response = await adminAxios.get("/api/products/admin/attributes/");
+        setAttributes(response.data.results || response.data || []);
+      } catch {
+        // Silently handle error
+      }
+    };
+
+    fetchAttributes();
+  }, []);
+
+  // Fetch attribute values when selected attribute changes
+  useEffect(() => {
+    if (!selectedAttributeId) {
+      setAttributeValues([]);
+      return;
+    }
+
+    const fetchAttributeValues = async () => {
+      try {
+        const response = await adminAxios.get(
+          `/api/products/admin/attributes/${selectedAttributeId}/values/`
+        );
+        setAttributeValues(response.data.results || response.data || []);
+      } catch {
+        // Silently handle error
+        setAttributeValues([]);
+      }
+    };
+
+    fetchAttributeValues();
+  }, [selectedAttributeId]);
 
   const validateForm = (): boolean => {
     const newErrors: Record<string, string> = {};
@@ -249,6 +378,65 @@ const ProductForm = ({
 
   const removeImage = (index: number) => {
     setImages((prev) => prev.filter((_, i) => i !== index));
+  };
+
+  // Product Attributes handlers
+  const addAttribute = () => {
+    setFormData((prev) => ({
+      ...prev,
+      attributes: [...prev.attributes, { attribute: 0, value: "", attribute_value: undefined }],
+    }));
+  };
+
+  const removeAttribute = (index: number) => {
+    setFormData((prev) => ({
+      ...prev,
+      attributes: prev.attributes.filter((_, i) => i !== index),
+    }));
+  };
+
+  const handleAttributeChange = (index: number, field: keyof ProductAttribute, value: any) => {
+    setFormData((prev) => ({
+      ...prev,
+      attributes: prev.attributes.map((attr, i) => {
+        if (i === index) {
+          // When attribute is changed, reset attribute_value
+          if (field === "attribute") {
+            return { ...attr, [field]: value, attribute_value: undefined };
+          }
+          return { ...attr, [field]: value };
+        }
+        return attr;
+      }),
+    }));
+  };
+
+  // Translations handlers
+  const addTranslation = () => {
+    setFormData((prev) => ({
+      ...prev,
+      translations: [...prev.translations, { language_code: "en", title: "", description: "" }],
+    }));
+  };
+
+  const removeTranslation = (index: number) => {
+    setFormData((prev) => ({
+      ...prev,
+      translations: prev.translations.filter((_, i) => i !== index),
+    }));
+  };
+
+  const handleTranslationChange = (
+    index: number,
+    field: keyof ProductTranslation,
+    value: string
+  ) => {
+    setFormData((prev) => ({
+      ...prev,
+      translations: prev.translations.map((trans, i) =>
+        i === index ? { ...trans, [field]: value } : trans
+      ),
+    }));
   };
 
   return (
@@ -414,6 +602,86 @@ const ProductForm = ({
 
       <Card>
         <CardHeader>
+          <h2>Product Attributes</h2>
+        </CardHeader>
+        <CardContent>
+          {formData.attributes.map((attr, index) => (
+            <AttributeCard key={index}>
+              <AttributeHeader>
+                <AttributeTitle>Attribute {index + 1}</AttributeTitle>
+                <RemoveButton type="button" onClick={() => removeAttribute(index)}>
+                  ×
+                </RemoveButton>
+              </AttributeHeader>
+
+              <FormGroup>
+                <Label>Attribute</Label>
+                <Select
+                  value={attr.attribute || ""}
+                  onChange={(e) => {
+                    const attributeId = e.target.value;
+                    handleAttributeChange(index, "attribute", Number(attributeId));
+                    setSelectedAttributeId(attributeId);
+                  }}
+                >
+                  <option value="">Select an attribute</option>
+                  {attributes.map((attribute) => (
+                    <option key={attribute.id} value={attribute.id}>
+                      {attribute.name}
+                    </option>
+                  ))}
+                </Select>
+              </FormGroup>
+
+              {attr.attribute > 0 && (
+                <FormGroup>
+                  <Label>Attribute Value</Label>
+                  <Select
+                    value={attr.attribute_value || ""}
+                    onChange={(e) =>
+                      handleAttributeChange(
+                        index,
+                        "attribute_value",
+                        Number(e.target.value) || undefined
+                      )
+                    }
+                  >
+                    <option value="">Select a value (optional)</option>
+                    {attributeValues
+                      .filter((av) => {
+                        const selectedAttr = attributes.find((a) => a.id === attr.attribute);
+                        return selectedAttr?.values?.some((v) => v.id === av.id);
+                      })
+                      .map((value) => (
+                        <option key={value.id} value={value.id}>
+                          {value.value}
+                        </option>
+                      ))}
+                  </Select>
+                  <HelperText>Or enter custom value below</HelperText>
+                </FormGroup>
+              )}
+
+              <FormGroup>
+                <Label>Custom Value</Label>
+                <Input
+                  type="text"
+                  value={attr.value}
+                  onChange={(e) => handleAttributeChange(index, "value", e.target.value)}
+                  placeholder="Enter custom attribute value"
+                />
+              </FormGroup>
+            </AttributeCard>
+          ))}
+
+          <AddButton type="button" onClick={addAttribute}>
+            + Add Attribute
+          </AddButton>
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
           <h2>Images</h2>
         </CardHeader>
         <CardContent>
@@ -483,6 +751,59 @@ const ProductForm = ({
               rows={3}
             />
           </FormGroup>
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <h2>Translations</h2>
+        </CardHeader>
+        <CardContent>
+          {formData.translations.map((translation, index) => (
+            <TranslationCard key={index}>
+              <TranslationHeader>
+                <TranslationTitle>Translation {index + 1}</TranslationTitle>
+                <RemoveButton type="button" onClick={() => removeTranslation(index)}>
+                  ×
+                </RemoveButton>
+              </TranslationHeader>
+
+              <FormGroup>
+                <Label>Language</Label>
+                <Select
+                  value={translation.language_code}
+                  onChange={(e) => handleTranslationChange(index, "language_code", e.target.value)}
+                >
+                  <option value="en">English</option>
+                  <option value="ka">Georgian</option>
+                </Select>
+              </FormGroup>
+
+              <FormGroup>
+                <Label>Title</Label>
+                <Input
+                  type="text"
+                  value={translation.title}
+                  onChange={(e) => handleTranslationChange(index, "title", e.target.value)}
+                  placeholder="Product title in selected language"
+                />
+              </FormGroup>
+
+              <FormGroup>
+                <Label>Description</Label>
+                <Textarea
+                  value={translation.description}
+                  onChange={(e) => handleTranslationChange(index, "description", e.target.value)}
+                  placeholder="Product description in selected language"
+                  rows={4}
+                />
+              </FormGroup>
+            </TranslationCard>
+          ))}
+
+          <AddButton type="button" onClick={addTranslation}>
+            + Add Translation
+          </AddButton>
         </CardContent>
       </Card>
 

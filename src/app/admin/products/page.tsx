@@ -222,6 +222,8 @@ const ProductsManagement = () => {
         category: formData.category_id ? parseInt(formData.category_id) : undefined,
         is_active: formData.is_active,
         is_featured: formData.is_featured,
+        attributes:
+          formData.attributes && formData.attributes.length > 0 ? formData.attributes : undefined,
       };
 
       if (editingProduct) {
