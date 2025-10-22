@@ -215,9 +215,6 @@ const AttributesManagement = () => {
     try {
       setLoading(true);
 
-      console.log("Form data received:", formData);
-      console.log("placement_hint value:", formData.placement_hint);
-
       // Prepare API data
       const attributeData: any = {
         name: formData.name,
@@ -234,8 +231,6 @@ const AttributesManagement = () => {
         formData.placement_hint && formData.placement_hint.trim() !== ""
           ? formData.placement_hint.trim()
           : null;
-
-      console.log("Sending to API:", attributeData);
 
       let createdOrUpdatedAttribute;
 
@@ -263,9 +258,7 @@ const AttributesManagement = () => {
               sort_order: 0,
             }
           );
-          console.log("Attribute value created successfully:", pendingValue);
-        } catch (error) {
-          console.error("Failed to create attribute value:", error);
+        } catch {
           alert("Attribute created but failed to add the value. You can add it manually.");
         }
       }
