@@ -8,7 +8,7 @@ import AttributesTable from "@/components/NewAdmin/attributes/AttributesTable";
 import AttributeForm from "@/components/NewAdmin/attributes/AttributeForm";
 import AttributeValuesManager from "@/components/NewAdmin/attributes/AttributeValuesManager";
 import styled from "styled-components";
-import { AdminAttribute, AdminAttributeRequest } from "@/api/generated/interfaces";
+import { AdminAttribute } from "@/api/generated/interfaces";
 import adminAxios from "@/api/admin-axios";
 
 const PageHeader = styled.div`
@@ -215,23 +215,59 @@ const AttributesManagement = () => {
     try {
       setLoading(true);
 
+      console.log("Form data received:", formData);
+      console.log("placement_hint value:", formData.placement_hint);
+
       // Prepare API data
-      const attributeData: AdminAttributeRequest = {
+      const attributeData: any = {
         name: formData.name,
         attribute_type: formData.attribute_type,
         is_required: formData.is_required ?? false,
         is_filterable: formData.is_filterable ?? false,
         parent: formData.parent || undefined,
         categories: formData.categories || [],
+        translations: formData.translations || [],
       };
 
+      // Store the value to create after attribute creation
+      const pendingValue =
+        formData.placement_hint && formData.placement_hint.trim() !== ""
+          ? formData.placement_hint.trim()
+          : null;
+
+      console.log("Sending to API:", attributeData);
+
+      let createdOrUpdatedAttribute;
+
       if (editingAttribute) {
-        await adminAxios.patch(
+        const response = await adminAxios.patch(
           `/api/products/admin/attributes/${editingAttribute.id}/update/`,
           attributeData
         );
+        createdOrUpdatedAttribute = response.data;
       } else {
-        await adminAxios.post("/api/products/admin/attributes/create/", attributeData);
+        const response = await adminAxios.post(
+          "/api/products/admin/attributes/create/",
+          attributeData
+        );
+        createdOrUpdatedAttribute = response.data;
+      }
+
+      // If there's a pending value, create it as an attribute value
+      if (pendingValue && createdOrUpdatedAttribute?.id) {
+        try {
+          await adminAxios.post(
+            `/api/products/admin/attributes/${createdOrUpdatedAttribute.id}/values/create/`,
+            {
+              value: pendingValue,
+              sort_order: 0,
+            }
+          );
+          console.log("Attribute value created successfully:", pendingValue);
+        } catch (error) {
+          console.error("Failed to create attribute value:", error);
+          alert("Attribute created but failed to add the value. You can add it manually.");
+        }
       }
 
       // Reload attributes after successful create/update
