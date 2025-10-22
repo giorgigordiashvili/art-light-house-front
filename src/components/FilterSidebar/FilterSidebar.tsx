@@ -8,7 +8,6 @@ import PriceFilter from "./PriceFilter";
 
 const SidebarWrapper = styled.div`
   width: 308px;
-  height: 1083px;
   border-radius: 17px;
   border: 1px solid #ffffff12;
   background: #1a1a1a96;
