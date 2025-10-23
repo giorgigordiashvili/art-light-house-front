@@ -19,5 +19,7 @@ export const metadata = {
   description: "This is Art Light House shop website",
   icons: {
     icon: "/favicon.png",
+    shortcut: "/favicon.png",
+    apple: "/favicon.png",
   },
 };
