@@ -6,14 +6,13 @@ import { Button, ButtonGroup } from "@/components/NewAdmin/ui/Button";
 import { Input, Select } from "@/components/NewAdmin/ui/Form";
 import ProductsTable from "@/components/NewAdmin/products/ProductsTable";
 import ProductForm from "@/components/NewAdmin/products/ProductForm";
-import { ProductList, ProductCreateUpdateRequest, Category } from "@/api/generated/interfaces";
 import {
-  productList,
-  productDelete,
-  productUpdate,
-  productCreate,
-  categoryList,
-} from "@/api/generated/api";
+  ProductList,
+  ProductCreateUpdateRequest,
+  Category,
+  ProductDetail,
+} from "@/api/generated/interfaces";
+import adminAxios from "@/api/admin-axios";
 import styled from "styled-components";
 
 const PageHeader = styled.div`
@@ -123,7 +122,7 @@ const ProductsManagement = () => {
   const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(false);
   const [showForm, setShowForm] = useState(false);
-  const [editingProduct, setEditingProduct] = useState<ProductList | null>(null);
+  const [editingProduct, setEditingProduct] = useState<ProductDetail | null>(null);
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
   const [categoryFilter, setCategoryFilter] = useState("all");
@@ -137,9 +136,11 @@ const ProductsManagement = () => {
   const loadProducts = async () => {
     try {
       setLoading(true);
-      const productsData = await productList();
-      setProducts(productsData);
-    } catch {
+      const response = await adminAxios.get("/api/products/");
+      setProducts(response.data);
+    } catch (error) {
+      console.error("Failed to load products:", error);
+      alert("Failed to load products. Please try again.");
     } finally {
       setLoading(false);
     }
@@ -147,9 +148,11 @@ const ProductsManagement = () => {
 
   const loadCategories = async () => {
     try {
-      const categoriesData = await categoryList();
-      setCategories(categoriesData);
-    } catch {}
+      const response = await adminAxios.get("/api/products/categories/");
+      setCategories(response.data);
+    } catch (error) {
+      console.error("Failed to load categories:", error);
+    }
   };
 
   const handleCreateProduct = () => {
@@ -157,19 +160,31 @@ const ProductsManagement = () => {
     setShowForm(true);
   };
 
-  const handleEditProduct = (product: ProductList) => {
-    setEditingProduct(product);
-    setShowForm(true);
+  const handleEditProduct = async (product: ProductList) => {
+    try {
+      setLoading(true);
+      // Fetch full product details for editing
+      const response = await adminAxios.get(`/api/products/${product.id}/`);
+      setEditingProduct(response.data);
+      setShowForm(true);
+    } catch (error) {
+      console.error("Failed to load product details:", error);
+      alert("Failed to load product details. Please try again.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleDeleteProduct = async (product: ProductList) => {
     if (confirm(`Are you sure you want to delete "${product.title}"?`)) {
       try {
         setLoading(true);
-        await productDelete(product.id);
+        await adminAxios.delete(`/api/products/${product.id}/delete/`);
         // Reload products after successful deletion
         await loadProducts();
-      } catch {
+        alert("Product deleted successfully!");
+      } catch (error) {
+        console.error("Failed to delete product:", error);
         alert("Failed to delete product. Please try again.");
       } finally {
         setLoading(false);
@@ -181,20 +196,21 @@ const ProductsManagement = () => {
     try {
       setLoading(true);
 
-      await productUpdate(product.id, {
+      await adminAxios.patch(`/api/products/${product.id}/update/`, {
         is_active: !product.is_active,
       });
 
       // Reload products after successful update
       await loadProducts();
-    } catch {
+    } catch (error) {
+      console.error("Failed to update product status:", error);
       alert("Failed to update product status. Please try again.");
     } finally {
       setLoading(false);
     }
   };
 
-  const handleFormSubmit = async (formData: any) => {
+  const handleFormSubmit = async (formData: any, images: File[]) => {
     try {
       setLoading(true);
 
@@ -226,10 +242,39 @@ const ProductsManagement = () => {
           formData.attributes && formData.attributes.length > 0 ? formData.attributes : undefined,
       };
 
+      let productId: number;
+
       if (editingProduct) {
-        await productUpdate(editingProduct.id, productData);
+        const response = await adminAxios.patch(
+          `/api/products/${editingProduct.id}/update/`,
+          productData
+        );
+        productId = response.data.id;
+        alert("Product updated successfully!");
       } else {
-        await productCreate(productData);
+        const response = await adminAxios.post("/api/products/create/", productData);
+        productId = response.data.id;
+        alert("Product created successfully!");
+      }
+
+      // Upload images if any
+      if (images.length > 0) {
+        for (let i = 0; i < images.length; i++) {
+          const formData = new FormData();
+          formData.append("image", images[i]);
+          formData.append("is_primary", i === 0 ? "true" : "false");
+          formData.append("sort_order", i.toString());
+
+          try {
+            await adminAxios.post(`/api/products/${productId}/images/upload/`, formData, {
+              headers: {
+                "Content-Type": "multipart/form-data",
+              },
+            });
+          } catch (error) {
+            console.error(`Failed to upload image ${i + 1}:`, error);
+          }
+        }
       }
 
       // Reload products after successful create/update
@@ -237,8 +282,13 @@ const ProductsManagement = () => {
 
       setShowForm(false);
       setEditingProduct(null);
-    } catch {
-      alert("Failed to save product. Please try again.");
+    } catch (error: any) {
+      console.error("Failed to save product:", error);
+      const errorMessage =
+        error.response?.data?.message ||
+        error.message ||
+        "Failed to save product. Please try again.";
+      alert(errorMessage);
     } finally {
       setLoading(false);
     }
@@ -348,7 +398,7 @@ const ProductsManagement = () => {
 
           <ProductsTable
             products={filteredProducts}
-            loading={false}
+            loading={loading}
             onEdit={handleEditProduct}
             onDelete={handleDeleteProduct}
             onToggleStatus={handleToggleStatus}

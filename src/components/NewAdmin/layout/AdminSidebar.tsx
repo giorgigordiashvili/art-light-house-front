@@ -168,6 +168,17 @@ const AdminSidebar = () => {
           <h3>Management</h3>
           <NavList>
             <NavItem>
+              <NavLink
+                href="/admin/orders"
+                $isActive={pathname?.startsWith("/admin/orders") || false}
+              >
+                <svg viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M19 3h-4.18C14.4 1.84 13.3 1 12 1s-2.4.84-2.82 2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 0c.55 0 1 .45 1 1s-.45 1-1 1-1-.45-1-1 .45-1 1-1zm2 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z" />
+                </svg>
+                Orders
+              </NavLink>
+            </NavItem>
+            <NavItem>
               <NavLink href="/admin/products" $isActive={isActive("/admin/products")}>
                 <svg viewBox="0 0 24 24" fill="currentColor">
                   <path d="M7 18c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zM1 2v2h2l3.6 7.5-1.1 1.9c-.1.3-.1.6-.1.9 0 1.1.9 2 2 2h12v-2H7.42c-.14 0-.25-.11-.25-.25L7.7 13H19l1.8-3.5L20.8 2H5.21L4.27 0H1zm16 16c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z" />

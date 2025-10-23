@@ -1,6 +1,6 @@
 "use client";
 import { useState, useEffect } from "react";
-import { ProductList, AdminAttribute, AdminAttributeValue } from "@/api/generated/interfaces";
+import { ProductDetail, AdminAttribute, AdminAttributeValue } from "@/api/generated/interfaces";
 import {
   Form,
   FormGroup,
@@ -205,7 +205,7 @@ interface Category {
 }
 
 interface ProductFormProps {
-  initialData?: ProductList | null;
+  initialData?: ProductDetail | null;
   categories: Category[];
   onSubmit: (data: FormData, images: File[]) => void;
   onCancel: () => void;
@@ -220,23 +220,23 @@ const ProductForm = ({
   loading = false,
 }: ProductFormProps) => {
   const [formData, setFormData] = useState<FormData>(() => {
-    // Convert ProductList to FormData format
+    // Convert ProductDetail to FormData format
     if (initialData) {
       return {
         title: initialData.title || "",
-        description: "", // ProductList doesn't have description, will need to fetch from ProductDetail
+        description: initialData.description || "",
         price: initialData.price || "",
         compare_price: initialData.compare_price || "",
         stock_quantity: initialData.stock_quantity?.toString() || "0",
-        category_id: "", // Will need to derive from category_name
+        category_id: initialData.category?.toString() || "",
         is_active: initialData.is_active ?? true,
         is_featured: initialData.is_featured ?? false,
-        track_inventory: true,
-        allow_backorder: false,
-        meta_title: "",
-        meta_description: "",
-        sku: initialData.slug || "",
-        barcode: "",
+        track_inventory: initialData.track_inventory ?? true,
+        allow_backorder: initialData.allow_backorder ?? false,
+        meta_title: initialData.meta_title || "",
+        meta_description: initialData.meta_description || "",
+        sku: initialData.sku || "",
+        barcode: initialData.barcode || "",
         translations: [],
         attributes: [],
       };

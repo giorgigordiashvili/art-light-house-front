@@ -155,9 +155,9 @@ const AdminDashboard = () => {
         </StatCard>
 
         <StatCard>
-          <div className="stat-value">1,247</div>
-          <div className="stat-label">Page Views</div>
-          <div className="stat-change positive">+156 this week</div>
+          <div className="stat-value">-</div>
+          <div className="stat-label">Total Orders</div>
+          <div className="stat-change">View all orders</div>
         </StatCard>
       </StatsGrid>
 
@@ -211,6 +211,11 @@ const AdminDashboard = () => {
           </CardHeader>
           <CardContent>
             <QuickActions>
+              <QuickActionButton onClick={() => (window.location.href = "/admin/orders")}>
+                <p className="action-title">View Orders</p>
+                <p className="action-description">Manage customer orders and shipments</p>
+              </QuickActionButton>
+
               <QuickActionButton onClick={() => (window.location.href = "/admin/products")}>
                 <p className="action-title">Add New Product</p>
                 <p className="action-description">Create a new product listing</p>
