@@ -269,6 +269,50 @@ const ProductForm = ({
   const [images, setImages] = useState<File[]>([]);
   const [errors, setErrors] = useState<Record<string, string>>({});
 
+  // Update form data when initialData changes
+  useEffect(() => {
+    if (initialData) {
+      setFormData({
+        title: initialData.title || "",
+        description: initialData.description || "",
+        price: initialData.price || "",
+        compare_price: initialData.compare_price || "",
+        stock_quantity: initialData.stock_quantity?.toString() || "0",
+        category_id: initialData.category?.toString() || "",
+        is_active: initialData.is_active ?? true,
+        is_featured: initialData.is_featured ?? false,
+        track_inventory: initialData.track_inventory ?? true,
+        allow_backorder: initialData.allow_backorder ?? false,
+        meta_title: initialData.meta_title || "",
+        meta_description: initialData.meta_description || "",
+        sku: initialData.sku || "",
+        barcode: initialData.barcode || "",
+        translations: [],
+        attributes: [],
+      });
+    } else {
+      // Reset form for new product
+      setFormData({
+        title: "",
+        description: "",
+        price: "",
+        compare_price: "",
+        stock_quantity: "0",
+        category_id: "",
+        is_active: true,
+        is_featured: false,
+        track_inventory: true,
+        allow_backorder: false,
+        meta_title: "",
+        meta_description: "",
+        sku: "",
+        barcode: "",
+        translations: [],
+        attributes: [],
+      });
+    }
+  }, [initialData]);
+
   // Fetch attributes on component mount
   useEffect(() => {
     const fetchAttributes = async () => {
