@@ -215,79 +215,119 @@ const ProductsManagement = () => {
       setLoading(true);
 
       // Generate slug from title if not provided
-      const slug = formData.title
+      const slug = (formData.slug || formData.title)
         .toLowerCase()
-        .replace(/[^a-z0-9\s]/g, "")
+        .replace(/[^a-z0-9\s-]/g, "")
         .replace(/\s+/g, "-")
         .substring(0, 50);
 
       // Prepare API data
       const productData: ProductCreateUpdateRequest = {
-        title: formData.title,
-        description: formData.description,
+        title: formData.title?.trim(),
+        description: formData.description?.trim(),
         slug: slug,
-        price: formData.price,
-        compare_price: formData.compare_price || undefined,
-        sku: formData.sku || undefined,
-        barcode: formData.barcode || undefined,
-        stock_quantity: formData.track_inventory ? parseInt(formData.stock_quantity) : undefined,
-        track_inventory: formData.track_inventory,
-        allow_backorder: formData.allow_backorder,
-        meta_title: formData.meta_title || undefined,
-        meta_description: formData.meta_description || undefined,
+        price: formData.price?.toString(),
+        compare_price: formData.compare_price ? formData.compare_price.toString() : undefined,
+        sku: formData.sku?.trim() || undefined,
+        barcode: formData.barcode?.trim() || undefined,
+        stock_quantity: formData.track_inventory
+          ? parseInt(formData.stock_quantity) || 0
+          : undefined,
+        track_inventory: Boolean(formData.track_inventory),
+        allow_backorder: Boolean(formData.allow_backorder),
+        meta_title: formData.meta_title?.trim() || undefined,
+        meta_description: formData.meta_description?.trim() || undefined,
         category: formData.category_id ? parseInt(formData.category_id) : undefined,
-        is_active: formData.is_active,
-        is_featured: formData.is_featured,
+        is_active: Boolean(formData.is_active),
+        is_featured: Boolean(formData.is_featured),
         attributes:
           formData.attributes && formData.attributes.length > 0 ? formData.attributes : undefined,
       };
 
+      console.log("Submitting product data:", productData);
+
       let productId: number;
 
       if (editingProduct) {
+        console.log(`Updating product ${editingProduct.id}...`);
         const response = await adminAxios.patch(
           `/api/products/${editingProduct.id}/update/`,
           productData
         );
         productId = response.data.id;
+        console.log("Product updated:", response.data);
         alert("Product updated successfully!");
       } else {
+        console.log("Creating new product...");
         const response = await adminAxios.post("/api/products/create/", productData);
         productId = response.data.id;
+        console.log("Product created:", response.data);
         alert("Product created successfully!");
       }
 
       // Upload images if any
       if (images.length > 0) {
+        console.log(`Uploading ${images.length} images...`);
         for (let i = 0; i < images.length; i++) {
-          const formData = new FormData();
-          formData.append("image", images[i]);
-          formData.append("is_primary", i === 0 ? "true" : "false");
-          formData.append("sort_order", i.toString());
+          const imageFormData = new FormData();
+          imageFormData.append("image", images[i]);
+          imageFormData.append("is_primary", i === 0 ? "true" : "false");
+          imageFormData.append("sort_order", i.toString());
 
           try {
-            await adminAxios.post(`/api/products/${productId}/images/upload/`, formData, {
+            console.log(`Uploading image ${i + 1}/${images.length}...`);
+            await adminAxios.post(`/api/products/${productId}/images/upload/`, imageFormData, {
               headers: {
                 "Content-Type": "multipart/form-data",
               },
             });
-          } catch (error) {
+            console.log(`Image ${i + 1} uploaded successfully`);
+          } catch (error: any) {
             console.error(`Failed to upload image ${i + 1}:`, error);
+            console.error("Error details:", error.response?.data);
+            alert(
+              `Failed to upload image ${i + 1}: ${error.response?.data?.error || error.message}`
+            );
           }
         }
       }
 
       // Reload products after successful create/update
+      console.log("Reloading products...");
       await loadProducts();
 
       setShowForm(false);
       setEditingProduct(null);
     } catch (error: any) {
       console.error("Failed to save product:", error);
-      const errorMessage =
-        error.response?.data?.message ||
-        error.message ||
-        "Failed to save product. Please try again.";
+      console.error("Error response:", error.response?.data);
+      console.error("Error status:", error.response?.status);
+
+      let errorMessage = "Failed to save product. Please try again.";
+
+      if (error.response?.data) {
+        if (typeof error.response.data === "string") {
+          errorMessage = error.response.data;
+        } else if (error.response.data.detail) {
+          errorMessage = error.response.data.detail;
+        } else if (error.response.data.message) {
+          errorMessage = error.response.data.message;
+        } else {
+          // Try to format field errors
+          const errors = Object.entries(error.response.data)
+            .map(([field, messages]) => {
+              if (Array.isArray(messages)) {
+                return `${field}: ${messages.join(", ")}`;
+              }
+              return `${field}: ${messages}`;
+            })
+            .join("\n");
+          if (errors) errorMessage = errors;
+        }
+      } else if (error.message) {
+        errorMessage = error.message;
+      }
+
       alert(errorMessage);
     } finally {
       setLoading(false);
