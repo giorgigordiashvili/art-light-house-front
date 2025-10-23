@@ -28,9 +28,8 @@ export function TranslationAdmin() {
       if (langs.length > 0 && !selectedLanguage) {
         setSelectedLanguage(langs.find((l) => l.isDefault)?.id || langs[0].id);
       }
-    } catch (error) {
+    } catch {
       setError("Failed to load languages");
-      console.error("Error loading languages:", error);
     }
   }, [selectedLanguage]);
 
@@ -47,9 +46,8 @@ export function TranslationAdmin() {
 
       const trans = await translationService.getTranslations(filters);
       setTranslations(trans);
-    } catch (error) {
+    } catch {
       setError("Failed to load translations");
-      console.error("Error loading translations:", error);
     } finally {
       setLoading(false);
     }
@@ -79,9 +77,8 @@ export function TranslationAdmin() {
 
       setNewTranslation({ key: "", value: "", namespace: "" });
       loadTranslations();
-    } catch (error) {
+    } catch {
       setError("Failed to create translation");
-      console.error("Error creating translation:", error);
     }
   };
 
@@ -97,9 +94,8 @@ export function TranslationAdmin() {
 
       setEditingTranslation(null);
       loadTranslations();
-    } catch (error) {
+    } catch {
       setError("Failed to update translation");
-      console.error("Error updating translation:", error);
     }
   };
 
@@ -109,9 +105,8 @@ export function TranslationAdmin() {
     try {
       await translationService.deleteTranslation(id);
       loadTranslations();
-    } catch (error) {
+    } catch {
       setError("Failed to delete translation");
-      console.error("Error deleting translation:", error);
     }
   };
 

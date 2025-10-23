@@ -93,9 +93,8 @@ const Order = ({ dictionary }: any) => {
         setLoading(true);
         const ordersData = await ordersList();
         setOrders(ordersData);
-      } catch (err) {
+      } catch {
         setError("Failed to fetch orders");
-        console.error("Error fetching orders:", err);
       } finally {
         setLoading(false);
       }

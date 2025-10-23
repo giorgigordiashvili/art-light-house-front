@@ -1,6 +1,7 @@
 "use client";
 import React from "react";
 import styled from "styled-components";
+import Image from "next/image";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation } from "swiper/modules";
 import "swiper/css";
@@ -41,10 +42,6 @@ const StyledComponent = styled.div`
   left: 0;
   width: 100%;
   height: 876px;
-  background-repeat: no-repeat;
-  background-position: center;
-  background-size: cover;
-  background-image: url("/assets/BackgroundImage.png");
   z-index: 0;
 `;
 
@@ -145,7 +142,19 @@ const HeroAndCategory = ({ dictionary }: any) => {
   return (
     <StyledContainer>
       <StyledLinearGradient />
-      <StyledComponent />
+      <StyledComponent>
+        <Image
+          src="/assets/BackgroundImage.png"
+          alt="Hero background"
+          fill
+          priority
+          quality={90}
+          style={{
+            objectFit: "cover",
+            objectPosition: "center",
+          }}
+        />
+      </StyledComponent>
       <ContentWrapper>
         <SwiperWrapper>
           <Swiper modules={[Navigation]} navigation={true} loop className="hero-swiper">

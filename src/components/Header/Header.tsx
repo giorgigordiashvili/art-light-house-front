@@ -179,9 +179,7 @@ const Header = ({ header, dictionary }: HeaderProps) => {
     setIsBurgerMenuOpen((prev) => !prev);
   };
 
-  useEffect(() => {
-    // console.log(header);
-  }, []);
+  useEffect(() => {}, []);
 
   useEffect(() => {
     document.body.style.overflow =

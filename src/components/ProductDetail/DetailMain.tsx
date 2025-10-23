@@ -277,7 +277,6 @@ function DetailMain({ dictionary, productId }: { dictionary: any; productId: num
     try {
       const payload = { product_id: product.id, quantity: 1 };
       const cart = await cartAddItem(payload);
-      console.log("✅ Added to cart:", payload, "→ Cart:", cart);
 
       // Update cart count in header
       try {
@@ -288,9 +287,7 @@ function DetailMain({ dictionary, productId }: { dictionary: any; productId: num
           window.dispatchEvent(new CustomEvent("cartUpdated", { detail: { count, cart } }));
         }
       } catch {}
-    } catch (error) {
-      console.error("❌ Failed to add to cart", error);
-    }
+    } catch {}
   };
 
   // Set the selected image to primary image when product loads

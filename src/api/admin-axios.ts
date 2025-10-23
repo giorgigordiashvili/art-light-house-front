@@ -26,13 +26,6 @@ const createAdminAxiosInstance = (): AxiosInstance => {
         config.baseURL = getApiUrl();
       }
 
-      // Log API calls in development
-      if (process.env.NODE_ENV === "development") {
-        console.log(
-          `🔐 Admin API Request: ${config.method?.toUpperCase()} ${config.baseURL}${config.url}`
-        );
-      }
-
       // Use admin token instead of regular user token
       const adminToken =
         typeof window !== "undefined" ? localStorage.getItem("admin_access_token") : null;
@@ -71,8 +64,6 @@ const createAdminAxiosInstance = (): AxiosInstance => {
       if (error.response?.status === 401) {
         // Handle unauthorized access for admin
         if (typeof window !== "undefined") {
-          console.warn("🔒 Admin access token expired or invalid - logging out admin");
-
           // Clear admin tokens
           localStorage.removeItem("admin_access_token");
           localStorage.removeItem("admin_refresh_token");

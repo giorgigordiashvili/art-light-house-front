@@ -41,20 +41,10 @@ interface AdminAuthGuardProps {
 }
 
 const AdminAuthGuard = ({ children }: AdminAuthGuardProps) => {
-  const { isAuthenticated, isLoading, user } = useAdminAuth();
-
-  console.log(
-    "🛡️ AdminAuthGuard: isLoading:",
-    isLoading,
-    "isAuthenticated:",
-    isAuthenticated,
-    "user:",
-    user
-  );
+  const { isAuthenticated, isLoading } = useAdminAuth();
 
   // Loading state
   if (isLoading) {
-    console.log("🛡️ AdminAuthGuard: Showing loading state");
     return (
       <LoadingContainer>
         <LoadingSpinner />
@@ -65,12 +55,10 @@ const AdminAuthGuard = ({ children }: AdminAuthGuardProps) => {
 
   // Not authenticated - show login form
   if (!isAuthenticated) {
-    console.log("🛡️ AdminAuthGuard: User not authenticated, showing login");
     return <AdminLogin />;
   }
 
   // User is authenticated
-  console.log("🛡️ AdminAuthGuard: User authenticated, showing admin content");
   return <>{children}</>;
 };
 

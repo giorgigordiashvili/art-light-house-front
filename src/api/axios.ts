@@ -9,10 +9,6 @@ const getApiUrl = (): string => {
   // Default fallback
   const fallbackUrl = "https://testapi.artlighthouse.ge";
 
-  if (process.env.NODE_ENV === "development") {
-    console.log(`⚠️  Fallback mode -> API URL: ${fallbackUrl}`);
-  }
-
   return fallbackUrl;
 };
 
@@ -34,13 +30,6 @@ const createAxiosInstance = (baseURL?: string): AxiosInstance => {
         config.baseURL = getApiUrl();
       } else if (baseURL) {
         config.baseURL = baseURL;
-      }
-
-      // Log API calls in development
-      if (process.env.NODE_ENV === "development") {
-        console.log(
-          `🌐 API Request: ${config.method?.toUpperCase()} ${config.baseURL}${config.url}`
-        );
       }
 
       const token =
@@ -82,8 +71,6 @@ const createAxiosInstance = (baseURL?: string): AxiosInstance => {
       if (error.response?.status === 401) {
         // Handle unauthorized access - token expired or invalid
         if (typeof window !== "undefined") {
-          console.warn("🔒 Access token expired or invalid - logging out user");
-
           // Clear all authentication tokens and user data
           localStorage.removeItem("auth_access_token");
           localStorage.removeItem("auth_refresh_token");

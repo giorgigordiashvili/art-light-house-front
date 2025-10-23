@@ -74,7 +74,6 @@ const ProductHeartIcon = ({ productId, defaultIsFavorite, size = 30 }: Props) =>
         setIsFilled(false);
         return;
       }
-      console.error("Failed to toggle favorites", err);
     } finally {
       setIsSubmitting(false);
     }

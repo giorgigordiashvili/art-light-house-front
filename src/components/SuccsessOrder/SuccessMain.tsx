@@ -111,8 +111,7 @@ const Container = ({ dictionary }: { dictionary: any }) => {
         if (orders.length > 0) {
           setLatestOrder(orders[0]);
         }
-      } catch (error) {
-        console.error("Failed to fetch latest order:", error);
+      } catch {
       } finally {
         setLoading(false);
       }

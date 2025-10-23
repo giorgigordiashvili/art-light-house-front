@@ -137,12 +137,9 @@ const ProductsManagement = () => {
   const loadProducts = async () => {
     try {
       setLoading(true);
-      console.log("🔄 Loading products from API...");
       const productsData = await productList();
-      console.log("✅ Products loaded:", productsData);
       setProducts(productsData);
-    } catch (error) {
-      console.error("❌ Error loading products:", error);
+    } catch {
     } finally {
       setLoading(false);
     }
@@ -150,13 +147,9 @@ const ProductsManagement = () => {
 
   const loadCategories = async () => {
     try {
-      console.log("🔄 Loading categories from API...");
       const categoriesData = await categoryList();
-      console.log("✅ Categories loaded:", categoriesData);
       setCategories(categoriesData);
-    } catch (error) {
-      console.error("❌ Error loading categories:", error);
-    }
+    } catch {}
   };
 
   const handleCreateProduct = () => {
@@ -173,13 +166,10 @@ const ProductsManagement = () => {
     if (confirm(`Are you sure you want to delete "${product.title}"?`)) {
       try {
         setLoading(true);
-        console.log("🗑️ Deleting product:", product.id);
         await productDelete(product.id);
-        console.log("✅ Product deleted successfully");
         // Reload products after successful deletion
         await loadProducts();
-      } catch (error) {
-        console.error("❌ Error deleting product:", error);
+      } catch {
         alert("Failed to delete product. Please try again.");
       } finally {
         setLoading(false);
@@ -190,27 +180,23 @@ const ProductsManagement = () => {
   const handleToggleStatus = async (product: ProductList) => {
     try {
       setLoading(true);
-      console.log("🔄 Toggling product status:", product.id, "to", !product.is_active);
 
       await productUpdate(product.id, {
         is_active: !product.is_active,
       });
 
-      console.log("✅ Product status updated successfully");
       // Reload products after successful update
       await loadProducts();
-    } catch (error) {
-      console.error("❌ Error updating product status:", error);
+    } catch {
       alert("Failed to update product status. Please try again.");
     } finally {
       setLoading(false);
     }
   };
 
-  const handleFormSubmit = async (formData: any, images: File[]) => {
+  const handleFormSubmit = async (formData: any) => {
     try {
       setLoading(true);
-      console.log("📝 Submitting product form:", { formData, images });
 
       // Generate slug from title if not provided
       const slug = formData.title
@@ -236,16 +222,14 @@ const ProductsManagement = () => {
         category: formData.category_id ? parseInt(formData.category_id) : undefined,
         is_active: formData.is_active,
         is_featured: formData.is_featured,
+        attributes:
+          formData.attributes && formData.attributes.length > 0 ? formData.attributes : undefined,
       };
 
       if (editingProduct) {
-        console.log("✏️ Updating existing product:", editingProduct.id);
         await productUpdate(editingProduct.id, productData);
-        console.log("✅ Product updated successfully");
       } else {
-        console.log("🆕 Creating new product");
         await productCreate(productData);
-        console.log("✅ Product created successfully");
       }
 
       // Reload products after successful create/update
@@ -253,8 +237,7 @@ const ProductsManagement = () => {
 
       setShowForm(false);
       setEditingProduct(null);
-    } catch (error) {
-      console.error("❌ Error submitting product form:", error);
+    } catch {
       alert("Failed to save product. Please try again.");
     } finally {
       setLoading(false);

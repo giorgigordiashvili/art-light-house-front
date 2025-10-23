@@ -25,13 +25,11 @@ export default function ClientRootLayout({ children, dictionary }: ClientRootLay
       const handleError = (event: ErrorEvent) => {
         const message = event.error?.message;
         if (message?.includes("authentication")) {
-          console.error("Authentication error:", message);
           localStorage.setItem("auth_error", message);
         }
       };
 
       window.addEventListener("error", handleError);
-      console.log("Client layout initialized in", process.env.NODE_ENV, "mode");
 
       return () => window.removeEventListener("error", handleError);
     }

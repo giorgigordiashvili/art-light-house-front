@@ -35,20 +35,32 @@ const StyledContainer = styled.div`
   }
 `;
 
-const StyledModal = styled.div`
+const StyledModal = styled.div<{ $isRegister: boolean }>`
   position: relative;
   background-color: #1c1c1c;
   width: fit-content;
   height: fit-content;
+  max-height: ${({ $isRegister }) => ($isRegister ? "calc(100vh - 120px)" : "none")};
+  overflow-y: ${({ $isRegister }) => ($isRegister ? "auto" : "visible")};
   border-radius: 20px;
   padding: 30px 24px 24px 24px;
+
   @media (max-width: 1080px) {
     width: auto;
     height: auto;
+    max-height: ${({ $isRegister }) => ($isRegister ? "calc(100vh - 100px)" : "none")};
     border-radius: 0;
     padding: 31px 16px 71px 16px;
     border-top-left-radius: 20px;
     border-top-right-radius: 20px;
+  }
+
+  /* Hide scrollbar but keep functionality */
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
+
+  &::-webkit-scrollbar {
+    display: none; /* Chrome, Safari and Opera */
   }
 `;
 
@@ -238,8 +250,6 @@ const AuthorizationModal: React.FC<AuthorizationModalProps> = ({
         }
       }
     } catch (error: any) {
-      console.error(error);
-
       if (activeTab === "auth") {
         // Handle custom API login errors
         let errorMessage =
@@ -277,7 +287,7 @@ const AuthorizationModal: React.FC<AuthorizationModalProps> = ({
 
   return (
     <StyledContainer>
-      <StyledModal>
+      <StyledModal $isRegister={activeTab === "register"}>
         <StyledCloseIcon onClick={onClose}>
           <CloseIcon />
         </StyledCloseIcon>

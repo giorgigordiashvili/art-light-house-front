@@ -41,8 +41,6 @@ export const useProfileUpdate = (): UseProfileUpdateReturn => {
 
       return updatedUser;
     } catch (err: any) {
-      console.error("Error updating profile:", err);
-
       let errorMessage = "Failed to update profile";
       if (err?.response?.status === 400) {
         errorMessage = "Invalid data provided";

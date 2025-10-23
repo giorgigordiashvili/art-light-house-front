@@ -33,9 +33,8 @@ const OrderDetailScreen = ({ dictionary, orderId }: OrderDetailScreenProps) => {
         setLoading(true);
         const orderData = await ordersRetrieve(orderId);
         setOrder(orderData);
-      } catch (err) {
+      } catch {
         setError("Failed to fetch order");
-        console.error("Error fetching order:", err);
       } finally {
         setLoading(false);
       }

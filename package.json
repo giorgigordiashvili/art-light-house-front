@@ -18,6 +18,7 @@
     "@react-google-maps/api": "^2.20.7",
     "@vis.gl/react-google-maps": "^1.5.2",
     "axios": "^1.12.2",
+    "framer-motion": "^12.23.24",
     "negotiator": "^1.0.0",
     "next": "15.3.0",
     "next-intl": "^4.1.0",

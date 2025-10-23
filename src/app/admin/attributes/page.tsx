@@ -8,7 +8,7 @@ import AttributesTable from "@/components/NewAdmin/attributes/AttributesTable";
 import AttributeForm from "@/components/NewAdmin/attributes/AttributeForm";
 import AttributeValuesManager from "@/components/NewAdmin/attributes/AttributeValuesManager";
 import styled from "styled-components";
-import { AdminAttribute, AdminAttributeRequest } from "@/api/generated/interfaces";
+import { AdminAttribute } from "@/api/generated/interfaces";
 import adminAxios from "@/api/admin-axios";
 
 const PageHeader = styled.div`
@@ -170,12 +170,9 @@ const AttributesManagement = () => {
   const loadAttributes = async () => {
     try {
       setLoading(true);
-      console.log("🔄 Loading attributes from API...");
       const response = await adminAxios.get("/api/products/admin/attributes/");
-      console.log("✅ Attributes loaded:", response.data);
       setAttributes(response.data);
-    } catch (error) {
-      console.error("❌ Error loading attributes:", error);
+    } catch {
     } finally {
       setLoading(false);
     }
@@ -200,12 +197,9 @@ const AttributesManagement = () => {
     if (confirm(`Are you sure you want to delete "${attribute.name}"?`)) {
       try {
         setLoading(true);
-        console.log("🗑️ Deleting attribute:", attribute.id);
         await adminAxios.delete(`/api/products/admin/attributes/${attribute.id}/delete/`);
-        console.log("✅ Attribute deleted successfully");
         await loadAttributes();
-      } catch (error) {
-        console.error("❌ Error deleting attribute:", error);
+      } catch {
         alert("Failed to delete attribute. Please try again.");
       } finally {
         setLoading(false);
@@ -220,29 +214,53 @@ const AttributesManagement = () => {
   const handleFormSubmit = async (formData: any) => {
     try {
       setLoading(true);
-      console.log("📝 Submitting attribute form:", { formData, editingAttribute });
 
       // Prepare API data
-      const attributeData: AdminAttributeRequest = {
+      const attributeData: any = {
         name: formData.name,
         attribute_type: formData.attribute_type,
         is_required: formData.is_required ?? false,
         is_filterable: formData.is_filterable ?? false,
         parent: formData.parent || undefined,
         categories: formData.categories || [],
+        translations: formData.translations || [],
       };
 
+      // Store the value to create after attribute creation
+      const pendingValue =
+        formData.placement_hint && formData.placement_hint.trim() !== ""
+          ? formData.placement_hint.trim()
+          : null;
+
+      let createdOrUpdatedAttribute;
+
       if (editingAttribute) {
-        console.log("✏️ Updating existing attribute:", editingAttribute.id);
-        await adminAxios.patch(
+        const response = await adminAxios.patch(
           `/api/products/admin/attributes/${editingAttribute.id}/update/`,
           attributeData
         );
-        console.log("✅ Attribute updated successfully");
+        createdOrUpdatedAttribute = response.data;
       } else {
-        console.log("🆕 Creating new attribute");
-        await adminAxios.post("/api/products/admin/attributes/create/", attributeData);
-        console.log("✅ Attribute created successfully");
+        const response = await adminAxios.post(
+          "/api/products/admin/attributes/create/",
+          attributeData
+        );
+        createdOrUpdatedAttribute = response.data;
+      }
+
+      // If there's a pending value, create it as an attribute value
+      if (pendingValue && createdOrUpdatedAttribute?.id) {
+        try {
+          await adminAxios.post(
+            `/api/products/admin/attributes/${createdOrUpdatedAttribute.id}/values/create/`,
+            {
+              value: pendingValue,
+              sort_order: 0,
+            }
+          );
+        } catch {
+          alert("Attribute created but failed to add the value. You can add it manually.");
+        }
       }
 
       // Reload attributes after successful create/update
@@ -250,20 +268,18 @@ const AttributesManagement = () => {
 
       setModalView(null);
       setEditingAttribute(null);
-    } catch (error) {
-      console.error("❌ Error submitting attribute form:", error);
+    } catch {
       alert("Failed to save attribute. Please try again.");
     } finally {
       setLoading(false);
     }
   };
 
-  const handleValuesSubmit = async (values: any[]) => {
+  const handleValuesSubmit = async () => {
     if (!managingValuesFor) return;
 
     try {
       setLoading(true);
-      console.log("📝 Updating attribute values:", values);
 
       // Note: This would need to be implemented based on the specific API
       // for now just reload the attributes
@@ -271,8 +287,7 @@ const AttributesManagement = () => {
 
       setModalView(null);
       setManagingValuesFor(null);
-    } catch (error) {
-      console.error("❌ Error updating attribute values:", error);
+    } catch {
       alert("Failed to update attribute values. Please try again.");
     } finally {
       setLoading(false);

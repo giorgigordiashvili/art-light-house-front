@@ -14,9 +14,7 @@ const MainContainer = styled.div`
 
 const Main = () => {
   // Demo pagination props
-  const handlePageChange = (page: number) => {
-    console.log("Page changed to:", page);
-  };
+  const handlePageChange = () => {};
 
   return (
     <MainContainer>

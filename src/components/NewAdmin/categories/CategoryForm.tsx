@@ -1,6 +1,6 @@
 "use client";
 import { useState } from "react";
-import { AdminCategory } from "@/api/generated/interfaces";
+import { AdminCategory, CategoryTranslationRequest } from "@/api/generated/interfaces";
 import {
   Form,
   FormGroup,
@@ -16,6 +16,47 @@ import {
 } from "@/components/NewAdmin/ui/Form";
 import { Button } from "@/components/NewAdmin/ui/Button";
 import { Card, CardHeader, CardContent } from "@/components/NewAdmin/ui/Card";
+import styled from "styled-components";
+
+const TranslationCard = styled.div`
+  background: #f8f9fa;
+  border: 1px solid #dee2e6;
+  border-radius: 8px;
+  padding: 16px;
+  margin-bottom: 12px;
+  position: relative;
+`;
+
+const TranslationHeader = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+`;
+
+const TranslationTitle = styled.h4`
+  margin: 0;
+  font-size: 14px;
+  font-weight: 600;
+  color: #495057;
+`;
+
+const RemoveButton = styled.button`
+  background: none;
+  border: none;
+  color: #dc3545;
+  cursor: pointer;
+  font-size: 18px;
+  padding: 4px 8px;
+
+  &:hover {
+    color: #c82333;
+  }
+`;
+
+const AddTranslationButton = styled(Button)`
+  margin-top: 12px;
+`;
 
 interface FormData {
   name: string;
@@ -25,6 +66,7 @@ interface FormData {
   meta_title: string;
   meta_description: string;
   slug: string;
+  translations: CategoryTranslationRequest[];
 }
 
 interface CategoryFormProps {
@@ -54,6 +96,7 @@ const CategoryForm = ({
         meta_title: "",
         meta_description: "",
         slug: initialData.slug || "",
+        translations: initialData.translations || [],
       };
     }
 
@@ -65,10 +108,45 @@ const CategoryForm = ({
       meta_title: "",
       meta_description: "",
       slug: "",
+      translations: [],
     };
   });
 
   const [errors, setErrors] = useState<Record<string, string>>({});
+
+  const addTranslation = () => {
+    setFormData((prev) => ({
+      ...prev,
+      translations: [
+        ...prev.translations,
+        {
+          language_code: "en" as any,
+          name: "",
+          description: "",
+        },
+      ],
+    }));
+  };
+
+  const removeTranslation = (index: number) => {
+    setFormData((prev) => ({
+      ...prev,
+      translations: prev.translations.filter((_, i) => i !== index),
+    }));
+  };
+
+  const handleTranslationChange = (
+    index: number,
+    field: keyof CategoryTranslationRequest,
+    value: string
+  ) => {
+    setFormData((prev) => ({
+      ...prev,
+      translations: prev.translations.map((trans, i) =>
+        i === index ? { ...trans, [field]: value } : trans
+      ),
+    }));
+  };
 
   const validateForm = (): boolean => {
     const newErrors: Record<string, string> = {};
@@ -239,6 +317,73 @@ const CategoryForm = ({
             <Checkbox name="is_active" checked={formData.is_active} onChange={handleInputChange} />
             <CheckboxLabel>Category is active and visible to customers</CheckboxLabel>
           </CheckboxWrapper>
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <h2>Translations</h2>
+        </CardHeader>
+        <CardContent>
+          <HelperText style={{ marginBottom: "16px" }}>
+            Add translations for different languages. This will allow the category name and
+            description to be displayed in multiple languages.
+          </HelperText>
+
+          {formData.translations.map((translation, index) => (
+            <TranslationCard key={index}>
+              <TranslationHeader>
+                <TranslationTitle>Translation #{index + 1}</TranslationTitle>
+                <RemoveButton
+                  type="button"
+                  onClick={() => removeTranslation(index)}
+                  title="Remove translation"
+                >
+                  ×
+                </RemoveButton>
+              </TranslationHeader>
+
+              <FormGroup>
+                <Label>Language Code *</Label>
+                <Select
+                  value={String(translation.language_code || "")}
+                  onChange={(e) => handleTranslationChange(index, "language_code", e.target.value)}
+                  required
+                >
+                  <option value="">Select language</option>
+                  <option value="en">English (en)</option>
+                  <option value="ka">Georgian (ka)</option>
+                </Select>
+              </FormGroup>
+
+              <FormGroup>
+                <Label>Name *</Label>
+                <Input
+                  value={translation.name}
+                  onChange={(e) => handleTranslationChange(index, "name", e.target.value)}
+                  placeholder="Category name in selected language"
+                  required
+                />
+              </FormGroup>
+
+              <FormGroup>
+                <Label>Description</Label>
+                <Textarea
+                  value={translation.description || ""}
+                  onChange={(e) => handleTranslationChange(index, "description", e.target.value)}
+                  placeholder="Category description in selected language"
+                  rows={3}
+                />
+              </FormGroup>
+            </TranslationCard>
+          ))}
+
+          <AddTranslationButton type="button" $variant="secondary" onClick={addTranslation}>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z" />
+            </svg>
+            Add Translation
+          </AddTranslationButton>
         </CardContent>
       </Card>
 

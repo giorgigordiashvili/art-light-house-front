@@ -131,13 +131,11 @@ const AdminLogin = () => {
   // Log error state changes
   useEffect(() => {
     if (error) {
-      console.log("🎯 AdminLogin: Error state updated:", error);
     }
   }, [error]);
 
   useEffect(() => {
     if (success) {
-      console.log("🎯 AdminLogin: Success state updated:", success);
     }
   }, [success]);
 
@@ -157,29 +155,20 @@ const AdminLogin = () => {
     setSuccess("");
     setIsLoading(true);
 
-    console.log("🎯 AdminLogin: Starting login process");
-
     try {
       const loginSuccess = await signIn(email, password);
-      console.log("🎯 AdminLogin: Login result:", loginSuccess);
 
       if (loginSuccess) {
-        console.log("🎯 AdminLogin: Login successful, setting success message");
         setSuccess("Login successful! Redirecting to admin panel...");
         // Small delay to show success message before redirect
         setTimeout(() => {
-          console.log("🎯 AdminLogin: Redirecting to /admin");
           router.replace("/admin");
         }, 1500);
       } else {
-        console.log("🎯 AdminLogin: Login failed - no admin privileges");
         const errorMsg = "Access denied. You don't have admin privileges.";
-        console.log("🎯 AdminLogin: Setting error message:", errorMsg);
         setError(errorMsg);
       }
     } catch (err: any) {
-      console.error("Admin login error:", err);
-
       // Handle different error scenarios
       if (err?.response?.status === 400) {
         setError("Invalid email or password format.");

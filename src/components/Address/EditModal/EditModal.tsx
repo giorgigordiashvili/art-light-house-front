@@ -30,14 +30,10 @@ const EditModal = ({ onEdit, onDelete, addressId, dictionary }: Props) => {
   const handleDelete = async () => {
     try {
       setIsLoading(true);
-      console.log(`🗑️ Deleting address with ID: ${addressId}`);
-
       await addressDelete(addressId);
 
-      console.log("✅ Address deleted successfully");
       onDelete();
-    } catch (error: any) {
-      console.error("❌ Failed to delete address:", error);
+    } catch {
       // You might want to show an error message to the user here
     } finally {
       setIsLoading(false);

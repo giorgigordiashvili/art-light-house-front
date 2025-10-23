@@ -49,8 +49,7 @@ function AttributeFilter({ attributeName, title }: AttributeFilterProps) {
           });
           setOptions(attributeOptions);
         }
-      } catch (error) {
-        console.error(`Error fetching attributes for ${attributeName}:`, error);
+      } catch {
       } finally {
         setLoading(false);
       }

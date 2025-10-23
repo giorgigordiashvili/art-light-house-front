@@ -59,7 +59,6 @@ const AddButton = ({
     try {
       const payload = { product_id: product.id, quantity: 1 };
       const cart = await cartAddItem(payload);
-      console.log("✅ Added to cart:", payload, "→ Cart:", cart);
       try {
         const count = Array.isArray(cart?.items)
           ? cart.items.reduce((acc: number, it: any) => acc + (it.quantity || 0), 0)
@@ -69,9 +68,7 @@ const AddButton = ({
         }
       } catch {}
       onClick?.();
-    } catch (error) {
-      console.error("❌ Failed to add to cart", error);
-    }
+    } catch {}
   };
 
   return (

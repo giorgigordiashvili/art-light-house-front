@@ -17,11 +17,11 @@ left: 96px; */
   border-radius: 17px;
 `;
 
-const Option = styled.div<{ active?: boolean }>`
+const Option = styled.div<{ $active?: boolean }>`
   padding: 10px 16px;
   font-size: 16px;
-  font-weight: ${({ active }) => (active ? "bold" : "normal")};
-  color: ${({ active }) => (active ? "#ffffff" : "#bcbcbc")};
+  font-weight: ${({ $active }) => ($active ? "bold" : "normal")};
+  color: ${({ $active }) => ($active ? "#ffffff" : "#bcbcbc")};
   cursor: pointer;
   border-top: 1px solid #2c2c2c;
 
@@ -72,7 +72,7 @@ const SortBox = ({ onSortChange, dictionary, currentOrdering }: Props) => {
   return (
     <Box>
       {options.map((opt) => (
-        <Option key={opt} active={selected === opt} onClick={() => handleClick(opt)}>
+        <Option key={opt} $active={selected === opt} onClick={() => handleClick(opt)}>
           {opt}
         </Option>
       ))}

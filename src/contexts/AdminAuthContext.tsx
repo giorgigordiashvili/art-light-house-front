@@ -24,20 +24,14 @@ const ADMIN_USER_KEY = "admin_user";
 
 // Admin-specific API function that uses admin axios instance
 const adminUserProfile = async (): Promise<User> => {
-  console.log("🔐 AdminAuthContext: Making admin profile request with admin axios");
   const response = await adminAxios.get(`/api/auth/profile/`);
-  console.log("🔐 AdminAuthContext: Admin profile response:", response.data);
   return response.data;
 };
 
 // Function to check if user has admin privileges
 const checkAdminStatus = (user: User): boolean => {
-  console.log("🔍 Checking admin status for user:", user);
-  console.log("🔍 is_admin value:", user.is_admin, "type:", typeof user.is_admin);
-
   // Handle both boolean and string types for is_admin
   const isAdmin = (user.is_admin as any) === true || user.is_admin === "true";
-  console.log("🔍 Final admin status:", isAdmin);
 
   return isAdmin;
 };
@@ -55,41 +49,33 @@ export const AdminAuthProvider = ({ children }: { children: ReactNode }) => {
         if (savedToken && savedUser) {
           // Verify token is still valid by fetching user profile
           try {
-            console.log("🔄 AdminAuthContext: Verifying admin token with profile fetch");
             const profile = await adminUserProfile();
-            console.log("🔄 AdminAuthContext: Profile fetched:", profile);
 
             if (checkAdminStatus(profile)) {
-              console.log("✅ AdminAuthContext: User verified as admin, setting user state");
               setUser(profile);
               localStorage.setItem(ADMIN_USER_KEY, JSON.stringify(profile));
             } else {
-              console.log(
-                "❌ AdminAuthContext: User no longer has admin privileges, clearing tokens"
-              );
               // User is not admin, clear admin tokens
               localStorage.removeItem(ADMIN_TOKEN_KEY);
               localStorage.removeItem(ADMIN_REFRESH_KEY);
               localStorage.removeItem(ADMIN_USER_KEY);
             }
-          } catch (error) {
-            console.log("❌ AdminAuthContext: Token verification failed, clearing tokens:", error);
+          } catch {
             // Token expired or invalid, clear storage
             localStorage.removeItem(ADMIN_TOKEN_KEY);
             localStorage.removeItem(ADMIN_REFRESH_KEY);
             localStorage.removeItem(ADMIN_USER_KEY);
           }
         }
-      } catch (error) {
-        console.error("Error initializing admin auth:", error);
+      } catch {
+        // Error initializing admin auth
       } finally {
         setIsLoading(false);
       }
     };
 
     // Listen for forced admin logout events
-    const handleAdminForceLogout = (event: CustomEvent) => {
-      console.warn("🔒 Admin forced logout triggered:", event.detail?.reason || "unknown");
+    const handleAdminForceLogout = () => {
       setUser(null);
       setIsLoading(false);
     };
@@ -109,21 +95,16 @@ export const AdminAuthProvider = ({ children }: { children: ReactNode }) => {
     setIsLoading(true);
     try {
       const credentials: UserLoginRequest = { email, password };
-      console.log("🚀 Attempting admin login with:", { email });
 
       const response = await userLogin(credentials);
-      console.log("✅ Login response received:", response);
 
       // Check if the logged-in user has admin privileges
       const isAdmin = checkAdminStatus(response.user);
 
       if (!isAdmin) {
-        console.log("❌ User does not have admin privileges");
         // User doesn't have admin privileges
         return false;
       }
-
-      console.log("✅ User has admin privileges, storing tokens and user data");
 
       // Store admin tokens separately from regular user tokens
       localStorage.setItem(ADMIN_TOKEN_KEY, response.access);
@@ -133,10 +114,8 @@ export const AdminAuthProvider = ({ children }: { children: ReactNode }) => {
       localStorage.setItem(ADMIN_USER_KEY, JSON.stringify(response.user));
       setUser(response.user);
 
-      console.log("✅ Admin login successful");
       return true;
-    } catch (error) {
-      console.error("❌ Admin login error:", error);
+    } catch {
       return false;
     } finally {
       setIsLoading(false);
@@ -148,8 +127,8 @@ export const AdminAuthProvider = ({ children }: { children: ReactNode }) => {
     try {
       // Call logout API
       await userLogout();
-    } catch (error) {
-      console.error("Admin logout error:", error);
+    } catch {
+      // Continue with logout even if API call fails
     } finally {
       // Clear admin tokens and user data
       localStorage.removeItem(ADMIN_TOKEN_KEY);

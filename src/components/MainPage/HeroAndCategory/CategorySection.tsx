@@ -125,11 +125,14 @@ const Card = styled.div<{
     padding: 1px;
     border-radius: 32px;
     background: ${(props) => props.gradient || "transparent"};
+    mask:
+      linear-gradient(#fff 0 0) content-box,
+      linear-gradient(#fff 0 0);
     -webkit-mask:
       linear-gradient(#fff 0 0) content-box,
       linear-gradient(#fff 0 0);
-    -webkit-mask-composite: destination-out;
     mask-composite: exclude;
+    -webkit-mask-composite: destination-out;
     z-index: 1;
     pointer-events: none;
   }
@@ -192,14 +195,17 @@ const Card = styled.div<{
 
 const CategorySection = ({ dictionary }: Props) => {
   const width = useWindowWidth();
+  const [mounted, setMounted] = useState(false);
   const circleSize = width <= 522 ? "mobile" : "medium";
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   return (
     <Container>
       <StyledContainer>
-        <StyledCircle>
-          <Circle size={circleSize} /> {/* ✅ dynamically changes */}
-        </StyledCircle>
+        <StyledCircle>{mounted && <Circle size={circleSize} />}</StyledCircle>
         <ScrollableWrapper>
           <RowWrapper>
             <Row className="first-row">
