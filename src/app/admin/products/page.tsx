@@ -215,11 +215,19 @@ const ProductsManagement = () => {
       setLoading(true);
 
       // Generate slug from title if not provided
-      const slug = (formData.slug || formData.title)
-        .toLowerCase()
-        .replace(/[^a-z0-9\s-]/g, "")
-        .replace(/\s+/g, "-")
-        .substring(0, 50);
+      const slug =
+        (formData.slug || formData.title || "product")
+          .toLowerCase()
+          .replace(/[^a-z0-9\s-]/g, "")
+          .replace(/\s+/g, "-")
+          .substring(0, 50) || "product";
+
+      // Filter out attributes with empty values
+      const validAttributes = formData.attributes
+        ? formData.attributes.filter((attr: any) => {
+            return attr.attribute && (attr.value?.trim() || attr.attribute_value);
+          })
+        : [];
 
       // Prepare API data
       const productData: ProductCreateUpdateRequest = {
@@ -240,8 +248,7 @@ const ProductsManagement = () => {
         category: formData.category_id ? parseInt(formData.category_id) : undefined,
         is_active: Boolean(formData.is_active),
         is_featured: Boolean(formData.is_featured),
-        attributes:
-          formData.attributes && formData.attributes.length > 0 ? formData.attributes : undefined,
+        attributes: validAttributes.length > 0 ? validAttributes : undefined,
       };
 
       console.log("Submitting product data:", productData);
