@@ -1,5 +1,6 @@
 "use client";
 import { useState, useEffect } from "react";
+import dynamic from "next/dynamic";
 import { ProjectDetail } from "@/api/generated/interfaces";
 import {
   Form,
@@ -17,6 +18,12 @@ import {
 import { Button } from "@/components/NewAdmin/ui/Button";
 import { Card, CardHeader, CardContent } from "@/components/NewAdmin/ui/Card";
 import styled from "styled-components";
+
+// Dynamically import TinyMCE to avoid SSR issues
+const Editor = dynamic(() => import("@tinymce/tinymce-react").then((mod) => mod.Editor), {
+  ssr: false,
+  loading: () => <p>Loading editor...</p>,
+});
 
 const ImageUploadArea = styled.div`
   border: 2px dashed #dee2e6;
@@ -265,19 +272,46 @@ const ProjectForm = ({ initialData, onSubmit, onCancel, loading = false }: Proje
 
           <FormGroup>
             <Label>Full Description *</Label>
-            <Textarea
-              name="description"
+            <Editor
+              apiKey="t6sv10msadi4x9ocmxrajwnnz8bmwyzk5vbs5tqfubseauo2"
               value={formData.description}
-              onChange={handleInputChange}
-              className={errors.description ? "error" : ""}
-              placeholder="Full project description (supports HTML)..."
-              rows={10}
-              required
+              onEditorChange={(content) => {
+                setFormData((prev) => ({ ...prev, description: content }));
+              }}
+              init={{
+                height: 400,
+                menubar: true,
+                plugins: [
+                  "advlist",
+                  "autolink",
+                  "lists",
+                  "link",
+                  "image",
+                  "charmap",
+                  "preview",
+                  "anchor",
+                  "searchreplace",
+                  "visualblocks",
+                  "code",
+                  "fullscreen",
+                  "insertdatetime",
+                  "media",
+                  "table",
+                  "code",
+                  "help",
+                  "wordcount",
+                ],
+                toolbar:
+                  "undo redo | blocks | " +
+                  "bold italic forecolor | alignleft aligncenter " +
+                  "alignright alignjustify | bullist numlist outdent indent | " +
+                  "removeformat | code | help",
+                content_style: "body { font-family:Helvetica,Arial,sans-serif; font-size:14px }",
+              }}
             />
             {errors.description && <ErrorMessage>{errors.description}</ErrorMessage>}
             <HelperText>
-              Supports HTML formatting. You can use tags like &lt;p&gt;, &lt;h3&gt;, &lt;ul&gt;,
-              &lt;strong&gt;, etc.
+              Rich text editor with full HTML support. Use the toolbar to format your content.
             </HelperText>
           </FormGroup>
         </CardContent>
