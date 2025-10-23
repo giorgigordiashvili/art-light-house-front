@@ -398,7 +398,7 @@ const Header = ({ header, dictionary }: HeaderProps) => {
               <StyledNavigation>
                 <NavItem text={header.products} href="/products" />
                 <NavItem text={header.sale} href="/" />
-                <NavItem text={header.project} href="/" />
+                <NavItem text={header.project} href="/projects" />
                 <NavItem text={header.contact} href="/contact" />
               </StyledNavigation>
               <StyledUserActions>

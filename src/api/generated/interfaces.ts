@@ -352,6 +352,21 @@ export interface PatchedProductCreateUpdateRequest {
   attributes?: ProductAttributeRequest[];
 }
 
+export interface PatchedProjectCreateUpdateRequest {
+  title?: string;
+  slug?: string;
+  description?: string;
+  short_description?: string;
+  client?: string;
+  location?: string;
+  year?: number;
+  category?: string;
+  is_published?: boolean;
+  is_featured?: boolean;
+  sort_order?: number;
+  published_at?: string;
+}
+
 export interface PatchedUserUpdateRequest {
   first_name?: string;
   last_name?: string;
@@ -464,6 +479,85 @@ export interface ProductListRequest {
   average_rating?: string;
   review_count?: number;
   stock_quantity?: number;
+}
+
+export interface ProjectCreateUpdateRequest {
+  title: string;
+  slug: string;
+  description: string;
+  short_description?: string;
+  client?: string;
+  location?: string;
+  year?: number;
+  category?: string;
+  is_published?: boolean;
+  is_featured?: boolean;
+  sort_order?: number;
+  published_at?: string;
+}
+
+export interface ProjectDetail {
+  id: number;
+  title: string;
+  slug: string;
+  description: string;
+  short_description?: string;
+  client?: string;
+  location?: string;
+  year?: number;
+  category?: string;
+  is_published?: boolean;
+  is_featured?: boolean;
+  sort_order?: number;
+  created_at: string;
+  updated_at: string;
+  published_at?: string;
+  primary_image_url: string;
+  images: ProjectImage[];
+  translations: ProjectTranslation[];
+}
+
+export interface ProjectImage {
+  id: number;
+  image: string;
+  image_url: string;
+  alt_text?: string;
+  caption?: string;
+  is_primary?: boolean;
+  sort_order?: number;
+  created_at: string;
+}
+
+export interface ProjectImageUploadRequest {
+  image: string;
+  alt_text?: string;
+  caption?: string;
+  is_primary?: boolean;
+  sort_order?: number;
+}
+
+export interface ProjectList {
+  id: number;
+  title: string;
+  slug: string;
+  short_description?: string;
+  category?: string;
+  year?: number;
+  location?: string;
+  client?: string;
+  is_featured?: boolean;
+  primary_image_url: string;
+  images_count: string;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface ProjectTranslation {
+  id: number;
+  language_code: LanguageCodeEnum;
+  title: string;
+  description: string;
+  short_description?: string;
 }
 
 export interface ResendVerificationCodeRequest {

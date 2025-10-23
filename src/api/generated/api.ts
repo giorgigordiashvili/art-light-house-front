@@ -42,6 +42,12 @@ import type {
   ProductCreateUpdateRequest,
   Favorite,
   AddToFavoritesRequest,
+  ProjectList,
+  ProjectDetail,
+  ProjectImage,
+  ProjectImageUploadRequest,
+  ProjectCreateUpdateRequest,
+  PatchedProjectCreateUpdateRequest,
 } from "./interfaces";
 
 export async function addressList(): Promise<Address[]> {
@@ -440,5 +446,87 @@ export async function favoritesAdd(data: AddToFavoritesRequest): Promise<Favorit
 
 export async function favoritesToggle(data: AddToFavoritesRequest): Promise<any> {
   const response = await axios.post(`/api/products/favorites/toggle/`, data);
+  return response.data;
+}
+
+export async function projectsList(
+  category?: string,
+  isFeatured?: boolean
+): Promise<ProjectList[]> {
+  const response = await axios.get(
+    `/api/projects/${(() => {
+      const parts = [
+        category ? "category=" + encodeURIComponent(category) : null,
+        isFeatured ? "is_featured=" + encodeURIComponent(isFeatured) : null,
+      ].filter(Boolean);
+      return parts.length > 0 ? "?" + parts.join("&") : "";
+    })()}`
+  );
+  return response.data;
+}
+
+export async function projectsDetail(slug: string): Promise<ProjectDetail> {
+  const response = await axios.get(`/api/projects/${slug}/`);
+  return response.data;
+}
+
+export async function adminProjectsList(): Promise<ProjectDetail[]> {
+  const response = await axios.get(`/api/projects/admin/projects/`);
+  return response.data;
+}
+
+export async function adminProjectsDetail(projectId: number): Promise<ProjectDetail> {
+  const response = await axios.get(`/api/projects/admin/projects/${projectId}/`);
+  return response.data;
+}
+
+export async function adminProjectsDelete(projectId: number): Promise<any> {
+  const response = await axios.delete(`/api/projects/admin/projects/${projectId}/delete/`);
+  return response.data;
+}
+
+export async function adminProjectImagesList(projectId: number): Promise<ProjectImage[]> {
+  const response = await axios.get(`/api/projects/admin/projects/${projectId}/images/`);
+  return response.data;
+}
+
+export async function adminProjectImageDelete(imageId: number, projectId: number): Promise<any> {
+  const response = await axios.delete(
+    `/api/projects/admin/projects/${projectId}/images/${imageId}/delete/`
+  );
+  return response.data;
+}
+
+export async function adminProjectImageUpload(
+  projectId: number,
+  data: ProjectImageUploadRequest
+): Promise<ProjectImage> {
+  const response = await axios.post(
+    `/api/projects/admin/projects/${projectId}/images/upload/`,
+    data
+  );
+  return response.data;
+}
+
+export async function adminProjectsUpdate2(
+  projectId: number,
+  data: ProjectCreateUpdateRequest
+): Promise<ProjectDetail> {
+  const response = await axios.put(`/api/projects/admin/projects/${projectId}/update/`, data);
+  return response.data;
+}
+
+export async function adminProjectsUpdate(
+  projectId: number,
+  data: PatchedProjectCreateUpdateRequest
+): Promise<ProjectDetail> {
+  const response = await axios.patch(`/api/projects/admin/projects/${projectId}/update/`, data);
+  return response.data;
+}
+
+export async function adminProjectsCreate(
+  data: ProjectCreateUpdateRequest
+): Promise<ProjectDetail> {
+  const response = await axios.post(`/api/projects/admin/projects/create/`, data);
   return response.data;
 }
