@@ -133,9 +133,11 @@ const ProjectsManagement = () => {
       setProjects(response.data);
 
       // Extract unique categories
-      const uniqueCategories = Array.from(
+      const uniqueCategories: string[] = Array.from(
         new Set(
-          response.data.map((p: ProjectDetail) => p.category).filter((c): c is string => Boolean(c))
+          response.data
+            .map((p: ProjectDetail) => p.category)
+            .filter((c: string | undefined): c is string => Boolean(c))
         )
       );
       setCategories(uniqueCategories);
