@@ -34,5 +34,5 @@ export default async function ProjectDetailPage({ params }: ProjectPageProps) {
   const { lang, slug } = await params;
   const dictionary = await getDictionary(isLocale(lang) ? lang : "ge");
 
-  return <ProjectDetailScreen slug={slug} dictionary={dictionary} />;
+  return <ProjectDetailScreen slug={slug} dictionary={dictionary} lang={lang} />;
 }

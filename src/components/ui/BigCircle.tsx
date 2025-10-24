@@ -3,17 +3,19 @@ import styled, { css } from "styled-components";
 
 type Props = {
   variant?: 1 | 2;
+  setZIndex?: boolean;
 };
 
-const StyledContainer = styled.div<{ variant?: 1 | 2 }>`
+const StyledContainer = styled.div<{ variant?: 1 | 2; $setZIndex?: boolean }>`
   position: absolute;
   top: -600px;
   left: -140px;
   width: 851px;
   height: 851px;
   border-radius: 50%;
-  z-index: 1;
+  z-index: ${({ $setZIndex }) => ($setZIndex ? 0 : 1)};
   background: transparent;
+
   @media (max-width: 1080px) {
     width: 546px;
     height: 546px;
@@ -48,8 +50,8 @@ const StyledContainer = styled.div<{ variant?: 1 | 2 }>`
   }
 `;
 
-const BigCircle = ({ variant = 1 }: Props) => {
-  return <StyledContainer variant={variant} />;
+const BigCircle = ({ variant = 1, setZIndex = false }: Props) => {
+  return <StyledContainer variant={variant} $setZIndex={setZIndex} />;
 };
 
 export default BigCircle;

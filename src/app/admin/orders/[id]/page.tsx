@@ -1,6 +1,7 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useParams, useRouter } from "next/navigation";
+import Link from "next/link";
 import AdminLayout from "@/components/NewAdmin/layout/AdminLayout";
 import { Button } from "@/components/NewAdmin/ui/Button";
 import OrderDetail from "@/components/NewAdmin/orders/OrderDetail";
@@ -137,13 +138,7 @@ const OrderDetailPage = () => {
   const [newPaymentStatus, setNewPaymentStatus] = useState("");
   const [updating, setUpdating] = useState(false);
 
-  useEffect(() => {
-    if (orderId) {
-      loadOrder();
-    }
-  }, [orderId]);
-
-  const loadOrder = async () => {
+  const loadOrder = useCallback(async () => {
     try {
       setLoading(true);
       setError(null);
@@ -157,7 +152,13 @@ const OrderDetailPage = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [orderId]);
+
+  useEffect(() => {
+    if (orderId) {
+      loadOrder();
+    }
+  }, [orderId, loadOrder]);
 
   const handleUpdateStatus = () => {
     if (order) {
@@ -245,7 +246,7 @@ const OrderDetailPage = () => {
         <div className="header-left">
           <h1>Order {order.order_number}</h1>
           <div className="breadcrumb">
-            <a href="/admin">Dashboard</a> / <a href="/admin/orders">Orders</a> /{" "}
+            <Link href="/admin">Dashboard</Link> / <Link href="/admin/orders">Orders</Link> /{" "}
             {order.order_number}
           </div>
         </div>

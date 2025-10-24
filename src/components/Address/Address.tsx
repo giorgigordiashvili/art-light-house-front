@@ -130,18 +130,7 @@ const Address = ({ dictionary }: any) => {
           <StyledMobileDetail>
             <MobileDetailDropdown dictionary={dictionary} />
           </StyledMobileDetail>
-          {loading ? (
-            <div
-              style={{
-                color: "#ffffff",
-                textAlign: "center",
-                padding: "40px",
-                fontSize: "16px",
-              }}
-            >
-              Loading addresses...
-            </div>
-          ) : error ? (
+          {error ? (
             <div
               style={{
                 color: "#ff4444",
@@ -159,6 +148,7 @@ const Address = ({ dictionary }: any) => {
               onEditAddress={handleEditAddress}
               onDeleteAddress={handleDeleteAddress}
               dictionary={dictionary}
+              loading={loading}
             />
           )}
         </StyledBars>

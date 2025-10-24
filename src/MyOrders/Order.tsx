@@ -70,16 +70,89 @@ const Title = styled.p`
   } */
 `;
 
-const LoadingText = styled.p`
-  color: white;
-  text-align: center;
-  padding: 20px;
-`;
-
 const EmptyText = styled.p`
   color: #999;
   text-align: center;
   padding: 20px;
+`;
+
+const SkeletonOrderCard = styled.div`
+  width: 100%;
+  min-height: 120px;
+  border-radius: 12px;
+  border: 1px solid #ffffff12;
+  background: rgba(255, 255, 255, 0.02);
+  position: relative;
+  overflow: hidden;
+  padding: 20px;
+
+  &::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+      90deg,
+      transparent 0%,
+      rgba(255, 255, 255, 0.05) 50%,
+      transparent 100%
+    );
+    animation: shimmer 1.5s infinite;
+    z-index: 1;
+  }
+
+  @keyframes shimmer {
+    0% {
+      left: -100%;
+    }
+    100% {
+      left: 100%;
+    }
+  }
+
+  @media (max-width: 1080px) {
+    min-height: 100px;
+    padding: 16px;
+  }
+`;
+
+const SkeletonHeader = styled.div`
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 16px;
+`;
+
+const SkeletonOrderNumber = styled.div`
+  width: 30%;
+  height: 20px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 4px;
+`;
+
+const SkeletonStatus = styled.div`
+  width: 20%;
+  height: 20px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 4px;
+`;
+
+const SkeletonInfo = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+`;
+
+const SkeletonText = styled.div`
+  width: 60%;
+  height: 14px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 4px;
+
+  &:nth-child(2) {
+    width: 40%;
+  }
 `;
 
 const Order = ({ dictionary }: any) => {
@@ -108,7 +181,20 @@ const Order = ({ dictionary }: any) => {
       <Title>{dictionary?.orderBarTitle || "Orders"}</Title>
       <InputsWrapper>
         {loading ? (
-          <LoadingText>Loading orders...</LoadingText>
+          <>
+            {[1, 2, 3, 4].map((index) => (
+              <SkeletonOrderCard key={index}>
+                <SkeletonHeader>
+                  <SkeletonOrderNumber />
+                  <SkeletonStatus />
+                </SkeletonHeader>
+                <SkeletonInfo>
+                  <SkeletonText />
+                  <SkeletonText />
+                </SkeletonInfo>
+              </SkeletonOrderCard>
+            ))}
+          </>
         ) : error ? (
           <EmptyText>{error}</EmptyText>
         ) : orders.length === 0 ? (
