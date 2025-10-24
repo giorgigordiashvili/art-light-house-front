@@ -5,7 +5,6 @@ import Link from "next/link";
 import { projectsList } from "@/api/generated/api";
 import { ProjectList } from "@/api/generated/interfaces";
 import NewCircle from "@/components/ui/NewCircle";
-import Circle from "@/components/ui/Circle";
 import BigCircle from "@/components/ui/BigCircle";
 
 const StyledComponent = styled.div`
@@ -178,13 +177,84 @@ const ProjectDescription = styled.p`
   overflow: hidden;
 `;
 
-const LoadingContainer = styled.div`
+const SkeletonCard = styled.div`
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  position: relative;
+
+  &::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+      90deg,
+      transparent 0%,
+      rgba(255, 255, 255, 0.05) 50%,
+      transparent 100%
+    );
+    animation: shimmer 1.5s infinite;
+  }
+
+  @keyframes shimmer {
+    0% {
+      left: -100%;
+    }
+    100% {
+      left: 100%;
+    }
+  }
+`;
+
+const SkeletonImage = styled.div`
+  width: 100%;
+  height: 250px;
+  background: rgba(255, 255, 255, 0.05);
+`;
+
+const SkeletonContent = styled.div`
+  padding: 24px;
+`;
+
+const SkeletonTitle = styled.div`
+  width: 70%;
+  height: 24px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 4px;
+  margin-bottom: 12px;
+`;
+
+const SkeletonMeta = styled.div`
   display: flex;
-  justify-content: center;
-  align-items: center;
-  min-height: 400px;
-  color: white;
-  font-size: 1.125rem;
+  gap: 16px;
+  margin-bottom: 12px;
+`;
+
+const SkeletonMetaItem = styled.div`
+  width: 80px;
+  height: 14px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 4px;
+`;
+
+const SkeletonDescription = styled.div`
+  width: 100%;
+  height: 12px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 4px;
+  margin-bottom: 8px;
+
+  &:nth-child(2) {
+    width: 90%;
+  }
+
+  &:nth-child(3) {
+    width: 75%;
+  }
 `;
 
 const EmptyState = styled.div`
@@ -202,21 +272,11 @@ const EmptyState = styled.div`
   }
 `;
 
-const StyledCircle = styled.div`
-  position: absolute;
-  bottom: -1200px;
-  left: 38%;
-  transform: translateX(-50%);
-  @media (max-width: 1080px) {
-    display: none;
-  }
-`;
-
 interface ProjectsScreenProps {
   dictionary: any;
 }
 
-const ProjectsScreen = ({ dictionary }: ProjectsScreenProps) => {
+const ProjectsScreen = ({}: ProjectsScreenProps) => {
   const [projects, setProjects] = useState<ProjectList[]>([]);
   const [loading, setLoading] = useState(true);
   const [categoryFilter, setCategoryFilter] = useState<string | undefined>(undefined);
@@ -224,6 +284,7 @@ const ProjectsScreen = ({ dictionary }: ProjectsScreenProps) => {
 
   useEffect(() => {
     loadProjects();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [categoryFilter]);
 
   const loadProjects = async () => {
@@ -270,7 +331,24 @@ const ProjectsScreen = ({ dictionary }: ProjectsScreenProps) => {
         )}
 
         {loading ? (
-          <LoadingContainer>Loading projects...</LoadingContainer>
+          <ProjectsGrid>
+            {[1, 2, 3, 4, 5, 6].map((index) => (
+              <SkeletonCard key={index}>
+                <SkeletonImage />
+                <SkeletonContent>
+                  <SkeletonTitle />
+                  <SkeletonMeta>
+                    <SkeletonMetaItem />
+                    <SkeletonMetaItem />
+                    <SkeletonMetaItem />
+                  </SkeletonMeta>
+                  <SkeletonDescription />
+                  <SkeletonDescription />
+                  <SkeletonDescription />
+                </SkeletonContent>
+              </SkeletonCard>
+            ))}
+          </ProjectsGrid>
         ) : projects.length === 0 ? (
           <EmptyState>
             <h3>No projects found</h3>
@@ -322,9 +400,6 @@ const ProjectsScreen = ({ dictionary }: ProjectsScreenProps) => {
       </Container>
 
       <NewCircle size="small" top="1000px" right="142px" media="no" />
-      <StyledCircle>
-        <Circle size="large" />
-      </StyledCircle>
       <BigCircle variant={2} />
     </StyledComponent>
   );

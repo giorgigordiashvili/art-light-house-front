@@ -91,6 +91,107 @@ const PaginationWrapper = styled.div`
   margin-top: 70px;
 `;
 
+const SkeletonGrid = styled.div`
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+  margin-bottom: 253px;
+  justify-items: center;
+
+  @media (max-width: 1080px) {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+  }
+`;
+
+const SkeletonCard = styled.div`
+  width: 308px;
+  height: 417px;
+  border-radius: 17px;
+  border: 1px solid #ffffff12;
+  background: #1a1a1a96;
+  backdrop-filter: blur(114px);
+  position: relative;
+  overflow: hidden;
+
+  &::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+      90deg,
+      transparent 0%,
+      rgba(255, 255, 255, 0.05) 50%,
+      transparent 100%
+    );
+    animation: shimmer 1.5s infinite;
+    z-index: 1;
+  }
+
+  @keyframes shimmer {
+    0% {
+      left: -100%;
+    }
+    100% {
+      left: 100%;
+    }
+  }
+
+  @media (max-width: 1080px) {
+    width: 170px;
+    height: 275px;
+  }
+`;
+
+const SkeletonImage = styled.div`
+  width: 100%;
+  height: 280px;
+  background: rgba(255, 255, 255, 0.05);
+
+  @media (max-width: 1080px) {
+    height: 180px;
+  }
+`;
+
+const SkeletonContent = styled.div`
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+
+  @media (max-width: 1080px) {
+    padding: 12px;
+    gap: 8px;
+  }
+`;
+
+const SkeletonTitle = styled.div`
+  width: 70%;
+  height: 16px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 4px;
+
+  @media (max-width: 1080px) {
+    height: 14px;
+  }
+`;
+
+const SkeletonPrice = styled.div`
+  width: 50%;
+  height: 20px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 4px;
+  margin-top: 8px;
+
+  @media (max-width: 1080px) {
+    height: 16px;
+    margin-top: 4px;
+  }
+`;
+
 function ProductsMain({ dictionary }: any) {
   const [isMobileFilterDropdownVisible, setMobileFilterDropdownVisible] = useState(false);
   const { setOnFilterChange, filters, isInitialized } = useFilterContext();
@@ -202,16 +303,30 @@ function ProductsMain({ dictionary }: any) {
       <StyledComponent>
         <Container>
           <PageTitle>{dictionary.title}</PageTitle>
-          <div
-            style={{
-              color: "#ffffff",
-              textAlign: "center",
-              padding: "40px",
-              fontSize: "16px",
-            }}
-          >
-            Loading products...
-          </div>
+          <SortWrapper>
+            <OnMobile>
+              <FilterButton onClick={toggleMobileFilterDropdown} dictionary={dictionary} />
+            </OnMobile>
+            <SortDropdown dictionary={dictionary} />
+          </SortWrapper>
+          <ContentWrapper>
+            <OnDesktop>
+              <FilterSidebar dictionary={dictionary.filter} />
+            </OnDesktop>
+            <div style={{ width: "100%" }}>
+              <SkeletonGrid>
+                {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12].map((index) => (
+                  <SkeletonCard key={index}>
+                    <SkeletonImage />
+                    <SkeletonContent>
+                      <SkeletonTitle />
+                      <SkeletonPrice />
+                    </SkeletonContent>
+                  </SkeletonCard>
+                ))}
+              </SkeletonGrid>
+            </div>
+          </ContentWrapper>
         </Container>
       </StyledComponent>
     );
