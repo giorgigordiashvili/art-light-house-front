@@ -400,7 +400,7 @@ const ProjectsScreen = ({ dictionary }: ProjectsScreenProps) => {
       </Container>
 
       <NewCircle size="small" top="1000px" right="142px" media="no" />
-      <BigCircle variant={2} />
+      <BigCircle variant={2} setZIndex />
     </StyledComponent>
   );
 };

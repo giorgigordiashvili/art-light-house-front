@@ -230,9 +230,10 @@ const StyledCircle = styled.div`
 interface ProjectDetailScreenProps {
   slug: string;
   dictionary: any;
+  lang: string;
 }
 
-const ProjectDetailScreen = ({ slug, dictionary }: ProjectDetailScreenProps) => {
+const ProjectDetailScreen = ({ slug, dictionary, lang }: ProjectDetailScreenProps) => {
   const [project, setProject] = useState<ProjectDetail | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -273,7 +274,7 @@ const ProjectDetailScreen = ({ slug, dictionary }: ProjectDetailScreenProps) => 
           <ErrorContainer>
             <h3>Project Not Found</h3>
             <p>{error}</p>
-            <BackButton href="/projects">
+            <BackButton href={`/${lang}/projects`}>
               <svg fill="currentColor" viewBox="0 0 24 24">
                 <path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z" />
               </svg>
@@ -294,7 +295,7 @@ const ProjectDetailScreen = ({ slug, dictionary }: ProjectDetailScreenProps) => 
   return (
     <StyledComponent>
       <Container>
-        <BackButton href="/projects">
+        <BackButton href={`/${lang}/projects`}>
           <svg fill="currentColor" viewBox="0 0 24 24">
             <path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z" />
           </svg>
@@ -372,7 +373,7 @@ const ProjectDetailScreen = ({ slug, dictionary }: ProjectDetailScreenProps) => 
       <StyledCircle>
         <Circle size="large" />
       </StyledCircle>
-      <BigCircle variant={2} />
+      <BigCircle variant={2} setZIndex />
     </StyledComponent>
   );
 };
