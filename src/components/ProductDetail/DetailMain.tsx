@@ -167,6 +167,313 @@ const StyledActionsWrapper = styled.div`
   gap: 14px;
 `;
 
+// Skeleton styles for main product
+const SkeletonBigCard = styled.div`
+  width: 636px;
+  height: 700px;
+  border-radius: 17px;
+  border: 1px solid #ffffff12;
+  background: #1a1a1a96;
+  backdrop-filter: blur(114px);
+  position: relative;
+  overflow: hidden;
+
+  &::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+      90deg,
+      transparent 0%,
+      rgba(255, 255, 255, 0.05) 50%,
+      transparent 100%
+    );
+    animation: shimmer 1.5s infinite;
+    z-index: 1;
+  }
+
+  @keyframes shimmer {
+    0% {
+      left: -100%;
+    }
+    100% {
+      left: 100%;
+    }
+  }
+
+  @media (max-width: 1080px) {
+    width: 100%;
+    height: 500px;
+  }
+`;
+
+const SkeletonDetails = styled.div`
+  width: 563px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+
+  @media (max-width: 1080px) {
+    width: 100%;
+  }
+`;
+
+const SkeletonTitle = styled.div`
+  width: 70%;
+  height: 32px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 8px;
+  position: relative;
+  overflow: hidden;
+
+  &::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+      90deg,
+      transparent 0%,
+      rgba(255, 255, 255, 0.05) 50%,
+      transparent 100%
+    );
+    animation: shimmer 1.5s infinite;
+  }
+
+  @keyframes shimmer {
+    0% {
+      left: -100%;
+    }
+    100% {
+      left: 100%;
+    }
+  }
+`;
+
+const SkeletonPrice = styled.div`
+  width: 40%;
+  height: 40px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 8px;
+  position: relative;
+  overflow: hidden;
+
+  &::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+      90deg,
+      transparent 0%,
+      rgba(255, 255, 255, 0.05) 50%,
+      transparent 100%
+    );
+    animation: shimmer 1.5s infinite;
+  }
+
+  @keyframes shimmer {
+    0% {
+      left: -100%;
+    }
+    100% {
+      left: 100%;
+    }
+  }
+`;
+
+const SkeletonDescription = styled.div`
+  width: 100%;
+  height: 16px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 4px;
+  margin-bottom: 8px;
+  position: relative;
+  overflow: hidden;
+
+  &:nth-child(2) {
+    width: 95%;
+  }
+
+  &:nth-child(3) {
+    width: 85%;
+  }
+
+  &:nth-child(4) {
+    width: 90%;
+  }
+
+  &::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+      90deg,
+      transparent 0%,
+      rgba(255, 255, 255, 0.05) 50%,
+      transparent 100%
+    );
+    animation: shimmer 1.5s infinite;
+  }
+
+  @keyframes shimmer {
+    0% {
+      left: -100%;
+    }
+    100% {
+      left: 100%;
+    }
+  }
+`;
+
+const SkeletonButtons = styled.div`
+  display: flex;
+  gap: 21px;
+
+  @media (max-width: 1080px) {
+    flex-direction: column;
+    width: 100%;
+  }
+`;
+
+const SkeletonButton = styled.div`
+  width: 271px;
+  height: 50px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 10px;
+  position: relative;
+  overflow: hidden;
+
+  &::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+      90deg,
+      transparent 0%,
+      rgba(255, 255, 255, 0.05) 50%,
+      transparent 100%
+    );
+    animation: shimmer 1.5s infinite;
+  }
+
+  @keyframes shimmer {
+    0% {
+      left: -100%;
+    }
+    100% {
+      left: 100%;
+    }
+  }
+
+  @media (max-width: 1080px) {
+    width: 100%;
+  }
+`;
+
+// Skeleton styles for similar products
+const SkeletonProductCard = styled.div`
+  width: 308px;
+  height: 417px;
+  border-radius: 17px;
+  border: 1px solid #ffffff12;
+  background: #1a1a1a96;
+  backdrop-filter: blur(114px);
+  position: relative;
+  overflow: hidden;
+  flex-shrink: 0;
+
+  &::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+      90deg,
+      transparent 0%,
+      rgba(255, 255, 255, 0.05) 50%,
+      transparent 100%
+    );
+    animation: shimmer 1.5s infinite;
+    z-index: 1;
+  }
+
+  @keyframes shimmer {
+    0% {
+      left: -100%;
+    }
+    100% {
+      left: 100%;
+    }
+  }
+
+  @media (max-width: 1080px) {
+    width: 170px;
+    height: 275px;
+  }
+`;
+
+const SkeletonProductImage = styled.div`
+  width: 100%;
+  height: 280px;
+  background: rgba(255, 255, 255, 0.05);
+
+  @media (max-width: 1080px) {
+    height: 180px;
+  }
+`;
+
+const SkeletonProductContent = styled.div`
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+
+  @media (max-width: 1080px) {
+    padding: 12px;
+    gap: 8px;
+  }
+`;
+
+const SkeletonProductTitle = styled.div`
+  width: 70%;
+  height: 16px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 4px;
+
+  @media (max-width: 1080px) {
+    height: 14px;
+  }
+`;
+
+const SkeletonProductPrice = styled.div`
+  width: 50%;
+  height: 20px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 4px;
+  margin-top: 8px;
+
+  @media (max-width: 1080px) {
+    height: 16px;
+    margin-top: 4px;
+  }
+`;
+
 function DetailMain({ dictionary, productId }: { dictionary: any; productId: number }) {
   const { product, loading, error } = useProductDetail(productId);
   const { openAuthModal } = useAuthModal();
@@ -303,20 +610,51 @@ function DetailMain({ dictionary, productId }: { dictionary: any; productId: num
     return (
       <StyledComponent>
         <Container>
-          <div
-            style={{
-              color: "#ffffff",
-              textAlign: "center",
-              padding: "40px",
-              fontSize: "16px",
-              minHeight: "50vh",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-            }}
-          >
-            Loading product details...
-          </div>
+          <MenuBar dictionary={dictionary} />
+          <FlexRow>
+            <SkeletonBigCard />
+            <SkeletonDetails>
+              <SkeletonTitle />
+              <SkeletonPrice />
+              <div
+                style={{ display: "flex", flexDirection: "column", gap: "12px", marginTop: "24px" }}
+              >
+                <SkeletonDescription />
+                <SkeletonDescription />
+                <SkeletonDescription />
+                <SkeletonDescription />
+              </div>
+              <SkeletonButtons>
+                <SkeletonButton />
+                <SkeletonButton />
+              </SkeletonButtons>
+            </SkeletonDetails>
+          </FlexRow>
+
+          <ProductHeader>
+            <StyledTitlesWrapper>
+              <Image
+                src="/assets/icons/notification-text.svg"
+                alt={dictionary?.productDetails?.similarProducts || "Similar Products"}
+                width={32}
+                height={32}
+                style={{ borderRadius: 8, objectFit: "cover" }}
+              />
+              <p>{dictionary?.productDetails?.similarProducts || "Similar Products"}</p>
+            </StyledTitlesWrapper>
+          </ProductHeader>
+
+          <HorizontalScroll ref={scrollRef} $isDragging={false}>
+            {[1, 2, 3, 4, 5, 6].map((index) => (
+              <SkeletonProductCard key={index}>
+                <SkeletonProductImage />
+                <SkeletonProductContent>
+                  <SkeletonProductTitle />
+                  <SkeletonProductPrice />
+                </SkeletonProductContent>
+              </SkeletonProductCard>
+            ))}
+          </HorizontalScroll>
         </Container>
       </StyledComponent>
     );
@@ -392,16 +730,17 @@ function DetailMain({ dictionary, productId }: { dictionary: any; productId: num
           )}
         </ProductHeader>
         {similarLoading ? (
-          <div
-            style={{
-              color: "#ffffff",
-              textAlign: "center",
-              padding: "40px",
-              fontSize: "16px",
-            }}
-          >
-            Loading similar products...
-          </div>
+          <HorizontalScroll ref={scrollRef} $isDragging={false}>
+            {[1, 2, 3, 4, 5, 6].map((index) => (
+              <SkeletonProductCard key={index}>
+                <SkeletonProductImage />
+                <SkeletonProductContent>
+                  <SkeletonProductTitle />
+                  <SkeletonProductPrice />
+                </SkeletonProductContent>
+              </SkeletonProductCard>
+            ))}
+          </HorizontalScroll>
         ) : similarError ? (
           <div
             style={{
@@ -416,10 +755,14 @@ function DetailMain({ dictionary, productId }: { dictionary: any; productId: num
         ) : similarProducts.length === 0 ? (
           <div
             style={{
+              height: "477px",
+              padding: "40px",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
               color: "#ffffff60",
               textAlign: "center",
-              padding: "40px",
-              fontSize: "16px",
+              fontSize: "26px",
             }}
           >
             No similar products found
