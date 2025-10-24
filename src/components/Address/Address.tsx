@@ -68,83 +68,6 @@ const StyledBars = styled.div`
   }
 `;
 
-const SkeletonAddressCard = styled.div`
-  width: 100%;
-  height: 180px;
-  border-radius: 12px;
-  border: 1px solid #ffffff12;
-  background: #1a1a1a96;
-  backdrop-filter: blur(114px);
-  position: relative;
-  overflow: hidden;
-  margin-bottom: 20px;
-
-  &::before {
-    content: "";
-    position: absolute;
-    top: 0;
-    left: -100%;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(
-      90deg,
-      transparent 0%,
-      rgba(255, 255, 255, 0.05) 50%,
-      transparent 100%
-    );
-    animation: shimmer 1.5s infinite;
-    z-index: 1;
-  }
-
-  @keyframes shimmer {
-    0% {
-      left: -100%;
-    }
-    100% {
-      left: 100%;
-    }
-  }
-
-  @media (max-width: 1080px) {
-    height: 160px;
-  }
-`;
-
-const SkeletonContent = styled.div`
-  padding: 24px;
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-`;
-
-const SkeletonTitle = styled.div`
-  width: 40%;
-  height: 20px;
-  background: rgba(255, 255, 255, 0.05);
-  border-radius: 4px;
-`;
-
-const SkeletonText = styled.div`
-  width: 80%;
-  height: 16px;
-  background: rgba(255, 255, 255, 0.05);
-  border-radius: 4px;
-
-  &:nth-child(3) {
-    width: 60%;
-  }
-
-  &:nth-child(4) {
-    width: 70%;
-  }
-`;
-
-const SkeletonGrid = styled.div`
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-`;
-
 const StyledMobileDetail = styled.div`
   display: none;
   @media (max-width: 1080px) {
@@ -207,20 +130,7 @@ const Address = ({ dictionary }: any) => {
           <StyledMobileDetail>
             <MobileDetailDropdown dictionary={dictionary} />
           </StyledMobileDetail>
-          {loading ? (
-            <SkeletonGrid>
-              {[1, 2, 3].map((index) => (
-                <SkeletonAddressCard key={index}>
-                  <SkeletonContent>
-                    <SkeletonTitle />
-                    <SkeletonText />
-                    <SkeletonText />
-                    <SkeletonText />
-                  </SkeletonContent>
-                </SkeletonAddressCard>
-              ))}
-            </SkeletonGrid>
-          ) : error ? (
+          {error ? (
             <div
               style={{
                 color: "#ff4444",
@@ -238,6 +148,7 @@ const Address = ({ dictionary }: any) => {
               onEditAddress={handleEditAddress}
               onDeleteAddress={handleDeleteAddress}
               dictionary={dictionary}
+              loading={loading}
             />
           )}
         </StyledBars>

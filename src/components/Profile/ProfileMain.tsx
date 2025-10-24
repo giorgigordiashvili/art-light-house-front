@@ -169,7 +169,8 @@ const DetailBarWrapper = styled.div<{ $isOpen: boolean }>`
 
 const SkeletonProfileCard = styled.div`
   width: 100%;
-  border-radius: 12px;
+  min-height: 544px;
+  border-radius: 17px;
   border: 1px solid #ffffff12;
   background: #1a1a1a96;
   backdrop-filter: blur(114px);
@@ -205,6 +206,7 @@ const SkeletonProfileCard = styled.div`
 
   @media (max-width: 1080px) {
     padding: 24px;
+    min-height: auto;
   }
 `;
 
