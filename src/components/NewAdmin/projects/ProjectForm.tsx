@@ -499,6 +499,7 @@ const ProjectForm = ({ initialData, onSubmit, onCancel, loading = false }: Proje
               <ExistingImagesGrid>
                 {initialData.images.map((image) => (
                   <ImageCard key={image.id}>
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img src={image.image_url} alt={image.alt_text || "Project image"} />
                     {image.is_primary && <div className="primary-indicator">Primary</div>}
                   </ImageCard>
@@ -539,6 +540,7 @@ const ProjectForm = ({ initialData, onSubmit, onCancel, loading = false }: Proje
             <ImagePreview>
               {images.map((file, index) => (
                 <ImageCard key={index}>
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img src={URL.createObjectURL(file)} alt={`Preview ${index}`} />
                   <button type="button" className="remove-btn" onClick={() => removeImage(index)}>
                     ×

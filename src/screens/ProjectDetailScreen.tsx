@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import styled from "styled-components";
 import Link from "next/link";
 import { projectsDetail } from "@/api/generated/api";
@@ -239,11 +239,7 @@ const ProjectDetailScreen = ({ slug, dictionary, lang }: ProjectDetailScreenProp
   const [error, setError] = useState<string | null>(null);
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
 
-  useEffect(() => {
-    loadProject();
-  }, [slug]);
-
-  const loadProject = async () => {
+  const loadProject = useCallback(async () => {
     try {
       setLoading(true);
       setError(null);
@@ -255,7 +251,11 @@ const ProjectDetailScreen = ({ slug, dictionary, lang }: ProjectDetailScreenProp
     } finally {
       setLoading(false);
     }
-  };
+  }, [slug]);
+
+  useEffect(() => {
+    loadProject();
+  }, [loadProject]);
 
   if (loading) {
     return (
@@ -334,6 +334,7 @@ const ProjectDetailScreen = ({ slug, dictionary, lang }: ProjectDetailScreenProp
         {images.length > 0 && (
           <ImageGallery>
             <MainImage>
+              {/* eslint-disable-next-line @next/next/no-img-element */}
               <img src={currentImage.image_url} alt={currentImage.alt_text || project.title} />
             </MainImage>
 
@@ -345,6 +346,7 @@ const ProjectDetailScreen = ({ slug, dictionary, lang }: ProjectDetailScreenProp
                     $active={index === selectedImageIndex}
                     onClick={() => setSelectedImageIndex(index)}
                   >
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img src={image.image_url} alt={image.alt_text || `Image ${index + 1}`} />
                   </Thumbnail>
                 ))}

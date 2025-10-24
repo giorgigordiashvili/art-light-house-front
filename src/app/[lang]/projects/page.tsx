@@ -13,8 +13,8 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const dictionary = await getDictionary(isLocale(lang) ? lang : "ge");
 
   return {
-    title: "Projects | Art Lighthouse",
-    description: "Explore our portfolio of interior design and lighting projects",
+    title: `${dictionary.metadata.projects.title} | Art Lighthouse`,
+    description: dictionary.metadata.projects.subTitle,
   };
 }
 
