@@ -167,6 +167,91 @@ const DetailBarWrapper = styled.div<{ $isOpen: boolean }>`
   }
 `;
 
+const SkeletonProfileCard = styled.div`
+  width: 100%;
+  border-radius: 12px;
+  border: 1px solid #ffffff12;
+  background: #1a1a1a96;
+  backdrop-filter: blur(114px);
+  position: relative;
+  overflow: hidden;
+  padding: 32px;
+
+  &::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+      90deg,
+      transparent 0%,
+      rgba(255, 255, 255, 0.05) 50%,
+      transparent 100%
+    );
+    animation: shimmer 1.5s infinite;
+    z-index: 1;
+  }
+
+  @keyframes shimmer {
+    0% {
+      left: -100%;
+    }
+    100% {
+      left: 100%;
+    }
+  }
+
+  @media (max-width: 1080px) {
+    padding: 24px;
+  }
+`;
+
+const SkeletonRow = styled.div`
+  display: flex;
+  gap: 24px;
+  margin-bottom: 24px;
+
+  @media (max-width: 1080px) {
+    flex-direction: column;
+    gap: 16px;
+  }
+`;
+
+const SkeletonField = styled.div`
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+`;
+
+const SkeletonLabel = styled.div`
+  width: 30%;
+  height: 14px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 4px;
+`;
+
+const SkeletonInput = styled.div`
+  width: 100%;
+  height: 48px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 8px;
+`;
+
+const SkeletonButton = styled.div`
+  width: 150px;
+  height: 48px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 8px;
+  margin-top: 16px;
+
+  @media (max-width: 1080px) {
+    width: 100%;
+  }
+`;
+
 const MyDetails = ({ dictionary }: any) => {
   const [isDropdownOpen] = useState(false);
   const { profileData, isLoading, error } = useProfileData();
@@ -183,12 +268,44 @@ const MyDetails = ({ dictionary }: any) => {
           <ContentWrapper>
             <DetailBar dictionary={dictionary?.profile} />
             <RightSection>
-              <Personal
-                dictionary={dictionary?.profile}
-                profileData={profileData}
-                isLoading={isLoading}
-                variant="data"
-              />
+              {isLoading ? (
+                <SkeletonProfileCard>
+                  <SkeletonRow>
+                    <SkeletonField>
+                      <SkeletonLabel />
+                      <SkeletonInput />
+                    </SkeletonField>
+                    <SkeletonField>
+                      <SkeletonLabel />
+                      <SkeletonInput />
+                    </SkeletonField>
+                  </SkeletonRow>
+                  <SkeletonRow>
+                    <SkeletonField>
+                      <SkeletonLabel />
+                      <SkeletonInput />
+                    </SkeletonField>
+                    <SkeletonField>
+                      <SkeletonLabel />
+                      <SkeletonInput />
+                    </SkeletonField>
+                  </SkeletonRow>
+                  <SkeletonRow>
+                    <SkeletonField>
+                      <SkeletonLabel />
+                      <SkeletonInput />
+                    </SkeletonField>
+                  </SkeletonRow>
+                  <SkeletonButton />
+                </SkeletonProfileCard>
+              ) : (
+                <Personal
+                  dictionary={dictionary?.profile}
+                  profileData={profileData}
+                  isLoading={isLoading}
+                  variant="data"
+                />
+              )}
             </RightSection>
           </ContentWrapper>
         </DesktopWrapper>
@@ -200,12 +317,44 @@ const MyDetails = ({ dictionary }: any) => {
             <DetailBar dictionary={dictionary?.profile} />
           </DetailBarWrapper>
           <RightSection>
-            <Personal
-              dictionary={dictionary?.profile}
-              profileData={profileData}
-              isLoading={isLoading}
-              variant="data"
-            />
+            {isLoading ? (
+              <SkeletonProfileCard>
+                <SkeletonRow>
+                  <SkeletonField>
+                    <SkeletonLabel />
+                    <SkeletonInput />
+                  </SkeletonField>
+                  <SkeletonField>
+                    <SkeletonLabel />
+                    <SkeletonInput />
+                  </SkeletonField>
+                </SkeletonRow>
+                <SkeletonRow>
+                  <SkeletonField>
+                    <SkeletonLabel />
+                    <SkeletonInput />
+                  </SkeletonField>
+                  <SkeletonField>
+                    <SkeletonLabel />
+                    <SkeletonInput />
+                  </SkeletonField>
+                </SkeletonRow>
+                <SkeletonRow>
+                  <SkeletonField>
+                    <SkeletonLabel />
+                    <SkeletonInput />
+                  </SkeletonField>
+                </SkeletonRow>
+                <SkeletonButton />
+              </SkeletonProfileCard>
+            ) : (
+              <Personal
+                dictionary={dictionary?.profile}
+                profileData={profileData}
+                isLoading={isLoading}
+                variant="data"
+              />
+            )}
           </RightSection>
         </MobileWrapper>
       </Container>
