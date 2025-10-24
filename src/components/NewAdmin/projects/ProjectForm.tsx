@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import dynamic from "next/dynamic";
 import { ProjectDetail } from "@/api/generated/interfaces";
 import {
@@ -9,6 +9,7 @@ import {
   Label,
   Input,
   Textarea,
+  Select,
   CheckboxWrapper,
   Checkbox,
   CheckboxLabel,
@@ -18,6 +19,15 @@ import {
 import { Button } from "@/components/NewAdmin/ui/Button";
 import { Card, CardHeader, CardContent } from "@/components/NewAdmin/ui/Card";
 import styled from "styled-components";
+
+// Project Translation interface
+interface ProjectTranslationRequest {
+  language_code: string;
+  title: string;
+  description: string;
+  short_description?: string;
+  category?: string;
+}
 
 // Dynamically import TinyMCE to avoid SSR issues
 const Editor = dynamic(() => import("@tinymce/tinymce-react").then((mod) => mod.Editor), {
@@ -108,6 +118,53 @@ const ExistingImagesGrid = styled.div`
   margin-bottom: 16px;
 `;
 
+const TranslationCard = styled.div`
+  background: #f8f9fa;
+  padding: 16px;
+  border-radius: 8px;
+  border: 1px solid #dee2e6;
+  margin-bottom: 16px;
+`;
+
+const TranslationHeader = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+`;
+
+const TranslationTitle = styled.h4`
+  margin: 0;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #495057;
+`;
+
+const RemoveButton = styled.button`
+  background: none;
+  border: none;
+  color: #dc3545;
+  font-size: 1.5rem;
+  cursor: pointer;
+  padding: 0;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  &:hover {
+    color: #c82333;
+  }
+`;
+
+const AddTranslationButton = styled(Button)`
+  margin-top: 8px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+`;
+
 interface FormData {
   title: string;
   slug: string;
@@ -120,6 +177,7 @@ interface FormData {
   is_published: boolean;
   is_featured: boolean;
   sort_order: string;
+  translations: ProjectTranslationRequest[];
 }
 
 interface ProjectFormProps {
@@ -144,6 +202,15 @@ const ProjectForm = ({ initialData, onSubmit, onCancel, loading = false }: Proje
         is_published: initialData.is_published ?? false,
         is_featured: initialData.is_featured ?? false,
         sort_order: initialData.sort_order?.toString() || "0",
+        translations: initialData.translations
+          ? initialData.translations.map((t) => ({
+              language_code: String(t.language_code),
+              title: t.title,
+              description: t.description,
+              short_description: t.short_description || "",
+              category: initialData.category || "",
+            }))
+          : [],
       };
     }
 
@@ -159,6 +226,7 @@ const ProjectForm = ({ initialData, onSubmit, onCancel, loading = false }: Proje
       is_published: false,
       is_featured: false,
       sort_order: "0",
+      translations: [],
     };
   });
 
@@ -222,6 +290,43 @@ const ProjectForm = ({ initialData, onSubmit, onCancel, loading = false }: Proje
 
   const removeImage = (index: number) => {
     setImages((prev) => prev.filter((_, i) => i !== index));
+  };
+
+  // Translation handlers
+  const addTranslation = () => {
+    setFormData((prev) => ({
+      ...prev,
+      translations: [
+        ...prev.translations,
+        {
+          language_code: "",
+          title: "",
+          description: "",
+          short_description: "",
+          category: "",
+        },
+      ],
+    }));
+  };
+
+  const removeTranslation = (index: number) => {
+    setFormData((prev) => ({
+      ...prev,
+      translations: prev.translations.filter((_, i) => i !== index),
+    }));
+  };
+
+  const handleTranslationChange = (
+    index: number,
+    field: keyof ProjectTranslationRequest,
+    value: string
+  ) => {
+    setFormData((prev) => ({
+      ...prev,
+      translations: prev.translations.map((translation, i) =>
+        i === index ? { ...translation, [field]: value } : translation
+      ),
+    }));
   };
 
   return (
@@ -472,6 +577,120 @@ const ProjectForm = ({ initialData, onSubmit, onCancel, loading = false }: Proje
               <strong>Featured</strong> - Highlight this project on the homepage
             </CheckboxLabel>
           </CheckboxWrapper>
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <h2>Translations</h2>
+        </CardHeader>
+        <CardContent>
+          <HelperText style={{ marginBottom: "16px" }}>
+            Add translations for different languages. This will allow the project to be displayed in
+            multiple languages on your website.
+          </HelperText>
+
+          {formData.translations.map((translation, index) => (
+            <TranslationCard key={index}>
+              <TranslationHeader>
+                <TranslationTitle>Translation #{index + 1}</TranslationTitle>
+                <RemoveButton
+                  type="button"
+                  onClick={() => removeTranslation(index)}
+                  title="Remove translation"
+                >
+                  ×
+                </RemoveButton>
+              </TranslationHeader>
+
+              <FormGroup>
+                <Label>Language Code *</Label>
+                <Select
+                  value={translation.language_code}
+                  onChange={(e) => handleTranslationChange(index, "language_code", e.target.value)}
+                  required
+                >
+                  <option value="">Select language</option>
+                  <option value="en">English (en)</option>
+                  <option value="ge">Georgian (ge)</option>
+                </Select>
+              </FormGroup>
+
+              <FormGroup>
+                <Label>Project Title *</Label>
+                <Input
+                  value={translation.title}
+                  onChange={(e) => handleTranslationChange(index, "title", e.target.value)}
+                  placeholder="Project title in selected language"
+                  required
+                />
+              </FormGroup>
+
+              <FormGroup>
+                <Label>Short Description</Label>
+                <Textarea
+                  value={translation.short_description || ""}
+                  onChange={(e) =>
+                    handleTranslationChange(index, "short_description", e.target.value)
+                  }
+                  placeholder="Brief description in selected language..."
+                  rows={3}
+                />
+              </FormGroup>
+
+              <FormGroup>
+                <Label>Full Description *</Label>
+                <Editor
+                  apiKey="t6sv10msadi4x9ocmxrajwnnz8bmwyzk5vbs5tqfubseauo2"
+                  value={translation.description}
+                  onEditorChange={(content) => {
+                    handleTranslationChange(index, "description", content);
+                  }}
+                  init={{
+                    height: 300,
+                    menubar: false,
+                    plugins: [
+                      "advlist",
+                      "autolink",
+                      "lists",
+                      "link",
+                      "charmap",
+                      "preview",
+                      "searchreplace",
+                      "visualblocks",
+                      "code",
+                      "insertdatetime",
+                      "help",
+                      "wordcount",
+                    ],
+                    toolbar:
+                      "undo redo | blocks | bold italic | alignleft aligncenter alignright | bullist numlist | removeformat | help",
+                    content_style:
+                      "body { font-family:Helvetica,Arial,sans-serif; font-size:14px }",
+                  }}
+                />
+              </FormGroup>
+
+              <FormGroup>
+                <Label>Category (Translated)</Label>
+                <Input
+                  value={translation.category || ""}
+                  onChange={(e) => handleTranslationChange(index, "category", e.target.value)}
+                  placeholder="Category name in selected language"
+                />
+                <HelperText>
+                  Optionally provide a translated version of the category name
+                </HelperText>
+              </FormGroup>
+            </TranslationCard>
+          ))}
+
+          <AddTranslationButton type="button" $variant="secondary" onClick={addTranslation}>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z" />
+            </svg>
+            Add Translation
+          </AddTranslationButton>
         </CardContent>
       </Card>
 

@@ -441,9 +441,21 @@
     "detailBar5": "Settings",
     "detailBar6": "Logout"
   },
+  "projects": {
+    "title": "Our Projects",
+    "description": "Explore our portfolio of exceptional interior design and lighting projects",
+    "allProjects": "All Projects",
+    "backToProjects": "Back to Projects",
+    "featuredProject": "Featured Project",
+    "projectDetails": "Project Details",
+    "client": "Client",
+    "category": "Category",
+    "year": "Year",
+    "location": "Location"
+  },
   "metadata": {
     "main": {
-      "title": "Main Page - Art Lighthouse",
+      "title": "Main",
       "subTitle": "Learn more about our company and values."
     },
     "products": {

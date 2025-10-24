@@ -276,7 +276,7 @@ interface ProjectsScreenProps {
   dictionary: any;
 }
 
-const ProjectsScreen = ({}: ProjectsScreenProps) => {
+const ProjectsScreen = ({ dictionary }: ProjectsScreenProps) => {
   const [projects, setProjects] = useState<ProjectList[]>([]);
   const [loading, setLoading] = useState(true);
   const [categoryFilter, setCategoryFilter] = useState<string | undefined>(undefined);
@@ -309,14 +309,14 @@ const ProjectsScreen = ({}: ProjectsScreenProps) => {
     <StyledComponent>
       <Container>
         <Header>
-          <h1>Our Projects</h1>
-          <p>Explore our portfolio of exceptional interior design and lighting projects</p>
+          <h1>{dictionary.projects.title}</h1>
+          <p>{dictionary.projects.description}</p>
         </Header>
 
         {categories.length > 0 && (
           <FilterBar>
             <FilterButton $active={!categoryFilter} onClick={() => setCategoryFilter(undefined)}>
-              All Projects
+              {dictionary.projects.allProjects}
             </FilterButton>
             {categories.map((category) => (
               <FilterButton

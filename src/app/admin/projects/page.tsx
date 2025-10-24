@@ -215,17 +215,29 @@ const ProjectsManagement = () => {
         sort_order: formData.sort_order ? parseInt(formData.sort_order) : 0,
       };
 
+      // Add translations if any (note: this field is not in the TypeScript interface yet)
+      const projectDataWithTranslations: any = {
+        ...projectData,
+        translations:
+          formData.translations && formData.translations.length > 0
+            ? formData.translations
+            : undefined,
+      };
+
       let projectId: number;
 
       if (editingProject) {
         const response = await adminAxios.patch(
           `/api/projects/admin/projects/${editingProject.id}/update/`,
-          projectData
+          projectDataWithTranslations
         );
         projectId = response.data.id;
         alert("Project updated successfully!");
       } else {
-        const response = await adminAxios.post("/api/projects/admin/projects/create/", projectData);
+        const response = await adminAxios.post(
+          "/api/projects/admin/projects/create/",
+          projectDataWithTranslations
+        );
         projectId = response.data.id;
         alert("Project created successfully!");
       }

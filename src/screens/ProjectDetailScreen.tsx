@@ -277,7 +277,7 @@ const ProjectDetailScreen = ({ slug, dictionary }: ProjectDetailScreenProps) => 
               <svg fill="currentColor" viewBox="0 0 24 24">
                 <path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z" />
               </svg>
-              Back to Projects
+              {dictionary.projects.backToProjects}
             </BackButton>
           </ErrorContainer>
         </Container>
@@ -298,7 +298,7 @@ const ProjectDetailScreen = ({ slug, dictionary }: ProjectDetailScreenProps) => 
           <svg fill="currentColor" viewBox="0 0 24 24">
             <path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z" />
           </svg>
-          Back to Projects
+          {dictionary.projects.backToProjects}
         </BackButton>
 
         <Header>
@@ -306,26 +306,28 @@ const ProjectDetailScreen = ({ slug, dictionary }: ProjectDetailScreenProps) => 
           <MetaInfo>
             {project.client && (
               <MetaItem>
-                <strong>Client:</strong> {project.client}
+                <strong>{dictionary.projects.client}:</strong> {project.client}
               </MetaItem>
             )}
             {project.category && (
               <MetaItem>
-                <strong>Category:</strong> {project.category}
+                <strong>{dictionary.projects.category}:</strong> {project.category}
               </MetaItem>
             )}
             {project.year && (
               <MetaItem>
-                <strong>Year:</strong> {project.year}
+                <strong>{dictionary.projects.year}:</strong> {project.year}
               </MetaItem>
             )}
             {project.location && (
               <MetaItem>
-                <strong>Location:</strong> {project.location}
+                <strong>{dictionary.projects.location}:</strong> {project.location}
               </MetaItem>
             )}
           </MetaInfo>
-          {project.is_featured && <FeaturedBadge>Featured Project</FeaturedBadge>}
+          {project.is_featured && (
+            <FeaturedBadge>{dictionary.projects.featuredProject}</FeaturedBadge>
+          )}
         </Header>
 
         {images.length > 0 && (
@@ -352,7 +354,7 @@ const ProjectDetailScreen = ({ slug, dictionary }: ProjectDetailScreenProps) => 
 
         {(project.short_description || project.description) && (
           <ContentSection>
-            <h2>Project Details</h2>
+            <h2>{dictionary.projects.projectDetails}</h2>
             {project.short_description && (
               <div style={{ marginBottom: "24px", fontSize: "1.125rem", fontWeight: 500 }}>
                 {project.short_description}
