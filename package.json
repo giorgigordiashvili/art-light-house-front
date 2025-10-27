@@ -13,8 +13,11 @@
     "generate:api": "gordela-api-gen"
   },
   "dependencies": {
+    "@emotion/react": "^11.14.0",
+    "@emotion/styled": "^11.14.1",
     "@formatjs/intl-localematcher": "^0.6.1",
     "@gordela/api-generator": "^1.2.0",
+    "@mui/material": "^7.3.4",
     "@react-google-maps/api": "^2.20.7",
     "@tinymce/tinymce-react": "^6.3.0",
     "@vis.gl/react-google-maps": "^1.5.2",

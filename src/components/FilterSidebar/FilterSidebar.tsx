@@ -5,6 +5,8 @@ import CategoryFilter from "./CategoryFilter";
 import Line from "./Line";
 import AttributeFilter from "./AttributeFilter";
 import PriceFilter from "./PriceFilter";
+import PriceInput from "@/components/ListProductCard/PriceInput";
+import PriceRangeSlider from "./PriceRangeSlider";
 
 const SidebarWrapper = styled.div`
   width: 308px;
@@ -26,6 +28,11 @@ const Title = styled.p`
   color: white;
 `;
 
+const StyledInputs = styled.div`
+  display: flex;
+  gap: 6px;
+`;
+
 interface FilterSidebarProps {
   dictionary: any;
 }
@@ -40,6 +47,11 @@ function FilterSidebar({ dictionary }: FilterSidebarProps) {
       <CategoryFilter dictionary={dictionary} />
       <Line />
       <PriceFilter dictionary={dictionary} />
+      <StyledInputs>
+        <PriceInput text="დან" />
+        <PriceInput text="მდე" />
+      </StyledInputs>
+      <PriceRangeSlider min={0} max={10000} />
       <Line />
       <AttributeFilter attributeName="სტილი" title={dictionary.subTitle3} />
       <Line />
