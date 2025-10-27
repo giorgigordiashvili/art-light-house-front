@@ -7,8 +7,7 @@ import { useFilterContext } from "@/contexts/FilterContext";
 
 const SliderWrapper = styled.div`
   width: 100%;
-  padding: 10px 5px;
-  margin-top: 10px;
+  margin-top: 16px;
 
   .MuiSlider-root {
     color: #ffcb40;
@@ -45,7 +44,6 @@ const SliderWrapper = styled.div`
     color: #0b0b0b;
     font-weight: 600;
     font-size: 12px;
-    padding: 4px 8px;
     border-radius: 4px;
 
     &:before {
