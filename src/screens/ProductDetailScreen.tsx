@@ -4,7 +4,7 @@ import DetailMain from "@/components/ProductDetail/DetailMain";
 import BigCircle from "@/components/ui/BigCircle";
 
 const StyledComponent = styled.div`
-  background: black;
+  background: #0b0b0b;
   display: flex;
   min-height: 100dvh;
   flex-direction: column;

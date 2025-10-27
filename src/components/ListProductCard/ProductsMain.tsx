@@ -13,7 +13,7 @@ import { useFilterContext } from "@/contexts/FilterContext";
 import { useRouter, usePathname } from "next/navigation";
 
 const StyledComponent = styled.div`
-  background: black;
+  background: #0b0b0b;
   height: auto;
   display: flex;
   align-items: center;

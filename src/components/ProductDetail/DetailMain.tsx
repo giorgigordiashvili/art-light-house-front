@@ -20,7 +20,7 @@ import { useAuthModal } from "@/contexts/AuthModalContext";
 import { cartAddItem } from "@/api/generated/api";
 
 const StyledComponent = styled.div`
-  background: black;
+  background: #0b0b0b;
   margin-top: 80px;
 
   @media (max-width: 1080px) {

@@ -7,7 +7,7 @@ import Circle from "@/components/ui/Circle";
 import BigCircle from "@/components/ui/BigCircle";
 
 const StyledComponent = styled.div`
-  background: black;
+  background: #0b0b0b;
   padding-bottom: 130px;
   padding-top: 186px;
   @media (max-width: 1080px) {

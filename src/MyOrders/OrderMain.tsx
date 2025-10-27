@@ -7,7 +7,7 @@ import MobileOrderDropdown from "./MobileOrderDropDown";
 import Order from "@/MyOrders/Order";
 
 const StyledComponent = styled.div`
-  background: black;
+  background: #0b0b0b;
   margin-top: 80px;
   margin-bottom: 219px;
   width: 100%;

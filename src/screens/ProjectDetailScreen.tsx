@@ -9,7 +9,7 @@ import Circle from "@/components/ui/Circle";
 import BigCircle from "@/components/ui/BigCircle";
 
 const StyledComponent = styled.div`
-  background: black;
+  background: #0b0b0b;
   display: flex;
   min-height: 100dvh;
   flex-direction: column;

@@ -3,7 +3,7 @@ import styled from "styled-components";
 import Container from "@/components/SuccsessOrder/SuccessMain";
 
 const StyledComponent = styled.div`
-  background: black;
+  background: #0b0b0b;
   display: flex;
   min-height: 100dvh;
   flex-direction: column;
