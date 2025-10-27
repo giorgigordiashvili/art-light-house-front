@@ -32,13 +32,15 @@ const ensureValidLanguage = (lang: string): Locale => {
 
 const StyledContainer = styled.div`
   position: fixed;
-  width: 100%;
   top: 0;
-  padding: 17px 20px 18px 20px;
+  left: 0;
+  right: var(--scrollbar-compensation, 0px);
+  padding: 17px 36px 18px 20px;
   background-color: rgba(11, 11, 11, 0.34);
   backdrop-filter: blur(98.8px);
   border-bottom: 1px solid #ffffff14;
   z-index: 1001;
+  margin-right: -16px;
 
   @media (max-width: 1080px) {
     padding: 17px 0 18px 0;
@@ -174,6 +176,8 @@ const Header = ({ header, dictionary }: HeaderProps) => {
   const burgerIconRef = useRef<HTMLDivElement>(null);
   const userMenuRef = useRef<HTMLDivElement>(null);
   const authButtonRef = useRef<HTMLDivElement>(null);
+  const originalBodyPaddingRef = useRef<string | null>(null);
+  // const originalBodyBackgroundRef = useRef<string | null>(null);
 
   const toggleBurgerMenu = () => {
     setIsBurgerMenuOpen((prev) => !prev);
@@ -181,33 +185,70 @@ const Header = ({ header, dictionary }: HeaderProps) => {
 
   useEffect(() => {}, []);
 
+  const shouldLockBody =
+    isBurgerMenuOpen ||
+    isUserMenuOpen ||
+    isRecoverPasswordOpen ||
+    isPasswordResetVerifyOpen ||
+    isEmptyCartModalOpen ||
+    isCartModalOpen ||
+    isFavoritesModalOpen ||
+    isLanguageSwitcherModalOpen ||
+    isAuthModalOpen;
+
   useEffect(() => {
-    document.body.style.overflow =
-      isBurgerMenuOpen ||
-      isUserMenuOpen ||
-      isRecoverPasswordOpen ||
-      isPasswordResetVerifyOpen ||
-      isEmptyCartModalOpen ||
-      isCartModalOpen ||
-      isFavoritesModalOpen ||
-      isLanguageSwitcherModalOpen ||
-      isAuthModalOpen
-        ? "hidden"
-        : "visible";
+    if (typeof window === "undefined") {
+      return;
+    }
+
+    const body = document.body;
+    const root = document.documentElement;
+
+    if (shouldLockBody) {
+      if (originalBodyPaddingRef.current === null) {
+        originalBodyPaddingRef.current = body.style.paddingRight;
+      }
+      // if (originalBodyBackgroundRef.current === null) {
+      //   originalBodyBackgroundRef.current = body.style.backgroundColor;
+      // }
+
+      const scrollBarWidth = window.innerWidth - document.documentElement.clientWidth;
+      body.style.overflow = "hidden";
+      if (scrollBarWidth > 0) {
+        body.style.paddingRight = `${scrollBarWidth}px`;
+      }
+      root.style.setProperty("--scrollbar-compensation", `${scrollBarWidth}px`);
+      body.style.backgroundColor = "#0b0b0b";
+    } else {
+      body.style.overflow = "visible";
+      if (originalBodyPaddingRef.current !== null) {
+        body.style.paddingRight = originalBodyPaddingRef.current;
+        originalBodyPaddingRef.current = null;
+      }
+      // if (originalBodyBackgroundRef.current !== null) {
+      //   body.style.backgroundColor = originalBodyBackgroundRef.current;
+      //   originalBodyBackgroundRef.current = null;
+      // }
+      root.style.removeProperty("--scrollbar-compensation");
+    }
+
     return () => {
-      document.body.style.overflow = "visible";
+      if (!shouldLockBody) {
+        return;
+      }
+
+      body.style.overflow = "visible";
+      if (originalBodyPaddingRef.current !== null) {
+        body.style.paddingRight = originalBodyPaddingRef.current;
+        originalBodyPaddingRef.current = null;
+      }
+      // if (originalBodyBackgroundRef.current !== null) {
+      //   body.style.backgroundColor = originalBodyBackgroundRef.current;
+      //   originalBodyBackgroundRef.current = null;
+      // }
+      root.style.removeProperty("--scrollbar-compensation");
     };
-  }, [
-    isBurgerMenuOpen,
-    isUserMenuOpen,
-    isRecoverPasswordOpen,
-    isPasswordResetVerifyOpen,
-    isEmptyCartModalOpen,
-    isCartModalOpen,
-    isFavoritesModalOpen,
-    isLanguageSwitcherModalOpen,
-    isAuthModalOpen,
-  ]);
+  }, [shouldLockBody]);
 
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
