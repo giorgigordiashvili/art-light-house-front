@@ -48,8 +48,8 @@ function FilterSidebar({ dictionary }: FilterSidebarProps) {
       <Line />
       <PriceFilter dictionary={dictionary} />
       <StyledInputs>
-        <PriceInput text="დან" />
-        <PriceInput text="მდე" />
+        <PriceInput text="დან" type="min" />
+        <PriceInput text="მდე" type="max" />
       </StyledInputs>
       <PriceRangeSlider min={0} max={10000} />
       <Line />

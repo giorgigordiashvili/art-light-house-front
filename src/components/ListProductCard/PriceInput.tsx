@@ -1,8 +1,11 @@
+"use client";
 import React from "react";
 import Styled from "styled-components";
+import { useFilterContext } from "@/contexts/FilterContext";
 
 type Props = {
   text: string;
+  type: "min" | "max";
 };
 
 const StyledInput = Styled.input`
@@ -22,8 +25,59 @@ const StyledInput = Styled.input`
   }
 `;
 
-const PriceInput: React.FC<Props> = ({ text }) => {
-  return <StyledInput placeholder={text} />;
+const PriceInput: React.FC<Props> = ({ text, type }) => {
+  const { filters, updatePriceFilter } = useFilterContext();
+  const [localValue, setLocalValue] = React.useState<string>("");
+
+  React.useEffect(() => {
+    const currentValue = type === "min" ? filters.minPrice : filters.maxPrice;
+    setLocalValue(currentValue !== undefined ? currentValue.toString() : "");
+  }, [filters.minPrice, filters.maxPrice, type]);
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    // Only allow numbers
+    if (value === "" || /^\d+$/.test(value)) {
+      setLocalValue(value);
+    }
+  };
+
+  const handleBlur = () => {
+    if (localValue === "") {
+      updatePriceFilter(
+        type === "min" ? undefined : filters.minPrice,
+        type === "max" ? undefined : filters.maxPrice
+      );
+      return;
+    }
+
+    const numValue = parseInt(localValue, 10);
+    if (!isNaN(numValue)) {
+      if (type === "min") {
+        updatePriceFilter(numValue, filters.maxPrice);
+      } else {
+        updatePriceFilter(filters.minPrice, numValue);
+      }
+    }
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter") {
+      handleBlur();
+    }
+  };
+
+  return (
+    <StyledInput
+      placeholder={text}
+      value={localValue}
+      onChange={handleChange}
+      onBlur={handleBlur}
+      onKeyDown={handleKeyDown}
+      type="text"
+      inputMode="numeric"
+    />
+  );
 };
 
 export default PriceInput;
