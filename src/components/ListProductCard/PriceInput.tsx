@@ -23,6 +23,10 @@ const StyledInput = Styled.input`
   &::placeholder {
     color: #777777;
   }
+
+  @media (max-width: 1080px) {
+    width: 100%;
+  }
 `;
 
 const PriceInput: React.FC<Props> = ({ text, type }) => {

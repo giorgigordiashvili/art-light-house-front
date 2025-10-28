@@ -6,6 +6,8 @@ import Line from "../FilterSidebar/Line";
 import AttributeFilter from "../FilterSidebar/AttributeFilter";
 import PriceFilter from "../FilterSidebar/PriceFilter";
 import ButtonFilter from "./ButtonFilter";
+import PriceRangeSlider from "../FilterSidebar/PriceRangeSlider";
+import PriceInput from "@/components/ListProductCard/PriceInput";
 
 const slideUp = keyframes`
   from {
@@ -44,6 +46,7 @@ const ScrollArea = styled.div`
   padding: 20px;
   overflow-y: auto;
   flex: 1;
+  scrollbar-width: none;
 `;
 
 const BottomBar = styled.div`
@@ -77,6 +80,12 @@ const CloseButton = styled.button`
   cursor: pointer;
 `;
 
+const InputsRow = styled.div`
+  display: flex;
+  gap: 6px;
+  margin-top: 8px;
+`;
+
 interface MobileFilterDropdownProps {
   onClose: () => void;
   dictionary: any;
@@ -96,6 +105,11 @@ const MobileFilterDropdown: React.FC<MobileFilterDropdownProps> = ({ onClose, di
           <CategoryFilter dictionary={dictionary.filter} />
           <Line />
           <PriceFilter dictionary={dictionary.filter} />
+          <InputsRow>
+            <PriceInput text={dictionary.filter?.placeholder1 ?? "დან"} type="min" />
+            <PriceInput text={dictionary.filter?.placeholder2 ?? "მდე"} type="max" />
+          </InputsRow>
+          <PriceRangeSlider min={0} max={10000} />
           <Line />
           <AttributeFilter attributeName="სტილი" title={dictionary.filter.subTitle3} />
           <Line />
