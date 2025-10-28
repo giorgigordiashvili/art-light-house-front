@@ -38,7 +38,7 @@ const PageTitle = styled.h1`
 `;
 
 const ResultsTitle = styled.h2`
-  position: sticky;
+  position: absolute;
   z-index: 2;
   font-family: "Helvetica";
   font-weight: 400;
