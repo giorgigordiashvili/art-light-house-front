@@ -37,22 +37,23 @@ const PageTitle = styled.h1`
   }
 `;
 
-// const ResultsTitle = styled.h2`
-//   position: absolute;
-//   z-index: 2;
-//   font-family: "Helvetica";
-//   font-weight: 400;
-//   font-size: 18px;
-//   line-height: 24px;
-//   color: #ffffff90;
+const ResultsTitle = styled.h2`
+  position: relative;
+  z-index: 2;
+  font-family: "Helvetica";
+  font-weight: 400;
+  font-size: 18px;
+  line-height: 24px;
+  color: #ffffff90;
+  margin-top: -10px;
+  margin-bottom: 32px;
 
-//   @media (max-width: 1080px) {
-//     font-size: 16px;
-//     margin-top: -10px;
-//     margin-bottom: 32px;
-//     top: 210px;
-//   }
-// `;
+  @media (max-width: 1080px) {
+    font-size: 16px;
+    margin-top: -10px;
+    margin-bottom: 32px;
+  }
+`;
 
 const ContentWrapper = styled.div`
   display: flex;
@@ -90,6 +91,7 @@ const PaginationWrapper = styled.div`
   display: flex;
   justify-content: center;
   margin-top: 70px;
+  margin-bottom: 183px;
 `;
 
 const SkeletonGrid = styled.div`
@@ -213,14 +215,14 @@ function ProductsMain({ dictionary }: any) {
     applyFilters,
   } = useProducts({ skipInitialFetch: true }); // Skip initial fetch to wait for URL filters
 
-  // const isReady = !loading && !error;
-  // const zeroResultsText = dictionary?.results?.zero ?? "0 products found";
-  // const countResultsTemplate = dictionary?.results?.count ?? "{count} products found";
-  // const resultsTitleMessage = isReady
-  //   ? products.length === 0
-  //     ? zeroResultsText
-  //     : countResultsTemplate.replace("{count}", products.length.toString())
-  //   : null;
+  const isReady = !loading && !error;
+  const zeroResultsText = dictionary?.results?.zero ?? "0 products found";
+  const countResultsTemplate = dictionary?.results?.count ?? "{count} products found";
+  const resultsTitleMessage = isReady
+    ? products.length === 0
+      ? zeroResultsText
+      : countResultsTemplate.replace("{count}", products.length.toString())
+    : null;
 
   // Register immediate filter callback
   useEffect(() => {
@@ -299,39 +301,7 @@ function ProductsMain({ dictionary }: any) {
     await fetchPage(page);
   };
 
-  if (loading) {
-    return (
-      <StyledComponent>
-        <Container>
-          <PageTitle>{dictionary.title}</PageTitle>
-          <SortWrapper>
-            <OnMobile>
-              <FilterButton onClick={toggleMobileFilterDropdown} dictionary={dictionary} />
-            </OnMobile>
-            <SortDropdown dictionary={dictionary} />
-          </SortWrapper>
-          <ContentWrapper>
-            <OnDesktop>
-              <FilterSidebar dictionary={dictionary.filter} />
-            </OnDesktop>
-            <div style={{ width: "100%" }}>
-              <SkeletonGrid>
-                {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12].map((index) => (
-                  <SkeletonCard key={index}>
-                    <SkeletonImage />
-                    <SkeletonContent>
-                      <SkeletonTitle />
-                      <SkeletonPrice />
-                    </SkeletonContent>
-                  </SkeletonCard>
-                ))}
-              </SkeletonGrid>
-            </div>
-          </ContentWrapper>
-        </Container>
-      </StyledComponent>
-    );
-  }
+  // Note: we intentionally avoid returning early on loading to keep the sidebar mounted
 
   if (error) {
     return (
@@ -357,7 +327,7 @@ function ProductsMain({ dictionary }: any) {
     <StyledComponent>
       <Container>
         <PageTitle>{dictionary.title}</PageTitle>
-        {/* {resultsTitleMessage && <ResultsTitle>{resultsTitleMessage}</ResultsTitle>} */}
+        {resultsTitleMessage && <ResultsTitle>{resultsTitleMessage}</ResultsTitle>}
         <SortWrapper>
           <OnMobile>
             <FilterButton onClick={toggleMobileFilterDropdown} dictionary={dictionary} />
@@ -369,19 +339,34 @@ function ProductsMain({ dictionary }: any) {
             <FilterSidebar dictionary={dictionary.filter} />
           </OnDesktop>
           <div style={{ width: "100%" }}>
-            <CardGrid products={products} dictionary={dictionary} />
-
-            {/* Pagination */}
-            {totalPages > 1 && (
-              <PaginationWrapper>
-                <PaginationWithArrows
-                  currentPage={currentPage}
-                  totalPages={totalPages}
-                  onPageChange={handlePageChange}
-                  hasNextPage={hasNextPage}
-                  hasPreviousPage={hasPreviousPage}
-                />
-              </PaginationWrapper>
+            {loading ? (
+              <SkeletonGrid>
+                {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12].map((index) => (
+                  <SkeletonCard key={index}>
+                    <SkeletonImage />
+                    <SkeletonContent>
+                      <SkeletonTitle />
+                      <SkeletonPrice />
+                    </SkeletonContent>
+                  </SkeletonCard>
+                ))}
+              </SkeletonGrid>
+            ) : (
+              <>
+                <CardGrid products={products} dictionary={dictionary} />
+                {/* Pagination */}
+                {totalPages > 1 && (
+                  <PaginationWrapper>
+                    <PaginationWithArrows
+                      currentPage={currentPage}
+                      totalPages={totalPages}
+                      onPageChange={handlePageChange}
+                      hasNextPage={hasNextPage}
+                      hasPreviousPage={hasPreviousPage}
+                    />
+                  </PaginationWrapper>
+                )}
+              </>
             )}
           </div>
         </ContentWrapper>
