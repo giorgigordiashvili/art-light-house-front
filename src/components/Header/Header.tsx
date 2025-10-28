@@ -43,7 +43,7 @@ const StyledContainer = styled.div`
   margin-right: -16px;
 
   @media (max-width: 1080px) {
-    padding: 17px 0 18px 0;
+    padding: 17px 16px 18px 0;
   }
 `;
 
