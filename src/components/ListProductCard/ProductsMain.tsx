@@ -50,6 +50,7 @@ const ResultsTitle = styled.h2`
     font-size: 16px;
     margin-top: -10px;
     margin-bottom: 32px;
+    top: 210px;
   }
 `;
 
