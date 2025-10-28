@@ -37,22 +37,22 @@ const PageTitle = styled.h1`
   }
 `;
 
-const ResultsTitle = styled.h2`
-  position: absolute;
-  z-index: 2;
-  font-family: "Helvetica";
-  font-weight: 400;
-  font-size: 18px;
-  line-height: 24px;
-  color: #ffffff90;
+// const ResultsTitle = styled.h2`
+//   position: absolute;
+//   z-index: 2;
+//   font-family: "Helvetica";
+//   font-weight: 400;
+//   font-size: 18px;
+//   line-height: 24px;
+//   color: #ffffff90;
 
-  @media (max-width: 1080px) {
-    font-size: 16px;
-    margin-top: -10px;
-    margin-bottom: 32px;
-    top: 210px;
-  }
-`;
+//   @media (max-width: 1080px) {
+//     font-size: 16px;
+//     margin-top: -10px;
+//     margin-bottom: 32px;
+//     top: 210px;
+//   }
+// `;
 
 const ContentWrapper = styled.div`
   display: flex;
@@ -213,14 +213,14 @@ function ProductsMain({ dictionary }: any) {
     applyFilters,
   } = useProducts({ skipInitialFetch: true }); // Skip initial fetch to wait for URL filters
 
-  const isReady = !loading && !error;
-  const zeroResultsText = dictionary?.results?.zero ?? "0 products found";
-  const countResultsTemplate = dictionary?.results?.count ?? "{count} products found";
-  const resultsTitleMessage = isReady
-    ? products.length === 0
-      ? zeroResultsText
-      : countResultsTemplate.replace("{count}", products.length.toString())
-    : null;
+  // const isReady = !loading && !error;
+  // const zeroResultsText = dictionary?.results?.zero ?? "0 products found";
+  // const countResultsTemplate = dictionary?.results?.count ?? "{count} products found";
+  // const resultsTitleMessage = isReady
+  //   ? products.length === 0
+  //     ? zeroResultsText
+  //     : countResultsTemplate.replace("{count}", products.length.toString())
+  //   : null;
 
   // Register immediate filter callback
   useEffect(() => {
@@ -357,7 +357,7 @@ function ProductsMain({ dictionary }: any) {
     <StyledComponent>
       <Container>
         <PageTitle>{dictionary.title}</PageTitle>
-        {resultsTitleMessage && <ResultsTitle>{resultsTitleMessage}</ResultsTitle>}
+        {/* {resultsTitleMessage && <ResultsTitle>{resultsTitleMessage}</ResultsTitle>} */}
         <SortWrapper>
           <OnMobile>
             <FilterButton onClick={toggleMobileFilterDropdown} dictionary={dictionary} />

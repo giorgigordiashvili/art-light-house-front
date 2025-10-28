@@ -32,6 +32,7 @@ const StyledInput = Styled.input`
 const PriceInput: React.FC<Props> = ({ text, type }) => {
   const { filters, updatePriceFilter } = useFilterContext();
   const [localValue, setLocalValue] = React.useState<string>("");
+  const debounceRef = React.useRef<number | null>(null);
 
   React.useEffect(() => {
     const currentValue = type === "min" ? filters.minPrice : filters.maxPrice;
@@ -43,6 +44,20 @@ const PriceInput: React.FC<Props> = ({ text, type }) => {
     // Only allow numbers
     if (value === "" || /^\d+$/.test(value)) {
       setLocalValue(value);
+
+      // Debounce immediate filter updates to avoid excessive requests
+      if (debounceRef.current) {
+        window.clearTimeout(debounceRef.current);
+      }
+
+      debounceRef.current = window.setTimeout(() => {
+        const numValue = value === "" ? undefined : parseInt(value, 10);
+        if (type === "min") {
+          updatePriceFilter(numValue, filters.maxPrice);
+        } else {
+          updatePriceFilter(filters.minPrice, numValue);
+        }
+      }, 300);
     }
   };
 
