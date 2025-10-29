@@ -101,6 +101,10 @@ const SkeletonGrid = styled.div`
   margin-bottom: 253px;
   justify-items: center;
 
+  @media (max-width: 1332px) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
   @media (max-width: 1080px) {
     grid-template-columns: repeat(2, 1fr);
     gap: 10px;
