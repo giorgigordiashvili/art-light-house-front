@@ -7,6 +7,8 @@ import AttributeFilter from "./AttributeFilter";
 import PriceFilter from "./PriceFilter";
 import PriceInput from "@/components/ListProductCard/PriceInput";
 import PriceRangeSlider from "./PriceRangeSlider";
+import PrimaryButton from "../Buttons/PrimaryButton";
+import { useFilterContext } from "@/contexts/FilterContext";
 
 const SidebarWrapper = styled.div`
   width: 308px;
@@ -33,12 +35,23 @@ const StyledInputs = styled.div`
   gap: 6px;
 `;
 
+const StyledButton = styled.div`
+  margin-top: 20px;
+`;
+
 interface FilterSidebarProps {
   dictionary: any;
 }
 
 function FilterSidebar({ dictionary }: FilterSidebarProps) {
   // No longer need manual apply button since filtering is immediate
+  const { filters, clearFilters } = useFilterContext();
+  const hasActiveFilters =
+    (filters.selectedCategoryIds && filters.selectedCategoryIds.length > 0) ||
+    filters.minPrice !== undefined ||
+    filters.maxPrice !== undefined ||
+    !!filters.selectedAttributes ||
+    !!filters.ordering;
 
   return (
     <SidebarWrapper>
@@ -56,6 +69,15 @@ function FilterSidebar({ dictionary }: FilterSidebarProps) {
       <AttributeFilter attributeName="სტილი" title={dictionary.subTitle3} />
       <Line />
       <AttributeFilter attributeName="განათების ტიპი" title={dictionary.subTitle4} />
+      <StyledButton>
+        <PrimaryButton
+          text={dictionary.filterButton}
+          width="100%"
+          height="48px"
+          onClick={clearFilters}
+          disabled={!hasActiveFilters}
+        />
+      </StyledButton>
     </SidebarWrapper>
   );
 }

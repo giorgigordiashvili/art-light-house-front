@@ -205,7 +205,7 @@
       "filterOption18": "RGB lighting",
       "iconAlt": "Filter icon",
       "clear": "clear",
-      "filterButton": "filter"
+      "filterButton": "delete all filters"
     },
     "cardTitle": "Garden light"
   },
