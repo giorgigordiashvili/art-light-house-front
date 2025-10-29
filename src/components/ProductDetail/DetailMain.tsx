@@ -40,10 +40,16 @@ const StyledCircle = styled.div`
   }
 `;
 
+const StyledMenuBar = styled.div`
+  padding-inline: 20px;
+`;
+
 const FlexRow = styled.div`
   display: grid;
-  grid-template-columns: 636px 563px;
+  grid-template-columns: 1fr 1fr;
   gap: 44px;
+  height: 636px;
+  padding-inline: 20px;
 
   @media (max-width: 1080px) {
     grid-template-columns: 1fr;
@@ -66,6 +72,10 @@ const ButtonRow = styled.div`
   display: flex;
   gap: 21px;
 
+  @media (max-width: 1180px) {
+    flex-direction: column;
+  }
+
   @media (max-width: 1080px) {
     flex-direction: column;
     align-items: stretch;
@@ -79,6 +89,7 @@ const ProductHeader = styled.div`
   justify-content: space-between;
   margin-top: 100px;
   color: #ffffff;
+  padding-inline: 20px;
 
   p {
     font-family: Helvetica;
@@ -98,6 +109,7 @@ const CardGrid = styled.div`
   gap: 20px;
   justify-content: center;
   margin-bottom: 538px;
+  padding-inline: 20px;
 
   @media (max-width: 1080px) {
     grid-template-columns: repeat(auto-fill, minmax(170px, 2fr));
@@ -169,14 +181,22 @@ const StyledActionsWrapper = styled.div`
 
 // Skeleton styles for main product
 const SkeletonBigCard = styled.div`
-  width: 636px;
-  height: 700px;
-  border-radius: 17px;
-  border: 1px solid #ffffff12;
-  background: #1a1a1a96;
-  backdrop-filter: blur(114px);
-  position: relative;
+  max-width: 636px;
+  max-height: 636px;
+  width: 100%;
+  height: 100%;
   overflow: hidden;
+  background: rgba(26, 26, 26, 0.59);
+  border-radius: 17px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  cursor: pointer;
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  backdrop-filter: blur(114px);
+  z-index: 1;
+  padding-inline: 20px;
 
   &::before {
     content: "";
@@ -339,6 +359,11 @@ const SkeletonDescription = styled.div`
 const SkeletonButtons = styled.div`
   display: flex;
   gap: 21px;
+
+  @media (max-width: 1180px) {
+    flex-direction: column;
+    width: 100%;
+  }
 
   @media (max-width: 1080px) {
     flex-direction: column;
@@ -610,7 +635,9 @@ function DetailMain({ dictionary, productId }: { dictionary: any; productId: num
     return (
       <StyledComponent>
         <Container>
-          <MenuBar dictionary={dictionary} />
+          <StyledMenuBar>
+            <MenuBar dictionary={dictionary} />
+          </StyledMenuBar>
           <FlexRow>
             <SkeletonBigCard />
             <SkeletonDetails>
@@ -691,7 +718,9 @@ function DetailMain({ dictionary, productId }: { dictionary: any; productId: num
         <Circle size="large" />
       </StyledCircle>
       <Container>
-        <MenuBar dictionary={dictionary} />
+        <StyledMenuBar>
+          <MenuBar dictionary={dictionary} />
+        </StyledMenuBar>
         <FlexRow>
           <BigCard
             product={product}

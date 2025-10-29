@@ -15,9 +15,11 @@ const StyleAddButton = styled.div`
   justify-content: center;
   cursor: pointer;
   transition: 0.2s ease-in-out;
+  @media (max-width: 1180px) {
+    width: 100%;
+  }
   @media (max-width: 1080px) {
     max-width: 100%;
-    width: 100%;
   }
   &:hover {
     background: #624e16;
