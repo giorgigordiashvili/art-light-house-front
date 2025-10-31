@@ -54,7 +54,13 @@
       "button5": "Register with Google",
       "button6": "Register with Facebook",
       "alert": "please enter name",
-      "alert2": "Error while registering. Please check your details and try again."
+      "alert2": "Error while registering. Please check your details and try again.",
+      "emailExists": "A user with the provided email already exists.",
+      "invalidPasswordFormat": "Make sure your password has at least 8 characters.",
+      "underage": "You must be at least 13 years old to register.",
+      "invalidPhoneNumber": "Enter a valid phone number.",
+      "invalidNameLength": "The name must be more than 2 characters and not exceed 30 characters.",
+      "invalidSurnameLength": "Last name must be between 2 and 30 characters."
     },
     "passwordRecoveryModal": {
       "title": "Password Recovery",
