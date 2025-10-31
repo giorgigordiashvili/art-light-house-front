@@ -56,7 +56,13 @@ const StyledPrimaryButton = styled.div`
   margin-top: 69px;
 `;
 
-const RegistrationSuccessModal = ({ onClose }: { onClose: () => void }) => {
+const RegistrationSuccessModal = ({
+  onClose,
+  dictionary,
+}: {
+  onClose: () => void;
+  dictionary?: any;
+}) => {
   return (
     <StyledContainer>
       <StyledCheckMark>
@@ -66,13 +72,26 @@ const RegistrationSuccessModal = ({ onClose }: { onClose: () => void }) => {
         <CloseIcon />
       </StyledCloseIcon>
       <StyledStrongDescription>
-        <ModalDescription text="რეგისტრავია წატმატებით გაიარე." variant="strong" />
+        <ModalDescription
+          text={dictionary?.header?.registrationSuccessModal?.title || "Registration successful."}
+          variant="strong"
+        />
       </StyledStrongDescription>
       <StyledDescription>
-        <ModalDescription text="ახლა უკვე შეგიძლია თავისუფლად შეუკვეთო პროდუქტები რომლებსაც შენთვის აარჩევ" />
+        <ModalDescription
+          text={
+            dictionary?.header?.registrationSuccessModal?.subTitle ||
+            "Now you can freely order products you choose for yourself"
+          }
+        />
       </StyledDescription>
       <StyledPrimaryButton>
-        <PrimaryButton text="მთავარზე დაბრუნება" width="242px" height="50px" onClick={onClose} />
+        <PrimaryButton
+          text={dictionary?.header?.registrationSuccessModal?.button || "Return to main"}
+          width="242px"
+          height="50px"
+          onClick={onClose}
+        />
       </StyledPrimaryButton>
     </StyledContainer>
   );

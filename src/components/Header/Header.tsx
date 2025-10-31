@@ -610,6 +610,7 @@ const Header = ({ header, dictionary }: HeaderProps) => {
               setIsRegistrationSuccessOpen(true);
             }}
             email={(window as any).__reg_email || ""}
+            dictionary={dictionary}
           />
         </>
       )}
@@ -617,7 +618,10 @@ const Header = ({ header, dictionary }: HeaderProps) => {
       {isRegistrationSuccessOpen && (
         <>
           <Overlay onClick={() => setIsRegistrationSuccessOpen(false)} />
-          <RegistrationSuccessModal onClose={() => setIsRegistrationSuccessOpen(false)} />
+          <RegistrationSuccessModal
+            onClose={() => setIsRegistrationSuccessOpen(false)}
+            dictionary={dictionary}
+          />
         </>
       )}
 
