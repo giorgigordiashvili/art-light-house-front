@@ -18,45 +18,70 @@ interface CheckboxOption {
 
 function AttributeFilter({ attributeName, title }: AttributeFilterProps) {
   const [options, setOptions] = useState<CheckboxOption[]>([]);
+  const [baseOptions, setBaseOptions] = useState<CheckboxOption[]>([]);
   const [loading, setLoading] = useState(true);
   const { filters, updateAttributeFilter } = useFilterContext();
 
+  // Module-level cache for all attributes (no category filter here)
+  const g = globalThis as unknown as {
+    __attributesCache?: { data: Attribute[] | null; promise: Promise<Attribute[]> | null };
+  };
+  if (!g.__attributesCache) {
+    g.__attributesCache = { data: null, promise: null };
+  }
+
+  // Fetch once (or reuse cache), build base options for this attributeName
   useEffect(() => {
-    const fetchAttributes = async () => {
+    let cancelled = false;
+    const load = async () => {
       try {
         setLoading(true);
-        const attributes = await attributeList();
+        const cache = g.__attributesCache!;
+        let attributes: Attribute[];
+        if (cache.data) {
+          attributes = cache.data;
+        } else if (cache.promise) {
+          attributes = await cache.promise;
+        } else {
+          cache.promise = attributeList();
+          attributes = await cache.promise;
+          cache.data = attributes;
+          cache.promise = null;
+        }
 
-        // Filter attributes that have the target type in their values
+        if (cancelled) return;
+
         const targetAttributes = attributes.filter(
           (attr: Attribute) =>
             attr.values && attr.values.length > 0 && attr.values[0].value === attributeName
         );
 
-        if (targetAttributes.length > 0) {
-          // Get currently selected attributes from filter context
-          const selectedPairs = filters.selectedAttributes
-            ? filters.selectedAttributes.split(",")
-            : [];
-
-          const attributeOptions: CheckboxOption[] = targetAttributes.map((attr: Attribute) => {
-            const value = `${attr.id}:${attr.values[0].id}`;
-            return {
-              label: attr.name, // The actual attribute name (like "EDISON", "LED", etc.)
-              value, // format: attr_id:value_id
-              checked: selectedPairs.includes(value), // Preserve checked state from filter context
-            };
-          });
-          setOptions(attributeOptions);
-        }
-      } catch {
+        const base: CheckboxOption[] = targetAttributes.map((attr: Attribute) => ({
+          label: attr.name,
+          value: `${attr.id}:${attr.values[0].id}`,
+        }));
+        setBaseOptions(base);
       } finally {
-        setLoading(false);
+        if (!cancelled) setLoading(false);
       }
     };
+    load();
+    return () => {
+      cancelled = true;
+    };
+    // attributeName controls which subset we show; no deps on selectedAttributes here
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [attributeName]);
 
-    fetchAttributes();
-  }, [attributeName, filters.selectedAttributes]); // Add filters.selectedAttributes as dependency
+  // When selection changes, just toggle checked flags; no refetch
+  useEffect(() => {
+    const selectedPairs = filters.selectedAttributes ? filters.selectedAttributes.split(",") : [];
+    const mapped = baseOptions.map((opt) => ({
+      ...opt,
+      checked: selectedPairs.includes(opt.value),
+    }));
+    setOptions(mapped);
+  }, [baseOptions, filters.selectedAttributes]);
 
   const handleOptionChange = (value: string) => {
     // Find the current checked state for this value

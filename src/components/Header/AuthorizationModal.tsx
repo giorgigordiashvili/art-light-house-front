@@ -225,12 +225,72 @@ const AuthorizationModal: React.FC<AuthorizationModalProps> = ({
           return;
         }
 
+        // Name length validation
+        const isNameInvalid = (name: string) => name.trim().length < 2 || name.trim().length > 30;
+        // Validate first name with first-name specific message
+        if (isNameInvalid(firstName)) {
+          setError(
+            dictionary?.registrationModal?.invalidNameLength ||
+              "The name must be more than 2 characters and not exceed 30 characters."
+          );
+          setIsLoading(false);
+          return;
+        }
+        // Validate last name (only if provided) with last-name specific message
+        if (lastName && isNameInvalid(lastName)) {
+          setError(
+            dictionary?.registrationModal?.invalidSurnameLength ||
+              "Last name must be between 2 and 30 characters."
+          );
+          setIsLoading(false);
+          return;
+        }
+
         if (password !== confirmPassword) {
           setError(
             dictionary?.authorizationModal?.passwordConfirmMismatch || "Passwords do not match"
           );
           setIsLoading(false);
           return;
+        }
+
+        // Password format validation
+        if (password.length < 8) {
+          setError(
+            dictionary?.registrationModal?.invalidPasswordFormat ||
+              "Make sure your password has at least 8 characters."
+          );
+          setIsLoading(false);
+          return;
+        }
+
+        // Underage validation (>= 13 years if birthDate provided)
+        if (birthDate) {
+          const birth = new Date(birthDate);
+          const today = new Date();
+          let age = today.getFullYear() - birth.getFullYear();
+          const m = today.getMonth() - birth.getMonth();
+          if (m < 0 || (m === 0 && today.getDate() < birth.getDate())) age--;
+          if (age < 13) {
+            setError(
+              dictionary?.registrationModal?.underage ||
+                "You must be at least 13 years old to register."
+            );
+            setIsLoading(false);
+            return;
+          }
+        }
+
+        // Phone number validation (if provided) — simple international format
+        if (phoneNumber) {
+          const phoneOk = /^\+?[0-9]{7,15}$/.test(phoneNumber.trim());
+          if (!phoneOk) {
+            setError(
+              dictionary?.registrationModal?.invalidPhoneNumber || "Enter a valid phone number."
+            );
+            setIsLoading(false);
+            return;
+          }
         }
 
         const payload: UserRegistrationRequest = {
@@ -270,10 +330,28 @@ const AuthorizationModal: React.FC<AuthorizationModalProps> = ({
         setError(errorMessage);
       } else {
         // Handle Clerk registration errors
-        setError(
-          dictionary?.registrationModal?.alert2 ||
-            "Error while registering. Please check your details and try again."
-        );
+        const status = error?.response?.status;
+        const data = error?.response?.data;
+        const msg: string | undefined = data?.message || data?.detail || error?.message;
+        const emailErrors = data?.email;
+
+        // Detect email already exists
+        if (
+          status === 409 ||
+          (Array.isArray(emailErrors) && emailErrors.length > 0) ||
+          (typeof emailErrors === "string" && emailErrors) ||
+          (typeof msg === "string" && /exist|taken|already/i.test(msg))
+        ) {
+          setError(
+            dictionary?.registrationModal?.emailExists ||
+              "A user with the provided email already exists."
+          );
+        } else {
+          setError(
+            dictionary?.registrationModal?.alert2 ||
+              "Error while registering. Please check your details and try again."
+          );
+        }
       }
     } finally {
       setIsLoading(false);

@@ -103,13 +103,18 @@ const ProductsTable = ({
               <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
                 <ProductImage
                   src={
-                    (typeof product.primary_image === "object" && product.primary_image?.image) ||
+                    (typeof product.primary_image === "object" &&
+                      product.primary_image !== null &&
+                      "image" in product.primary_image &&
+                      (product.primary_image as any).image) ||
                     (typeof product.primary_image === "string" && product.primary_image) ||
                     "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='48' height='48'%3E%3Crect width='48' height='48' fill='%23f0f0f0'/%3E%3Ctext x='50%25' y='50%25' font-size='12' text-anchor='middle' dy='.3em' fill='%23999'%3ENo Image%3C/text%3E%3C/svg%3E"
                   }
                   alt={
                     (typeof product.primary_image === "object" &&
-                      product.primary_image?.alt_text) ||
+                      product.primary_image !== null &&
+                      "alt_text" in product.primary_image &&
+                      (product.primary_image as any).alt_text) ||
                     product.title
                   }
                   onError={(e) => {

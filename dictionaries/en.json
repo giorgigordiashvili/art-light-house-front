@@ -54,7 +54,13 @@
       "button5": "Register with Google",
       "button6": "Register with Facebook",
       "alert": "please enter name",
-      "alert2": "Error while registering. Please check your details and try again."
+      "alert2": "Error while registering. Please check your details and try again.",
+      "emailExists": "A user with the provided email already exists.",
+      "invalidPasswordFormat": "Make sure your password has at least 8 characters.",
+      "underage": "You must be at least 13 years old to register.",
+      "invalidPhoneNumber": "Enter a valid phone number.",
+      "invalidNameLength": "The name must be more than 2 characters and not exceed 30 characters.",
+      "invalidSurnameLength": "Last name must be between 2 and 30 characters."
     },
     "passwordRecoveryModal": {
       "title": "Password Recovery",
@@ -205,7 +211,7 @@
       "filterOption18": "RGB lighting",
       "iconAlt": "Filter icon",
       "clear": "clear",
-      "filterButton": "filter"
+      "filterButton": "delete all filters"
     },
     "cardTitle": "Garden light"
   },
@@ -441,14 +447,30 @@
     "detailBar5": "Settings",
     "detailBar6": "Logout"
   },
+  "projects": {
+    "title": "Our Projects",
+    "description": "Explore our portfolio of exceptional interior design and lighting projects",
+    "allProjects": "All Projects",
+    "backToProjects": "Back to Projects",
+    "featuredProject": "Featured Project",
+    "projectDetails": "Project Details",
+    "client": "Client",
+    "category": "Category",
+    "year": "Year",
+    "location": "Location"
+  },
   "metadata": {
     "main": {
-      "title": "Main Page - Art Lighthouse",
+      "title": "Main - Art Lighthouse",
       "subTitle": "Learn more about our company and values."
     },
     "products": {
       "title": "Products - Art Lighthouse",
       "subTitle": "Browse our complete collection of products."
+    },
+    "projects": {
+      "title": "Projects",
+      "subTitle": "Explore our portfolio of interior design and lighting projects"
     },
     "cart": {
       "title": "Cart - Art Lighthouse",

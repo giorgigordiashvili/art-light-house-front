@@ -14,11 +14,41 @@ export const useCategories = (): UseCategoriesReturn => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
+  // simple module-level cache to prevent duplicate fetches across remounts
+  const anyGlobal = globalThis as unknown as {
+    __categoriesCache?: { data: Category[] | null; promise: Promise<Category[]> | null };
+  };
+  if (!anyGlobal.__categoriesCache) {
+    anyGlobal.__categoriesCache = {
+      data: null as Category[] | null,
+      promise: null as Promise<Category[]> | null,
+    };
+  }
+
   const fetchCategories = async () => {
     try {
       setLoading(true);
       setError(null);
-      const data = await categoryList();
+      const cache = anyGlobal.__categoriesCache as {
+        data: Category[] | null;
+        promise: Promise<Category[]> | null;
+      };
+
+      if (cache.data) {
+        setCategories(cache.data);
+        return;
+      }
+
+      if (cache.promise) {
+        const data = await cache.promise;
+        setCategories(data);
+        return;
+      }
+
+      cache.promise = categoryList();
+      const data = await cache.promise;
+      cache.data = data;
+      cache.promise = null;
       setCategories(data);
     } catch (err: any) {
       setError(err?.response?.data?.message || err?.message || "Failed to fetch categories");
@@ -29,6 +59,8 @@ export const useCategories = (): UseCategoriesReturn => {
 
   useEffect(() => {
     fetchCategories();
+    // intentionally run once on mount; fetchCategories reads from global cache
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return {

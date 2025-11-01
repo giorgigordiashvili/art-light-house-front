@@ -11,9 +11,11 @@ const StyleBuyButton = styled.div`
   align-items: center;
   justify-content: center;
   cursor: pointer;
+  @media (max-width: 1180px) {
+    width: 100%;
+  }
   @media (max-width: 1080px) {
     max-width: 100%;
-    width: 100%;
   }
 `;
 

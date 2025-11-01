@@ -13,7 +13,7 @@ import { useFilterContext } from "@/contexts/FilterContext";
 import { useRouter, usePathname } from "next/navigation";
 
 const StyledComponent = styled.div`
-  background: black;
+  background: #0b0b0b;
   height: auto;
   display: flex;
   align-items: center;
@@ -38,13 +38,15 @@ const PageTitle = styled.h1`
 `;
 
 const ResultsTitle = styled.h2`
-  position: sticky;
+  position: relative;
   z-index: 2;
   font-family: "Helvetica";
   font-weight: 400;
   font-size: 18px;
   line-height: 24px;
   color: #ffffff90;
+  margin-top: -10px;
+  margin-bottom: 32px;
 
   @media (max-width: 1080px) {
     font-size: 16px;
@@ -89,6 +91,112 @@ const PaginationWrapper = styled.div`
   display: flex;
   justify-content: center;
   margin-top: 70px;
+  margin-bottom: 183px;
+`;
+
+const SkeletonGrid = styled.div`
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+  margin-bottom: 253px;
+  justify-items: center;
+
+  @media (max-width: 1332px) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  @media (max-width: 1080px) {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+  }
+`;
+
+const SkeletonCard = styled.div`
+  width: 308px;
+  height: 417px;
+  border-radius: 17px;
+  border: 1px solid #ffffff12;
+  background: #1a1a1a96;
+  backdrop-filter: blur(114px);
+  position: relative;
+  overflow: hidden;
+
+  &::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+      90deg,
+      transparent 0%,
+      rgba(255, 255, 255, 0.05) 50%,
+      transparent 100%
+    );
+    animation: shimmer 1.5s infinite;
+    z-index: 1;
+  }
+
+  @keyframes shimmer {
+    0% {
+      left: -100%;
+    }
+    100% {
+      left: 100%;
+    }
+  }
+
+  @media (max-width: 1080px) {
+    width: 170px;
+    height: 275px;
+  }
+`;
+
+const SkeletonImage = styled.div`
+  width: 100%;
+  height: 280px;
+  background: rgba(255, 255, 255, 0.05);
+
+  @media (max-width: 1080px) {
+    height: 180px;
+  }
+`;
+
+const SkeletonContent = styled.div`
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+
+  @media (max-width: 1080px) {
+    padding: 12px;
+    gap: 8px;
+  }
+`;
+
+const SkeletonTitle = styled.div`
+  width: 70%;
+  height: 16px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 4px;
+
+  @media (max-width: 1080px) {
+    height: 14px;
+  }
+`;
+
+const SkeletonPrice = styled.div`
+  width: 50%;
+  height: 20px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 4px;
+  margin-top: 8px;
+
+  @media (max-width: 1080px) {
+    height: 16px;
+    margin-top: 4px;
+  }
 `;
 
 function ProductsMain({ dictionary }: any) {
@@ -197,25 +305,7 @@ function ProductsMain({ dictionary }: any) {
     await fetchPage(page);
   };
 
-  if (loading) {
-    return (
-      <StyledComponent>
-        <Container>
-          <PageTitle>{dictionary.title}</PageTitle>
-          <div
-            style={{
-              color: "#ffffff",
-              textAlign: "center",
-              padding: "40px",
-              fontSize: "16px",
-            }}
-          >
-            Loading products...
-          </div>
-        </Container>
-      </StyledComponent>
-    );
-  }
+  // Note: we intentionally avoid returning early on loading to keep the sidebar mounted
 
   if (error) {
     return (
@@ -253,19 +343,34 @@ function ProductsMain({ dictionary }: any) {
             <FilterSidebar dictionary={dictionary.filter} />
           </OnDesktop>
           <div style={{ width: "100%" }}>
-            <CardGrid products={products} dictionary={dictionary} />
-
-            {/* Pagination */}
-            {totalPages > 1 && (
-              <PaginationWrapper>
-                <PaginationWithArrows
-                  currentPage={currentPage}
-                  totalPages={totalPages}
-                  onPageChange={handlePageChange}
-                  hasNextPage={hasNextPage}
-                  hasPreviousPage={hasPreviousPage}
-                />
-              </PaginationWrapper>
+            {loading ? (
+              <SkeletonGrid>
+                {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12].map((index) => (
+                  <SkeletonCard key={index}>
+                    <SkeletonImage />
+                    <SkeletonContent>
+                      <SkeletonTitle />
+                      <SkeletonPrice />
+                    </SkeletonContent>
+                  </SkeletonCard>
+                ))}
+              </SkeletonGrid>
+            ) : (
+              <>
+                <CardGrid products={products} dictionary={dictionary} />
+                {/* Pagination */}
+                {totalPages > 1 && (
+                  <PaginationWrapper>
+                    <PaginationWithArrows
+                      currentPage={currentPage}
+                      totalPages={totalPages}
+                      onPageChange={handlePageChange}
+                      hasNextPage={hasNextPage}
+                      hasPreviousPage={hasPreviousPage}
+                    />
+                  </PaginationWrapper>
+                )}
+              </>
             )}
           </div>
         </ContentWrapper>

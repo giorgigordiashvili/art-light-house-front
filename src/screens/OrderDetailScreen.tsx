@@ -9,7 +9,7 @@ import { ordersRetrieve } from "@/api/generated/api";
 import type { Order } from "@/api/generated/interfaces";
 
 const StyledComponent = styled.div`
-  background: black;
+  background: #0b0b0b;
   display: flex;
   min-height: 100dvh;
   flex-direction: column;

@@ -73,17 +73,21 @@ const StyledPrimaryButton = styled.div`
   margin-top: 41px;
 `;
 
+interface RegistrationCodeModalProps {
+  onClose: () => void;
+  onReturn: () => void;
+  onConfirm: () => void;
+  email: string;
+  dictionary?: any;
+}
+
 const RegistrationCodeModal = ({
   onClose,
   onReturn,
   onConfirm,
   email,
-}: {
-  onClose: () => void;
-  onReturn: () => void;
-  onConfirm: () => void;
-  email: string;
-}) => {
+  dictionary,
+}: RegistrationCodeModalProps) => {
   const [code, setCode] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
@@ -118,9 +122,15 @@ const RegistrationCodeModal = ({
       setResendInfo("");
       setResendError("");
       await resendVerificationCode({ email });
-      setResendInfo("კოდი ხელახლა გაიგზავნა თქვენს ელ.ფოსტაზე");
+      setResendInfo(
+        dictionary?.header?.registrationCodeModal?.resendInfo ||
+          "The code has been resent to your email"
+      );
     } catch {
-      setResendError("ვერ მოხერხდა კოდის გაგზავნა. ცადეთ თავიდან.");
+      setResendError(
+        dictionary?.header?.registrationCodeModal?.resendError ||
+          "Failed to send the code. Please try again."
+      );
     } finally {
       setIsResending(false);
     }
@@ -134,24 +144,38 @@ const RegistrationCodeModal = ({
       <StyledReturnIcon onClick={onReturn}>
         <ReturnIcon />
       </StyledReturnIcon>
-      <ModalTitle text="რეგისტრაცია" />
+      <ModalTitle text={dictionary?.header?.registrationModal?.title || "Registration"} />
       <StyledDescription>
         <ModalDescription
           variant="alt"
-          text={`მითიტებულ ელ.ფოსტაზე “${email}” გაიგზავნა ერთჯერადი დადასტურების კოდი. გთხოვთ შეიყვანოთ.`}
+          text={
+            dictionary?.header?.registrationCodeModal?.subTitle
+              ? String(dictionary.header.registrationCodeModal.subTitle).replace(
+                  /“([^”]+)”/,
+                  `“${email}”`
+                )
+              : `A one-time confirmation code has been sent to the specified email “${email}”. Please enter it.`
+          }
         />
       </StyledDescription>
       <StyledInput>
-        <InputTitle text="ერთჯერადი კოდი" />
+        <InputTitle
+          text={dictionary?.header?.registrationCodeModal?.inputTitle1 || "One-time code"}
+        />
         <ModalInput
-          placeholder="ჩაწერე ერთჯერადი კოდი აქ"
+          placeholder={
+            dictionary?.header?.registrationCodeModal?.placeholder1 || "Enter one-time code here"
+          }
           value={code}
           onChange={(e) => setCode(e.target.value)}
         />
       </StyledInput>
       {error && <div style={{ color: "#ff4d4f", marginTop: 8, textAlign: "center" }}>{error}</div>}
       <StyledAdditionalAction>
-        <AdditionalAction text="თავიდან გაგზავნა" onClick={handleResend} />
+        <AdditionalAction
+          text={dictionary?.header?.registrationCodeModal?.button1 || "Resend"}
+          onClick={handleResend}
+        />
       </StyledAdditionalAction>
       {resendInfo && (
         <div style={{ color: "#52c41a", marginTop: 8, textAlign: "center" }}>{resendInfo}</div>
@@ -161,7 +185,7 @@ const RegistrationCodeModal = ({
       )}
       <StyledPrimaryButton>
         <PrimaryButton
-          text="დადასტურება"
+          text={dictionary?.header?.registrationCodeModal?.button2 || "Confirm"}
           width="460px"
           height="50px"
           onClick={handleVerify}

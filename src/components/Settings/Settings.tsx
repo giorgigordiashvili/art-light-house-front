@@ -6,7 +6,7 @@ import Pass from "./Pass";
 import MobileDetailDropdown from "@/components/DetailBar/MobileDetailDropdown";
 
 const StyledComponent = styled.div`
-  background: black;
+  background: #0b0b0b;
   margin-top: 80px;
   margin-bottom: 219px;
   width: 100%;
