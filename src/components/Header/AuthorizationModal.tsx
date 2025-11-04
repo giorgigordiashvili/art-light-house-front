@@ -8,8 +8,8 @@ import ModalInput from "./ModalInput";
 import InputTitle from "./InputTitle";
 import AdditionalAction from "./AdditionalAction";
 import { useAuth } from "@/contexts/AuthContext";
-import { ClientLogin, ClientRegistration } from "@/api/generated/interfaces";
-import { registerClient } from "@/api/generated/api";
+import { ClientRegistration, ClientLogin } from "@/api/generated/interfaces";
+import { registerClient, loginClient } from "@/api/generated/api";
 import Image from "next/image";
 
 interface AuthorizationModalProps {
@@ -161,7 +161,7 @@ const AuthorizationModal: React.FC<AuthorizationModalProps> = ({
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
 
-  const { login } = useAuth();
+  const { loginWithTokens } = useAuth();
 
   const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setEmail(e.target.value);
@@ -209,14 +209,22 @@ const AuthorizationModal: React.FC<AuthorizationModalProps> = ({
 
     try {
       if (activeTab === "auth") {
-        // Sign In with our custom API
-        const credentials: ClientLogin = {
+        // Storefront sign in via ecommerce clients login (identifier + password)
+        const payload: ClientLogin = {
           identifier: email,
           password,
         };
 
-        await login(credentials);
-        onClose();
+        const resp = await loginClient(payload);
+        if (resp?.client && resp?.access && resp?.refresh) {
+          // Persist tokens and user in AuthContext
+          loginWithTokens(resp.client, resp.access, resp.refresh);
+          onClose();
+        } else {
+          setError(
+            dictionary?.authorizationModal?.invalidCredentials || "Invalid email or password"
+          );
+        }
       } else {
         // Sign Up via custom API
         if (!firstName) {

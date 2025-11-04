@@ -2630,7 +2630,12 @@ export async function apiEcommerceClientProfileUpdateProfilePartialUpdate(
   return response.data;
 }
 
-export async function loginClient(data: ClientLogin): Promise<EcommerceClient> {
+export async function loginClient(data: ClientLogin): Promise<{
+  message: string;
+  client: EcommerceClient;
+  access: string;
+  refresh: string;
+}> {
   const response = await axios.post(`/api/ecommerce/clients/login/`, data);
   return response.data;
 }

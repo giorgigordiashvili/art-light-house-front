@@ -13,7 +13,7 @@ import {
   apiEcommerceClientAddressesCreate,
   apiEcommerceClientAddressesPartialUpdate,
 } from "@/api/generated/api";
-import { ClientAddress, PatchedClientAddress } from "@/api/generated/interfaces";
+import { PatchedClientAddress } from "@/api/generated/interfaces";
 import { mapPlaceToAddressType } from "@/utils/addressHelpers";
 
 const StyledContainer = styled.div`
@@ -111,8 +111,8 @@ const AddressModal = ({ onClose, onSave, initialData, dictionary }: Props) => {
       if (isEditing) {
         // Update existing address
         const updateData: PatchedClientAddress = {
-          address_string: address,
-          extra_details: additionalInfo || undefined,
+          address,
+          extra_instructions: additionalInfo || undefined,
           latitude: roundedLat,
           longitude: roundedLng,
           is_default: isDefault,
@@ -121,14 +121,14 @@ const AddressModal = ({ onClose, onSave, initialData, dictionary }: Props) => {
         await apiEcommerceClientAddressesPartialUpdate(String(initialData.id!), updateData);
       } else {
         // Create new address
-        const addressData: ClientAddress = {
-          address_type: mapPlaceToAddressType(selectedPlace, dictionary) as any,
-          address_string: address,
-          extra_details: additionalInfo || undefined,
+        const addressData = {
+          label: mapPlaceToAddressType(selectedPlace, dictionary) as any,
+          address,
+          extra_instructions: additionalInfo || undefined,
           latitude: roundedLat,
           longitude: roundedLng,
           is_default: isDefault,
-        };
+        } as any;
 
         await apiEcommerceClientAddressesCreate(addressData);
       }

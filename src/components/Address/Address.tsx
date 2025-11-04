@@ -80,7 +80,7 @@ const Address = ({ dictionary }: any) => {
   const [editingAddress, setEditingAddress] = useState<AddressData | null>(null);
 
   // Fetch addresses from API
-  const { addresses: apiAddresses, loading, error, refetch } = useAddresses();
+  const { addresses: apiAddresses, loading, error, refetch, isAuthenticated } = useAddresses();
 
   // Convert API addresses to AddressData format
   const addresses = apiAddresses.map((address) => convertAddressToAddressData(address, dictionary));
@@ -130,7 +130,21 @@ const Address = ({ dictionary }: any) => {
           <StyledMobileDetail>
             <MobileDetailDropdown dictionary={dictionary} />
           </StyledMobileDetail>
-          {error ? (
+          {!isAuthenticated ? (
+            <div
+              style={{
+                color: "#ffffff",
+                textAlign: "center",
+                padding: "40px",
+                fontSize: "16px",
+                backgroundColor: "#2a2a2a",
+                borderRadius: "12px",
+                marginTop: "20px",
+              }}
+            >
+              {dictionary?.pleaseLogin || "Please log in to view and manage your addresses."}
+            </div>
+          ) : error ? (
             <div
               style={{
                 color: "#ff4444",

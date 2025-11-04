@@ -4,9 +4,9 @@ import { useState } from "react";
 import InputWithLabel from "../Profile/Input";
 import SaveButton from "@/ProfileButton/Save";
 import Cancel from "@/ProfileButton/Cancel";
-// TODO: Password change endpoint not available for clients in new API
-// import { apiEcommerceClientPasswordChangeCreate } from "@/api/generated/api";
-import type { PasswordChangeRequest } from "@/api/generated/interfaces";
+import { passwordResetRequest, passwordResetConfirm } from "@/api/generated/api";
+import type { PasswordResetRequest, PasswordResetConfirm } from "@/api/generated/interfaces";
+import { useAuth } from "@/contexts/AuthContext";
 const StylePass = styled.div`
   /* width: 800px; */
   width: 100%;
@@ -90,56 +90,129 @@ const Title = styled.p`
 `;
 
 const Pass = ({ dictionary }: any) => {
-  const [currentPassword, setCurrentPassword] = useState("");
+  const { user } = useAuth();
+  const [step, setStep] = useState<"request" | "confirm">("request");
+
+  // Step 1: Request reset
+  const [email, setEmail] = useState(user?.email || "");
+
+  // Step 2: Confirm reset
+  const [token, setToken] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
 
   const resetForm = () => {
-    setCurrentPassword("");
+    setToken("");
     setNewPassword("");
     setConfirmPassword("");
+    setError(null);
+    setSuccess(null);
   };
 
-  const handleSave = async () => {
+  const handleRequestReset = async () => {
     setError(null);
     setSuccess(null);
 
-    if (!currentPassword || !newPassword || !confirmPassword) {
-      setError(dictionary?.password?.required || "Please fill in all fields");
-      return;
-    }
-    if (newPassword !== confirmPassword) {
-      setError(dictionary?.password?.mismatch || "New passwords do not match");
+    if (!email || !email.trim()) {
+      setError(dictionary?.password?.emailRequired || "Please enter your email address");
       return;
     }
 
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const payload: PasswordChangeRequest = {
-      current_password: currentPassword,
+    // Basic email validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      setError(dictionary?.password?.invalidEmail || "Please enter a valid email address");
+      return;
+    }
+
+    const payload: PasswordResetRequest = {
+      email: email.trim(),
+    };
+
+    try {
+      setIsLoading(true);
+      await passwordResetRequest(payload);
+      setSuccess(
+        dictionary?.password?.resetEmailSent ||
+          "Password reset instructions have been sent to your email. Please check your inbox."
+      );
+      // Move to confirmation step after 2 seconds
+      setTimeout(() => {
+        setStep("confirm");
+        setSuccess(null);
+      }, 2000);
+    } catch (e: any) {
+      const apiMsg =
+        e?.response?.data?.detail ||
+        e?.response?.data?.message ||
+        e?.response?.data?.error ||
+        (typeof e?.response?.data === "string" ? e.response.data : null);
+      setError(
+        apiMsg ||
+          dictionary?.password?.resetRequestFailed ||
+          "Failed to send reset email. Please try again."
+      );
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleConfirmReset = async () => {
+    setError(null);
+    setSuccess(null);
+
+    if (!token || !token.trim()) {
+      setError(
+        dictionary?.password?.tokenRequired || "Please enter the reset token from your email"
+      );
+      return;
+    }
+
+    if (!newPassword || newPassword.length < 8) {
+      setError(
+        dictionary?.password?.passwordMinLength || "Password must be at least 8 characters long"
+      );
+      return;
+    }
+
+    if (newPassword !== confirmPassword) {
+      setError(dictionary?.password?.mismatch || "Passwords do not match");
+      return;
+    }
+
+    const payload: PasswordResetConfirm = {
+      token: token.trim(),
       new_password: newPassword,
       new_password_confirm: confirmPassword,
     };
 
     try {
       setIsLoading(true);
-      // TODO: Password change endpoint not available for clients in new API
-      // Backend needs to implement: apiEcommerceClientPasswordChangeCreate
-      // await apiEcommerceClientPasswordChangeCreate(payload);
-      throw new Error("Password change endpoint not implemented in new API");
-      // setSuccess(dictionary?.password?.changeSuccess || "Password changed successfully!");
-      // resetForm();
+      await passwordResetConfirm(payload);
+      setSuccess(
+        dictionary?.password?.resetSuccess ||
+          "Password has been reset successfully! You can now login with your new password."
+      );
+      // Reset form after success
+      setTimeout(() => {
+        resetForm();
+        setStep("request");
+        setEmail(user?.email || "");
+      }, 3000);
     } catch (e: any) {
       const apiMsg =
         e?.response?.data?.detail ||
         e?.response?.data?.message ||
+        e?.response?.data?.error ||
         (typeof e?.response?.data === "string" ? e.response.data : null);
       setError(
         apiMsg ||
-          dictionary?.password?.changeFailed ||
-          "Failed to change password. Please try again."
+          dictionary?.password?.resetConfirmFailed ||
+          "Failed to reset password. The token may be invalid or expired."
       );
     } finally {
       setIsLoading(false);
@@ -149,15 +222,27 @@ const Pass = ({ dictionary }: any) => {
   const handleCancel = () => {
     setError(null);
     setSuccess(null);
-    resetForm();
+    if (step === "confirm") {
+      resetForm();
+      setStep("request");
+    } else {
+      setEmail(user?.email || "");
+    }
   };
 
-  const hasChanges = !!(currentPassword || newPassword || confirmPassword);
+  const hasChanges =
+    step === "request"
+      ? !!email && email !== user?.email
+      : !!(token || newPassword || confirmPassword);
   const isDisabled = isLoading || !hasChanges;
 
   return (
     <StylePass>
-      <Title>{dictionary?.title2}</Title>
+      <Title>
+        {step === "request"
+          ? dictionary?.password?.resetTitle || "Reset Password"
+          : dictionary?.password?.confirmTitle || "Enter Reset Code"}
+      </Title>
       {/* Success/Error Messages */}
       {success && (
         <div
@@ -187,48 +272,90 @@ const Pass = ({ dictionary }: any) => {
           {error}
         </div>
       )}
-      <InputsWrapper>
-        <LeftColumn>
-          <InputWithLabel
-            icon="/assets/icons/pass1.svg"
-            label={dictionary?.subTitle1}
-            placeholder={dictionary?.placeHolder1}
-            value={currentPassword}
-            onChange={setCurrentPassword}
-            isPasswordField
-          />
-          <InputWithLabel
-            icon="/assets/icons/pass2.svg"
-            label={dictionary?.subTitle2}
-            placeholder={dictionary?.placeHolder2}
-            value={newPassword}
-            onChange={setNewPassword}
-            isPasswordField
-          />
-          <InputWithLabel
-            icon="/assets/icons/pass2.svg"
-            label={dictionary?.subTitle3}
-            placeholder={dictionary?.placeHolder3}
-            value={confirmPassword}
-            onChange={setConfirmPassword}
-            isPasswordField
-          />
-        </LeftColumn>
-      </InputsWrapper>
 
-      <ButtonRow>
-        <Cancel
-          dictionary={dictionary}
-          onCancel={handleCancel}
-          disabled={!hasChanges || isLoading}
-        />
-        <SaveButton
-          dictionary={dictionary}
-          onSave={handleSave}
-          disabled={isDisabled}
-          isLoading={isLoading}
-        />
-      </ButtonRow>
+      {step === "request" ? (
+        <>
+          <InputsWrapper>
+            <LeftColumn>
+              <InputWithLabel
+                icon="/assets/icons/pass1.svg"
+                label={dictionary?.password?.emailLabel || "Email Address"}
+                placeholder={dictionary?.password?.emailPlaceholder || "Enter your email"}
+                value={email}
+                onChange={setEmail}
+                isPasswordField={false}
+              />
+              <div style={{ color: "#999", fontSize: "14px", marginTop: "-10px" }}>
+                {dictionary?.password?.resetInstructions ||
+                  "Enter your email address and we'll send you instructions to reset your password."}
+              </div>
+            </LeftColumn>
+          </InputsWrapper>
+
+          <ButtonRow>
+            <Cancel
+              dictionary={dictionary}
+              onCancel={handleCancel}
+              disabled={!hasChanges || isLoading}
+            />
+            <SaveButton
+              dictionary={{
+                ...dictionary,
+                button1: dictionary?.password?.sendResetButton || "Send Reset Email",
+              }}
+              onSave={handleRequestReset}
+              disabled={isDisabled}
+              isLoading={isLoading}
+            />
+          </ButtonRow>
+        </>
+      ) : (
+        <>
+          <InputsWrapper>
+            <LeftColumn>
+              <InputWithLabel
+                icon="/assets/icons/pass1.svg"
+                label={dictionary?.password?.tokenLabel || "Reset Token"}
+                placeholder={dictionary?.password?.tokenPlaceholder || "Enter token from email"}
+                value={token}
+                onChange={setToken}
+                isPasswordField={false}
+              />
+              <InputWithLabel
+                icon="/assets/icons/pass2.svg"
+                label={dictionary?.password?.newPasswordLabel || "New Password"}
+                placeholder={dictionary?.password?.newPasswordPlaceholder || "Enter new password"}
+                value={newPassword}
+                onChange={setNewPassword}
+                isPasswordField
+              />
+              <InputWithLabel
+                icon="/assets/icons/pass2.svg"
+                label={dictionary?.password?.confirmPasswordLabel || "Confirm New Password"}
+                placeholder={
+                  dictionary?.password?.confirmPasswordPlaceholder || "Confirm new password"
+                }
+                value={confirmPassword}
+                onChange={setConfirmPassword}
+                isPasswordField
+              />
+            </LeftColumn>
+          </InputsWrapper>
+
+          <ButtonRow>
+            <Cancel dictionary={dictionary} onCancel={handleCancel} disabled={isLoading} />
+            <SaveButton
+              dictionary={{
+                ...dictionary,
+                button1: dictionary?.password?.resetButton || "Reset Password",
+              }}
+              onSave={handleConfirmReset}
+              disabled={isDisabled}
+              isLoading={isLoading}
+            />
+          </ButtonRow>
+        </>
+      )}
     </StylePass>
   );
 };

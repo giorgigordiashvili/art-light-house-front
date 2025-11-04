@@ -1,14 +1,14 @@
 "use client";
 
 import React, { createContext, useContext, useEffect, useState, ReactNode } from "react";
-import { EcommerceClient, ClientLogin } from "@/api/generated/interfaces";
-import { loginClient, getCurrentClient } from "@/api/generated/api";
+import { EcommerceClient, TenantLogin } from "@/api/generated/interfaces";
+import { tenantLogin, getCurrentClient } from "@/api/generated/api";
 
 interface AuthContextType {
   user: EcommerceClient | null;
   isAuthenticated: boolean;
   isLoading: boolean;
-  login: (credentials: ClientLogin) => Promise<void>;
+  login: (credentials: TenantLogin) => Promise<void>;
   logout: () => Promise<void>;
   updateUser: (userData: EcommerceClient) => void;
   token: string | null;
@@ -85,19 +85,35 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     };
   }, []);
 
-  const login = async (credentials: ClientLogin): Promise<void> => {
+  const login = async (credentials: TenantLogin): Promise<void> => {
     setIsLoading(true);
     try {
-      // New API returns just the client, tokens are in httpOnly cookies
-      const client = await loginClient(credentials);
+      // Use tenantLogin endpoint to authenticate and get token
+      const response = await tenantLogin(credentials);
 
-      // Store user data (tokens handled by cookies)
+      if (!response?.token) {
+        throw new Error("Login failed");
+      }
+
+      // Store token
+      localStorage.setItem(TOKEN_KEY, response.token);
+      // Clear any old refresh token if present (tenant login doesn't provide refresh)
+      localStorage.removeItem(REFRESH_KEY);
+
+      // Fetch current ecommerce client profile after login
+      const client = await getCurrentClient();
+
+      // Store user data
       localStorage.setItem(USER_KEY, JSON.stringify(client));
-      localStorage.setItem(TOKEN_KEY, "cookie-based"); // Placeholder
 
       // Update state
-      setToken("cookie-based");
+      setToken(response.token);
       setUser(client);
+
+      // Dispatch auth change event
+      if (typeof window !== "undefined") {
+        window.dispatchEvent(new CustomEvent("authChange"));
+      }
     } catch (error) {
       throw error;
     } finally {
@@ -123,6 +139,11 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       setToken(null);
       setUser(null);
       setIsLoading(false);
+
+      // Dispatch auth change event
+      if (typeof window !== "undefined") {
+        window.dispatchEvent(new CustomEvent("authChange"));
+      }
     }
   };
 
@@ -145,6 +166,11 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       localStorage.setItem(USER_KEY, JSON.stringify(userData));
       setToken(access);
       setUser(userData);
+
+      // Dispatch auth change event
+      if (typeof window !== "undefined") {
+        window.dispatchEvent(new CustomEvent("authChange"));
+      }
     } catch {
       // Failed to store tokens
     }
