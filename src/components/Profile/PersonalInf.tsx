@@ -7,7 +7,8 @@ import Cancel from "@/ProfileButton/Cancel";
 import { User } from "@/api/generated/interfaces";
 import { useProfileUpdate } from "@/hooks/useProfileUpdate";
 import { useAuth } from "@/contexts/AuthContext";
-import { userChangePassword } from "@/api/generated/api";
+// TODO: Password change endpoint not available for clients in new API
+// import { apiEcommerceClientPasswordChangeCreate } from "@/api/generated/api";
 import type { PasswordChangeRequest } from "@/api/generated/interfaces";
 const StylePersonal = styled.div`
   width: 100%;
@@ -210,6 +211,7 @@ const Personal = ({
         setPasswordChangeError(dictionary?.password?.mismatch || "New passwords do not match");
         return;
       }
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const payload: PasswordChangeRequest = {
         current_password: passwordData.old_password,
         new_password: passwordData.new_password,
@@ -217,10 +219,13 @@ const Personal = ({
       };
       try {
         setPasswordChangeLoading(true);
-        await userChangePassword(payload);
-        setPasswordChangeSuccess(true);
+        // TODO: Password change endpoint not available for clients in new API
+        // Backend needs to implement: apiEcommerceClientPasswordChangeCreate
+        // await apiEcommerceClientPasswordChangeCreate(payload);
+        throw new Error("Password change endpoint not implemented in new API");
+        // setPasswordChangeSuccess(true);
         // reset fields after success
-        setPasswordData({ old_password: "", new_password: "", confirm_password: "" });
+        // setPasswordData({ old_password: "", new_password: "", confirm_password: "" });
       } catch (e: any) {
         const message = e?.response?.data?.detail || e?.message || null;
         setPasswordChangeError(

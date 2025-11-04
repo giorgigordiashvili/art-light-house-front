@@ -4,8 +4,11 @@ import { usePathname, useRouter } from "next/navigation";
 import ContactTitle from "../Contact/ContactTitle";
 import FavoriteCard from "./FavoriteCard";
 import styled from "styled-components";
-import { favoritesList, favoritesRemove } from "@/api/generated/api";
-import type { Favorite } from "@/api/generated/interfaces";
+import {
+  apiEcommerceClientFavoritesList,
+  apiEcommerceClientFavoritesDestroy,
+} from "@/api/generated/api";
+import type { FavoriteProduct } from "@/api/generated/interfaces";
 import EmptyFavoritesCard from "@/components/Favorites/EmptyFavoritesCard";
 
 const StyledContainer = styled.div``;
@@ -31,7 +34,7 @@ const StyledCards = styled.div`
 `;
 
 const Favorites = ({ dictionary }: { dictionary: any }) => {
-  const [items, setItems] = useState<Favorite[]>([]);
+  const [items, setItems] = useState<FavoriteProduct[]>([]);
   const router = useRouter();
   const pathname = usePathname();
   const [loading, setLoading] = useState(true);
@@ -50,9 +53,9 @@ const Favorites = ({ dictionary }: { dictionary: any }) => {
           setError(null);
           return;
         }
-        const data = await favoritesList();
+        const response = await apiEcommerceClientFavoritesList();
         if (!mounted) return;
-        setItems(Array.isArray(data) ? data : []);
+        setItems(response.results || []);
       } catch (e: any) {
         if (!mounted) return;
         const status = e?.response?.status;
@@ -111,7 +114,10 @@ const Favorites = ({ dictionary }: { dictionary: any }) => {
               typeof window !== "undefined" && !!localStorage.getItem("auth_access_token");
             if (!hasToken) return;
             try {
-              await favoritesRemove(productId);
+              const favoriteItem = items.find((f) => f.product === productId);
+              if (favoriteItem) {
+                await apiEcommerceClientFavoritesDestroy(String(favoriteItem.id));
+              }
               setItems((prev) => prev.filter((f) => f.product !== productId));
               try {
                 if (typeof window !== "undefined") {

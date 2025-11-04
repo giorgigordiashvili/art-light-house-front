@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
-import { productList } from "@/api/generated/api";
+import { apiEcommerceClientProductsList } from "@/api/generated/api";
 import { ProductList } from "@/api/generated/interfaces";
 
 interface UseProductsOptions {
@@ -26,8 +26,6 @@ interface UseProductsResult {
   applyFilters: (filterOptions: UseProductsOptions) => Promise<void>;
 }
 
-const PRODUCTS_PER_PAGE = 12;
-
 export const useProducts = (options: UseProductsOptions = {}): UseProductsResult => {
   const [products, setProducts] = useState<ProductList[]>([]);
   const [loading, setLoading] = useState(true);
@@ -44,44 +42,40 @@ export const useProducts = (options: UseProductsOptions = {}): UseProductsResult
 
         const filtersToUse = filterOptions ?? activeFilters;
 
-        // Build comma-separated category IDs string for API (supports multiple IDs)
-        const categoryFilter =
-          filtersToUse.categoryIds && filtersToUse.categoryIds.length > 0
-            ? filtersToUse.categoryIds.join(",")
-            : undefined;
-
-        // Fetch products from API with filters
-        const fetchedProducts = await productList(
-          filtersToUse.attributes,
-          categoryFilter,
-          filtersToUse.inStock,
+        // New API has different parameters: isFeatured, ordering, page, search
+        const response = await apiEcommerceClientProductsList(
           undefined, // isFeatured
-          filtersToUse.maxPrice,
-          filtersToUse.minPrice,
           filtersToUse.ordering,
+          page,
           filtersToUse.search
         );
 
-        // Exclude out-of-stock products (stock_quantity === 0). Fallback to is_in_stock when missing.
-        const availableProducts = fetchedProducts.filter((p) => {
-          if (typeof p.stock_quantity === "number") {
-            return p.stock_quantity > 0;
-          }
-          if (typeof p.is_in_stock === "string") {
-            const v = p.is_in_stock.toLowerCase();
-            return v === "true" || v === "1" || v === "yes";
-          }
-          return true; // keep if unknown
-        });
+        // Extract results from paginated response
+        const fetchedProducts = response.results || [];
 
-        // Client-side pagination
-        const startIndex = (page - 1) * PRODUCTS_PER_PAGE;
-        const endIndex = startIndex + PRODUCTS_PER_PAGE;
-        const paginatedProducts = availableProducts.slice(startIndex, endIndex);
+        // Apply client-side filters
+        let filteredProducts = fetchedProducts;
 
-        setProducts(paginatedProducts);
+        // Price filtering
+        if (filtersToUse.minPrice !== undefined || filtersToUse.maxPrice !== undefined) {
+          filteredProducts = filteredProducts.filter((p) => {
+            const price = parseFloat(p.price || "0");
+            const minOk = filtersToUse.minPrice === undefined || price >= filtersToUse.minPrice;
+            const maxOk = filtersToUse.maxPrice === undefined || price <= filtersToUse.maxPrice;
+            return minOk && maxOk;
+          });
+        }
+
+        // Stock filtering
+        if (filtersToUse.inStock) {
+          filteredProducts = filteredProducts.filter((p) => p.is_in_stock);
+        }
+
+        setProducts(filteredProducts);
         setCurrentPage(page);
-        setTotalPages(Math.ceil(availableProducts.length / PRODUCTS_PER_PAGE));
+        // Calculate total pages from count
+        const totalCount = response.count || 0;
+        setTotalPages(Math.ceil(totalCount / 12)); // Assuming 12 items per page
       } catch (err: any) {
         setError(err?.response?.data?.message || err?.message || "Failed to fetch products");
       } finally {

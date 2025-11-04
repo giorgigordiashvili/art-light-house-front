@@ -17,7 +17,7 @@ import ReturnIcon from "../Header/ReturnIcon";
 import { useProductDetail } from "@/hooks/useProductDetail";
 import { useSimilarProducts } from "@/hooks/useSimilarProducts";
 import { useAuthModal } from "@/contexts/AuthModalContext";
-import { cartAddItem } from "@/api/generated/api";
+import { apiEcommerceClientCartItemsCreate } from "@/api/generated/api";
 
 const StyledComponent = styled.div`
   background: #0b0b0b;
@@ -607,16 +607,14 @@ function DetailMain({ dictionary, productId }: { dictionary: any; productId: num
     }
 
     try {
-      const payload = { product_id: product.id, quantity: 1 };
-      const cart = await cartAddItem(payload);
+      const payload = { product: product.id, quantity: 1 };
+      await apiEcommerceClientCartItemsCreate(payload);
 
-      // Update cart count in header
+      // Update cart count in header - fetch latest cart
       try {
-        const count = Array.isArray(cart?.items)
-          ? cart.items.reduce((acc: number, it: any) => acc + (it.quantity || 0), 0)
-          : 0;
+        // Trigger cart refresh event
         if (typeof window !== "undefined") {
-          window.dispatchEvent(new CustomEvent("cartUpdated", { detail: { count, cart } }));
+          window.dispatchEvent(new CustomEvent("cartUpdated"));
         }
       } catch {}
     } catch {}

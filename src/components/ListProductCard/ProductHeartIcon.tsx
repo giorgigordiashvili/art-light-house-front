@@ -1,8 +1,11 @@
 "use client";
 import React, { useMemo, useState } from "react";
 import Image from "next/image";
-import { favoritesAdd, favoritesList, favoritesRemove } from "@/api/generated/api";
-import type { AddToFavoritesRequest } from "@/api/generated/interfaces";
+import {
+  apiEcommerceClientFavoritesList,
+  apiEcommerceClientFavoritesCreate,
+  apiEcommerceClientFavoritesDestroy,
+} from "@/api/generated/api";
 import { useAuthModal } from "@/contexts/AuthModalContext";
 
 type Props = {
@@ -40,28 +43,34 @@ const ProductHeartIcon = ({ productId, defaultIsFavorite, size = 30 }: Props) =>
       setIsSubmitting(true);
       // Determine current favorite state; prefer local, fallback to list
       let currentlyFavorite = isFilled;
+      let favoriteId: string | null = null;
+
       if (!currentlyFavorite) {
         try {
-          const list = await favoritesList();
-          currentlyFavorite = Array.isArray(list) && list.some((f: any) => f.product === productId);
+          const response = await apiEcommerceClientFavoritesList();
+          const list = response.results || [];
+          const existing = list.find((f: any) => f.product === productId);
+          currentlyFavorite = !!existing;
+          if (existing) favoriteId = String(existing.id);
         } catch {}
       }
 
-      if (currentlyFavorite) {
+      if (currentlyFavorite && favoriteId) {
         // Remove from favorites
-        await favoritesRemove(productId);
+        await apiEcommerceClientFavoritesDestroy(favoriteId);
         setIsFilled(false);
       } else {
         // Add to favorites
-        const payload: AddToFavoritesRequest = { product_id: productId };
-        await favoritesAdd(payload);
+        const payload = { product: productId } as any;
+        await apiEcommerceClientFavoritesCreate(payload);
         setIsFilled(true);
       }
 
       // Sync header by dispatching updated count
       try {
-        const list = await favoritesList();
-        const count = Array.isArray(list) ? list.length : 0;
+        const response = await apiEcommerceClientFavoritesList();
+        const list = response.results || [];
+        const count = list.length;
         if (typeof window !== "undefined") {
           window.dispatchEvent(
             new CustomEvent("favoritesUpdated", { detail: { count, hasAny: count > 0 } })

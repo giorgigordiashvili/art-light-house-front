@@ -4,8 +4,11 @@ import styled from "styled-components";
 import { useRouter } from "next/navigation";
 import ProductContent from "./ProductContent";
 import PrimaryButton from "../Buttons/PrimaryButton";
-import { favoritesList, favoritesRemove } from "@/api/generated/api";
-import type { Favorite } from "@/api/generated/interfaces";
+import {
+  apiEcommerceClientFavoritesList,
+  apiEcommerceClientFavoritesDestroy,
+} from "@/api/generated/api";
+import type { FavoriteProduct } from "@/api/generated/interfaces";
 import { useAuth } from "@/contexts/AuthContext";
 import Image from "next/image";
 import TrashIcon from "./TrashIcon";
@@ -136,7 +139,7 @@ const StyledTrashButton = styled.div`
 
 const FavoritesModal = ({ onClose, dictionary }: Props) => {
   const router = useRouter();
-  const [items, setItems] = useState<Favorite[]>([]);
+  const [items, setItems] = useState<FavoriteProduct[]>([]);
   const [loading, setLoading] = useState(false);
   const { isAuthenticated } = useAuth();
 
@@ -148,8 +151,8 @@ const FavoritesModal = ({ onClose, dictionary }: Props) => {
         setItems([]);
         return;
       }
-      const data = await favoritesList();
-      setItems(Array.isArray(data) ? data : []);
+      const response = await apiEcommerceClientFavoritesList();
+      setItems(response.results || []);
     } catch {
       setItems([]);
     } finally {
@@ -206,7 +209,11 @@ const FavoritesModal = ({ onClose, dictionary }: Props) => {
 
   const handleRemove = async (productId: number) => {
     try {
-      await favoritesRemove(productId);
+      // Find the favorite item to get its ID
+      const favoriteItem = items.find((item) => item.product === productId);
+      if (favoriteItem) {
+        await apiEcommerceClientFavoritesDestroy(String(favoriteItem.id));
+      }
       // Update local state immediately
       setItems((prev) => prev.filter((item) => item.product !== productId));
       // Dispatch event to update other components

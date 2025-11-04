@@ -1,8 +1,11 @@
 import React from "react";
 import styled from "styled-components";
 import Image from "next/image";
-import { ProductList, AddToCartRequest } from "@/api/generated/interfaces";
-import { cartAddItem } from "@/api/generated/api";
+import { ProductList } from "@/api/generated/interfaces";
+import {
+  apiEcommerceClientCartItemsCreate,
+  apiEcommerceClientCartGetOrCreateRetrieve,
+} from "@/api/generated/api";
 import { useAuthModal } from "@/contexts/AuthModalContext";
 
 const StyledButton = styled.button`
@@ -43,8 +46,9 @@ const PlusButton = ({ product }: { product?: ProductList }) => {
     }
 
     try {
-      const payload: AddToCartRequest = { product_id: product.id, quantity: 1 };
-      const cart = await cartAddItem(payload);
+      const payload = { product: product.id, quantity: 1 };
+      await apiEcommerceClientCartItemsCreate(payload);
+      const cart = await apiEcommerceClientCartGetOrCreateRetrieve();
       try {
         const count = Array.isArray(cart?.items)
           ? cart.items.reduce((acc: number, it: any) => acc + (it.quantity || 0), 0)

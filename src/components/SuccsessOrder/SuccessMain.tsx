@@ -5,7 +5,7 @@ import SummaryBlock from "@/OrderDetail/SummaryBlock";
 import Address from "@/OrderDetail/Address";
 import Delivery from "@/OrderDetail/Delivery";
 import { useEffect, useState } from "react";
-import { ordersList } from "@/api/generated/api";
+import { apiEcommerceClientOrdersList } from "@/api/generated/api";
 import type { Order } from "@/api/generated/interfaces";
 
 const StyleContainer = styled.div`
@@ -106,10 +106,10 @@ const Container = ({ dictionary }: { dictionary: any }) => {
     const fetchLatestOrder = async () => {
       try {
         setLoading(true);
-        const orders = await ordersList();
+        const response = await apiEcommerceClientOrdersList();
         // Get the most recent order (first in the array, assuming sorted by date)
-        if (orders.length > 0) {
-          setLatestOrder(orders[0]);
+        if (response.results.length > 0) {
+          setLatestOrder(response.results[0]);
         }
       } catch {
       } finally {

@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import styled from "styled-components";
 import ModalOption from "./ModalOption";
 import DividerLine from "@/components/MainPage/HeroAndCategory/DividerLine";
-import { addressDelete } from "@/api/generated/api";
+import { apiEcommerceClientAddressesDestroy } from "@/api/generated/api";
 
 const StyledContainer = styled.div`
   position: absolute;
@@ -30,7 +30,7 @@ const EditModal = ({ onEdit, onDelete, addressId, dictionary }: Props) => {
   const handleDelete = async () => {
     try {
       setIsLoading(true);
-      await addressDelete(addressId);
+      await apiEcommerceClientAddressesDestroy(String(addressId));
 
       onDelete();
     } catch {

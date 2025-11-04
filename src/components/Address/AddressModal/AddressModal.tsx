@@ -9,8 +9,11 @@ import ModalTitle from "./ModalTitle";
 import GoogleMap from "@/components/Contact/GoogleMap";
 import ToggleDefaultButton from "@/components/Buttons/ToggleDefaultButton";
 import { AddressData } from "@/types";
-import { addressCreate, addressUpdate } from "@/api/generated/api";
-import { AddressRequest, PatchedAddressUpdateRequest } from "@/api/generated/interfaces";
+import {
+  apiEcommerceClientAddressesCreate,
+  apiEcommerceClientAddressesPartialUpdate,
+} from "@/api/generated/api";
+import { ClientAddress, PatchedClientAddress } from "@/api/generated/interfaces";
 import { mapPlaceToAddressType } from "@/utils/addressHelpers";
 
 const StyledContainer = styled.div`
@@ -107,7 +110,7 @@ const AddressModal = ({ onClose, onSave, initialData, dictionary }: Props) => {
 
       if (isEditing) {
         // Update existing address
-        const updateData: PatchedAddressUpdateRequest = {
+        const updateData: PatchedClientAddress = {
           address_string: address,
           extra_details: additionalInfo || undefined,
           latitude: roundedLat,
@@ -115,10 +118,10 @@ const AddressModal = ({ onClose, onSave, initialData, dictionary }: Props) => {
           is_default: isDefault,
         };
 
-        await addressUpdate(initialData.id!, updateData);
+        await apiEcommerceClientAddressesPartialUpdate(String(initialData.id!), updateData);
       } else {
         // Create new address
-        const addressData: AddressRequest = {
+        const addressData: ClientAddress = {
           address_type: mapPlaceToAddressType(selectedPlace, dictionary) as any,
           address_string: address,
           extra_details: additionalInfo || undefined,
@@ -127,7 +130,7 @@ const AddressModal = ({ onClose, onSave, initialData, dictionary }: Props) => {
           is_default: isDefault,
         };
 
-        await addressCreate(addressData);
+        await apiEcommerceClientAddressesCreate(addressData);
       }
 
       // Call the parent callback to trigger refresh

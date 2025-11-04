@@ -4,7 +4,8 @@ import { useState } from "react";
 import InputWithLabel from "../Profile/Input";
 import SaveButton from "@/ProfileButton/Save";
 import Cancel from "@/ProfileButton/Cancel";
-import { userChangePassword } from "@/api/generated/api";
+// TODO: Password change endpoint not available for clients in new API
+// import { apiEcommerceClientPasswordChangeCreate } from "@/api/generated/api";
 import type { PasswordChangeRequest } from "@/api/generated/interfaces";
 const StylePass = styled.div`
   /* width: 800px; */
@@ -115,6 +116,7 @@ const Pass = ({ dictionary }: any) => {
       return;
     }
 
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const payload: PasswordChangeRequest = {
       current_password: currentPassword,
       new_password: newPassword,
@@ -123,9 +125,12 @@ const Pass = ({ dictionary }: any) => {
 
     try {
       setIsLoading(true);
-      await userChangePassword(payload);
-      setSuccess(dictionary?.password?.changeSuccess || "Password changed successfully!");
-      resetForm();
+      // TODO: Password change endpoint not available for clients in new API
+      // Backend needs to implement: apiEcommerceClientPasswordChangeCreate
+      // await apiEcommerceClientPasswordChangeCreate(payload);
+      throw new Error("Password change endpoint not implemented in new API");
+      // setSuccess(dictionary?.password?.changeSuccess || "Password changed successfully!");
+      // resetForm();
     } catch (e: any) {
       const apiMsg =
         e?.response?.data?.detail ||

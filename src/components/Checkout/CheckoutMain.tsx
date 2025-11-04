@@ -8,8 +8,11 @@ import TextContainer from "@/components/Checkout/TextContainer";
 import Summery from "@/components/CartPage/Summary";
 import AddressSelectionModal from "@/components/Checkout/AddressSelectionModal";
 import { useAddresses } from "@/hooks/useAddresses";
-import { Address, Cart, OrderCreateRequest } from "@/api/generated/interfaces";
-import { cartGet, ordersCreate, cartClear } from "@/api/generated/api";
+import { ClientAddress, Cart, OrderCreateRequest } from "@/api/generated/interfaces";
+import {
+  apiEcommerceClientCartGetOrCreateRetrieve,
+  apiEcommerceClientOrdersCreate,
+} from "@/api/generated/api";
 import { useRouter, usePathname } from "next/navigation";
 
 const Container = styled.div`
@@ -141,7 +144,7 @@ const Checkout: React.FC<CheckoutProps> = ({ dictionary }) => {
 
   const [selectedDelivery, setSelectedDelivery] = useState<string | null>(null);
   const [isAddressModalOpen, setIsAddressModalOpen] = useState(false);
-  const [selectedAddress, setSelectedAddress] = useState<Address | null>(null);
+  const [selectedAddress, setSelectedAddress] = useState<ClientAddress | null>(null);
   const [phoneNumber, setPhoneNumber] = useState("");
   const [deliveryNotes, setDeliveryNotes] = useState("");
   const [cart, setCart] = useState<Cart | null>(null);
@@ -156,7 +159,7 @@ const Checkout: React.FC<CheckoutProps> = ({ dictionary }) => {
     const fetchCart = async () => {
       try {
         setLoadingCart(true);
-        const cartData = await cartGet();
+        const cartData = await apiEcommerceClientCartGetOrCreateRetrieve();
         setCart(cartData);
       } catch {
       } finally {
@@ -190,7 +193,7 @@ const Checkout: React.FC<CheckoutProps> = ({ dictionary }) => {
   const getDeliveryDisabled = (method?: string) =>
     selectedDelivery !== null && selectedDelivery !== method;
 
-  const handleAddressSelect = (address: Address) => {
+  const handleAddressSelect = (address: ClientAddress) => {
     setSelectedAddress(address);
     setIsAddressModalOpen(false);
   };
@@ -265,12 +268,11 @@ const Checkout: React.FC<CheckoutProps> = ({ dictionary }) => {
       };
 
       // Create order
-      await ordersCreate(orderData);
+      await apiEcommerceClientOrdersCreate(orderData);
 
-      // Clear the cart after successful order
+      // TODO: Cart clearing - backend should automatically clear cart after order
+      // For now, just dispatch empty cart event
       try {
-        await cartClear();
-
         // Dispatch cart update event to update cart icon/modal
         if (typeof window !== "undefined") {
           window.dispatchEvent(
@@ -280,17 +282,13 @@ const Checkout: React.FC<CheckoutProps> = ({ dictionary }) => {
                 cart: {
                   id: 0,
                   items: [],
-                  total_items: "0",
-                  total_price: "0",
-                  created_at: "",
-                  updated_at: "",
                 },
               },
             })
           );
         }
       } catch {
-        // Continue to success page even if cart clear fails
+        // Continue to success page even if event dispatch fails
       }
 
       // Redirect to success page

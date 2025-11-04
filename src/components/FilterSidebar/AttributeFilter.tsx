@@ -1,7 +1,8 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import CheckboxGroup from "./CheckboxGroup";
-import { attributeList } from "@/api/generated/api";
+// TODO: Attributes endpoint not available in new API - need backend implementation
+// import { apiEcommerceClientAttributesList } from "@/api/generated/api";
 import { Attribute } from "@/api/generated/interfaces";
 import { useFilterContext } from "@/contexts/FilterContext";
 
@@ -36,6 +37,12 @@ function AttributeFilter({ attributeName, title }: AttributeFilterProps) {
     const load = async () => {
       try {
         setLoading(true);
+        // TODO: Attributes endpoint not available in new API
+        // Need backend to implement apiEcommerceClientAttributesList
+        // For now, return empty array to prevent errors
+        const attributes: Attribute[] = [];
+
+        /* When API is available, uncomment:
         const cache = g.__attributesCache!;
         let attributes: Attribute[];
         if (cache.data) {
@@ -43,11 +50,12 @@ function AttributeFilter({ attributeName, title }: AttributeFilterProps) {
         } else if (cache.promise) {
           attributes = await cache.promise;
         } else {
-          cache.promise = attributeList();
+          cache.promise = apiEcommerceClientAttributesList();
           attributes = await cache.promise;
           cache.data = attributes;
           cache.promise = null;
         }
+        */
 
         if (cancelled) return;
 
@@ -69,8 +77,6 @@ function AttributeFilter({ attributeName, title }: AttributeFilterProps) {
     return () => {
       cancelled = true;
     };
-    // attributeName controls which subset we show; no deps on selectedAttributes here
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [attributeName]);
 
   // When selection changes, just toggle checked flags; no refetch

@@ -6,7 +6,11 @@ import ContactTitle from "../Contact/ContactTitle";
 import Summary from "./Summary";
 import CartProduct from "../Header/CartProduct";
 import EmptyCartCard from "../Cart/EmptyCartCard";
-import { cartGet, cartRemoveItem, cartUpdateItem } from "@/api/generated/api";
+import {
+  apiEcommerceClientCartGetOrCreateRetrieve,
+  apiEcommerceClientCartItemsPartialUpdate,
+  apiEcommerceClientCartItemsDestroy,
+} from "@/api/generated/api";
 import type { Cart } from "@/api/generated/interfaces";
 import { useAuth } from "@/contexts/AuthContext";
 
@@ -85,7 +89,7 @@ const Cart = ({ dictionary }: any) => {
   const fetchCart = async () => {
     try {
       setLoading(true);
-      const data = await cartGet();
+      const data = await apiEcommerceClientCartGetOrCreateRetrieve();
       setCart(data);
     } catch {
       setCart({
@@ -119,7 +123,8 @@ const Cart = ({ dictionary }: any) => {
   const handleIncrease = async (itemId: number, current: number) => {
     if (!isAuthenticated) return;
     try {
-      const updated = await cartUpdateItem(itemId, { quantity: current + 1 });
+      await apiEcommerceClientCartItemsPartialUpdate(String(itemId), { quantity: current + 1 });
+      const updated = await apiEcommerceClientCartGetOrCreateRetrieve();
       setCart(updated);
       try {
         const count = updated.items?.reduce((acc, it) => acc + (it.quantity || 0), 0) || 0;
@@ -139,7 +144,8 @@ const Cart = ({ dictionary }: any) => {
       return;
     }
     try {
-      const updated = await cartUpdateItem(itemId, { quantity: current - 1 });
+      await apiEcommerceClientCartItemsPartialUpdate(String(itemId), { quantity: current - 1 });
+      const updated = await apiEcommerceClientCartGetOrCreateRetrieve();
       setCart(updated);
       try {
         const count = updated.items?.reduce((acc, it) => acc + (it.quantity || 0), 0) || 0;
@@ -155,7 +161,8 @@ const Cart = ({ dictionary }: any) => {
   const handleRemove = async (itemId: number) => {
     if (!isAuthenticated) return;
     try {
-      const updated = await cartRemoveItem(itemId);
+      await apiEcommerceClientCartItemsDestroy(String(itemId));
+      const updated = await apiEcommerceClientCartGetOrCreateRetrieve();
       setCart(updated);
       try {
         const count = updated.items?.reduce((acc, it) => acc + (it.quantity || 0), 0) || 0;

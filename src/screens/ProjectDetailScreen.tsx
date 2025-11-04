@@ -2,7 +2,8 @@
 import { useState, useEffect, useCallback } from "react";
 import styled from "styled-components";
 import Link from "next/link";
-import { projectsDetail } from "@/api/generated/api";
+// TODO: Projects API not available in new API - backend needs to implement
+// import { apiEcommerceClientProjectsRetrieve } from "@/api/generated/api";
 import { ProjectDetail } from "@/api/generated/interfaces";
 import NewCircle from "@/components/ui/NewCircle";
 import Circle from "@/components/ui/Circle";
@@ -233,25 +234,27 @@ interface ProjectDetailScreenProps {
   lang: string;
 }
 
-const ProjectDetailScreen = ({ slug, dictionary, lang }: ProjectDetailScreenProps) => {
-  const [project, setProject] = useState<ProjectDetail | null>(null);
+const ProjectDetailScreen = ({ dictionary, lang }: ProjectDetailScreenProps) => {
+  const [project] = useState<ProjectDetail | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [selectedImageIndex, setSelectedImageIndex] = useState(0);
+  const [selectedImageIndex] = useState(0);
 
   const loadProject = useCallback(async () => {
     try {
       setLoading(true);
       setError(null);
-      const data = await projectsDetail(slug);
-      setProject(data);
+      // TODO: Projects API not available - backend needs to implement apiEcommerceClientProjectsRetrieve
+      // const data = await apiEcommerceClientProjectsRetrieve(slug);
+      // setProject(data);
+      throw new Error("Projects API not implemented");
     } catch (err) {
       console.error("Failed to load project:", err);
       setError("Failed to load project. It may not exist or has been removed.");
     } finally {
       setLoading(false);
     }
-  }, [slug]);
+  }, []);
 
   useEffect(() => {
     loadProject();

@@ -6,7 +6,11 @@ import CartProduct from "./CartProduct";
 import PrimaryButton from "../Buttons/PrimaryButton";
 import SummaryPrice from "./SummaryPrice";
 import EmptyCartModal from "./EmptyCartModal";
-import { cartGet, cartRemoveItem, cartUpdateItem } from "@/api/generated/api";
+import {
+  apiEcommerceClientCartGetOrCreateRetrieve,
+  apiEcommerceClientCartItemsPartialUpdate,
+  apiEcommerceClientCartItemsDestroy,
+} from "@/api/generated/api";
 import type { Cart } from "@/api/generated/interfaces";
 import { useAuth } from "@/contexts/AuthContext";
 
@@ -126,7 +130,7 @@ const CartModal = ({ onClose, dictionary }: Props) => {
   const fetchCart = async () => {
     try {
       setLoading(true);
-      const data = await cartGet();
+      const data = await apiEcommerceClientCartGetOrCreateRetrieve();
       setCart(data);
     } catch {
       setCart({
@@ -200,7 +204,8 @@ const CartModal = ({ onClose, dictionary }: Props) => {
 
   const handleIncrease = async (itemId: number, current: number) => {
     try {
-      const updated = await cartUpdateItem(itemId, { quantity: current + 1 });
+      await apiEcommerceClientCartItemsPartialUpdate(String(itemId), { quantity: current + 1 });
+      const updated = await apiEcommerceClientCartGetOrCreateRetrieve();
       setCart(updated);
       try {
         const count = updated.items?.reduce((acc, it) => acc + (it.quantity || 0), 0) || 0;
@@ -221,7 +226,8 @@ const CartModal = ({ onClose, dictionary }: Props) => {
       return;
     }
     try {
-      const updated = await cartUpdateItem(itemId, { quantity: current - 1 });
+      await apiEcommerceClientCartItemsPartialUpdate(String(itemId), { quantity: current - 1 });
+      const updated = await apiEcommerceClientCartGetOrCreateRetrieve();
       setCart(updated);
       try {
         const count = updated.items?.reduce((acc, it) => acc + (it.quantity || 0), 0) || 0;
@@ -238,7 +244,8 @@ const CartModal = ({ onClose, dictionary }: Props) => {
 
   const handleRemove = async (itemId: number) => {
     try {
-      const updated = await cartRemoveItem(itemId);
+      await apiEcommerceClientCartItemsDestroy(String(itemId));
+      const updated = await apiEcommerceClientCartGetOrCreateRetrieve();
       setCart(updated);
       try {
         const count = updated.items?.reduce((acc, it) => acc + (it.quantity || 0), 0) || 0;

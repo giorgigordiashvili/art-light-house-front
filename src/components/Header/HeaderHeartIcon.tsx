@@ -1,6 +1,6 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import { favoritesList } from "@/api/generated/api";
+import { apiEcommerceClientFavoritesList } from "@/api/generated/api";
 import HeartIcon from "@/app/icons/HeartIcon";
 import FilledHeartIcon from "@/app/icons/FilledHeartIcon";
 import { useAuth } from "@/contexts/AuthContext";
@@ -26,8 +26,8 @@ const HeaderHeartIcon = ({ size = 30, isModalOpen = false }: Props) => {
           if (isMounted) setIsFilled(false);
           return;
         }
-        const list = await favoritesList();
-        if (isMounted) setIsFilled(Array.isArray(list) && list.length > 0);
+        const response = await apiEcommerceClientFavoritesList();
+        if (isMounted) setIsFilled((response.results || []).length > 0);
       } catch {
         if (isMounted) setIsFilled(false);
       }

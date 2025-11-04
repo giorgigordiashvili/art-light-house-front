@@ -5,7 +5,7 @@ import BigCircle from "@/components/ui/BigCircle";
 import LeftCircle from "@/components/ui/LeftCircle";
 import NewCircle from "@/components/ui/NewCircle";
 import { useEffect, useState } from "react";
-import { ordersRetrieve } from "@/api/generated/api";
+import { apiEcommerceClientOrdersRetrieve } from "@/api/generated/api";
 import type { Order } from "@/api/generated/interfaces";
 
 const StyledComponent = styled.div`
@@ -31,7 +31,7 @@ const OrderDetailScreen = ({ dictionary, orderId }: OrderDetailScreenProps) => {
     const fetchOrder = async () => {
       try {
         setLoading(true);
-        const orderData = await ordersRetrieve(orderId);
+        const orderData = await apiEcommerceClientOrdersRetrieve(orderId);
         setOrder(orderData);
       } catch {
         setError("Failed to fetch order");

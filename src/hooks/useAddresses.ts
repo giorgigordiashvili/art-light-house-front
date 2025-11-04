@@ -1,16 +1,16 @@
 import { useState, useEffect } from "react";
-import { addressList } from "@/api/generated/api";
-import { Address } from "@/api/generated/interfaces";
+import { apiEcommerceClientAddressesList } from "@/api/generated/api";
+import { ClientAddress } from "@/api/generated/interfaces";
 
 interface UseAddressesResult {
-  addresses: Address[];
+  addresses: ClientAddress[];
   loading: boolean;
   error: string | null;
   refetch: () => Promise<void>;
 }
 
 export const useAddresses = (): UseAddressesResult => {
-  const [addresses, setAddresses] = useState<Address[]>([]);
+  const [addresses, setAddresses] = useState<ClientAddress[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -19,8 +19,8 @@ export const useAddresses = (): UseAddressesResult => {
       setLoading(true);
       setError(null);
 
-      const fetchedAddresses = await addressList();
-      setAddresses(fetchedAddresses);
+      const response = await apiEcommerceClientAddressesList();
+      setAddresses(response.results || []);
     } catch (err: any) {
       setError(err?.response?.data?.message || err?.message || "Failed to fetch addresses");
     } finally {

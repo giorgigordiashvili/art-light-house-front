@@ -8,7 +8,8 @@ import InputTitle from "./InputTitle";
 import CloseIcon from "./CloseIcon";
 import ReturnIcon from "./ReturnIcon";
 import AdditionalAction from "./AdditionalAction";
-import { verifyEmail, resendVerificationCode } from "@/api/generated/api";
+import { verifyEmail } from "@/api/generated/api";
+import type { EmailVerificationRequest } from "@/api/generated/interfaces";
 import { useAuth } from "@/contexts/AuthContext";
 
 const StyledContainer = styled.div`
@@ -78,6 +79,7 @@ interface RegistrationCodeModalProps {
   onReturn: () => void;
   onConfirm: () => void;
   email: string;
+  verificationToken?: string;
   dictionary?: any;
 }
 
@@ -86,6 +88,7 @@ const RegistrationCodeModal = ({
   onReturn,
   onConfirm,
   email,
+  verificationToken = "",
   dictionary,
 }: RegistrationCodeModalProps) => {
   const [code, setCode] = useState("");
@@ -103,9 +106,36 @@ const RegistrationCodeModal = ({
     try {
       setIsLoading(true);
       setError("");
-      const resp = await verifyEmail({ email, code });
-      if (resp?.access && resp?.refresh && resp?.user) {
-        loginWithTokens(resp.user, resp.access, resp.refresh);
+      // Ensure we have a verification token (fallback to window storage if needed)
+      const token =
+        verificationToken ||
+        (typeof window !== "undefined" ? (window as any).__reg_verification_token || "" : "");
+
+      const trimmedCode = code.trim();
+
+      if (!token) {
+        setError(
+          dictionary?.header?.registrationCodeModal?.missingToken ||
+            "Verification session expired. Please start registration again."
+        );
+        return;
+      }
+
+      if (!trimmedCode) {
+        setError(
+          dictionary?.header?.registrationCodeModal?.missingCode ||
+            "Please enter the verification code."
+        );
+        return;
+      }
+
+      const requestData: EmailVerificationRequest = {
+        verification_token: token,
+        code: trimmedCode,
+      };
+      const resp = await verifyEmail(requestData);
+      if (resp?.access && resp?.refresh && resp?.client) {
+        loginWithTokens(resp.client, resp.access, resp.refresh);
         onConfirm();
       }
     } catch {
@@ -121,10 +151,11 @@ const RegistrationCodeModal = ({
       setIsResending(true);
       setResendInfo("");
       setResendError("");
-      await resendVerificationCode({ email });
+      // TODO: Resend verification code endpoint not available in new API
+      // await resendVerificationCode({ email });
       setResendInfo(
         dictionary?.header?.registrationCodeModal?.resendInfo ||
-          "The code has been resent to your email"
+          "Please check your email for the verification code"
       );
     } catch {
       setResendError(
