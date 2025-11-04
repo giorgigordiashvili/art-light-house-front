@@ -146,7 +146,8 @@ const PasswordResetVerifyModal = ({
       setLoading(true);
 
       const requestData: PasswordResetConfirm = {
-        token: code.trim(),
+        email: email.trim(),
+        code: code.trim(),
         new_password: newPassword,
         new_password_confirm: confirmPassword,
       };

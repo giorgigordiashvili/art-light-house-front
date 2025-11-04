@@ -1084,7 +1084,8 @@ export interface PaginatedUserList {
 }
 
 export interface PasswordResetConfirm {
-  token: string;
+  email: string;
+  code: string;
   new_password: string;
   new_password_confirm: string;
 }

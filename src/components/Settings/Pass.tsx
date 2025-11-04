@@ -96,8 +96,8 @@ const Pass = ({ dictionary }: any) => {
   // Step 1: Request reset
   const [email, setEmail] = useState(user?.email || "");
 
-  // Step 2: Confirm reset
-  const [token, setToken] = useState("");
+  // Step 2: Confirm reset (6-digit code)
+  const [code, setCode] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
 
@@ -106,7 +106,7 @@ const Pass = ({ dictionary }: any) => {
   const [success, setSuccess] = useState<string | null>(null);
 
   const resetForm = () => {
-    setToken("");
+    setCode("");
     setNewPassword("");
     setConfirmPassword("");
     setError(null);
@@ -165,10 +165,15 @@ const Pass = ({ dictionary }: any) => {
     setError(null);
     setSuccess(null);
 
-    if (!token || !token.trim()) {
+    if (!code || !code.trim()) {
       setError(
-        dictionary?.password?.tokenRequired || "Please enter the reset token from your email"
+        dictionary?.password?.codeRequired || "Please enter the 6-digit code from your email"
       );
+      return;
+    }
+
+    if (code.trim().length !== 6 || !/^\d{6}$/.test(code.trim())) {
+      setError(dictionary?.password?.invalidCode || "Please enter a valid 6-digit code");
       return;
     }
 
@@ -185,7 +190,8 @@ const Pass = ({ dictionary }: any) => {
     }
 
     const payload: PasswordResetConfirm = {
-      token: token.trim(),
+      email: email.trim(),
+      code: code.trim(),
       new_password: newPassword,
       new_password_confirm: confirmPassword,
     };
@@ -212,7 +218,7 @@ const Pass = ({ dictionary }: any) => {
       setError(
         apiMsg ||
           dictionary?.password?.resetConfirmFailed ||
-          "Failed to reset password. The token may be invalid or expired."
+          "Failed to reset password. The code may be invalid or expired."
       );
     } finally {
       setIsLoading(false);
@@ -230,11 +236,19 @@ const Pass = ({ dictionary }: any) => {
     }
   };
 
-  const hasChanges =
-    step === "request"
-      ? !!email && email !== user?.email
-      : !!(token || newPassword || confirmPassword);
-  const isDisabled = isLoading || !hasChanges;
+  // Simple validators
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  const canRequest = !!email && emailRegex.test(email.trim());
+  const canConfirm =
+    !!email?.trim() &&
+    !!code?.trim() &&
+    code.trim().length === 6 &&
+    /^\d{6}$/.test(code.trim()) &&
+    !!newPassword &&
+    newPassword.length >= 8 &&
+    newPassword === confirmPassword;
+
+  const isDisabled = isLoading || (step === "request" ? !canRequest : !canConfirm);
 
   return (
     <StylePass>
@@ -243,6 +257,7 @@ const Pass = ({ dictionary }: any) => {
           ? dictionary?.password?.resetTitle || "Reset Password"
           : dictionary?.password?.confirmTitle || "Enter Reset Code"}
       </Title>
+
       {/* Success/Error Messages */}
       {success && (
         <div
@@ -293,11 +308,7 @@ const Pass = ({ dictionary }: any) => {
           </InputsWrapper>
 
           <ButtonRow>
-            <Cancel
-              dictionary={dictionary}
-              onCancel={handleCancel}
-              disabled={!hasChanges || isLoading}
-            />
+            <Cancel dictionary={dictionary} onCancel={handleCancel} disabled={isLoading} />
             <SaveButton
               dictionary={{
                 ...dictionary,
@@ -315,10 +326,12 @@ const Pass = ({ dictionary }: any) => {
             <LeftColumn>
               <InputWithLabel
                 icon="/assets/icons/pass1.svg"
-                label={dictionary?.password?.tokenLabel || "Reset Token"}
-                placeholder={dictionary?.password?.tokenPlaceholder || "Enter token from email"}
-                value={token}
-                onChange={setToken}
+                label={dictionary?.password?.codeLabel || "6-digit Code"}
+                placeholder={
+                  dictionary?.password?.codePlaceholder || "Enter 6-digit code from email"
+                }
+                value={code}
+                onChange={(val: string) => setCode(String(val).replace(/\D/g, "").slice(0, 6))}
                 isPasswordField={false}
               />
               <InputWithLabel

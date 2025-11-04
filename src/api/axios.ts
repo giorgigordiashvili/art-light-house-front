@@ -30,11 +30,28 @@ const createAxiosInstance = (baseURL?: string): AxiosInstance => {
         config.baseURL = baseURL;
       }
 
+      // Endpoints that must be called WITHOUT Authorization header
+      const authFreePaths = [
+        "/api/ecommerce/clients/login/",
+        "/api/ecommerce/clients/register/",
+        "/api/ecommerce/clients/verify/",
+        "/api/ecommerce/clients/password-reset/request/",
+        "/api/ecommerce/clients/password-reset/confirm/",
+      ];
+
+      const urlPath = (config.url || "").toString();
+      const isAuthFree = authFreePaths.some((p) => urlPath.includes(p));
+
       const token =
         typeof window !== "undefined" ? localStorage.getItem("auth_access_token") : null;
       // Only add Authorization header if we have a valid token (not "cookie-based" placeholder)
-      if (token && token !== "cookie-based" && config.headers) {
+      if (!isAuthFree && token && token !== "cookie-based" && config.headers) {
         config.headers.Authorization = `Bearer ${token}`;
+      }
+
+      // Ensure Authorization header is not present for auth-free endpoints
+      if (isAuthFree && config.headers && (config.headers as any).Authorization) {
+        delete (config.headers as any).Authorization;
       }
 
       // Do not set 'Origin' header manually; browser controls it for CORS
