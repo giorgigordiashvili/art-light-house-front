@@ -13,7 +13,7 @@ import {
   apiEcommerceClientAddressesCreate,
   apiEcommerceClientAddressesPartialUpdate,
 } from "@/api/generated/api";
-import { PatchedClientAddress } from "@/api/generated/interfaces";
+import { PatchedClientAddress, ClientAddress } from "@/api/generated/interfaces";
 import { mapPlaceToAddressType } from "@/utils/addressHelpers";
 
 const StyledContainer = styled.div`
@@ -121,14 +121,17 @@ const AddressModal = ({ onClose, onSave, initialData, dictionary }: Props) => {
         await apiEcommerceClientAddressesPartialUpdate(String(initialData.id!), updateData);
       } else {
         // Create new address
+        // NOTE: Backend expects client to be null (it associates from auth), and requires city field
         const addressData = {
+          client: null as any,
           label: mapPlaceToAddressType(selectedPlace, dictionary) as any,
           address,
+          city: "tbilisi", // default city; adjust if UI adds city selection
           extra_instructions: additionalInfo || undefined,
           latitude: roundedLat,
           longitude: roundedLng,
           is_default: isDefault,
-        } as any;
+        } as unknown as ClientAddress;
 
         await apiEcommerceClientAddressesCreate(addressData);
       }
