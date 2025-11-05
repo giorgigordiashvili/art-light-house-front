@@ -50,12 +50,25 @@ const Description = styled.p`
   }
 `;
 
+function pickLocalized(value: any, fallback = ""): string {
+  if (typeof value === "string") return value;
+  if (value && typeof value === "object") {
+    let lang = "ka";
+    if (typeof window !== "undefined") {
+      const seg = (window.location.pathname.split("/")[1] || "").toLowerCase();
+      lang = seg === "en" ? "en" : "ka"; // 'ge' route maps to 'ka'
+    }
+    return value[lang] || value.en || value.ka || fallback;
+  }
+  return fallback;
+}
+
 const DetailDescription = ({ product }: { dictionary: any; product: ProductDetail }) => {
   return (
     <Wrapper>
-      <Title>{product.title}</Title>
+      <Title>{pickLocalized((product as any).title ?? product.name)}</Title>
       <Price>{product.price} ₾</Price>
-      <Description>{product.description}</Description>
+      <Description>{pickLocalized(product.description)}</Description>
     </Wrapper>
   );
 };
