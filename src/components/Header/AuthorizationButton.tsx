@@ -42,6 +42,7 @@ const StyledButton = styled.div`
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+    line-height: 15px;
 
     @media (max-width: 1080px) {
       display: none;
