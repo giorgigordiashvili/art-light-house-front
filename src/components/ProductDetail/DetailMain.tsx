@@ -20,6 +20,7 @@ import { useAuthModal } from "@/contexts/AuthModalContext";
 import {
   apiEcommerceClientCartItemsCreate,
   apiEcommerceClientCartGetOrCreateRetrieve,
+  apiEcommerceClientCartItemsPartialUpdate,
 } from "@/api/generated/api";
 
 const StyledComponent = styled.div`
@@ -616,8 +617,22 @@ function DetailMain({ dictionary, productId }: { dictionary: any; productId: num
       const cartId = normalized?.id;
       if (!cartId) return;
 
-      const payload = { cart: cartId, product: product.id, variant: null, quantity: 1 } as any;
-      await apiEcommerceClientCartItemsCreate(payload);
+      // If product already exists in cart, just increase its quantity
+      const existing = Array.isArray(normalized?.items)
+        ? (normalized.items as any[]).find((it: any) => {
+            const pid = typeof it.product === "object" ? it.product?.id : it.product;
+            return pid === product.id;
+          })
+        : undefined;
+
+      if (existing) {
+        await apiEcommerceClientCartItemsPartialUpdate(String(existing.id), {
+          quantity: (existing.quantity || 0) + 1,
+        } as any);
+      } else {
+        const payload = { cart: cartId, product: product.id, variant: null, quantity: 1 } as any;
+        await apiEcommerceClientCartItemsCreate(payload);
+      }
 
       // Update cart count in header - fetch latest cart
       try {

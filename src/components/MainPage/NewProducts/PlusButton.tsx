@@ -5,6 +5,7 @@ import { ProductList } from "@/api/generated/interfaces";
 import {
   apiEcommerceClientCartItemsCreate,
   apiEcommerceClientCartGetOrCreateRetrieve,
+  apiEcommerceClientCartItemsPartialUpdate,
 } from "@/api/generated/api";
 import { useAuthModal } from "@/contexts/AuthModalContext";
 
@@ -51,9 +52,22 @@ const PlusButton = ({ product }: { product?: ProductList }) => {
       const normalized = (data as any)?.cart ? (data as any).cart : (data as any);
       const cartId = normalized?.id;
       if (!cartId) return;
+      // If already in cart, bump quantity; else create
+      const existing = Array.isArray(normalized?.items)
+        ? (normalized.items as any[]).find((it: any) => {
+            const pid = typeof it.product === "object" ? it.product?.id : it.product;
+            return pid === product.id;
+          })
+        : undefined;
 
-      const payload = { cart: cartId, product: product.id, variant: null, quantity: 1 } as any;
-      await apiEcommerceClientCartItemsCreate(payload);
+      if (existing) {
+        await apiEcommerceClientCartItemsPartialUpdate(String(existing.id), {
+          quantity: (existing.quantity || 0) + 1,
+        } as any);
+      } else {
+        const payload = { cart: cartId, product: product.id, variant: null, quantity: 1 } as any;
+        await apiEcommerceClientCartItemsCreate(payload);
+      }
       const cart = await apiEcommerceClientCartGetOrCreateRetrieve();
       const n = (cart as any)?.cart ? (cart as any).cart : (cart as any);
       try {
