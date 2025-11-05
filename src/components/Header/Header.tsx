@@ -309,7 +309,10 @@ const Header = ({ header, dictionary }: HeaderProps) => {
           if (hasToken) {
             apiEcommerceClientCartGetOrCreateRetrieve()
               .then((data) => {
-                const count = data.items?.reduce((acc, it) => acc + (it.quantity || 0), 0) || 0;
+                const normalized = (data as any)?.cart ? (data as any).cart : (data as any);
+                const count =
+                  normalized.items?.reduce((acc: number, it: any) => acc + (it.quantity || 0), 0) ||
+                  0;
                 setCartItemCount(count);
               })
               .catch(() => {});
@@ -359,7 +362,9 @@ const Header = ({ header, dictionary }: HeaderProps) => {
 
     try {
       const data = await apiEcommerceClientCartGetOrCreateRetrieve();
-      const count = data.items?.reduce((acc, it) => acc + (it.quantity || 0), 0) || 0;
+      const normalized = (data as any)?.cart ? (data as any).cart : (data as any);
+      const count =
+        normalized.items?.reduce((acc: number, it: any) => acc + (it.quantity || 0), 0) || 0;
       setCartItemCount(count);
       if (count === 0) {
         if (isEmptyCartModalOpen) {
@@ -398,7 +403,9 @@ const Header = ({ header, dictionary }: HeaderProps) => {
       }
       try {
         const data = await apiEcommerceClientCartGetOrCreateRetrieve();
-        const count = data.items?.reduce((acc, it) => acc + (it.quantity || 0), 0) || 0;
+        const normalized = (data as any)?.cart ? (data as any).cart : (data as any);
+        const count =
+          normalized.items?.reduce((acc: number, it: any) => acc + (it.quantity || 0), 0) || 0;
         setCartItemCount(count);
       } catch {
         setCartItemCount(0);

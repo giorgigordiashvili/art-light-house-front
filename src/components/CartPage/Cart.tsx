@@ -70,6 +70,19 @@ const StyledSummary = styled.div`
   }
 `;
 
+function pickLocalized(value: any, fallback = ""): string {
+  if (typeof value === "string") return value;
+  if (value && typeof value === "object") {
+    let lang = "ka";
+    if (typeof window !== "undefined") {
+      const seg = (window.location.pathname.split("/")[1] || "").toLowerCase();
+      lang = seg === "en" ? "en" : "ka";
+    }
+    return value[lang] || value.en || value.ka || fallback;
+  }
+  return fallback;
+}
+
 const Cart = ({ dictionary }: any) => {
   const [isMobile, setIsMobile] = useState(false);
   const [cart, setCart] = useState<Cart | null>(null);
@@ -90,13 +103,18 @@ const Cart = ({ dictionary }: any) => {
     try {
       setLoading(true);
       const data = await apiEcommerceClientCartGetOrCreateRetrieve();
-      setCart(data);
+      const normalized = (data as any)?.cart ? (data as any).cart : (data as any);
+      setCart(normalized as Cart);
     } catch {
       setCart({
         id: 0,
+        client: 0,
+        delivery_address: null as any,
+        status: undefined,
+        notes: "",
         items: [],
-        total_items: "0",
-        total_price: "0",
+        total_items: 0,
+        total_amount: "0",
         created_at: "",
         updated_at: "",
       } as any);
@@ -109,9 +127,13 @@ const Cart = ({ dictionary }: any) => {
     if (!isAuthenticated) {
       setCart({
         id: 0,
+        client: 0,
+        delivery_address: null as any,
+        status: undefined,
+        notes: "",
         items: [],
-        total_items: "0",
-        total_price: "0",
+        total_items: 0,
+        total_amount: "0",
         created_at: "",
         updated_at: "",
       } as any);
@@ -120,17 +142,49 @@ const Cart = ({ dictionary }: any) => {
     fetchCart();
   }, [isAuthenticated]);
 
+  // Keep cart page in sync with external cart changes (e.g., updates from modal)
+  useEffect(() => {
+    const onCartUpdated = (e: Event) => {
+      try {
+        const detail = (e as CustomEvent).detail as { cart?: any };
+        if (detail?.cart) {
+          const normalized = (detail.cart as any)?.cart ? detail.cart.cart : detail.cart;
+          setCart(normalized as Cart);
+        } else {
+          // fallback: quick refetch
+          (async () => {
+            try {
+              const data = await apiEcommerceClientCartGetOrCreateRetrieve();
+              const normalized = (data as any)?.cart ? (data as any).cart : (data as any);
+              setCart(normalized as Cart);
+            } catch {}
+          })();
+        }
+      } catch {}
+    };
+    if (typeof window !== "undefined") {
+      window.addEventListener("cartUpdated", onCartUpdated as EventListener);
+    }
+    return () => {
+      if (typeof window !== "undefined") {
+        window.removeEventListener("cartUpdated", onCartUpdated as EventListener);
+      }
+    };
+  }, []);
+
   const handleIncrease = async (itemId: number, current: number) => {
     if (!isAuthenticated) return;
     try {
       await apiEcommerceClientCartItemsPartialUpdate(String(itemId), { quantity: current + 1 });
       const updated = await apiEcommerceClientCartGetOrCreateRetrieve();
-      setCart(updated);
+      const normalized = (updated as any)?.cart ? (updated as any).cart : (updated as any);
+      setCart(normalized as Cart);
       try {
-        const count = updated.items?.reduce((acc, it) => acc + (it.quantity || 0), 0) || 0;
+        const count =
+          normalized.items?.reduce((acc: number, it: any) => acc + (it.quantity || 0), 0) || 0;
         if (typeof window !== "undefined") {
           window.dispatchEvent(
-            new CustomEvent("cartUpdated", { detail: { count, cart: updated } })
+            new CustomEvent("cartUpdated", { detail: { count, cart: normalized } })
           );
         }
       } catch {}
@@ -146,12 +200,14 @@ const Cart = ({ dictionary }: any) => {
     try {
       await apiEcommerceClientCartItemsPartialUpdate(String(itemId), { quantity: current - 1 });
       const updated = await apiEcommerceClientCartGetOrCreateRetrieve();
-      setCart(updated);
+      const normalized = (updated as any)?.cart ? (updated as any).cart : (updated as any);
+      setCart(normalized as Cart);
       try {
-        const count = updated.items?.reduce((acc, it) => acc + (it.quantity || 0), 0) || 0;
+        const count =
+          normalized.items?.reduce((acc: number, it: any) => acc + (it.quantity || 0), 0) || 0;
         if (typeof window !== "undefined") {
           window.dispatchEvent(
-            new CustomEvent("cartUpdated", { detail: { count, cart: updated } })
+            new CustomEvent("cartUpdated", { detail: { count, cart: normalized } })
           );
         }
       } catch {}
@@ -163,12 +219,14 @@ const Cart = ({ dictionary }: any) => {
     try {
       await apiEcommerceClientCartItemsDestroy(String(itemId));
       const updated = await apiEcommerceClientCartGetOrCreateRetrieve();
-      setCart(updated);
+      const normalized = (updated as any)?.cart ? (updated as any).cart : (updated as any);
+      setCart(normalized as Cart);
       try {
-        const count = updated.items?.reduce((acc, it) => acc + (it.quantity || 0), 0) || 0;
+        const count =
+          normalized.items?.reduce((acc: number, it: any) => acc + (it.quantity || 0), 0) || 0;
         if (typeof window !== "undefined") {
           window.dispatchEvent(
-            new CustomEvent("cartUpdated", { detail: { count, cart: updated } })
+            new CustomEvent("cartUpdated", { detail: { count, cart: normalized } })
           );
         }
       } catch {}
@@ -187,10 +245,10 @@ const Cart = ({ dictionary }: any) => {
                   key={it.id}
                   card="cart"
                   dictionary={dictionary}
-                  title={it.product_details?.title}
-                  price={`${it.product_details?.price} ₾`}
+                  title={pickLocalized(it.product?.name)}
+                  price={`${it.product?.price ?? it.price_at_add} ₾`}
                   quantity={it.quantity || 1}
-                  imageSrc={it.product_details?.primary_image}
+                  imageSrc={it.product?.image || ""}
                   onIncrease={() => handleIncrease(it.id, it.quantity || 1)}
                   onDecrease={() => handleDecrease(it.id, it.quantity || 1)}
                   onRemove={() => handleRemove(it.id)}
@@ -201,10 +259,10 @@ const Cart = ({ dictionary }: any) => {
                 <CartProduct
                   key={it.id}
                   dictionary={dictionary}
-                  title={it.product_details?.title}
-                  price={`${it.product_details?.price} ₾`}
+                  title={pickLocalized(it.product?.name)}
+                  price={`${it.product?.price ?? it.price_at_add} ₾`}
                   quantity={it.quantity || 1}
-                  imageSrc={it.product_details?.primary_image}
+                  imageSrc={it.product?.image || ""}
                   onIncrease={() => handleIncrease(it.id, it.quantity || 1)}
                   onDecrease={() => handleDecrease(it.id, it.quantity || 1)}
                   onRemove={() => handleRemove(it.id)}
@@ -220,7 +278,7 @@ const Cart = ({ dictionary }: any) => {
             <Summary
               dictionary={{
                 ...dictionary.cart.cart,
-                price: `${cart?.total_price ?? "0"} ₾`,
+                price: `${cart?.total_amount ?? "0"} ₾`,
               }}
               cart={cart}
             />
