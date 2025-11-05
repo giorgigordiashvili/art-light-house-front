@@ -137,6 +137,19 @@ const StyledTrashButton = styled.div`
   z-index: 10;
 `;
 
+function pickLocalized(value: any, fallback = ""): string {
+  if (typeof value === "string") return value;
+  if (value && typeof value === "object") {
+    let lang = "ka";
+    if (typeof window !== "undefined") {
+      const seg = (window.location.pathname.split("/")[1] || "").toLowerCase();
+      lang = seg === "en" ? "en" : "ka";
+    }
+    return value[lang] || value.en || value.ka || fallback;
+  }
+  return fallback;
+}
+
 const FavoritesModal = ({ onClose, dictionary }: Props) => {
   const router = useRouter();
   const [items, setItems] = useState<FavoriteProduct[]>([]);
@@ -210,15 +223,33 @@ const FavoritesModal = ({ onClose, dictionary }: Props) => {
   const handleRemove = async (productId: number) => {
     try {
       // Find the favorite item to get its ID
-      const favoriteItem = items.find((item) => item.product === productId);
+      const favoriteItem = items.find((item) => {
+        const pid =
+          typeof (item as any).product === "object"
+            ? (item as any).product?.id
+            : (item as any).product;
+        return Number(pid) === Number(productId);
+      });
       if (favoriteItem) {
         await apiEcommerceClientFavoritesDestroy(String(favoriteItem.id));
       }
       // Update local state immediately
-      setItems((prev) => prev.filter((item) => item.product !== productId));
+      setItems((prev) =>
+        prev.filter((item) => {
+          const pid =
+            typeof (item as any).product === "object"
+              ? (item as any).product?.id
+              : (item as any).product;
+          return Number(pid) !== Number(productId);
+        })
+      );
       // Dispatch event to update other components
       if (typeof window !== "undefined") {
-        const remaining = items.length - 1;
+        const remaining = items.filter((i) => {
+          const pid =
+            typeof (i as any).product === "object" ? (i as any).product?.id : (i as any).product;
+          return Number(pid) !== Number(productId);
+        }).length;
         window.dispatchEvent(
           new CustomEvent("favoritesUpdated", {
             detail: { count: remaining, hasAny: remaining > 0 },
@@ -242,21 +273,29 @@ const FavoritesModal = ({ onClose, dictionary }: Props) => {
             )}
             <ProductList>
               {!loading && items?.length ? (
-                items.map((fav) => (
-                  <ProductWrapper key={fav.id}>
-                    <StyledTrashButton onClick={() => handleRemove(fav.product)}>
-                      <TrashIcon />
-                    </StyledTrashButton>
-                    <ContentPadding>
-                      <ProductContent
-                        dictionary={dictionary}
-                        title={fav.product_details?.title}
-                        price={`${fav.product_details?.price} ₾`}
-                        imageSrc={fav.product_details?.primary_image}
-                      />
-                    </ContentPadding>
-                  </ProductWrapper>
-                ))
+                items.map((fav) => {
+                  const p: any = (fav as any).product;
+                  const productId = typeof p === "object" ? p?.id : p;
+                  const title = pickLocalized(p?.name) || p?.title || "";
+                  const priceValue = p?.price || "";
+                  const price = priceValue ? `${priceValue} ₾` : "";
+                  const imageSrc = p?.image || "/assets/ProductImageContainer.svg";
+                  return (
+                    <ProductWrapper key={fav.id}>
+                      <StyledTrashButton onClick={() => handleRemove(Number(productId))}>
+                        <TrashIcon />
+                      </StyledTrashButton>
+                      <ContentPadding>
+                        <ProductContent
+                          dictionary={dictionary}
+                          title={title}
+                          price={price}
+                          imageSrc={imageSrc}
+                        />
+                      </ContentPadding>
+                    </ProductWrapper>
+                  );
+                })
               ) : (
                 <div
                   style={{

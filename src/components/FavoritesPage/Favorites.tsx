@@ -33,6 +33,19 @@ const StyledCards = styled.div`
   }
 `;
 
+function pickLocalized(value: any, fallback = ""): string {
+  if (typeof value === "string") return value;
+  if (value && typeof value === "object") {
+    let lang = "ka";
+    if (typeof window !== "undefined") {
+      const seg = (window.location.pathname.split("/")[1] || "").toLowerCase();
+      lang = seg === "en" ? "en" : "ka";
+    }
+    return value[lang] || value.en || value.ka || fallback;
+  }
+  return fallback;
+}
+
 const Favorites = ({ dictionary }: { dictionary: any }) => {
   const [items, setItems] = useState<FavoriteProduct[]>([]);
   const router = useRouter();
@@ -99,29 +112,45 @@ const Favorites = ({ dictionary }: { dictionary: any }) => {
     return (
       <StyledCards>
         {items.map((fav) => {
-          const pd: any = fav.product_details as any;
-          const title = pd?.title || "";
-          const priceValue = pd?.price || "";
+          const p: any = (fav as any).product;
+          const title = pickLocalized(p?.name) || p?.title || "";
+          const priceValue = p?.price || "";
           const price = priceValue ? `${priceValue} ₾` : "";
-          const primary = pd?.primary_image;
-          const imageSrc =
-            typeof primary === "string"
-              ? primary
-              : primary?.image || "/assets/ProductImageContainer.svg";
-          const productId = fav.product; // backend favorite record includes product id
+          const imageSrc = p?.image || "/assets/ProductImageContainer.svg";
+          const productId = typeof p === "object" ? Number(p?.id) : Number(p);
           const onRemove = async () => {
             const hasToken =
               typeof window !== "undefined" && !!localStorage.getItem("auth_access_token");
             if (!hasToken) return;
             try {
-              const favoriteItem = items.find((f) => f.product === productId);
+              const favoriteItem = items.find((f) => {
+                const pid =
+                  typeof (f as any).product === "object"
+                    ? (f as any).product?.id
+                    : (f as any).product;
+                return Number(pid) === Number(productId);
+              });
               if (favoriteItem) {
                 await apiEcommerceClientFavoritesDestroy(String(favoriteItem.id));
               }
-              setItems((prev) => prev.filter((f) => f.product !== productId));
+              setItems((prev) =>
+                prev.filter((f) => {
+                  const pid =
+                    typeof (f as any).product === "object"
+                      ? (f as any).product?.id
+                      : (f as any).product;
+                  return Number(pid) !== Number(productId);
+                })
+              );
               try {
                 if (typeof window !== "undefined") {
-                  const remaining = items.filter((f) => f.product !== productId).length;
+                  const remaining = items.filter((f) => {
+                    const pid =
+                      typeof (f as any).product === "object"
+                        ? (f as any).product?.id
+                        : (f as any).product;
+                    return Number(pid) !== Number(productId);
+                  }).length;
                   window.dispatchEvent(
                     new CustomEvent("favoritesUpdated", {
                       detail: { count: remaining, hasAny: remaining > 0 },
@@ -139,7 +168,7 @@ const Favorites = ({ dictionary }: { dictionary: any }) => {
           const onDetails = () => {
             const seg = (pathname?.split("/")[1] || "").toLowerCase();
             const locale = seg === "en" ? "en" : "ge";
-            router.push(`/${locale}/products/${productId}`);
+            router.push(`/${locale}/products/${Number(productId)}`);
           };
           return (
             <FavoriteCard

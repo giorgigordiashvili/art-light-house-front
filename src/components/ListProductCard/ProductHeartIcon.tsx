@@ -1,11 +1,12 @@
 "use client";
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import Image from "next/image";
 import {
   apiEcommerceClientFavoritesList,
   apiEcommerceClientFavoritesCreate,
   apiEcommerceClientFavoritesDestroy,
 } from "@/api/generated/api";
+import { apiEcommerceClientProfileMeRetrieve } from "@/api/generated/api";
 import { useAuthModal } from "@/contexts/AuthModalContext";
 
 type Props = {
@@ -28,6 +29,59 @@ const ProductHeartIcon = ({ productId, defaultIsFavorite, size = 30 }: Props) =>
   const [isFilled, setIsFilled] = useState<boolean>(initialFilled);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  // Ensure persisted state after refresh: check server favorites on mount
+  useEffect(() => {
+    let isMounted = true;
+    const hasToken = typeof window !== "undefined" && !!localStorage.getItem("auth_access_token");
+
+    // If we already know it's a favorite, no need to fetch
+    if (!hasToken || isFilled) return;
+
+    const checkFavorited = async () => {
+      try {
+        // Iterate pages defensively in case user has many favorites
+        let page = 1;
+        let found = false;
+        // Hard cap to avoid excessive requests; adjust if needed
+        const MAX_PAGES = 10;
+        while (!found && page <= MAX_PAGES) {
+          const resp = await apiEcommerceClientFavoritesList(undefined, page);
+          const list = (resp as any)?.results || [];
+          if (list.length > 0) {
+            found = list.some((f: any) => {
+              const pid = typeof f.product === "object" ? f.product?.id : f.product;
+              return Number(pid) === Number(productId);
+            });
+          }
+          if (found) break;
+          const next = (resp as any)?.next;
+          if (!next) break;
+          page += 1;
+        }
+        if (isMounted && found) setIsFilled(true);
+      } catch {
+        // ignore
+      }
+    };
+
+    checkFavorited();
+
+    // Also update reactively if some other component toggles favorites
+    const onFavUpdate = () => {
+      checkFavorited();
+    };
+    if (typeof window !== "undefined") {
+      window.addEventListener("favoritesUpdated", onFavUpdate as EventListener);
+    }
+    return () => {
+      isMounted = false;
+      if (typeof window !== "undefined") {
+        window.removeEventListener("favoritesUpdated", onFavUpdate as EventListener);
+      }
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [productId]);
+
   const handleClick = async (e: React.MouseEvent) => {
     e.stopPropagation();
     if (isSubmitting) return;
@@ -41,27 +95,30 @@ const ProductHeartIcon = ({ productId, defaultIsFavorite, size = 30 }: Props) =>
 
     try {
       setIsSubmitting(true);
-      // Determine current favorite state; prefer local, fallback to list
-      let currentlyFavorite = isFilled;
+      // Always query to find existing record id robustly
       let favoriteId: string | null = null;
+      try {
+        const response = await apiEcommerceClientFavoritesList();
+        const list = response.results || [];
+        const existing = list.find((f: any) => {
+          const pid = typeof f.product === "object" ? f.product?.id : f.product;
+          return Number(pid) === Number(productId);
+        });
+        if (existing) favoriteId = String(existing.id);
+      } catch {}
 
-      if (!currentlyFavorite) {
-        try {
-          const response = await apiEcommerceClientFavoritesList();
-          const list = response.results || [];
-          const existing = list.find((f: any) => f.product === productId);
-          currentlyFavorite = !!existing;
-          if (existing) favoriteId = String(existing.id);
-        } catch {}
-      }
-
-      if (currentlyFavorite && favoriteId) {
+      if (favoriteId) {
         // Remove from favorites
         await apiEcommerceClientFavoritesDestroy(favoriteId);
         setIsFilled(false);
       } else {
-        // Add to favorites
-        const payload = { product: productId } as any;
+        // Add to favorites; include client id from profile
+        let clientId: number | undefined;
+        try {
+          const me = await apiEcommerceClientProfileMeRetrieve();
+          clientId = (me as any)?.id;
+        } catch {}
+        const payload = { client: clientId, product: productId } as any;
         await apiEcommerceClientFavoritesCreate(payload);
         setIsFilled(true);
       }
