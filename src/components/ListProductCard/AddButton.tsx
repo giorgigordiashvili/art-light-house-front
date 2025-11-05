@@ -60,15 +60,22 @@ const AddButton = ({
     }
 
     try {
-      const payload = { product: product.id, quantity: 1 };
+      // Ensure we have a cart id
+      const data = await apiEcommerceClientCartGetOrCreateRetrieve();
+      const normalized = (data as any)?.cart ? (data as any).cart : (data as any);
+      const cartId = normalized?.id;
+      if (!cartId) return;
+
+      const payload = { cart: cartId, product: product.id, variant: null, quantity: 1 } as any;
       await apiEcommerceClientCartItemsCreate(payload);
       const cart = await apiEcommerceClientCartGetOrCreateRetrieve();
+      const n = (cart as any)?.cart ? (cart as any).cart : (cart as any);
       try {
-        const count = Array.isArray(cart?.items)
-          ? cart.items.reduce((acc: number, it: any) => acc + (it.quantity || 0), 0)
+        const count = Array.isArray(n?.items)
+          ? n.items.reduce((acc: number, it: any) => acc + (it.quantity || 0), 0)
           : 0;
         if (typeof window !== "undefined") {
-          window.dispatchEvent(new CustomEvent("cartUpdated", { detail: { count, cart } }));
+          window.dispatchEvent(new CustomEvent("cartUpdated", { detail: { count, cart: n } }));
         }
       } catch {}
       onClick?.();

@@ -17,7 +17,10 @@ import ReturnIcon from "../Header/ReturnIcon";
 import { useProductDetail } from "@/hooks/useProductDetail";
 import { useSimilarProducts } from "@/hooks/useSimilarProducts";
 import { useAuthModal } from "@/contexts/AuthModalContext";
-import { apiEcommerceClientCartItemsCreate } from "@/api/generated/api";
+import {
+  apiEcommerceClientCartItemsCreate,
+  apiEcommerceClientCartGetOrCreateRetrieve,
+} from "@/api/generated/api";
 
 const StyledComponent = styled.div`
   background: #0b0b0b;
@@ -509,7 +512,7 @@ function DetailMain({ dictionary, productId }: { dictionary: any; productId: num
     similarProducts,
     loading: similarLoading,
     error: similarError,
-  } = useSimilarProducts(product?.category, productId, 30); // fetch more to allow horizontal scroll
+  } = useSimilarProducts(undefined, productId, 30); // category not available on ProductDetail; fetch more to allow horizontal scroll
 
   // Horizontal scroll + drag state for similar products (when more than 4)
   const scrollRef = useRef<HTMLDivElement | null>(null);
@@ -607,14 +610,22 @@ function DetailMain({ dictionary, productId }: { dictionary: any; productId: num
     }
 
     try {
-      const payload = { product: product.id, quantity: 1 };
+      // Ensure we have a cart id first
+      const data = await apiEcommerceClientCartGetOrCreateRetrieve();
+      const normalized = (data as any)?.cart ? (data as any).cart : (data as any);
+      const cartId = normalized?.id;
+      if (!cartId) return;
+
+      const payload = { cart: cartId, product: product.id, variant: null, quantity: 1 } as any;
       await apiEcommerceClientCartItemsCreate(payload);
 
       // Update cart count in header - fetch latest cart
       try {
-        // Trigger cart refresh event
+        const updated = await apiEcommerceClientCartGetOrCreateRetrieve();
+        const n = (updated as any)?.cart ? (updated as any).cart : (updated as any);
+        const count = n.items?.reduce((acc: number, it: any) => acc + (it.quantity || 0), 0) || 0;
         if (typeof window !== "undefined") {
-          window.dispatchEvent(new CustomEvent("cartUpdated"));
+          window.dispatchEvent(new CustomEvent("cartUpdated", { detail: { count, cart: n } }));
         }
       } catch {}
     } catch {}
