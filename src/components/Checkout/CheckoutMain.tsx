@@ -8,7 +8,7 @@ import TextContainer from "@/components/Checkout/TextContainer";
 import Summery from "@/components/CartPage/Summary";
 import AddressSelectionModal from "@/components/Checkout/AddressSelectionModal";
 import { useAddresses } from "@/hooks/useAddresses";
-import { ClientAddress, Cart, OrderCreateRequest } from "@/api/generated/interfaces";
+import { ClientAddress, Cart, OrderCreate as OrderCreateRequest } from "@/api/generated/interfaces";
 import {
   apiEcommerceClientCartGetOrCreateRetrieve,
   apiEcommerceClientOrdersCreate,
@@ -245,26 +245,11 @@ const Checkout: React.FC<CheckoutProps> = ({ dictionary }) => {
     try {
       setSubmitting(true);
 
-      // Map delivery method from Georgian to API value
-      const deliveryMethodMap: Record<string, string> = {
-        "ექსპრეს მოტანა": "express",
-        "შემდეგ დღეს მოტანა": "standard",
-      };
-
-      const deliveryMethod = deliveryMethodMap[selectedDelivery] || "express";
-
-      // Prepare order data
+      // Prepare order data (server uses cart to infer items)
       const orderData: OrderCreateRequest = {
-        delivery_address: currentAddress.id,
-        phone_number: phoneNumber,
-        delivery_method: deliveryMethod as any,
-        delivery_notes: deliveryNotes || "",
-        payment_method: "card", // Default to card as per requirement
-        items: cart.items.map((item) => ({
-          product: item.product,
-          quantity: item.quantity || 1,
-        })),
-        from_cart: true, // User is ordering from cart
+        cart_id: cart.id,
+        delivery_address_id: currentAddress.id,
+        notes: deliveryNotes || "",
       };
 
       // Create order
@@ -311,17 +296,19 @@ const Checkout: React.FC<CheckoutProps> = ({ dictionary }) => {
               label={dictionary?.checkout?.subTitle1 || "მისამართი"}
               method={
                 currentAddress
-                  ? getAddressTypeName(currentAddress.address_type as any)
+                  ? getAddressTypeName(currentAddress.label as any)
                   : dictionary?.checkout?.cardTitle1 || "სამსახური"
               }
               desc={
-                currentAddress?.address_string ||
+                (currentAddress
+                  ? `${currentAddress.address}${currentAddress.city ? ", " + currentAddress.city : ""}`
+                  : undefined) ||
                 dictionary?.checkout?.cardDescription1 ||
                 "5 Petre Kavtaradze Street"
               }
               imageSrc={
                 currentAddress
-                  ? getAddressTypeIcon(currentAddress.address_type as any)
+                  ? getAddressTypeIcon(currentAddress.label as any)
                   : "/assets/icons/job.svg"
               }
               showChangeButton={true}
@@ -396,17 +383,19 @@ const Checkout: React.FC<CheckoutProps> = ({ dictionary }) => {
           label={dictionary?.checkout?.subTitle1 || "მისამართი"}
           method={
             currentAddress
-              ? getAddressTypeName(currentAddress.address_type as any)
+              ? getAddressTypeName(currentAddress.label as any)
               : dictionary?.checkout?.cardTitle1 || "სამსახური"
           }
           desc={
-            currentAddress?.address_string ||
+            (currentAddress
+              ? `${currentAddress.address}${currentAddress.city ? ", " + currentAddress.city : ""}`
+              : undefined) ||
             dictionary?.checkout?.cardDescription1 ||
             "5 Petre Kavtaradze Street"
           }
           imageSrc={
             currentAddress
-              ? getAddressTypeIcon(currentAddress.address_type as any)
+              ? getAddressTypeIcon(currentAddress.label as any)
               : "/assets/icons/job.svg"
           }
           showChangeButton={true}
