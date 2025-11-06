@@ -133,6 +133,11 @@ interface CheckoutProps {
       addressTypeWork?: string;
       addressTypeHome?: string;
       addressTypeOther?: string;
+      summary?: string;
+      productPrice?: string;
+      deliveryService?: string;
+      serviceCommision?: string;
+      paymentButton?: string;
     };
   };
 }
@@ -160,7 +165,9 @@ const Checkout: React.FC<CheckoutProps> = ({ dictionary }) => {
       try {
         setLoadingCart(true);
         const cartData = await apiEcommerceClientCartGetOrCreateRetrieve();
-        setCart(cartData);
+        // Normalize: API may return { cart, created } or just Cart
+        const normalized = (cartData as any)?.cart ? (cartData as any).cart : cartData;
+        setCart(normalized as Cart);
       } catch {
       } finally {
         setLoadingCart(false);
@@ -331,7 +338,14 @@ const Checkout: React.FC<CheckoutProps> = ({ dictionary }) => {
 
           <RightSection>
             <Summery
-              dictionary={dictionary?.checkout}
+              dictionary={{
+                ...dictionary?.checkout,
+                summary: dictionary?.checkout?.summary || "შეჯამება",
+                productPrice: dictionary?.checkout?.productPrice || "პროდუქტის ღირებულება",
+                deliveryService: dictionary?.checkout?.deliveryService || "მიტანის სერვისი",
+                serviceCommision: dictionary?.checkout?.serviceCommision || "სერვისის საკომისიო",
+                paymentButton: dictionary?.checkout?.paymentButton || "გადახდა",
+              }}
               cart={cart}
               onPayment={handlePayment}
               submitting={submitting || loadingCart}
@@ -417,7 +431,14 @@ const Checkout: React.FC<CheckoutProps> = ({ dictionary }) => {
 
         <RightSection>
           <Summery
-            dictionary={dictionary?.checkout}
+            dictionary={{
+              ...dictionary?.checkout,
+              summary: dictionary?.checkout?.summary || "შეჯამება",
+              productPrice: dictionary?.checkout?.productPrice || "პროდუქტის ღირებულება",
+              deliveryService: dictionary?.checkout?.deliveryService || "მიტანის სერვისი",
+              serviceCommision: dictionary?.checkout?.serviceCommision || "სერვისის საკომისიო",
+              paymentButton: dictionary?.checkout?.paymentButton || "გადახდა",
+            }}
             cart={cart}
             onPayment={handlePayment}
             submitting={submitting || loadingCart}
