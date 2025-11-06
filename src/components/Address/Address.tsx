@@ -130,20 +130,16 @@ const Address = ({ dictionary }: any) => {
           <StyledMobileDetail>
             <MobileDetailDropdown dictionary={dictionary} />
           </StyledMobileDetail>
-          {!isAuthenticated ? (
-            <div
-              style={{
-                color: "#ffffff",
-                textAlign: "center",
-                padding: "40px",
-                fontSize: "16px",
-                backgroundColor: "#2a2a2a",
-                borderRadius: "12px",
-                marginTop: "20px",
-              }}
-            >
-              {dictionary?.pleaseLogin || "Please log in to view and manage your addresses."}
-            </div>
+          {loading ? (
+            // Show skeleton via AddressBar while loading regardless of auth state
+            <AddressBar
+              onOpenModal={() => setIsModalOpen(true)}
+              addresses={[]}
+              onEditAddress={handleEditAddress}
+              onDeleteAddress={handleDeleteAddress}
+              dictionary={dictionary}
+              loading={true}
+            />
           ) : error ? (
             <div
               style={{
@@ -156,14 +152,16 @@ const Address = ({ dictionary }: any) => {
               Error loading addresses: {error}
             </div>
           ) : (
-            <AddressBar
-              onOpenModal={() => setIsModalOpen(true)}
-              addresses={addresses}
-              onEditAddress={handleEditAddress}
-              onDeleteAddress={handleDeleteAddress}
-              dictionary={dictionary}
-              loading={loading}
-            />
+            isAuthenticated && (
+              <AddressBar
+                onOpenModal={() => setIsModalOpen(true)}
+                addresses={addresses}
+                onEditAddress={handleEditAddress}
+                onDeleteAddress={handleDeleteAddress}
+                dictionary={dictionary}
+                loading={false}
+              />
+            )
           )}
         </StyledBars>
       </StyledContainer>

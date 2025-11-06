@@ -15,7 +15,8 @@ export const useAddresses = (): UseAddressesResult => {
   const [addresses, setAddresses] = useState<ClientAddress[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const { isAuthenticated: authContextIsAuthenticated } = useAuth();
+  const { isAuthenticated: authContextIsAuthenticated, isLoading: authContextIsLoading } =
+    useAuth();
   const [isAuthenticated, setIsAuthenticated] = useState(authContextIsAuthenticated);
 
   const fetchAddresses = useCallback(async () => {
@@ -23,7 +24,13 @@ export const useAddresses = (): UseAddressesResult => {
       setLoading(true);
       setError(null);
 
-      // Check if user is authenticated from AuthContext
+      // If auth state is still initializing, keep skeleton active
+      if (authContextIsLoading) {
+        setLoading(true);
+        return;
+      }
+
+      // If auth finished and user is not authenticated, stop loading with empty data
       if (!authContextIsAuthenticated) {
         setIsAuthenticated(false);
         setAddresses([]);
@@ -45,7 +52,7 @@ export const useAddresses = (): UseAddressesResult => {
     } finally {
       setLoading(false);
     }
-  }, [authContextIsAuthenticated]);
+  }, [authContextIsAuthenticated, authContextIsLoading]);
 
   useEffect(() => {
     // Update local isAuthenticated state when AuthContext changes
