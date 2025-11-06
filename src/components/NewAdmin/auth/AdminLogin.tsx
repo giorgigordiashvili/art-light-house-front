@@ -2,6 +2,9 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useAdminAuth } from "@/contexts/AdminAuthContext";
+import { tenantLogin } from "@/api/generated/api";
+import type { TenantLogin } from "@/api/generated/interfaces";
+import adminAxios from "@/api/admin-axios";
 import styled from "styled-components";
 
 const LoginContainer = styled.div`
@@ -139,7 +142,7 @@ const AdminLogin = () => {
     }
   }, [success]);
 
-  const { signIn, isAuthenticated, isLoading: authLoading } = useAdminAuth();
+  const { isAuthenticated, isLoading: authLoading } = useAdminAuth();
   const router = useRouter();
 
   // Redirect if already authenticated
@@ -156,18 +159,31 @@ const AdminLogin = () => {
     setIsLoading(true);
 
     try {
-      const loginSuccess = await signIn(email, password);
+      const payload: TenantLogin = { email, password };
+      const response = await tenantLogin(payload);
 
-      if (loginSuccess) {
-        setSuccess("Login successful! Redirecting to admin panel...");
-        // Small delay to show success message before redirect
-        setTimeout(() => {
-          router.replace("/admin");
-        }, 1500);
-      } else {
-        const errorMsg = "Access denied. You don't have admin privileges.";
-        setError(errorMsg);
+      // Expecting { message, token }
+      const token = (response as any)?.token;
+      if (!token) {
+        throw new Error("Invalid credentials or missing token");
       }
+
+      // Persist admin tokens (no refresh provided; store same value)
+      localStorage.setItem("admin_access_token", token);
+      localStorage.setItem("admin_refresh_token", token);
+
+      // Fetch and persist admin profile for AdminAuthProvider bootstrap
+      try {
+        const profile = await adminAxios.get(`/api/auth/profile/`);
+        localStorage.setItem("admin_user", JSON.stringify(profile.data));
+      } catch {
+        // ignore profile fetch errors; token persisted is enough to proceed
+      }
+
+      setSuccess("Login successful! Redirecting to admin panel...");
+      setTimeout(() => {
+        router.replace("/admin");
+      }, 800);
     } catch (err: any) {
       // Handle different error scenarios
       if (err?.response?.status === 400) {
