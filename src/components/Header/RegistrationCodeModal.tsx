@@ -8,8 +8,11 @@ import InputTitle from "./InputTitle";
 import CloseIcon from "./CloseIcon";
 import ReturnIcon from "./ReturnIcon";
 import AdditionalAction from "./AdditionalAction";
-import { verifyEmail } from "@/api/generated/api";
-import type { EmailVerificationRequest } from "@/api/generated/interfaces";
+import { verifyEmail, resendVerificationCode } from "@/api/generated/api";
+import type {
+  EmailVerificationRequestRequest,
+  ResendVerificationCodeRequestRequest,
+} from "@/api/generated/interfaces";
 import { useAuth } from "@/contexts/AuthContext";
 
 const StyledContainer = styled.div`
@@ -129,7 +132,7 @@ const RegistrationCodeModal = ({
         return;
       }
 
-      const requestData: EmailVerificationRequest = {
+      const requestData: EmailVerificationRequestRequest = {
         verification_token: token,
         code: trimmedCode,
       };
@@ -151,15 +154,27 @@ const RegistrationCodeModal = ({
       setIsResending(true);
       setResendInfo("");
       setResendError("");
-      // TODO: Resend verification code endpoint not available in new API
-      // await resendVerificationCode({ email });
+
+      const requestData: ResendVerificationCodeRequestRequest = {
+        email: email,
+      };
+
+      const response = await resendVerificationCode(requestData);
+
+      // Update the verification token if provided in response
+      if (response?.verification_token && typeof window !== "undefined") {
+        (window as any).__reg_verification_token = response.verification_token;
+      }
+
       setResendInfo(
-        dictionary?.header?.registrationCodeModal?.resendInfo ||
-          "Please check your email for the verification code"
+        response?.message ||
+          dictionary?.header?.registrationCodeModal?.resendInfo ||
+          "Verification code has been resent. Please check your email."
       );
-    } catch {
+    } catch (error: any) {
       setResendError(
-        dictionary?.header?.registrationCodeModal?.resendError ||
+        error?.response?.data?.message ||
+          dictionary?.header?.registrationCodeModal?.resendError ||
           "Failed to send the code. Please try again."
       );
     } finally {
