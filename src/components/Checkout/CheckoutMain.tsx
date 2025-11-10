@@ -11,7 +11,7 @@ import { useAddresses } from "@/hooks/useAddresses";
 import PaymentMethodSelectionModal from "@/components/Checkout/PaymentMethodSelectionModal";
 import { ecommerceClientCardsRetrieve } from "@/api/generated/api";
 import { PaymentMethodData } from "@/types";
-import { ClientAddress, Cart, OrderCreate as OrderCreateRequest } from "@/api/generated/interfaces";
+import { ClientAddress, Cart, OrderCreateRequest } from "@/api/generated/interfaces";
 import {
   ecommerceClientCartGetOrCreateRetrieve,
   ecommerceClientOrdersCreate,
@@ -298,40 +298,28 @@ const Checkout: React.FC<CheckoutProps> = ({ dictionary }) => {
     try {
       setSubmitting(true);
 
-      // Prepare order data (server uses cart to infer items)
+      // Prepare order data
       const orderData: OrderCreateRequest = {
         cart_id: cart.id,
         delivery_address_id: currentAddress.id,
         notes: deliveryNotes || "",
+        card_id: selectedPaymentMethodId ? parseInt(selectedPaymentMethodId, 10) : undefined,
       };
 
-      // Create order
-      await ecommerceClientOrdersCreate(orderData);
+      // Create order and get payment URL
+      const response: any = await ecommerceClientOrdersCreate(orderData);
 
-      // TODO: Cart clearing - backend should automatically clear cart after order
-      // For now, just dispatch empty cart event
-      try {
-        // Dispatch cart update event to update cart icon/modal
-        if (typeof window !== "undefined") {
-          window.dispatchEvent(
-            new CustomEvent("cartUpdated", {
-              detail: {
-                count: 0,
-                cart: {
-                  id: 0,
-                  items: [],
-                },
-              },
-            })
-          );
-        }
-      } catch {
-        // Continue to success page even if event dispatch fails
+      const paymentUrl = response?.payment_url;
+      if (paymentUrl) {
+        // Redirect to bank payment page
+        window.location.href = paymentUrl;
+        return;
       }
 
-      // Redirect to success page
-      router.push(`/${locale}/succsess`);
-    } catch {
+      // Fallback: if no payment URL, navigate to main page
+      router.push(`/${locale}`);
+    } catch (e) {
+      console.error("Order creation failed", e);
       alert("Failed to create order. Please try again.");
     } finally {
       setSubmitting(false);
