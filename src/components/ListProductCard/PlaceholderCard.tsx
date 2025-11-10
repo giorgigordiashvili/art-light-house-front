@@ -6,7 +6,7 @@ const StyledRectangle = styled.div`
   height: 417px;
   border-radius: 17px;
   z-index: 2;
-  opacity: 0.3;
+  opacity: 0;
   position: relative;
   display: flex;
   flex-direction: column;

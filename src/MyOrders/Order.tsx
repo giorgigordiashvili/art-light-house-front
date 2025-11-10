@@ -7,8 +7,7 @@ import type { Order as OrderType } from "@/api/generated/interfaces";
 const StylePass = styled.div`
   width: 100%;
   max-width: 100%;
-
-  max-height: 544px;
+  height: 544px;
   padding: 24px;
   background: #1a1a1a96;
   border-radius: 17px;
@@ -74,6 +73,7 @@ const EmptyText = styled.p`
   color: #999;
   text-align: center;
   padding: 20px;
+  font-size: 20px;
 `;
 
 const SkeletonOrderCard = styled.div`
