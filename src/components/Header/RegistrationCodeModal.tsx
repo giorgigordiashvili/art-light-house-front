@@ -100,6 +100,8 @@ const RegistrationCodeModal = ({
   const [isResending, setIsResending] = useState(false);
   const [resendInfo, setResendInfo] = useState("");
   const [resendError, setResendError] = useState("");
+  // Track the freshest verification token locally so we don't keep using a stale prop value after resends
+  const [currentToken, setCurrentToken] = useState<string>(verificationToken);
   const { loginWithTokens } = useAuth();
   const handleClickInside = (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -109,9 +111,9 @@ const RegistrationCodeModal = ({
     try {
       setIsLoading(true);
       setError("");
-      // Ensure we have a verification token (fallback to window storage if needed)
+      // Always pull the latest token from local state; if missing, fall back to window
       const token =
-        verificationToken ||
+        currentToken ||
         (typeof window !== "undefined" ? (window as any).__reg_verification_token || "" : "");
 
       const trimmedCode = code.trim();
@@ -141,8 +143,13 @@ const RegistrationCodeModal = ({
         loginWithTokens(resp.client, resp.access, resp.refresh);
         onConfirm();
       }
-    } catch {
-      setError("Invalid or expired code. Please try again.");
+    } catch (e: any) {
+      const apiMessage = e?.response?.data?.message || e?.response?.data?.error;
+      setError(
+        apiMessage ||
+          dictionary?.header?.registrationCodeModal?.invalidCode ||
+          "Invalid or expired code. Please try again."
+      );
     } finally {
       setIsLoading(false);
     }
@@ -162,8 +169,11 @@ const RegistrationCodeModal = ({
       const response = await resendVerificationCode(requestData);
 
       // Update the verification token if provided in response
-      if (response?.verification_token && typeof window !== "undefined") {
-        (window as any).__reg_verification_token = response.verification_token;
+      if (response?.verification_token) {
+        setCurrentToken(response.verification_token); // update local token
+        if (typeof window !== "undefined") {
+          (window as any).__reg_verification_token = response.verification_token;
+        }
       }
 
       setResendInfo(
@@ -235,7 +245,7 @@ const RegistrationCodeModal = ({
           width="460px"
           height="50px"
           onClick={handleVerify}
-          disabled={isLoading}
+          disabled={isLoading || !code.trim()}
         />
       </StyledPrimaryButton>
     </StyledContainer>
