@@ -277,7 +277,10 @@
     "deliveryCost": "მიწოდების სერვისი",
     "serviceFee": "სერვისის საკომისიო",
     "serviceFeeAmount": "2,99 ₾",
-    "deliveryAmount": "14,99 ₾"
+    "deliveryAmount": "14,99 ₾",
+    "orderNumber": "შეკვეთის ნომერი",
+    "itemCount": "პროდუქტების რაოდენობა",
+    "status": "სტატუსი"
   },
   "address": {
     "title": "ჩემი მისამართები",

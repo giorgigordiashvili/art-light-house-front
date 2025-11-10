@@ -278,7 +278,10 @@
     "deliveryCost": "Delivery service",
     "serviceFee": "Service commission",
     "serviceFeeAmount": "2,99 ₾",
-    "deliveryAmount": "14,99 ₾"
+    "deliveryAmount": "14,99 ₾",
+    "orderNumber": "Order Number",
+    "itemCount": "Items",
+    "status": "Status"
   },
   "address": {
     "title": "My addresses",
