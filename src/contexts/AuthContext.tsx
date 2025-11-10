@@ -1,14 +1,14 @@
 "use client";
 
 import React, { createContext, useContext, useEffect, useState, ReactNode } from "react";
-import { EcommerceClient, TenantLogin } from "@/api/generated/interfaces";
+import { EcommerceClient, TenantLoginRequest } from "@/api/generated/interfaces";
 import { tenantLogin, getCurrentClient } from "@/api/generated/api";
 
 interface AuthContextType {
   user: EcommerceClient | null;
   isAuthenticated: boolean;
   isLoading: boolean;
-  login: (credentials: TenantLogin) => Promise<void>;
+  login: (credentials: TenantLoginRequest) => Promise<void>;
   logout: () => Promise<void>;
   updateUser: (userData: EcommerceClient) => void;
   token: string | null;
@@ -85,7 +85,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     };
   }, []);
 
-  const login = async (credentials: TenantLogin): Promise<void> => {
+  const login = async (credentials: TenantLoginRequest): Promise<void> => {
     setIsLoading(true);
     try {
       // Use tenantLogin endpoint to authenticate and get token

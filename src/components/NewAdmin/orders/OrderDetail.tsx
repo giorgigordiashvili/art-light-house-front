@@ -228,6 +228,13 @@ const OrderDetail = ({ order, onUpdateStatus, onUpdatePayment }: OrderDetailProp
     });
   };
 
+  // Derive values that are not directly present on the generated Order interface
+  const derivedSubtotal = order.items?.reduce((acc, it) => acc + parseFloat(it.subtotal || "0"), 0);
+  const transactionId =
+    (order.payment_metadata &&
+      (order.payment_metadata.transaction_id || order.payment_metadata.txn_id)) ||
+    undefined;
+
   return (
     <DetailContainer>
       {/* Order Information */}
@@ -239,16 +246,18 @@ const OrderDetail = ({ order, onUpdateStatus, onUpdatePayment }: OrderDetailProp
             <div className="value">{order.order_number}</div>
           </InfoItem>
           <InfoItem>
-            <label>Order Status</label>
+            <label>Status</label>
             <div className="value">
-              <StatusBadge $status={order.status_display}>{order.status_display}</StatusBadge>
+              <StatusBadge $status={String(order.status || "unknown")}>
+                {String(order.status || "N/A")}
+              </StatusBadge>
             </div>
           </InfoItem>
           <InfoItem>
             <label>Payment Status</label>
             <div className="value">
-              <PaymentStatusBadge $status={order.payment_status_display}>
-                {order.payment_status_display}
+              <PaymentStatusBadge $status={String(order.payment_status || "unknown")}>
+                {String(order.payment_status || "N/A")}
               </PaymentStatusBadge>
             </div>
           </InfoItem>
@@ -290,48 +299,39 @@ const OrderDetail = ({ order, onUpdateStatus, onUpdatePayment }: OrderDetailProp
         )}
       </Section>
 
-      {/* Customer & Delivery Information */}
+      {/* Delivery Information */}
       <Section>
-        <SectionTitle>Customer & Delivery Information</SectionTitle>
+        <SectionTitle>Delivery Information</SectionTitle>
         <InfoGrid>
           <InfoItem>
-            <label>Phone Number</label>
-            <div className="value">{order.phone_number}</div>
+            <label>Address Label</label>
+            <div className="value">{order.delivery_address?.label || "N/A"}</div>
           </InfoItem>
           <InfoItem>
-            <label>Delivery Method</label>
-            <div className="value">{order.delivery_method_display}</div>
+            <label>City</label>
+            <div className="value">{order.delivery_address?.city || "N/A"}</div>
           </InfoItem>
-          {order.delivery_fee && (
-            <InfoItem>
-              <label>Delivery Fee</label>
-              <div className="value">₾{order.delivery_fee}</div>
-            </InfoItem>
-          )}
         </InfoGrid>
-
         <InfoItem style={{ marginTop: "16px" }}>
-          <label>Delivery Address</label>
-          <div className="value">
-            {order.delivery_address_data ? (
-              <>
-                <div>{order.delivery_address_data.address_string}</div>
-                {order.delivery_address_data.extra_details && (
-                  <div style={{ fontSize: "0.875rem", color: "#6c757d", marginTop: "4px" }}>
-                    {order.delivery_address_data.extra_details}
-                  </div>
-                )}
-              </>
-            ) : (
-              "N/A"
-            )}
-          </div>
+          <label>Full Address</label>
+          <div className="value">{order.delivery_address?.address || "N/A"}</div>
         </InfoItem>
-
-        {order.delivery_notes && (
-          <InfoItem style={{ marginTop: "16px" }}>
-            <label>Delivery Notes</label>
-            <div className="value">{order.delivery_notes}</div>
+        {order.delivery_address?.extra_instructions && (
+          <InfoItem style={{ marginTop: "12px" }}>
+            <label>Instructions</label>
+            <div className="value">{order.delivery_address.extra_instructions}</div>
+          </InfoItem>
+        )}
+        {order.notes && (
+          <InfoItem style={{ marginTop: "12px" }}>
+            <label>Client Notes</label>
+            <div className="value">{order.notes}</div>
+          </InfoItem>
+        )}
+        {order.admin_notes && (
+          <InfoItem style={{ marginTop: "12px" }}>
+            <label>Admin Notes</label>
+            <div className="value">{order.admin_notes}</div>
           </InfoItem>
         )}
       </Section>
@@ -344,8 +344,8 @@ const OrderDetail = ({ order, onUpdateStatus, onUpdatePayment }: OrderDetailProp
             <tr>
               <th>Product</th>
               <th>Quantity</th>
-              <th>Unit Price</th>
-              <th>Total</th>
+              <th>Price</th>
+              <th>Subtotal</th>
             </tr>
           </thead>
           <tbody>
@@ -353,19 +353,15 @@ const OrderDetail = ({ order, onUpdateStatus, onUpdatePayment }: OrderDetailProp
               <tr key={item.id}>
                 <td>
                   <ProductInfo>
-                    <ProductImage
-                      src={item.product_image_url || "/assets/placeholder.png"}
-                      alt={item.product_title}
-                    />
+                    <ProductImage src="/assets/placeholder.png" alt={String(item.product_name)} />
                     <div className="details">
-                      <div className="title">{item.product_title}</div>
-                      <div className="sku">SKU: {item.product_sku}</div>
+                      <div className="title">{String(item.product_name)}</div>
                     </div>
                   </ProductInfo>
                 </td>
                 <td>{item.quantity}</td>
-                <td>₾{item.unit_price}</td>
-                <td>₾{item.total_price}</td>
+                <td>₾{item.price}</td>
+                <td>₾{item.subtotal}</td>
               </tr>
             ))}
           </tbody>
@@ -378,42 +374,23 @@ const OrderDetail = ({ order, onUpdateStatus, onUpdatePayment }: OrderDetailProp
         <div>
           <TotalRow>
             <span className="label">Subtotal:</span>
-            <span className="value">₾{order.subtotal}</span>
+            <span className="value">₾{derivedSubtotal.toFixed(2)}</span>
           </TotalRow>
-          {order.delivery_fee && (
-            <TotalRow>
-              <span className="label">Delivery Fee:</span>
-              <span className="value">₾{order.delivery_fee}</span>
-            </TotalRow>
-          )}
-          {order.tax_amount && parseFloat(order.tax_amount) > 0 && (
-            <TotalRow>
-              <span className="label">Tax:</span>
-              <span className="value">₾{order.tax_amount}</span>
-            </TotalRow>
-          )}
-          {order.discount_amount && parseFloat(order.discount_amount) > 0 && (
-            <TotalRow>
-              <span className="label">Discount:</span>
-              <span className="value">-₾{order.discount_amount}</span>
-            </TotalRow>
-          )}
           <TotalRow className="total">
             <span className="label">Total:</span>
             <span className="value">₾{order.total_amount}</span>
           </TotalRow>
         </div>
-
         {order.payment_method && (
           <InfoItem style={{ marginTop: "16px" }}>
             <label>Payment Method</label>
             <div className="value">{order.payment_method}</div>
           </InfoItem>
         )}
-        {order.payment_transaction_id && (
+        {transactionId && (
           <InfoItem style={{ marginTop: "12px" }}>
             <label>Transaction ID</label>
-            <div className="value">{order.payment_transaction_id}</div>
+            <div className="value">{transactionId}</div>
           </InfoItem>
         )}
       </Section>

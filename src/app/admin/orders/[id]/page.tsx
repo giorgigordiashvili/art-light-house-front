@@ -143,9 +143,9 @@ const OrderDetailPage = () => {
       setLoading(true);
       setError(null);
       const response = await adminAxios.get(`/api/orders/admin/orders/${orderId}/`);
-      setOrder(response.data);
-      setNewStatus(response.data.status_display.toLowerCase());
-      setNewPaymentStatus(response.data.payment_status_display.toLowerCase());
+      setOrder(response.data as Order);
+      setNewStatus(String(response.data.status || "").toLowerCase());
+      setNewPaymentStatus(String(response.data.payment_status || "").toLowerCase());
     } catch (err: any) {
       console.error("Failed to load order:", err);
       setError(err.response?.data?.message || "Failed to load order. Please try again.");
@@ -169,7 +169,7 @@ const OrderDetailPage = () => {
 
   const handleUpdatePayment = () => {
     if (order) {
-      setNewPaymentStatus(order.payment_status_display.toLowerCase());
+      setNewPaymentStatus(String(order.payment_status || "").toLowerCase());
       setShowPaymentModal(true);
     }
   };
