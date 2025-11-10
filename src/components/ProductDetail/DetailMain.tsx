@@ -18,9 +18,9 @@ import { useProductDetail } from "@/hooks/useProductDetail";
 import { useSimilarProducts } from "@/hooks/useSimilarProducts";
 import { useAuthModal } from "@/contexts/AuthModalContext";
 import {
-  apiEcommerceClientCartItemsCreate,
-  apiEcommerceClientCartGetOrCreateRetrieve,
-  apiEcommerceClientCartItemsPartialUpdate,
+  ecommerceClientCartItemsCreate,
+  ecommerceClientCartGetOrCreateRetrieve,
+  ecommerceClientCartItemsPartialUpdate,
 } from "@/api/generated/api";
 
 const StyledComponent = styled.div`
@@ -612,7 +612,7 @@ function DetailMain({ dictionary, productId }: { dictionary: any; productId: num
 
     try {
       // Ensure we have a cart id first
-      const data = await apiEcommerceClientCartGetOrCreateRetrieve();
+      const data = await ecommerceClientCartGetOrCreateRetrieve();
       const normalized = (data as any)?.cart ? (data as any).cart : (data as any);
       const cartId = normalized?.id;
       if (!cartId) return;
@@ -626,17 +626,17 @@ function DetailMain({ dictionary, productId }: { dictionary: any; productId: num
         : undefined;
 
       if (existing) {
-        await apiEcommerceClientCartItemsPartialUpdate(String(existing.id), {
+        await ecommerceClientCartItemsPartialUpdate(String(existing.id), {
           quantity: (existing.quantity || 0) + 1,
         } as any);
       } else {
         const payload = { cart: cartId, product: product.id, variant: null, quantity: 1 } as any;
-        await apiEcommerceClientCartItemsCreate(payload);
+        await ecommerceClientCartItemsCreate(payload);
       }
 
       // Update cart count in header - fetch latest cart
       try {
-        const updated = await apiEcommerceClientCartGetOrCreateRetrieve();
+        const updated = await ecommerceClientCartGetOrCreateRetrieve();
         const n = (updated as any)?.cart ? (updated as any).cart : (updated as any);
         const count = n.items?.reduce((acc: number, it: any) => acc + (it.quantity || 0), 0) || 0;
         if (typeof window !== "undefined") {

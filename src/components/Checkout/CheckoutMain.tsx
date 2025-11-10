@@ -10,8 +10,8 @@ import AddressSelectionModal from "@/components/Checkout/AddressSelectionModal";
 import { useAddresses } from "@/hooks/useAddresses";
 import { ClientAddress, Cart, OrderCreate as OrderCreateRequest } from "@/api/generated/interfaces";
 import {
-  apiEcommerceClientCartGetOrCreateRetrieve,
-  apiEcommerceClientOrdersCreate,
+  ecommerceClientCartGetOrCreateRetrieve,
+  ecommerceClientOrdersCreate,
 } from "@/api/generated/api";
 import { useRouter, usePathname } from "next/navigation";
 
@@ -164,7 +164,7 @@ const Checkout: React.FC<CheckoutProps> = ({ dictionary }) => {
     const fetchCart = async () => {
       try {
         setLoadingCart(true);
-        const cartData = await apiEcommerceClientCartGetOrCreateRetrieve();
+        const cartData = await ecommerceClientCartGetOrCreateRetrieve();
         // Normalize: API may return { cart, created } or just Cart
         const normalized = (cartData as any)?.cart ? (cartData as any).cart : cartData;
         setCart(normalized as Cart);
@@ -260,7 +260,7 @@ const Checkout: React.FC<CheckoutProps> = ({ dictionary }) => {
       };
 
       // Create order
-      await apiEcommerceClientOrdersCreate(orderData);
+      await ecommerceClientOrdersCreate(orderData);
 
       // TODO: Cart clearing - backend should automatically clear cart after order
       // For now, just dispatch empty cart event

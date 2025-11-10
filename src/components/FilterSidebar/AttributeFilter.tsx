@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from "react";
 import CheckboxGroup from "./CheckboxGroup";
 // TODO: Attributes endpoint not available in new API - need backend implementation
-// import { apiEcommerceClientAttributesList } from "@/api/generated/api";
+// import { ecommerceClientAttributesList } from "@/api/generated/api";
 import { Attribute } from "@/api/generated/interfaces";
 import { useFilterContext } from "@/contexts/FilterContext";
 
@@ -38,7 +38,7 @@ function AttributeFilter({ attributeName, title }: AttributeFilterProps) {
       try {
         setLoading(true);
         // TODO: Attributes endpoint not available in new API
-        // Need backend to implement apiEcommerceClientAttributesList
+        // Need backend to implement ecommerceClientAttributesList
         // For now, return empty array to prevent errors
         const attributes: Attribute[] = [];
 
@@ -50,7 +50,7 @@ function AttributeFilter({ attributeName, title }: AttributeFilterProps) {
         } else if (cache.promise) {
           attributes = await cache.promise;
         } else {
-          cache.promise = apiEcommerceClientAttributesList();
+          cache.promise = ecommerceClientAttributesList();
           attributes = await cache.promise;
           cache.data = attributes;
           cache.promise = null;

@@ -3,9 +3,9 @@ import styled from "styled-components";
 import Image from "next/image";
 import { ProductList } from "@/api/generated/interfaces";
 import {
-  apiEcommerceClientCartItemsCreate,
-  apiEcommerceClientCartGetOrCreateRetrieve,
-  apiEcommerceClientCartItemsPartialUpdate,
+  ecommerceClientCartItemsCreate,
+  ecommerceClientCartGetOrCreateRetrieve,
+  ecommerceClientCartItemsPartialUpdate,
 } from "@/api/generated/api";
 import { useAuthModal } from "@/contexts/AuthModalContext";
 
@@ -48,7 +48,7 @@ const PlusButton = ({ product }: { product?: ProductList }) => {
 
     try {
       // Ensure we have a cart id
-      const data = await apiEcommerceClientCartGetOrCreateRetrieve();
+      const data = await ecommerceClientCartGetOrCreateRetrieve();
       const normalized = (data as any)?.cart ? (data as any).cart : (data as any);
       const cartId = normalized?.id;
       if (!cartId) return;
@@ -61,14 +61,14 @@ const PlusButton = ({ product }: { product?: ProductList }) => {
         : undefined;
 
       if (existing) {
-        await apiEcommerceClientCartItemsPartialUpdate(String(existing.id), {
+        await ecommerceClientCartItemsPartialUpdate(String(existing.id), {
           quantity: (existing.quantity || 0) + 1,
         } as any);
       } else {
         const payload = { cart: cartId, product: product.id, variant: null, quantity: 1 } as any;
-        await apiEcommerceClientCartItemsCreate(payload);
+        await ecommerceClientCartItemsCreate(payload);
       }
-      const cart = await apiEcommerceClientCartGetOrCreateRetrieve();
+      const cart = await ecommerceClientCartGetOrCreateRetrieve();
       const n = (cart as any)?.cart ? (cart as any).cart : (cart as any);
       try {
         const count = Array.isArray(n?.items)

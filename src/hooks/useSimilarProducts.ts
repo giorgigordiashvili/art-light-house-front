@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { apiEcommerceClientProductsList } from "@/api/generated/api";
+import { ecommerceClientProductsList } from "@/api/generated/api";
 import { ProductList } from "@/api/generated/interfaces";
 
 interface UseSimilarProductsResult {
@@ -30,12 +30,7 @@ export const useSimilarProducts = (
         setError(null);
 
         // Fetch products (category filtering will need to be done client-side or backend needs update)
-        const response = await apiEcommerceClientProductsList(
-          undefined, // isFeatured
-          undefined, // ordering
-          undefined, // page
-          undefined // search
-        );
+        const response = await ecommerceClientProductsList(false, undefined, 1, undefined);
 
         // Filter out the current product and limit the results
         const filtered = (response.results || [])

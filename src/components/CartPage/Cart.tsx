@@ -7,9 +7,9 @@ import Summary from "./Summary";
 import CartProduct from "../Header/CartProduct";
 import EmptyCartCard from "../Cart/EmptyCartCard";
 import {
-  apiEcommerceClientCartGetOrCreateRetrieve,
-  apiEcommerceClientCartItemsPartialUpdate,
-  apiEcommerceClientCartItemsDestroy,
+  ecommerceClientCartGetOrCreateRetrieve,
+  ecommerceClientCartItemsPartialUpdate,
+  ecommerceClientCartItemsDestroy,
 } from "@/api/generated/api";
 import type { Cart } from "@/api/generated/interfaces";
 import { useAuth } from "@/contexts/AuthContext";
@@ -102,7 +102,7 @@ const Cart = ({ dictionary }: any) => {
   const fetchCart = async () => {
     try {
       setLoading(true);
-      const data = await apiEcommerceClientCartGetOrCreateRetrieve();
+      const data = await ecommerceClientCartGetOrCreateRetrieve();
       const normalized = (data as any)?.cart ? (data as any).cart : (data as any);
       setCart(normalized as Cart);
     } catch {
@@ -154,7 +154,7 @@ const Cart = ({ dictionary }: any) => {
           // fallback: quick refetch
           (async () => {
             try {
-              const data = await apiEcommerceClientCartGetOrCreateRetrieve();
+              const data = await ecommerceClientCartGetOrCreateRetrieve();
               const normalized = (data as any)?.cart ? (data as any).cart : (data as any);
               setCart(normalized as Cart);
             } catch {}
@@ -175,8 +175,8 @@ const Cart = ({ dictionary }: any) => {
   const handleIncrease = async (itemId: number, current: number) => {
     if (!isAuthenticated) return;
     try {
-      await apiEcommerceClientCartItemsPartialUpdate(String(itemId), { quantity: current + 1 });
-      const updated = await apiEcommerceClientCartGetOrCreateRetrieve();
+      await ecommerceClientCartItemsPartialUpdate(String(itemId), { quantity: current + 1 });
+      const updated = await ecommerceClientCartGetOrCreateRetrieve();
       const normalized = (updated as any)?.cart ? (updated as any).cart : (updated as any);
       setCart(normalized as Cart);
       try {
@@ -198,8 +198,8 @@ const Cart = ({ dictionary }: any) => {
       return;
     }
     try {
-      await apiEcommerceClientCartItemsPartialUpdate(String(itemId), { quantity: current - 1 });
-      const updated = await apiEcommerceClientCartGetOrCreateRetrieve();
+      await ecommerceClientCartItemsPartialUpdate(String(itemId), { quantity: current - 1 });
+      const updated = await ecommerceClientCartGetOrCreateRetrieve();
       const normalized = (updated as any)?.cart ? (updated as any).cart : (updated as any);
       setCart(normalized as Cart);
       try {
@@ -217,8 +217,8 @@ const Cart = ({ dictionary }: any) => {
   const handleRemove = async (itemId: number) => {
     if (!isAuthenticated) return;
     try {
-      await apiEcommerceClientCartItemsDestroy(String(itemId));
-      const updated = await apiEcommerceClientCartGetOrCreateRetrieve();
+      await ecommerceClientCartItemsDestroy(String(itemId));
+      const updated = await ecommerceClientCartGetOrCreateRetrieve();
       const normalized = (updated as any)?.cart ? (updated as any).cart : (updated as any);
       setCart(normalized as Cart);
       try {

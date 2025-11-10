@@ -7,7 +7,7 @@ import { Input, Select } from "@/components/NewAdmin/ui/Form";
 import CategoriesTable from "@/components/NewAdmin/categories/CategoriesTable";
 import CategoryForm from "@/components/NewAdmin/categories/CategoryForm";
 import styled from "styled-components";
-import { AdminCategory, AdminCategoryRequest } from "@/api/generated/interfaces";
+import { ServiceCategory, ServiceCategoryRequest } from "@/api/generated/interfaces";
 import adminAxios from "@/api/admin-axios";
 
 const PageHeader = styled.div`
@@ -148,10 +148,10 @@ const TreeNode = styled.div<{ $level: number }>`
 `;
 
 const CategoriesManagement = () => {
-  const [categories, setCategories] = useState<AdminCategory[]>([]);
+  const [categories, setCategories] = useState<ServiceCategory[]>([]);
   const [loading, setLoading] = useState(false);
   const [showForm, setShowForm] = useState(false);
-  const [editingCategory, setEditingCategory] = useState<AdminCategory | null>(null);
+  const [editingCategory, setEditingCategory] = useState<ServiceCategory | null>(null);
   const [parentForNewCategory, setParentForNewCategory] = useState<number | undefined>(undefined);
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
@@ -178,19 +178,19 @@ const CategoriesManagement = () => {
     setShowForm(true);
   };
 
-  const handleEditCategory = (category: AdminCategory) => {
+  const handleEditCategory = (category: ServiceCategory) => {
     setEditingCategory(category);
     setParentForNewCategory(undefined);
     setShowForm(true);
   };
 
-  const handleAddChildCategory = (parentCategory: AdminCategory) => {
+  const handleAddChildCategory = (parentCategory: ServiceCategory) => {
     setEditingCategory(null);
     setParentForNewCategory(parentCategory.id);
     setShowForm(true);
   };
 
-  const handleDeleteCategory = async (category: AdminCategory) => {
+  const handleDeleteCategory = async (category: ServiceCategory) => {
     if (confirm(`Are you sure you want to delete "${category.name}"?`)) {
       try {
         setLoading(true);
@@ -204,7 +204,7 @@ const CategoriesManagement = () => {
     }
   };
 
-  const handleToggleStatus = async (category: AdminCategory) => {
+  const handleToggleStatus = async (category: ServiceCategory) => {
     try {
       setLoading(true);
       await adminAxios.patch(`/api/products/admin/categories/${category.id}/update/`, {
@@ -223,22 +223,12 @@ const CategoriesManagement = () => {
       setLoading(true);
 
       // Prepare API data
-      const categoryData: AdminCategoryRequest = {
+      const categoryData: ServiceCategoryRequest = {
         name: formData.name,
         description: formData.description || undefined,
-        slug:
-          formData.slug ||
-          formData.name
-            .toLowerCase()
-            .replace(/[^a-z0-9\s]/g, "")
-            .replace(/\s+/g, "-"),
-        parent:
-          parentForNewCategory || (formData.parent_id ? parseInt(formData.parent_id) : undefined),
+        icon: formData.icon || undefined,
+        display_order: formData.display_order || undefined,
         is_active: formData.is_active ?? true,
-        translations:
-          formData.translations && formData.translations.length > 0
-            ? formData.translations
-            : undefined,
       };
 
       if (editingCategory) {
@@ -281,19 +271,17 @@ const CategoriesManagement = () => {
   const stats = {
     total: categories.length,
     active: categories.filter((c) => c.is_active).length,
-    withSubcategories: categories.filter(
-      (c) => c.subcategories_count && parseInt(c.subcategories_count) > 0
-    ).length,
+    withSubcategories: 0, // ServiceCategory doesn't track subcategories
     rootLevel: categories.length,
   };
 
-  const renderTreeVisualization = (categories: AdminCategory[], level = 0) => {
+  const renderTreeVisualization = (categories: ServiceCategory[], level = 0) => {
     return categories.map((category) => (
       <div key={category.id}>
         <TreeNode $level={level}>
           <span className="node-name">{category.name}</span>
           <span className="node-info">
-            {category.full_path}
+            ID: {category.id}
             {!category.is_active && " - Inactive"}
           </span>
         </TreeNode>

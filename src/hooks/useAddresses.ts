@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
-import { apiEcommerceClientAddressesList } from "@/api/generated/api";
+import { ecommerceClientAddressesList } from "@/api/generated/api";
 import { ClientAddress } from "@/api/generated/interfaces";
 import { useAuth } from "@/contexts/AuthContext";
 
@@ -39,7 +39,7 @@ export const useAddresses = (): UseAddressesResult => {
       }
 
       setIsAuthenticated(true);
-      const response = await apiEcommerceClientAddressesList();
+      const response = await ecommerceClientAddressesList();
       setAddresses(response.results || []);
     } catch (err: any) {
       // Check if it's a 401 authentication error

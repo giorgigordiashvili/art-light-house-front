@@ -8,7 +8,7 @@ import AttributesTable from "@/components/NewAdmin/attributes/AttributesTable";
 import AttributeForm from "@/components/NewAdmin/attributes/AttributeForm";
 import AttributeValuesManager from "@/components/NewAdmin/attributes/AttributeValuesManager";
 import styled from "styled-components";
-import { AdminAttribute } from "@/api/generated/interfaces";
+import { AttributeDefinition } from "@/api/generated/interfaces";
 import adminAxios from "@/api/admin-axios";
 
 const PageHeader = styled.div`
@@ -154,11 +154,11 @@ const TypeCard = styled.div`
 type ModalView = "form" | "values" | null;
 
 const AttributesManagement = () => {
-  const [attributes, setAttributes] = useState<AdminAttribute[]>([]);
+  const [attributes, setAttributes] = useState<AttributeDefinition[]>([]);
   const [loading, setLoading] = useState(false);
   const [modalView, setModalView] = useState<ModalView>(null);
-  const [editingAttribute, setEditingAttribute] = useState<AdminAttribute | null>(null);
-  const [managingValuesFor, setManagingValuesFor] = useState<AdminAttribute | null>(null);
+  const [editingAttribute, setEditingAttribute] = useState<AttributeDefinition | null>(null);
+  const [managingValuesFor, setManagingValuesFor] = useState<AttributeDefinition | null>(null);
   const [searchTerm, setSearchTerm] = useState("");
   const [typeFilter, setTypeFilter] = useState("all");
 
@@ -183,17 +183,17 @@ const AttributesManagement = () => {
     setModalView("form");
   };
 
-  const handleEditAttribute = (attribute: AdminAttribute) => {
+  const handleEditAttribute = (attribute: AttributeDefinition) => {
     setEditingAttribute(attribute);
     setModalView("form");
   };
 
-  const handleManageValues = (attribute: AdminAttribute) => {
+  const handleManageValues = (attribute: AttributeDefinition) => {
     setManagingValuesFor(attribute);
     setModalView("values");
   };
 
-  const handleDeleteAttribute = async (attribute: AdminAttribute) => {
+  const handleDeleteAttribute = async (attribute: AttributeDefinition) => {
     if (confirm(`Are you sure you want to delete "${attribute.name}"?`)) {
       try {
         setLoading(true);
@@ -207,7 +207,7 @@ const AttributesManagement = () => {
     }
   };
 
-  const handleReorderAttributes = (reorderedAttributes: AdminAttribute[]) => {
+  const handleReorderAttributes = (reorderedAttributes: AttributeDefinition[]) => {
     setAttributes(reorderedAttributes);
   };
 
@@ -310,7 +310,7 @@ const AttributesManagement = () => {
     total: attributes.length,
     required: attributes.filter((a) => a.is_required).length,
     filterable: attributes.filter((a) => a.is_filterable).length,
-    withValues: attributes.filter((a) => a.values && a.values.length > 0).length,
+    withValues: attributes.filter((a) => a.options && (a.options as any[]).length > 0).length,
   };
 
   const typeStats = {

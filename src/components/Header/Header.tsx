@@ -23,7 +23,7 @@ import LanguageSwitcherModal from "./LanguageSwitcher/LanguageSwitcherModal";
 import { useAuth } from "@/contexts/AuthContext";
 import { useAuthModal } from "@/contexts/AuthModalContext";
 import { usePathname, useRouter } from "next/navigation";
-import { apiEcommerceClientCartGetOrCreateRetrieve } from "@/api/generated/api";
+import { ecommerceClientCartGetOrCreateRetrieve } from "@/api/generated/api";
 import { Locale, i18n } from "@/config/i18n";
 
 const ensureValidLanguage = (lang: string): Locale => {
@@ -307,7 +307,7 @@ const Header = ({ header, dictionary }: HeaderProps) => {
           const hasToken =
             typeof window !== "undefined" && !!localStorage.getItem("auth_access_token");
           if (hasToken) {
-            apiEcommerceClientCartGetOrCreateRetrieve()
+            ecommerceClientCartGetOrCreateRetrieve()
               .then((data) => {
                 const normalized = (data as any)?.cart ? (data as any).cart : (data as any);
                 const count =
@@ -361,7 +361,7 @@ const Header = ({ header, dictionary }: HeaderProps) => {
     }
 
     try {
-      const data = await apiEcommerceClientCartGetOrCreateRetrieve();
+      const data = await ecommerceClientCartGetOrCreateRetrieve();
       const normalized = (data as any)?.cart ? (data as any).cart : (data as any);
       const count =
         normalized.items?.reduce((acc: number, it: any) => acc + (it.quantity || 0), 0) || 0;
@@ -402,7 +402,7 @@ const Header = ({ header, dictionary }: HeaderProps) => {
         return;
       }
       try {
-        const data = await apiEcommerceClientCartGetOrCreateRetrieve();
+        const data = await ecommerceClientCartGetOrCreateRetrieve();
         const normalized = (data as any)?.cart ? (data as any).cart : (data as any);
         const count =
           normalized.items?.reduce((acc: number, it: any) => acc + (it.quantity || 0), 0) || 0;

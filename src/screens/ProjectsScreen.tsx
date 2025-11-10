@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import styled from "styled-components";
 import Link from "next/link";
 // TODO: Projects API not available in new API - backend needs to implement
-// import { apiEcommerceClientProjectsList } from "@/api/generated/api";
+// import { ecommerceClientProjectsList } from "@/api/generated/api";
 import { ProjectList } from "@/api/generated/interfaces";
 import NewCircle from "@/components/ui/NewCircle";
 import BigCircle from "@/components/ui/BigCircle";
@@ -290,8 +290,8 @@ const ProjectsScreen = ({ dictionary }: ProjectsScreenProps) => {
   const loadProjects = async () => {
     try {
       setLoading(true);
-      // TODO: Projects API not available - backend needs to implement apiEcommerceClientProjectsList
-      // const data = await apiEcommerceClientProjectsList(categoryFilter);
+      // TODO: Projects API not available - backend needs to implement ecommerceClientProjectsList
+      // const data = await ecommerceClientProjectsList(categoryFilter);
       const data: ProjectList[] = []; // Temporary empty array
       setProjects(data);
 

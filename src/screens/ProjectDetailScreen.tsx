@@ -3,7 +3,7 @@ import { useState, useEffect, useCallback } from "react";
 import styled from "styled-components";
 import Link from "next/link";
 // TODO: Projects API not available in new API - backend needs to implement
-// import { apiEcommerceClientProjectsRetrieve } from "@/api/generated/api";
+// import { ecommerceClientProjectsRetrieve } from "@/api/generated/api";
 import { ProjectDetail } from "@/api/generated/interfaces";
 import NewCircle from "@/components/ui/NewCircle";
 import Circle from "@/components/ui/Circle";
@@ -244,8 +244,8 @@ const ProjectDetailScreen = ({ dictionary, lang }: ProjectDetailScreenProps) => 
     try {
       setLoading(true);
       setError(null);
-      // TODO: Projects API not available - backend needs to implement apiEcommerceClientProjectsRetrieve
-      // const data = await apiEcommerceClientProjectsRetrieve(slug);
+      // TODO: Projects API not available - backend needs to implement ecommerceClientProjectsRetrieve
+      // const data = await ecommerceClientProjectsRetrieve(slug);
       // setProject(data);
       throw new Error("Projects API not implemented");
     } catch (err) {

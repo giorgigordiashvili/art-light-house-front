@@ -1,12 +1,12 @@
 "use client";
 
 import { useState } from "react";
-import { apiEcommerceClientProfileUpdateProfilePartialUpdate } from "@/api/generated/api";
-import { EcommerceClient, PatchedEcommerceClient } from "@/api/generated/interfaces";
+import { ecommerceClientProfileUpdateProfilePartialUpdate } from "@/api/generated/api";
+import { EcommerceClient, PatchedEcommerceClientRequest } from "@/api/generated/interfaces";
 import { useAuth } from "@/contexts/AuthContext";
 
 interface UseProfileUpdateReturn {
-  updateProfile: (data: PatchedEcommerceClient) => Promise<EcommerceClient | null>;
+  updateProfile: (data: PatchedEcommerceClientRequest) => Promise<EcommerceClient | null>;
   isUpdating: boolean;
   updateError: string | null;
   updateSuccess: boolean;
@@ -19,7 +19,9 @@ export const useProfileUpdate = (): UseProfileUpdateReturn => {
   const [updateSuccess, setUpdateSuccess] = useState(false);
   const { isAuthenticated } = useAuth();
 
-  const updateProfile = async (data: PatchedEcommerceClient): Promise<EcommerceClient | null> => {
+  const updateProfile = async (
+    data: PatchedEcommerceClientRequest
+  ): Promise<EcommerceClient | null> => {
     if (!isAuthenticated) {
       setUpdateError("User not authenticated");
       return null;
@@ -30,7 +32,7 @@ export const useProfileUpdate = (): UseProfileUpdateReturn => {
       setUpdateError(null);
       setUpdateSuccess(false);
 
-      const updatedUser = await apiEcommerceClientProfileUpdateProfilePartialUpdate(data);
+      const updatedUser = await ecommerceClientProfileUpdateProfilePartialUpdate(data);
 
       setUpdateSuccess(true);
 

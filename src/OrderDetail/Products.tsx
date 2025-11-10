@@ -1,5 +1,4 @@
 import styled from "styled-components";
-import Image from "next/image";
 import type { OrderItem } from "@/api/generated/interfaces";
 
 const ProductsCard = styled.div`
@@ -92,23 +91,11 @@ const Product = ({ orderItem }: ProductProps) => {
   }
   return (
     <ProductsCard>
-      <ImagePlaceholder>
-        {orderItem.product_image_url ? (
-          <Image
-            src={orderItem.product_image_url}
-            alt={orderItem.product_title}
-            width={73}
-            height={73}
-            style={{ objectFit: "cover" }}
-          />
-        ) : (
-          "Product image"
-        )}
-      </ImagePlaceholder>
+      <ImagePlaceholder>Product image</ImagePlaceholder>
       <InfoWrapper>
-        <Title>{orderItem.product_title}</Title>
+        <Title>{orderItem.product_name || "Product"}</Title>
         <PriceRow>
-          <Price>{orderItem.total_price} ₾</Price>
+          <Price>{orderItem.subtotal} ₾</Price>
           <Quantity>x {orderItem.quantity}</Quantity>
         </PriceRow>
       </InfoWrapper>

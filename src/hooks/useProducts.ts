@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
-import { apiEcommerceClientProductsList } from "@/api/generated/api";
+import { ecommerceClientProductsList } from "@/api/generated/api";
 import { ProductList } from "@/api/generated/interfaces";
 
 interface UseProductsOptions {
@@ -43,8 +43,8 @@ export const useProducts = (options: UseProductsOptions = {}): UseProductsResult
         const filtersToUse = filterOptions ?? activeFilters;
 
         // New API has different parameters: isFeatured, ordering, page, search
-        const response = await apiEcommerceClientProductsList(
-          undefined, // isFeatured
+        const response = await ecommerceClientProductsList(
+          undefined, // isFeatured - not used in this context
           filtersToUse.ordering,
           page,
           filtersToUse.search

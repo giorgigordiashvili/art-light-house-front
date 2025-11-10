@@ -4,10 +4,7 @@ import { usePathname, useRouter } from "next/navigation";
 import ContactTitle from "../Contact/ContactTitle";
 import FavoriteCard from "./FavoriteCard";
 import styled from "styled-components";
-import {
-  apiEcommerceClientFavoritesList,
-  apiEcommerceClientFavoritesDestroy,
-} from "@/api/generated/api";
+import { ecommerceClientFavoritesList, ecommerceClientFavoritesDestroy } from "@/api/generated/api";
 import type { FavoriteProduct } from "@/api/generated/interfaces";
 import EmptyFavoritesCard from "@/components/Favorites/EmptyFavoritesCard";
 
@@ -66,7 +63,7 @@ const Favorites = ({ dictionary }: { dictionary: any }) => {
           setError(null);
           return;
         }
-        const response = await apiEcommerceClientFavoritesList();
+        const response = await ecommerceClientFavoritesList();
         if (!mounted) return;
         setItems(response.results || []);
       } catch (e: any) {
@@ -131,7 +128,7 @@ const Favorites = ({ dictionary }: { dictionary: any }) => {
                 return Number(pid) === Number(productId);
               });
               if (favoriteItem) {
-                await apiEcommerceClientFavoritesDestroy(String(favoriteItem.id));
+                await ecommerceClientFavoritesDestroy(String(favoriteItem.id));
               }
               setItems((prev) =>
                 prev.filter((f) => {

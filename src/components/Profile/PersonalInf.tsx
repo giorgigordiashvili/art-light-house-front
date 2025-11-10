@@ -8,7 +8,7 @@ import { User } from "@/api/generated/interfaces";
 import { useProfileUpdate } from "@/hooks/useProfileUpdate";
 import { useAuth } from "@/contexts/AuthContext";
 // TODO: Password change endpoint not available for clients in new API
-// import { apiEcommerceClientPasswordChangeCreate } from "@/api/generated/api";
+// import { ecommerceClientPasswordChangeCreate } from "@/api/generated/api";
 import type { PasswordChangeRequest } from "@/api/generated/interfaces";
 const StylePersonal = styled.div`
   width: 100%;
@@ -220,8 +220,8 @@ const Personal = ({
       try {
         setPasswordChangeLoading(true);
         // TODO: Password change endpoint not available for clients in new API
-        // Backend needs to implement: apiEcommerceClientPasswordChangeCreate
-        // await apiEcommerceClientPasswordChangeCreate(payload);
+        // Backend needs to implement: ecommerceClientPasswordChangeCreate
+        // await ecommerceClientPasswordChangeCreate(payload);
         throw new Error("Password change endpoint not implemented in new API");
         // setPasswordChangeSuccess(true);
         // reset fields after success

@@ -162,7 +162,7 @@ const OrderDetailPage = () => {
 
   const handleUpdateStatus = () => {
     if (order) {
-      setNewStatus(order.status_display.toLowerCase());
+      setNewStatus(String(order.status || "").toLowerCase());
       setShowStatusModal(true);
     }
   };

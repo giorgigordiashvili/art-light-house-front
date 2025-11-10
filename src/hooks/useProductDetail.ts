@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { apiEcommerceClientProductsRetrieve } from "@/api/generated/api";
+import { ecommerceClientProductsRetrieve } from "@/api/generated/api";
 import { ProductDetail } from "@/api/generated/interfaces";
 
 interface UseProductDetailResult {
@@ -24,7 +24,7 @@ export const useProductDetail = (productId: number): UseProductDetailResult => {
       try {
         setLoading(true);
         setError(null);
-        const productData = await apiEcommerceClientProductsRetrieve(productId);
+        const productData = await ecommerceClientProductsRetrieve(productId);
         setProduct(productData);
       } catch (err: any) {
         setError(err.message || "Failed to fetch product details");

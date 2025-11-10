@@ -1,7 +1,7 @@
 import styled from "styled-components";
 import OrderCard from "@/MyOrders/OrderCard";
 import { useEffect, useState } from "react";
-import { apiEcommerceClientOrdersList } from "@/api/generated/api";
+import { ecommerceClientOrdersList } from "@/api/generated/api";
 import type { Order as OrderType } from "@/api/generated/interfaces";
 
 const StylePass = styled.div`
@@ -164,7 +164,7 @@ const Order = ({ dictionary }: any) => {
     const fetchOrders = async () => {
       try {
         setLoading(true);
-        const response = await apiEcommerceClientOrdersList();
+        const response = await ecommerceClientOrdersList();
         setOrders(response.results);
       } catch {
         setError("Failed to fetch orders");

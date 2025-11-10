@@ -51,7 +51,7 @@ export const useCategories = (): UseCategoriesReturn => {
       }
 
       // TODO: Replace with actual API call when categories endpoint is available
-      // cache.promise = apiEcommerceClientCategoriesList();
+      // cache.promise = ecommerceClientCategoriesList();
       // For now, return empty array
       cache.promise = Promise.resolve([]);
       const data = await cache.promise;

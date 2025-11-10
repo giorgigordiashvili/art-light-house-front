@@ -4,10 +4,7 @@ import styled from "styled-components";
 import { useRouter } from "next/navigation";
 import ProductContent from "./ProductContent";
 import PrimaryButton from "../Buttons/PrimaryButton";
-import {
-  apiEcommerceClientFavoritesList,
-  apiEcommerceClientFavoritesDestroy,
-} from "@/api/generated/api";
+import { ecommerceClientFavoritesList, ecommerceClientFavoritesDestroy } from "@/api/generated/api";
 import type { FavoriteProduct } from "@/api/generated/interfaces";
 import { useAuth } from "@/contexts/AuthContext";
 import Image from "next/image";
@@ -164,7 +161,7 @@ const FavoritesModal = ({ onClose, dictionary }: Props) => {
         setItems([]);
         return;
       }
-      const response = await apiEcommerceClientFavoritesList();
+      const response = await ecommerceClientFavoritesList();
       setItems(response.results || []);
     } catch {
       setItems([]);
@@ -231,7 +228,7 @@ const FavoritesModal = ({ onClose, dictionary }: Props) => {
         return Number(pid) === Number(productId);
       });
       if (favoriteItem) {
-        await apiEcommerceClientFavoritesDestroy(String(favoriteItem.id));
+        await ecommerceClientFavoritesDestroy(String(favoriteItem.id));
       }
       // Update local state immediately
       setItems((prev) =>

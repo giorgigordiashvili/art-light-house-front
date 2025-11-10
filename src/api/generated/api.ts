@@ -6,192 +6,299 @@
 import axios from "../axios";
 import type {
   PaginatedTicketAttachmentList,
+  TicketAttachmentRequest,
   TicketAttachment,
-  PatchedTicketAttachment,
+  PatchedTicketAttachmentRequest,
   TenantDashboardData,
-  TenantLogin,
+  TenantLoginRequest,
   PaginatedBoardList,
+  BoardRequest,
   Board,
-  PatchedBoard,
+  PatchedBoardRequest,
   PaginatedStaffAvailabilityList,
+  StaffAvailabilityRequest,
   StaffAvailability,
-  PatchedStaffAvailability,
+  PatchedStaffAvailabilityRequest,
   PaginatedBookingListList,
+  BookingListRequest,
   BookingList,
   BookingDetail,
-  PatchedBookingList,
+  PatchedBookingListRequest,
   PaginatedServiceCategoryList,
+  ServiceCategoryRequest,
   ServiceCategory,
-  PatchedServiceCategory,
+  PatchedServiceCategoryRequest,
   PaginatedBookingClientList,
   BookingClient,
   PaginatedStaffExceptionList,
+  StaffExceptionRequest,
   StaffException,
-  PatchedStaffException,
+  PatchedStaffExceptionRequest,
   PaginatedRecurringBookingList,
+  RecurringBookingRequest,
   RecurringBooking,
-  PatchedRecurringBooking,
+  PatchedRecurringBookingRequest,
   PaginatedServiceListList,
+  ServiceDetailRequest,
   ServiceDetail,
-  PatchedServiceDetail,
+  PatchedServiceDetailRequest,
+  ServiceListRequest,
   ServiceList,
   PaginatedBookingStaffList,
+  BookingStaffCreateRequest,
   BookingStaffCreate,
   BookingStaff,
-  PatchedBookingStaffCreate,
+  PatchedBookingStaffCreateRequest,
+  BookingStaffRequest,
+  BookingCreateRequest,
   BookingCreate,
+  RecurringBookingCreateRequest,
   RecurringBookingCreate,
   PaginatedCallLogList,
+  CallLogCreateRequest,
   CallLogCreate,
   CallLogDetail,
+  CallLogRequest,
   CallLog,
-  PatchedCallLog,
+  PatchedCallLogRequest,
+  CallEventRequest,
   CallEvent,
-  CallStatusUpdate,
+  CallStatusUpdateRequest,
   CallRecording,
-  PatchedCallStatusUpdate,
-  CallInitiate,
+  PatchedCallStatusUpdateRequest,
+  CallInitiateRequest,
   PaginatedChecklistItemList,
+  ChecklistItemRequest,
   ChecklistItem,
-  PatchedChecklistItem,
+  PatchedChecklistItemRequest,
   PaginatedClientList,
+  ClientRequest,
   Client,
-  PatchedClient,
+  PatchedClientRequest,
   PaginatedTicketColumnList,
+  TicketColumnCreateRequest,
   TicketColumnCreate,
   TicketColumn,
+  TicketColumnUpdateRequest,
   TicketColumnUpdate,
-  PatchedTicketColumnUpdate,
+  PatchedTicketColumnUpdateRequest,
+  TicketColumnRequest,
   KanbanBoard,
   PaginatedTicketCommentList,
+  TicketCommentRequest,
   TicketComment,
-  PatchedTicketComment,
+  PatchedTicketCommentRequest,
   PaginatedDepartmentList,
+  DepartmentRequest,
   Department,
-  PatchedDepartment,
+  PatchedDepartmentRequest,
   PaginatedClientAddressList,
+  ClientAddressRequest,
   ClientAddress,
-  PatchedClientAddress,
+  PatchedClientAddressRequest,
   PaginatedAttributeDefinitionList,
+  AttributeDefinitionRequest,
   AttributeDefinition,
-  PatchedAttributeDefinition,
+  PatchedAttributeDefinitionRequest,
   PaginatedCartList,
+  CartRequest,
   Cart,
   PaginatedCartItemList,
+  CartItemCreateRequest,
   CartItemCreate,
   CartItem,
-  PatchedCartItemCreate,
-  PatchedCart,
+  PatchedCartItemCreateRequest,
+  PatchedCartRequest,
   PaginatedEcommerceClientList,
+  EcommerceClientRequest,
   EcommerceClient,
-  PatchedEcommerceClient,
+  PatchedEcommerceClientRequest,
   PaginatedFavoriteProductList,
+  FavoriteProductCreateRequest,
   FavoriteProductCreate,
   FavoriteProduct,
-  PatchedFavoriteProduct,
+  FavoriteProductRequest,
+  PatchedFavoriteProductRequest,
   PaginatedProductImageList,
+  ProductImageRequest,
   ProductImage,
-  PatchedProductImage,
+  PatchedProductImageRequest,
   PaginatedLanguageList,
+  LanguageRequest,
   Language,
-  PatchedLanguage,
+  PatchedLanguageRequest,
   PaginatedOrderList,
+  OrderCreateRequest,
   OrderCreate,
   Order,
-  PatchedOrder,
+  OrderRequest,
+  PatchedOrderRequest,
   PaginatedProductListList,
+  ProductCreateUpdateRequest,
   ProductCreateUpdate,
   ProductDetail,
-  PatchedProductCreateUpdate,
+  PatchedProductCreateUpdateRequest,
+  ProductDetailRequest,
   PaginatedEcommerceSettingsList,
+  EcommerceSettingsRequest,
   EcommerceSettings,
-  PatchedEcommerceSettings,
+  PatchedEcommerceSettingsRequest,
   PaginatedProductVariantList,
+  ProductVariantRequest,
   ProductVariant,
-  PatchedProductVariant,
-  ClientLogin,
-  PasswordResetConfirm,
-  PasswordResetRequest,
-  ClientRegistration,
+  PatchedProductVariantRequest,
+  ClientLoginRequest,
+  PasswordResetConfirmRequest,
+  PasswordResetRequestRequest,
+  ClientRegistrationRequest,
   ClientRegistrationResponse,
-  EmailVerificationRequest,
+  ResendVerificationCodeRequestRequest,
+  ResendVerificationCodeResponse,
+  EmailVerificationRequestRequest,
   EmailVerificationResponse,
   PaginatedFeatureList,
   Feature,
   PaginatedTicketFormSubmissionList,
+  TicketFormSubmissionRequest,
   TicketFormSubmission,
-  PatchedTicketFormSubmission,
+  PatchedTicketFormSubmissionRequest,
   PaginatedGroupList,
+  GroupCreateRequest,
   GroupCreate,
   Group,
-  PatchedGroup,
+  GroupRequest,
+  PatchedGroupRequest,
   PaginatedItemListMinimalList,
+  ItemListRequest,
   ItemList,
-  PatchedItemList,
+  PatchedItemListRequest,
+  PaginatedLeaveApprovalChainList,
+  LeaveApprovalChainRequest,
+  LeaveApprovalChain,
+  PatchedLeaveApprovalChainRequest,
+  PaginatedLeaveBalanceListList,
+  LeaveBalanceDetailRequest,
+  LeaveBalanceDetail,
+  PatchedLeaveBalanceUpdateRequest,
+  LeaveBalanceUpdate,
+  CarryForwardRequestRequest,
+  CarryForwardResponse,
+  InitializeUserRequestRequest,
+  PaginatedLeaveRequestListList,
+  LeaveRequestCreateRequest,
+  LeaveRequestCreate,
+  LeaveRequestDetail,
+  LeaveRequestUpdateRequest,
+  LeaveRequestUpdate,
+  PatchedLeaveRequestUpdateRequest,
+  LeaveApprovalRequest,
+  LeaveApproval,
+  LeaveCancellationRequest,
+  LeaveCancellation,
+  PaginatedLeaveTypeListList,
+  LeaveTypeCreateUpdateRequest,
+  LeaveTypeCreateUpdate,
+  LeaveTypeDetail,
+  PatchedLeaveTypeCreateUpdateRequest,
+  PaginatedPublicHolidayListList,
+  PublicHolidayCreateUpdateRequest,
+  PublicHolidayCreateUpdate,
+  PublicHolidayDetail,
+  PatchedPublicHolidayCreateUpdateRequest,
+  PaginatedLeaveSettingsList,
+  LeaveSettingsRequest,
+  LeaveSettings,
+  PatchedLeaveSettingsRequest,
+  PublicHolidayList,
+  LeaveTypeList,
   PaginatedListItemMinimalList,
+  ListItemRequest,
   ListItem,
-  PatchedListItem,
+  PatchedListItemRequest,
   PaginatedNotificationList,
+  NotificationRequest,
   Notification,
-  PatchedNotification,
+  PatchedNotificationRequest,
   PaginatedPackageListList,
   Package,
   PackageList,
   PaginatedTicketPaymentList,
+  TicketPaymentRequest,
   TicketPayment,
-  PatchedTicketPayment,
+  PatchedTicketPaymentRequest,
   InvoiceListResponse,
-  AddNewCardRequest,
+  AddNewCardRequestRequest,
   AddNewCardResponse,
-  SetDefaultCardRequest,
+  SetDefaultCardRequestRequest,
   PaginatedPermissionList,
   Permission,
-  TenantRegistration,
+  TenantRegistrationRequest,
   Tenant,
   PaginatedSipConfigurationListList,
+  SipConfigurationRequest,
   SipConfiguration,
   SipConfigurationDetail,
-  PatchedSipConfiguration,
+  PatchedSipConfigurationRequest,
   PaginatedFacebookMessageList,
   FacebookMessage,
   PaginatedFacebookPageConnectionList,
+  FacebookPageConnectionRequest,
   FacebookPageConnection,
-  PatchedFacebookPageConnection,
-  FacebookSendMessage,
+  PatchedFacebookPageConnectionRequest,
+  FacebookSendMessageRequest,
+  PaginatedInstagramAccountConnectionList,
+  InstagramAccountConnectionRequest,
+  InstagramAccountConnection,
+  PatchedInstagramAccountConnectionRequest,
+  PaginatedInstagramMessageList,
+  InstagramMessage,
+  InstagramSendMessageRequest,
   PaginatedTagList,
+  TagRequest,
   Tag,
-  PatchedTag,
+  PatchedTagRequest,
   PaginatedTenantFeatureList,
   TenantFeature,
+  TenantFeatureRequest,
   PaginatedTenantGroupList,
+  TenantGroupCreateRequest,
   TenantGroupCreate,
   TenantGroup,
-  PatchedTenantGroupCreate,
+  PatchedTenantGroupCreateRequest,
+  TenantGroupRequest,
   PaginatedTenantPermissionList,
   TenantPermission,
   PaginatedTenantList,
+  TenantCreateRequest,
   TenantCreate,
-  PatchedTenant,
+  TenantRequest,
+  PatchedTenantRequest,
   PaginatedTicketFormMinimalList,
+  TicketFormRequest,
   TicketForm,
-  PatchedTicketForm,
+  PatchedTicketFormRequest,
   PaginatedTicketListList,
+  TicketRequest,
   Ticket,
-  PatchedTicket,
+  PatchedTicketRequest,
   PaginatedTicketAssignmentList,
+  TicketAssignmentRequest,
   TicketAssignment,
-  PatchedTicketAssignment,
+  PatchedTicketAssignmentRequest,
   PaginatedTicketTimeLogList,
   TicketTimeLog,
   TimeTrackingSummary,
   PaginatedUserList,
+  UserCreateRequest,
   UserCreate,
   User,
+  UserUpdateRequest,
   UserUpdate,
-  PatchedUserUpdate,
+  PatchedUserUpdateRequest,
+  UserRequest,
 } from "./interfaces";
 
-export async function apiAttachmentsList(
+export async function attachmentsList(
   page?: number,
   ticket?: number
 ): Promise<PaginatedTicketAttachmentList> {
@@ -207,33 +314,33 @@ export async function apiAttachmentsList(
   return response.data;
 }
 
-export async function apiAttachmentsCreate(data: TicketAttachment): Promise<TicketAttachment> {
+export async function attachmentsCreate(data: TicketAttachmentRequest): Promise<TicketAttachment> {
   const response = await axios.post(`/api/attachments/`, data);
   return response.data;
 }
 
-export async function apiAttachmentsRetrieve(id: number): Promise<TicketAttachment> {
+export async function attachmentsRetrieve(id: number): Promise<TicketAttachment> {
   const response = await axios.get(`/api/attachments/${id}/`);
   return response.data;
 }
 
-export async function apiAttachmentsUpdate(
+export async function attachmentsUpdate(
   id: number,
-  data: TicketAttachment
+  data: TicketAttachmentRequest
 ): Promise<TicketAttachment> {
   const response = await axios.put(`/api/attachments/${id}/`, data);
   return response.data;
 }
 
-export async function apiAttachmentsPartialUpdate(
+export async function attachmentsPartialUpdate(
   id: number,
-  data: PatchedTicketAttachment
+  data: PatchedTicketAttachmentRequest
 ): Promise<TicketAttachment> {
   const response = await axios.patch(`/api/attachments/${id}/`, data);
   return response.data;
 }
 
-export async function apiAttachmentsDestroy(id: number): Promise<any> {
+export async function attachmentsDestroy(id: number): Promise<any> {
   const response = await axios.delete(`/api/attachments/${id}/`);
   return response.data;
 }
@@ -262,7 +369,7 @@ export async function forcedPasswordChange(data: {
   return response.data;
 }
 
-export async function tenantLogin(data: TenantLogin): Promise<{
+export async function tenantLogin(data: TenantLoginRequest): Promise<{
   message?: string;
   token?: string;
   dashboard_data?: Record<string, any>;
@@ -321,7 +428,7 @@ export async function updateTenantProfile(): Promise<{
   return response.data;
 }
 
-export async function apiBoardsList(
+export async function boardsList(
   ordering?: string,
   page?: number,
   search?: string
@@ -339,47 +446,47 @@ export async function apiBoardsList(
   return response.data;
 }
 
-export async function apiBoardsCreate(data: Board): Promise<Board> {
+export async function boardsCreate(data: BoardRequest): Promise<Board> {
   const response = await axios.post(`/api/boards/`, data);
   return response.data;
 }
 
-export async function apiBoardsRetrieve(id: string): Promise<Board> {
+export async function boardsRetrieve(id: string): Promise<Board> {
   const response = await axios.get(`/api/boards/${id}/`);
   return response.data;
 }
 
-export async function apiBoardsUpdate(id: string, data: Board): Promise<Board> {
+export async function boardsUpdate(id: string, data: BoardRequest): Promise<Board> {
   const response = await axios.put(`/api/boards/${id}/`, data);
   return response.data;
 }
 
-export async function apiBoardsPartialUpdate(id: string, data: PatchedBoard): Promise<Board> {
+export async function boardsPartialUpdate(id: string, data: PatchedBoardRequest): Promise<Board> {
   const response = await axios.patch(`/api/boards/${id}/`, data);
   return response.data;
 }
 
-export async function apiBoardsDestroy(id: string): Promise<any> {
+export async function boardsDestroy(id: string): Promise<any> {
   const response = await axios.delete(`/api/boards/${id}/`);
   return response.data;
 }
 
-export async function apiBoardsKanbanBoardRetrieve(id: string): Promise<Board> {
+export async function boardsKanbanBoardRetrieve(id: string): Promise<Board> {
   const response = await axios.get(`/api/boards/${id}/kanban_board/`);
   return response.data;
 }
 
-export async function apiBoardsSetDefaultCreate(id: string, data: Board): Promise<Board> {
+export async function boardsSetDefaultCreate(id: string, data: BoardRequest): Promise<Board> {
   const response = await axios.post(`/api/boards/${id}/set_default/`, data);
   return response.data;
 }
 
-export async function apiBoardsDefaultRetrieve(): Promise<Board> {
+export async function boardsDefaultRetrieve(): Promise<Board> {
   const response = await axios.get(`/api/boards/default/`);
   return response.data;
 }
 
-export async function apiBookingsAdminAvailabilityList(
+export async function bookingsAdminAvailabilityList(
   dayOfWeek?: number,
   isAvailable?: boolean,
   ordering?: string,
@@ -403,40 +510,40 @@ export async function apiBookingsAdminAvailabilityList(
   return response.data;
 }
 
-export async function apiBookingsAdminAvailabilityCreate(
-  data: StaffAvailability
+export async function bookingsAdminAvailabilityCreate(
+  data: StaffAvailabilityRequest
 ): Promise<StaffAvailability> {
   const response = await axios.post(`/api/bookings/admin/availability/`, data);
   return response.data;
 }
 
-export async function apiBookingsAdminAvailabilityRetrieve(id: number): Promise<StaffAvailability> {
+export async function bookingsAdminAvailabilityRetrieve(id: number): Promise<StaffAvailability> {
   const response = await axios.get(`/api/bookings/admin/availability/${id}/`);
   return response.data;
 }
 
-export async function apiBookingsAdminAvailabilityUpdate(
+export async function bookingsAdminAvailabilityUpdate(
   id: number,
-  data: StaffAvailability
+  data: StaffAvailabilityRequest
 ): Promise<StaffAvailability> {
   const response = await axios.put(`/api/bookings/admin/availability/${id}/`, data);
   return response.data;
 }
 
-export async function apiBookingsAdminAvailabilityPartialUpdate(
+export async function bookingsAdminAvailabilityPartialUpdate(
   id: number,
-  data: PatchedStaffAvailability
+  data: PatchedStaffAvailabilityRequest
 ): Promise<StaffAvailability> {
   const response = await axios.patch(`/api/bookings/admin/availability/${id}/`, data);
   return response.data;
 }
 
-export async function apiBookingsAdminAvailabilityDestroy(id: number): Promise<any> {
+export async function bookingsAdminAvailabilityDestroy(id: number): Promise<any> {
   const response = await axios.delete(`/api/bookings/admin/availability/${id}/`);
   return response.data;
 }
 
-export async function apiBookingsAdminBookingsList(
+export async function bookingsAdminBookingsList(
   client?: number,
   ordering?: string,
   page?: number,
@@ -464,85 +571,85 @@ export async function apiBookingsAdminBookingsList(
   return response.data;
 }
 
-export async function apiBookingsAdminBookingsCreate(data: BookingList): Promise<BookingList> {
+export async function bookingsAdminBookingsCreate(data: BookingListRequest): Promise<BookingList> {
   const response = await axios.post(`/api/bookings/admin/bookings/`, data);
   return response.data;
 }
 
-export async function apiBookingsAdminBookingsRetrieve(id: number): Promise<BookingDetail> {
+export async function bookingsAdminBookingsRetrieve(id: number): Promise<BookingDetail> {
   const response = await axios.get(`/api/bookings/admin/bookings/${id}/`);
   return response.data;
 }
 
-export async function apiBookingsAdminBookingsUpdate(
+export async function bookingsAdminBookingsUpdate(
   id: number,
-  data: BookingList
+  data: BookingListRequest
 ): Promise<BookingList> {
   const response = await axios.put(`/api/bookings/admin/bookings/${id}/`, data);
   return response.data;
 }
 
-export async function apiBookingsAdminBookingsPartialUpdate(
+export async function bookingsAdminBookingsPartialUpdate(
   id: number,
-  data: PatchedBookingList
+  data: PatchedBookingListRequest
 ): Promise<BookingList> {
   const response = await axios.patch(`/api/bookings/admin/bookings/${id}/`, data);
   return response.data;
 }
 
-export async function apiBookingsAdminBookingsDestroy(id: number): Promise<any> {
+export async function bookingsAdminBookingsDestroy(id: number): Promise<any> {
   const response = await axios.delete(`/api/bookings/admin/bookings/${id}/`);
   return response.data;
 }
 
-export async function apiBookingsAdminBookingsAssignStaffCreate(
+export async function bookingsAdminBookingsAssignStaffCreate(
   id: number,
-  data: BookingList
+  data: BookingListRequest
 ): Promise<BookingList> {
   const response = await axios.post(`/api/bookings/admin/bookings/${id}/assign_staff/`, data);
   return response.data;
 }
 
-export async function apiBookingsAdminBookingsCancelCreate(
+export async function bookingsAdminBookingsCancelCreate(
   id: number,
-  data: BookingList
+  data: BookingListRequest
 ): Promise<BookingList> {
   const response = await axios.post(`/api/bookings/admin/bookings/${id}/cancel/`, data);
   return response.data;
 }
 
-export async function apiBookingsAdminBookingsCheckPaymentStatusRetrieve(
+export async function bookingsAdminBookingsCheckPaymentStatusRetrieve(
   id: number
 ): Promise<BookingList> {
   const response = await axios.get(`/api/bookings/admin/bookings/${id}/check_payment_status/`);
   return response.data;
 }
 
-export async function apiBookingsAdminBookingsCompleteCreate(
+export async function bookingsAdminBookingsCompleteCreate(
   id: number,
-  data: BookingList
+  data: BookingListRequest
 ): Promise<BookingList> {
   const response = await axios.post(`/api/bookings/admin/bookings/${id}/complete/`, data);
   return response.data;
 }
 
-export async function apiBookingsAdminBookingsConfirmCreate(
+export async function bookingsAdminBookingsConfirmCreate(
   id: number,
-  data: BookingList
+  data: BookingListRequest
 ): Promise<BookingList> {
   const response = await axios.post(`/api/bookings/admin/bookings/${id}/confirm/`, data);
   return response.data;
 }
 
-export async function apiBookingsAdminBookingsRescheduleCreate(
+export async function bookingsAdminBookingsRescheduleCreate(
   id: number,
-  data: BookingList
+  data: BookingListRequest
 ): Promise<BookingList> {
   const response = await axios.post(`/api/bookings/admin/bookings/${id}/reschedule/`, data);
   return response.data;
 }
 
-export async function apiBookingsAdminCategoriesList(
+export async function bookingsAdminCategoriesList(
   ordering?: string,
   page?: number,
   search?: string
@@ -560,40 +667,40 @@ export async function apiBookingsAdminCategoriesList(
   return response.data;
 }
 
-export async function apiBookingsAdminCategoriesCreate(
-  data: ServiceCategory
+export async function bookingsAdminCategoriesCreate(
+  data: ServiceCategoryRequest
 ): Promise<ServiceCategory> {
   const response = await axios.post(`/api/bookings/admin/categories/`, data);
   return response.data;
 }
 
-export async function apiBookingsAdminCategoriesRetrieve(id: number): Promise<ServiceCategory> {
+export async function bookingsAdminCategoriesRetrieve(id: number): Promise<ServiceCategory> {
   const response = await axios.get(`/api/bookings/admin/categories/${id}/`);
   return response.data;
 }
 
-export async function apiBookingsAdminCategoriesUpdate(
+export async function bookingsAdminCategoriesUpdate(
   id: number,
-  data: ServiceCategory
+  data: ServiceCategoryRequest
 ): Promise<ServiceCategory> {
   const response = await axios.put(`/api/bookings/admin/categories/${id}/`, data);
   return response.data;
 }
 
-export async function apiBookingsAdminCategoriesPartialUpdate(
+export async function bookingsAdminCategoriesPartialUpdate(
   id: number,
-  data: PatchedServiceCategory
+  data: PatchedServiceCategoryRequest
 ): Promise<ServiceCategory> {
   const response = await axios.patch(`/api/bookings/admin/categories/${id}/`, data);
   return response.data;
 }
 
-export async function apiBookingsAdminCategoriesDestroy(id: number): Promise<any> {
+export async function bookingsAdminCategoriesDestroy(id: number): Promise<any> {
   const response = await axios.delete(`/api/bookings/admin/categories/${id}/`);
   return response.data;
 }
 
-export async function apiBookingsAdminClientsList(
+export async function bookingsAdminClientsList(
   ordering?: string,
   page?: number,
   search?: string
@@ -611,27 +718,27 @@ export async function apiBookingsAdminClientsList(
   return response.data;
 }
 
-export async function apiBookingsAdminClientsRetrieve(id: number): Promise<BookingClient> {
+export async function bookingsAdminClientsRetrieve(id: number): Promise<BookingClient> {
   const response = await axios.get(`/api/bookings/admin/clients/${id}/`);
   return response.data;
 }
 
-export async function apiBookingsAdminClientsBookingsRetrieve(id: number): Promise<BookingClient> {
+export async function bookingsAdminClientsBookingsRetrieve(id: number): Promise<BookingClient> {
   const response = await axios.get(`/api/bookings/admin/clients/${id}/bookings/`);
   return response.data;
 }
 
-export async function apiBookingsAdminClientsStatsRetrieve(id: number): Promise<BookingClient> {
+export async function bookingsAdminClientsStatsRetrieve(id: number): Promise<BookingClient> {
   const response = await axios.get(`/api/bookings/admin/clients/${id}/stats/`);
   return response.data;
 }
 
-export async function apiBookingsAdminDashboardRetrieve(): Promise<any> {
+export async function bookingsAdminDashboardRetrieve(): Promise<any> {
   const response = await axios.get(`/api/bookings/admin/dashboard/`);
   return response.data;
 }
 
-export async function apiBookingsAdminExceptionsList(
+export async function bookingsAdminExceptionsList(
   isAvailable?: boolean,
   ordering?: string,
   page?: number,
@@ -653,40 +760,40 @@ export async function apiBookingsAdminExceptionsList(
   return response.data;
 }
 
-export async function apiBookingsAdminExceptionsCreate(
-  data: StaffException
+export async function bookingsAdminExceptionsCreate(
+  data: StaffExceptionRequest
 ): Promise<StaffException> {
   const response = await axios.post(`/api/bookings/admin/exceptions/`, data);
   return response.data;
 }
 
-export async function apiBookingsAdminExceptionsRetrieve(id: number): Promise<StaffException> {
+export async function bookingsAdminExceptionsRetrieve(id: number): Promise<StaffException> {
   const response = await axios.get(`/api/bookings/admin/exceptions/${id}/`);
   return response.data;
 }
 
-export async function apiBookingsAdminExceptionsUpdate(
+export async function bookingsAdminExceptionsUpdate(
   id: number,
-  data: StaffException
+  data: StaffExceptionRequest
 ): Promise<StaffException> {
   const response = await axios.put(`/api/bookings/admin/exceptions/${id}/`, data);
   return response.data;
 }
 
-export async function apiBookingsAdminExceptionsPartialUpdate(
+export async function bookingsAdminExceptionsPartialUpdate(
   id: number,
-  data: PatchedStaffException
+  data: PatchedStaffExceptionRequest
 ): Promise<StaffException> {
   const response = await axios.patch(`/api/bookings/admin/exceptions/${id}/`, data);
   return response.data;
 }
 
-export async function apiBookingsAdminExceptionsDestroy(id: number): Promise<any> {
+export async function bookingsAdminExceptionsDestroy(id: number): Promise<any> {
   const response = await axios.delete(`/api/bookings/admin/exceptions/${id}/`);
   return response.data;
 }
 
-export async function apiBookingsAdminRecurringBookingsList(
+export async function bookingsAdminRecurringBookingsList(
   client?: number,
   frequency?: "biweekly" | "monthly" | "weekly",
   ordering?: string,
@@ -712,71 +819,71 @@ export async function apiBookingsAdminRecurringBookingsList(
   return response.data;
 }
 
-export async function apiBookingsAdminRecurringBookingsCreate(
-  data: RecurringBooking
+export async function bookingsAdminRecurringBookingsCreate(
+  data: RecurringBookingRequest
 ): Promise<RecurringBooking> {
   const response = await axios.post(`/api/bookings/admin/recurring-bookings/`, data);
   return response.data;
 }
 
-export async function apiBookingsAdminRecurringBookingsRetrieve(
+export async function bookingsAdminRecurringBookingsRetrieve(
   id: number
 ): Promise<RecurringBooking> {
   const response = await axios.get(`/api/bookings/admin/recurring-bookings/${id}/`);
   return response.data;
 }
 
-export async function apiBookingsAdminRecurringBookingsUpdate(
+export async function bookingsAdminRecurringBookingsUpdate(
   id: number,
-  data: RecurringBooking
+  data: RecurringBookingRequest
 ): Promise<RecurringBooking> {
   const response = await axios.put(`/api/bookings/admin/recurring-bookings/${id}/`, data);
   return response.data;
 }
 
-export async function apiBookingsAdminRecurringBookingsPartialUpdate(
+export async function bookingsAdminRecurringBookingsPartialUpdate(
   id: number,
-  data: PatchedRecurringBooking
+  data: PatchedRecurringBookingRequest
 ): Promise<RecurringBooking> {
   const response = await axios.patch(`/api/bookings/admin/recurring-bookings/${id}/`, data);
   return response.data;
 }
 
-export async function apiBookingsAdminRecurringBookingsDestroy(id: number): Promise<any> {
+export async function bookingsAdminRecurringBookingsDestroy(id: number): Promise<any> {
   const response = await axios.delete(`/api/bookings/admin/recurring-bookings/${id}/`);
   return response.data;
 }
 
-export async function apiBookingsAdminRecurringBookingsCancelCreate(
+export async function bookingsAdminRecurringBookingsCancelCreate(
   id: number,
-  data: RecurringBooking
+  data: RecurringBookingRequest
 ): Promise<RecurringBooking> {
   const response = await axios.post(`/api/bookings/admin/recurring-bookings/${id}/cancel/`, data);
   return response.data;
 }
 
-export async function apiBookingsAdminRecurringBookingsPauseCreate(
+export async function bookingsAdminRecurringBookingsPauseCreate(
   id: number,
-  data: RecurringBooking
+  data: RecurringBookingRequest
 ): Promise<RecurringBooking> {
   const response = await axios.post(`/api/bookings/admin/recurring-bookings/${id}/pause/`, data);
   return response.data;
 }
 
-export async function apiBookingsAdminRecurringBookingsResumeCreate(
+export async function bookingsAdminRecurringBookingsResumeCreate(
   id: number,
-  data: RecurringBooking
+  data: RecurringBookingRequest
 ): Promise<RecurringBooking> {
   const response = await axios.post(`/api/bookings/admin/recurring-bookings/${id}/resume/`, data);
   return response.data;
 }
 
-export async function apiBookingsAdminScheduleRetrieve(): Promise<any> {
+export async function bookingsAdminScheduleRetrieve(): Promise<any> {
   const response = await axios.get(`/api/bookings/admin/schedule/`);
   return response.data;
 }
 
-export async function apiBookingsAdminServicesList(
+export async function bookingsAdminServicesList(
   bookingType?: "duration_based" | "fixed_slots",
   category?: number,
   ordering?: string,
@@ -800,69 +907,71 @@ export async function apiBookingsAdminServicesList(
   return response.data;
 }
 
-export async function apiBookingsAdminServicesCreate(data: ServiceDetail): Promise<ServiceDetail> {
+export async function bookingsAdminServicesCreate(
+  data: ServiceDetailRequest
+): Promise<ServiceDetail> {
   const response = await axios.post(`/api/bookings/admin/services/`, data);
   return response.data;
 }
 
-export async function apiBookingsAdminServicesRetrieve(id: number): Promise<ServiceDetail> {
+export async function bookingsAdminServicesRetrieve(id: number): Promise<ServiceDetail> {
   const response = await axios.get(`/api/bookings/admin/services/${id}/`);
   return response.data;
 }
 
-export async function apiBookingsAdminServicesUpdate(
+export async function bookingsAdminServicesUpdate(
   id: number,
-  data: ServiceDetail
+  data: ServiceDetailRequest
 ): Promise<ServiceDetail> {
   const response = await axios.put(`/api/bookings/admin/services/${id}/`, data);
   return response.data;
 }
 
-export async function apiBookingsAdminServicesPartialUpdate(
+export async function bookingsAdminServicesPartialUpdate(
   id: number,
-  data: PatchedServiceDetail
+  data: PatchedServiceDetailRequest
 ): Promise<ServiceDetail> {
   const response = await axios.patch(`/api/bookings/admin/services/${id}/`, data);
   return response.data;
 }
 
-export async function apiBookingsAdminServicesDestroy(id: number): Promise<any> {
+export async function bookingsAdminServicesDestroy(id: number): Promise<any> {
   const response = await axios.delete(`/api/bookings/admin/services/${id}/`);
   return response.data;
 }
 
-export async function apiBookingsAdminServicesActivateCreate(
+export async function bookingsAdminServicesActivateCreate(
   id: number,
-  data: ServiceList
+  data: ServiceListRequest
 ): Promise<ServiceList> {
   const response = await axios.post(`/api/bookings/admin/services/${id}/activate/`, data);
   return response.data;
 }
 
-export async function apiBookingsAdminServicesDeactivateCreate(
+export async function bookingsAdminServicesDeactivateCreate(
   id: number,
-  data: ServiceList
+  data: ServiceListRequest
 ): Promise<ServiceList> {
   const response = await axios.post(`/api/bookings/admin/services/${id}/deactivate/`, data);
   return response.data;
 }
 
-export async function apiBookingsAdminSettingsRetrieve(): Promise<any> {
+export async function bookingsAdminSettingsRetrieve(): Promise<any> {
   const response = await axios.get(`/api/bookings/admin/settings/`);
   return response.data;
 }
 
-export async function apiBookingsAdminSettingsUpdate(): Promise<any> {
+export async function bookingsAdminSettingsUpdate(): Promise<any> {
   const response = await axios.put(`/api/bookings/admin/settings/`);
   return response.data;
 }
 
-export async function apiBookingsAdminSettingsPartialUpdate(): Promise<any> {
+export async function bookingsAdminSettingsPartialUpdate(): Promise<any> {
   const response = await axios.patch(`/api/bookings/admin/settings/`);
   return response.data;
 }
 
-export async function apiBookingsAdminStaffList(
+export async function bookingsAdminStaffList(
   isActiveForBookings?: boolean,
   ordering?: string,
   page?: number,
@@ -884,63 +993,63 @@ export async function apiBookingsAdminStaffList(
   return response.data;
 }
 
-export async function apiBookingsAdminStaffCreate(
-  data: BookingStaffCreate
+export async function bookingsAdminStaffCreate(
+  data: BookingStaffCreateRequest
 ): Promise<BookingStaffCreate> {
   const response = await axios.post(`/api/bookings/admin/staff/`, data);
   return response.data;
 }
 
-export async function apiBookingsAdminStaffRetrieve(id: number): Promise<BookingStaff> {
+export async function bookingsAdminStaffRetrieve(id: number): Promise<BookingStaff> {
   const response = await axios.get(`/api/bookings/admin/staff/${id}/`);
   return response.data;
 }
 
-export async function apiBookingsAdminStaffUpdate(
+export async function bookingsAdminStaffUpdate(
   id: number,
-  data: BookingStaffCreate
+  data: BookingStaffCreateRequest
 ): Promise<BookingStaffCreate> {
   const response = await axios.put(`/api/bookings/admin/staff/${id}/`, data);
   return response.data;
 }
 
-export async function apiBookingsAdminStaffPartialUpdate(
+export async function bookingsAdminStaffPartialUpdate(
   id: number,
-  data: PatchedBookingStaffCreate
+  data: PatchedBookingStaffCreateRequest
 ): Promise<BookingStaffCreate> {
   const response = await axios.patch(`/api/bookings/admin/staff/${id}/`, data);
   return response.data;
 }
 
-export async function apiBookingsAdminStaffDestroy(id: number): Promise<any> {
+export async function bookingsAdminStaffDestroy(id: number): Promise<any> {
   const response = await axios.delete(`/api/bookings/admin/staff/${id}/`);
   return response.data;
 }
 
-export async function apiBookingsAdminStaffAvailabilityRetrieve(id: number): Promise<BookingStaff> {
+export async function bookingsAdminStaffAvailabilityRetrieve(id: number): Promise<BookingStaff> {
   const response = await axios.get(`/api/bookings/admin/staff/${id}/availability/`);
   return response.data;
 }
 
-export async function apiBookingsAdminStaffBookingsRetrieve(id: number): Promise<BookingStaff> {
+export async function bookingsAdminStaffBookingsRetrieve(id: number): Promise<BookingStaff> {
   const response = await axios.get(`/api/bookings/admin/staff/${id}/bookings/`);
   return response.data;
 }
 
-export async function apiBookingsAdminStaffExceptionsRetrieve(id: number): Promise<BookingStaff> {
+export async function bookingsAdminStaffExceptionsRetrieve(id: number): Promise<BookingStaff> {
   const response = await axios.get(`/api/bookings/admin/staff/${id}/exceptions/`);
   return response.data;
 }
 
-export async function apiBookingsAdminStaffToggleActiveCreate(
+export async function bookingsAdminStaffToggleActiveCreate(
   id: number,
-  data: BookingStaff
+  data: BookingStaffRequest
 ): Promise<BookingStaff> {
   const response = await axios.post(`/api/bookings/admin/staff/${id}/toggle_active/`, data);
   return response.data;
 }
 
-export async function apiBookingsClientBookingsList(
+export async function bookingsClientBookingsList(
   ordering?: string,
   page?: number,
   search?: string
@@ -958,46 +1067,48 @@ export async function apiBookingsClientBookingsList(
   return response.data;
 }
 
-export async function apiBookingsClientBookingsCreate(data: BookingCreate): Promise<BookingCreate> {
+export async function bookingsClientBookingsCreate(
+  data: BookingCreateRequest
+): Promise<BookingCreate> {
   const response = await axios.post(`/api/bookings/client/bookings/`, data);
   return response.data;
 }
 
-export async function apiBookingsClientBookingsRetrieve(id: string): Promise<BookingDetail> {
+export async function bookingsClientBookingsRetrieve(id: string): Promise<BookingDetail> {
   const response = await axios.get(`/api/bookings/client/bookings/${id}/`);
   return response.data;
 }
 
-export async function apiBookingsClientBookingsUpdate(
+export async function bookingsClientBookingsUpdate(
   id: string,
-  data: BookingList
+  data: BookingListRequest
 ): Promise<BookingList> {
   const response = await axios.put(`/api/bookings/client/bookings/${id}/`, data);
   return response.data;
 }
 
-export async function apiBookingsClientBookingsPartialUpdate(
+export async function bookingsClientBookingsPartialUpdate(
   id: string,
-  data: PatchedBookingList
+  data: PatchedBookingListRequest
 ): Promise<BookingList> {
   const response = await axios.patch(`/api/bookings/client/bookings/${id}/`, data);
   return response.data;
 }
 
-export async function apiBookingsClientBookingsDestroy(id: string): Promise<any> {
+export async function bookingsClientBookingsDestroy(id: string): Promise<any> {
   const response = await axios.delete(`/api/bookings/client/bookings/${id}/`);
   return response.data;
 }
 
-export async function apiBookingsClientBookingsCancelCreate(
+export async function bookingsClientBookingsCancelCreate(
   id: string,
-  data: BookingList
+  data: BookingListRequest
 ): Promise<BookingList> {
   const response = await axios.post(`/api/bookings/client/bookings/${id}/cancel/`, data);
   return response.data;
 }
 
-export async function apiBookingsClientCategoriesList(
+export async function bookingsClientCategoriesList(
   ordering?: string,
   page?: number,
   search?: string
@@ -1015,12 +1126,12 @@ export async function apiBookingsClientCategoriesList(
   return response.data;
 }
 
-export async function apiBookingsClientCategoriesRetrieve(id: number): Promise<ServiceCategory> {
+export async function bookingsClientCategoriesRetrieve(id: number): Promise<ServiceCategory> {
   const response = await axios.get(`/api/bookings/client/categories/${id}/`);
   return response.data;
 }
 
-export async function apiBookingsClientRecurringBookingsList(
+export async function bookingsClientRecurringBookingsList(
   ordering?: string,
   page?: number,
   search?: string
@@ -1038,58 +1149,58 @@ export async function apiBookingsClientRecurringBookingsList(
   return response.data;
 }
 
-export async function apiBookingsClientRecurringBookingsCreate(
-  data: RecurringBookingCreate
+export async function bookingsClientRecurringBookingsCreate(
+  data: RecurringBookingCreateRequest
 ): Promise<RecurringBookingCreate> {
   const response = await axios.post(`/api/bookings/client/recurring-bookings/`, data);
   return response.data;
 }
 
-export async function apiBookingsClientRecurringBookingsRetrieve(
+export async function bookingsClientRecurringBookingsRetrieve(
   id: string
 ): Promise<RecurringBooking> {
   const response = await axios.get(`/api/bookings/client/recurring-bookings/${id}/`);
   return response.data;
 }
 
-export async function apiBookingsClientRecurringBookingsUpdate(
+export async function bookingsClientRecurringBookingsUpdate(
   id: string,
-  data: RecurringBooking
+  data: RecurringBookingRequest
 ): Promise<RecurringBooking> {
   const response = await axios.put(`/api/bookings/client/recurring-bookings/${id}/`, data);
   return response.data;
 }
 
-export async function apiBookingsClientRecurringBookingsPartialUpdate(
+export async function bookingsClientRecurringBookingsPartialUpdate(
   id: string,
-  data: PatchedRecurringBooking
+  data: PatchedRecurringBookingRequest
 ): Promise<RecurringBooking> {
   const response = await axios.patch(`/api/bookings/client/recurring-bookings/${id}/`, data);
   return response.data;
 }
 
-export async function apiBookingsClientRecurringBookingsDestroy(id: string): Promise<any> {
+export async function bookingsClientRecurringBookingsDestroy(id: string): Promise<any> {
   const response = await axios.delete(`/api/bookings/client/recurring-bookings/${id}/`);
   return response.data;
 }
 
-export async function apiBookingsClientRecurringBookingsPauseCreate(
+export async function bookingsClientRecurringBookingsPauseCreate(
   id: string,
-  data: RecurringBooking
+  data: RecurringBookingRequest
 ): Promise<RecurringBooking> {
   const response = await axios.post(`/api/bookings/client/recurring-bookings/${id}/pause/`, data);
   return response.data;
 }
 
-export async function apiBookingsClientRecurringBookingsResumeCreate(
+export async function bookingsClientRecurringBookingsResumeCreate(
   id: string,
-  data: RecurringBooking
+  data: RecurringBookingRequest
 ): Promise<RecurringBooking> {
   const response = await axios.post(`/api/bookings/client/recurring-bookings/${id}/resume/`, data);
   return response.data;
 }
 
-export async function apiBookingsClientServicesList(
+export async function bookingsClientServicesList(
   bookingType?: "duration_based" | "fixed_slots",
   category?: number,
   ordering?: string,
@@ -1111,17 +1222,17 @@ export async function apiBookingsClientServicesList(
   return response.data;
 }
 
-export async function apiBookingsClientServicesRetrieve(id: number): Promise<ServiceList> {
+export async function bookingsClientServicesRetrieve(id: number): Promise<ServiceList> {
   const response = await axios.get(`/api/bookings/client/services/${id}/`);
   return response.data;
 }
 
-export async function apiBookingsClientServicesSlotsRetrieve(id: number): Promise<ServiceList> {
+export async function bookingsClientServicesSlotsRetrieve(id: number): Promise<ServiceList> {
   const response = await axios.get(`/api/bookings/client/services/${id}/slots/`);
   return response.data;
 }
 
-export async function apiBookingsClientStaffList(
+export async function bookingsClientStaffList(
   ordering?: string,
   page?: number,
   search?: string
@@ -1139,47 +1250,47 @@ export async function apiBookingsClientStaffList(
   return response.data;
 }
 
-export async function apiBookingsClientStaffRetrieve(id: number): Promise<BookingStaff> {
+export async function bookingsClientStaffRetrieve(id: number): Promise<BookingStaff> {
   const response = await axios.get(`/api/bookings/client/staff/${id}/`);
   return response.data;
 }
 
-export async function apiBookingsClientsLoginCreate(): Promise<any> {
+export async function bookingsClientsLoginCreate(): Promise<any> {
   const response = await axios.post(`/api/bookings/clients/login/`);
   return response.data;
 }
 
-export async function apiBookingsClientsPasswordResetConfirmCreate(): Promise<any> {
+export async function bookingsClientsPasswordResetConfirmCreate(): Promise<any> {
   const response = await axios.post(`/api/bookings/clients/password-reset/confirm/`);
   return response.data;
 }
 
-export async function apiBookingsClientsPasswordResetRequestCreate(): Promise<any> {
+export async function bookingsClientsPasswordResetRequestCreate(): Promise<any> {
   const response = await axios.post(`/api/bookings/clients/password-reset/request/`);
   return response.data;
 }
 
-export async function apiBookingsClientsProfileRetrieve(): Promise<any> {
+export async function bookingsClientsProfileRetrieve(): Promise<any> {
   const response = await axios.get(`/api/bookings/clients/profile/`);
   return response.data;
 }
 
-export async function apiBookingsClientsProfilePartialUpdate(): Promise<any> {
+export async function bookingsClientsProfilePartialUpdate(): Promise<any> {
   const response = await axios.patch(`/api/bookings/clients/profile/`);
   return response.data;
 }
 
-export async function apiBookingsClientsRegisterCreate(): Promise<any> {
+export async function bookingsClientsRegisterCreate(): Promise<any> {
   const response = await axios.post(`/api/bookings/clients/register/`);
   return response.data;
 }
 
-export async function apiBookingsClientsVerifyEmailCreate(): Promise<any> {
+export async function bookingsClientsVerifyEmailCreate(): Promise<any> {
   const response = await axios.post(`/api/bookings/clients/verify-email/`);
   return response.data;
 }
 
-export async function apiCallLogsList(
+export async function callLogsList(
   ordering?: string,
   page?: number,
   search?: string
@@ -1197,89 +1308,98 @@ export async function apiCallLogsList(
   return response.data;
 }
 
-export async function apiCallLogsCreate(data: CallLogCreate): Promise<CallLogCreate> {
+export async function callLogsCreate(data: CallLogCreateRequest): Promise<CallLogCreate> {
   const response = await axios.post(`/api/call-logs/`, data);
   return response.data;
 }
 
-export async function apiCallLogsRetrieve(id: number): Promise<CallLogDetail> {
+export async function callLogsRetrieve(id: number): Promise<CallLogDetail> {
   const response = await axios.get(`/api/call-logs/${id}/`);
   return response.data;
 }
 
-export async function apiCallLogsUpdate(id: number, data: CallLog): Promise<CallLog> {
+export async function callLogsUpdate(id: number, data: CallLogRequest): Promise<CallLog> {
   const response = await axios.put(`/api/call-logs/${id}/`, data);
   return response.data;
 }
 
-export async function apiCallLogsPartialUpdate(id: number, data: PatchedCallLog): Promise<CallLog> {
+export async function callLogsPartialUpdate(
+  id: number,
+  data: PatchedCallLogRequest
+): Promise<CallLog> {
   const response = await axios.patch(`/api/call-logs/${id}/`, data);
   return response.data;
 }
 
-export async function apiCallLogsDestroy(id: number): Promise<any> {
+export async function callLogsDestroy(id: number): Promise<any> {
   const response = await axios.delete(`/api/call-logs/${id}/`);
   return response.data;
 }
 
-export async function apiCallLogsAddEventCreate(id: number, data: CallEvent): Promise<CallEvent> {
+export async function callLogsAddEventCreate(
+  id: number,
+  data: CallEventRequest
+): Promise<CallEvent> {
   const response = await axios.post(`/api/call-logs/${id}/add_event/`, data);
   return response.data;
 }
 
-export async function apiCallLogsEndCallCreate(
+export async function callLogsEndCallCreate(
   id: number,
-  data: CallStatusUpdate
+  data: CallStatusUpdateRequest
 ): Promise<CallLog> {
   const response = await axios.post(`/api/call-logs/${id}/end_call/`, data);
   return response.data;
 }
 
-export async function apiCallLogsStartRecordingCreate(
+export async function callLogsStartRecordingCreate(
   id: number,
-  data: CallLog
+  data: CallLogRequest
 ): Promise<CallRecording> {
   const response = await axios.post(`/api/call-logs/${id}/start_recording/`, data);
   return response.data;
 }
 
-export async function apiCallLogsStopRecordingCreate(
+export async function callLogsStopRecordingCreate(
   id: number,
-  data: CallLog
+  data: CallLogRequest
 ): Promise<CallRecording> {
   const response = await axios.post(`/api/call-logs/${id}/stop_recording/`, data);
   return response.data;
 }
 
-export async function apiCallLogsToggleHoldCreate(id: number, data: CallLog): Promise<CallLog> {
+export async function callLogsToggleHoldCreate(id: number, data: CallLogRequest): Promise<CallLog> {
   const response = await axios.post(`/api/call-logs/${id}/toggle_hold/`, data);
   return response.data;
 }
 
-export async function apiCallLogsTransferCallCreate(id: number, data: CallLog): Promise<CallLog> {
+export async function callLogsTransferCallCreate(
+  id: number,
+  data: CallLogRequest
+): Promise<CallLog> {
   const response = await axios.post(`/api/call-logs/${id}/transfer_call/`, data);
   return response.data;
 }
 
-export async function apiCallLogsUpdateStatusPartialUpdate(
+export async function callLogsUpdateStatusPartialUpdate(
   id: number,
-  data: PatchedCallStatusUpdate
+  data: PatchedCallStatusUpdateRequest
 ): Promise<CallLog> {
   const response = await axios.patch(`/api/call-logs/${id}/update_status/`, data);
   return response.data;
 }
 
-export async function apiCallLogsInitiateCallCreate(data: CallInitiate): Promise<CallLog> {
+export async function callLogsInitiateCallCreate(data: CallInitiateRequest): Promise<CallLog> {
   const response = await axios.post(`/api/call-logs/initiate_call/`, data);
   return response.data;
 }
 
-export async function apiCallLogsLogIncomingCallCreate(data: CallLogCreate): Promise<CallLog> {
+export async function callLogsLogIncomingCallCreate(data: CallLogCreateRequest): Promise<CallLog> {
   const response = await axios.post(`/api/call-logs/log_incoming_call/`, data);
   return response.data;
 }
 
-export async function apiCallLogsStatisticsRetrieve(
+export async function callLogsStatisticsRetrieve(
   period?: "month" | "today" | "week"
 ): Promise<Record<string, any>> {
   const response = await axios.get(
@@ -1288,7 +1408,7 @@ export async function apiCallLogsStatisticsRetrieve(
   return response.data;
 }
 
-export async function apiChecklistItemsList(
+export async function checklistItemsList(
   ordering?: string,
   page?: number
 ): Promise<PaginatedChecklistItemList> {
@@ -1304,54 +1424,54 @@ export async function apiChecklistItemsList(
   return response.data;
 }
 
-export async function apiChecklistItemsCreate(data: ChecklistItem): Promise<ChecklistItem> {
+export async function checklistItemsCreate(data: ChecklistItemRequest): Promise<ChecklistItem> {
   const response = await axios.post(`/api/checklist-items/`, data);
   return response.data;
 }
 
-export async function apiChecklistItemsRetrieve(id: string): Promise<ChecklistItem> {
+export async function checklistItemsRetrieve(id: string): Promise<ChecklistItem> {
   const response = await axios.get(`/api/checklist-items/${id}/`);
   return response.data;
 }
 
-export async function apiChecklistItemsUpdate(
+export async function checklistItemsUpdate(
   id: string,
-  data: ChecklistItem
+  data: ChecklistItemRequest
 ): Promise<ChecklistItem> {
   const response = await axios.put(`/api/checklist-items/${id}/`, data);
   return response.data;
 }
 
-export async function apiChecklistItemsPartialUpdate(
+export async function checklistItemsPartialUpdate(
   id: string,
-  data: PatchedChecklistItem
+  data: PatchedChecklistItemRequest
 ): Promise<ChecklistItem> {
   const response = await axios.patch(`/api/checklist-items/${id}/`, data);
   return response.data;
 }
 
-export async function apiChecklistItemsDestroy(id: string): Promise<any> {
+export async function checklistItemsDestroy(id: string): Promise<any> {
   const response = await axios.delete(`/api/checklist-items/${id}/`);
   return response.data;
 }
 
-export async function apiChecklistItemsReorderPartialUpdate(
+export async function checklistItemsReorderPartialUpdate(
   id: string,
-  data: PatchedChecklistItem
+  data: PatchedChecklistItemRequest
 ): Promise<ChecklistItem> {
   const response = await axios.patch(`/api/checklist-items/${id}/reorder/`, data);
   return response.data;
 }
 
-export async function apiChecklistItemsToggleCheckPartialUpdate(
+export async function checklistItemsToggleCheckPartialUpdate(
   id: string,
-  data: PatchedChecklistItem
+  data: PatchedChecklistItemRequest
 ): Promise<ChecklistItem> {
   const response = await axios.patch(`/api/checklist-items/${id}/toggle_check/`, data);
   return response.data;
 }
 
-export async function apiClientsList(
+export async function clientsList(
   ordering?: string,
   page?: number,
   search?: string
@@ -1369,32 +1489,35 @@ export async function apiClientsList(
   return response.data;
 }
 
-export async function apiClientsCreate(data: Client): Promise<Client> {
+export async function clientsCreate(data: ClientRequest): Promise<Client> {
   const response = await axios.post(`/api/clients/`, data);
   return response.data;
 }
 
-export async function apiClientsRetrieve(id: number): Promise<Client> {
+export async function clientsRetrieve(id: number): Promise<Client> {
   const response = await axios.get(`/api/clients/${id}/`);
   return response.data;
 }
 
-export async function apiClientsUpdate(id: number, data: Client): Promise<Client> {
+export async function clientsUpdate(id: number, data: ClientRequest): Promise<Client> {
   const response = await axios.put(`/api/clients/${id}/`, data);
   return response.data;
 }
 
-export async function apiClientsPartialUpdate(id: number, data: PatchedClient): Promise<Client> {
+export async function clientsPartialUpdate(
+  id: number,
+  data: PatchedClientRequest
+): Promise<Client> {
   const response = await axios.patch(`/api/clients/${id}/`, data);
   return response.data;
 }
 
-export async function apiClientsDestroy(id: number): Promise<any> {
+export async function clientsDestroy(id: number): Promise<any> {
   const response = await axios.delete(`/api/clients/${id}/`);
   return response.data;
 }
 
-export async function apiClientsCallHistoryList(
+export async function clientsCallHistoryList(
   id: number,
   ordering?: string,
   page?: number,
@@ -1413,7 +1536,7 @@ export async function apiClientsCallHistoryList(
   return response.data;
 }
 
-export async function apiColumnsList(
+export async function columnsList(
   board?: number,
   ordering?: string,
   page?: number
@@ -1431,40 +1554,40 @@ export async function apiColumnsList(
   return response.data;
 }
 
-export async function apiColumnsCreate(data: TicketColumnCreate): Promise<TicketColumnCreate> {
+export async function columnsCreate(data: TicketColumnCreateRequest): Promise<TicketColumnCreate> {
   const response = await axios.post(`/api/columns/`, data);
   return response.data;
 }
 
-export async function apiColumnsRetrieve(id: number): Promise<TicketColumn> {
+export async function columnsRetrieve(id: number): Promise<TicketColumn> {
   const response = await axios.get(`/api/columns/${id}/`);
   return response.data;
 }
 
-export async function apiColumnsUpdate(
+export async function columnsUpdate(
   id: number,
-  data: TicketColumnUpdate
+  data: TicketColumnUpdateRequest
 ): Promise<TicketColumnUpdate> {
   const response = await axios.put(`/api/columns/${id}/`, data);
   return response.data;
 }
 
-export async function apiColumnsPartialUpdate(
+export async function columnsPartialUpdate(
   id: number,
-  data: PatchedTicketColumnUpdate
+  data: PatchedTicketColumnUpdateRequest
 ): Promise<TicketColumnUpdate> {
   const response = await axios.patch(`/api/columns/${id}/`, data);
   return response.data;
 }
 
-export async function apiColumnsDestroy(id: number): Promise<any> {
+export async function columnsDestroy(id: number): Promise<any> {
   const response = await axios.delete(`/api/columns/${id}/`);
   return response.data;
 }
 
-export async function apiColumnsReorderCreate(
+export async function columnsReorderCreate(
   id: number,
-  data: TicketColumn
+  data: TicketColumnRequest
 ): Promise<TicketColumn> {
   const response = await axios.post(`/api/columns/${id}/reorder/`, data);
   return response.data;
@@ -1475,7 +1598,7 @@ export async function kanbanBoard(): Promise<KanbanBoard> {
   return response.data;
 }
 
-export async function apiCommentsList(
+export async function commentsList(
   ordering?: string,
   page?: number
 ): Promise<PaginatedTicketCommentList> {
@@ -1491,75 +1614,78 @@ export async function apiCommentsList(
   return response.data;
 }
 
-export async function apiCommentsCreate(data: TicketComment): Promise<TicketComment> {
+export async function commentsCreate(data: TicketCommentRequest): Promise<TicketComment> {
   const response = await axios.post(`/api/comments/`, data);
   return response.data;
 }
 
-export async function apiCommentsRetrieve(id: string): Promise<TicketComment> {
+export async function commentsRetrieve(id: string): Promise<TicketComment> {
   const response = await axios.get(`/api/comments/${id}/`);
   return response.data;
 }
 
-export async function apiCommentsUpdate(id: string, data: TicketComment): Promise<TicketComment> {
+export async function commentsUpdate(
+  id: string,
+  data: TicketCommentRequest
+): Promise<TicketComment> {
   const response = await axios.put(`/api/comments/${id}/`, data);
   return response.data;
 }
 
-export async function apiCommentsPartialUpdate(
+export async function commentsPartialUpdate(
   id: string,
-  data: PatchedTicketComment
+  data: PatchedTicketCommentRequest
 ): Promise<TicketComment> {
   const response = await axios.patch(`/api/comments/${id}/`, data);
   return response.data;
 }
 
-export async function apiCommentsDestroy(id: string): Promise<any> {
+export async function commentsDestroy(id: string): Promise<any> {
   const response = await axios.delete(`/api/comments/${id}/`);
   return response.data;
 }
 
-export async function apiCorsTestRetrieve(): Promise<any> {
+export async function corsTestRetrieve(): Promise<any> {
   const response = await axios.get(`/api/cors-test/`);
   return response.data;
 }
 
-export async function apiCronHealthRetrieve(): Promise<any> {
+export async function cronHealthRetrieve(): Promise<any> {
   const response = await axios.get(`/api/cron/health/`);
   return response.data;
 }
 
-export async function apiCronProcessTrialExpirationsRetrieve(): Promise<any> {
+export async function cronProcessTrialExpirationsRetrieve(): Promise<any> {
   const response = await axios.get(`/api/cron/process-trial-expirations/`);
   return response.data;
 }
 
-export async function apiCronProcessTrialExpirationsCreate(): Promise<any> {
+export async function cronProcessTrialExpirationsCreate(): Promise<any> {
   const response = await axios.post(`/api/cron/process-trial-expirations/`);
   return response.data;
 }
 
-export async function apiCronRecurringPaymentsRetrieve(): Promise<any> {
+export async function cronRecurringPaymentsRetrieve(): Promise<any> {
   const response = await axios.get(`/api/cron/recurring-payments/`);
   return response.data;
 }
 
-export async function apiCronRecurringPaymentsCreate(): Promise<any> {
+export async function cronRecurringPaymentsCreate(): Promise<any> {
   const response = await axios.post(`/api/cron/recurring-payments/`);
   return response.data;
 }
 
-export async function apiCronSubscriptionCheckRetrieve(): Promise<any> {
+export async function cronSubscriptionCheckRetrieve(): Promise<any> {
   const response = await axios.get(`/api/cron/subscription-check/`);
   return response.data;
 }
 
-export async function apiCronSubscriptionCheckCreate(): Promise<any> {
+export async function cronSubscriptionCheckCreate(): Promise<any> {
   const response = await axios.post(`/api/cron/subscription-check/`);
   return response.data;
 }
 
-export async function apiDepartmentsList(
+export async function departmentsList(
   ordering?: string,
   page?: number,
   search?: string
@@ -1577,40 +1703,40 @@ export async function apiDepartmentsList(
   return response.data;
 }
 
-export async function apiDepartmentsCreate(data: Department): Promise<Department> {
+export async function departmentsCreate(data: DepartmentRequest): Promise<Department> {
   const response = await axios.post(`/api/departments/`, data);
   return response.data;
 }
 
-export async function apiDepartmentsRetrieve(id: number): Promise<Department> {
+export async function departmentsRetrieve(id: number): Promise<Department> {
   const response = await axios.get(`/api/departments/${id}/`);
   return response.data;
 }
 
-export async function apiDepartmentsUpdate(id: number, data: Department): Promise<Department> {
+export async function departmentsUpdate(id: number, data: DepartmentRequest): Promise<Department> {
   const response = await axios.put(`/api/departments/${id}/`, data);
   return response.data;
 }
 
-export async function apiDepartmentsPartialUpdate(
+export async function departmentsPartialUpdate(
   id: number,
-  data: PatchedDepartment
+  data: PatchedDepartmentRequest
 ): Promise<Department> {
   const response = await axios.patch(`/api/departments/${id}/`, data);
   return response.data;
 }
 
-export async function apiDepartmentsDestroy(id: number): Promise<any> {
+export async function departmentsDestroy(id: number): Promise<any> {
   const response = await axios.delete(`/api/departments/${id}/`);
   return response.data;
 }
 
-export async function apiDeploymentStatusRetrieve(tenantId: number): Promise<any> {
+export async function deploymentStatusRetrieve(tenantId: number): Promise<any> {
   const response = await axios.get(`/api/deployment-status/${tenantId}/`);
   return response.data;
 }
 
-export async function apiEcommerceAdminAddressesList(
+export async function ecommerceAdminAddressesList(
   client?: number,
   isDefault?: boolean,
   ordering?: string,
@@ -1630,48 +1756,48 @@ export async function apiEcommerceAdminAddressesList(
   return response.data;
 }
 
-export async function apiEcommerceAdminAddressesCreate(
-  data: ClientAddress
+export async function ecommerceAdminAddressesCreate(
+  data: ClientAddressRequest
 ): Promise<ClientAddress> {
   const response = await axios.post(`/api/ecommerce/admin/addresses/`, data);
   return response.data;
 }
 
-export async function apiEcommerceAdminAddressesRetrieve(id: number): Promise<ClientAddress> {
+export async function ecommerceAdminAddressesRetrieve(id: number): Promise<ClientAddress> {
   const response = await axios.get(`/api/ecommerce/admin/addresses/${id}/`);
   return response.data;
 }
 
-export async function apiEcommerceAdminAddressesUpdate(
+export async function ecommerceAdminAddressesUpdate(
   id: number,
-  data: ClientAddress
+  data: ClientAddressRequest
 ): Promise<ClientAddress> {
   const response = await axios.put(`/api/ecommerce/admin/addresses/${id}/`, data);
   return response.data;
 }
 
-export async function apiEcommerceAdminAddressesPartialUpdate(
+export async function ecommerceAdminAddressesPartialUpdate(
   id: number,
-  data: PatchedClientAddress
+  data: PatchedClientAddressRequest
 ): Promise<ClientAddress> {
   const response = await axios.patch(`/api/ecommerce/admin/addresses/${id}/`, data);
   return response.data;
 }
 
-export async function apiEcommerceAdminAddressesDestroy(id: number): Promise<any> {
+export async function ecommerceAdminAddressesDestroy(id: number): Promise<any> {
   const response = await axios.delete(`/api/ecommerce/admin/addresses/${id}/`);
   return response.data;
 }
 
-export async function apiEcommerceAdminAddressesSetDefaultCreate(
+export async function ecommerceAdminAddressesSetDefaultCreate(
   id: number,
-  data: ClientAddress
+  data: ClientAddressRequest
 ): Promise<ClientAddress> {
   const response = await axios.post(`/api/ecommerce/admin/addresses/${id}/set_default/`, data);
   return response.data;
 }
 
-export async function apiEcommerceAdminAttributesList(
+export async function ecommerceAdminAttributesList(
   attributeType?: "boolean" | "color" | "date" | "multiselect" | "number" | "select" | "text",
   isFilterable?: boolean,
   isVariantAttribute?: boolean,
@@ -1697,42 +1823,40 @@ export async function apiEcommerceAdminAttributesList(
   return response.data;
 }
 
-export async function apiEcommerceAdminAttributesCreate(
-  data: AttributeDefinition
+export async function ecommerceAdminAttributesCreate(
+  data: AttributeDefinitionRequest
 ): Promise<AttributeDefinition> {
   const response = await axios.post(`/api/ecommerce/admin/attributes/`, data);
   return response.data;
 }
 
-export async function apiEcommerceAdminAttributesRetrieve(
-  id: number
-): Promise<AttributeDefinition> {
+export async function ecommerceAdminAttributesRetrieve(id: number): Promise<AttributeDefinition> {
   const response = await axios.get(`/api/ecommerce/admin/attributes/${id}/`);
   return response.data;
 }
 
-export async function apiEcommerceAdminAttributesUpdate(
+export async function ecommerceAdminAttributesUpdate(
   id: number,
-  data: AttributeDefinition
+  data: AttributeDefinitionRequest
 ): Promise<AttributeDefinition> {
   const response = await axios.put(`/api/ecommerce/admin/attributes/${id}/`, data);
   return response.data;
 }
 
-export async function apiEcommerceAdminAttributesPartialUpdate(
+export async function ecommerceAdminAttributesPartialUpdate(
   id: number,
-  data: PatchedAttributeDefinition
+  data: PatchedAttributeDefinitionRequest
 ): Promise<AttributeDefinition> {
   const response = await axios.patch(`/api/ecommerce/admin/attributes/${id}/`, data);
   return response.data;
 }
 
-export async function apiEcommerceAdminAttributesDestroy(id: number): Promise<any> {
+export async function ecommerceAdminAttributesDestroy(id: number): Promise<any> {
   const response = await axios.delete(`/api/ecommerce/admin/attributes/${id}/`);
   return response.data;
 }
 
-export async function apiEcommerceAdminCartList(
+export async function ecommerceAdminCartList(
   client?: number,
   ordering?: string,
   page?: number,
@@ -1752,12 +1876,12 @@ export async function apiEcommerceAdminCartList(
   return response.data;
 }
 
-export async function apiEcommerceAdminCartCreate(data: Cart): Promise<Cart> {
+export async function ecommerceAdminCartCreate(data: CartRequest): Promise<Cart> {
   const response = await axios.post(`/api/ecommerce/admin/cart/`, data);
   return response.data;
 }
 
-export async function apiEcommerceAdminCartItemsList(
+export async function ecommerceAdminCartItemsList(
   cart?: number,
   page?: number,
   product?: number
@@ -1775,73 +1899,76 @@ export async function apiEcommerceAdminCartItemsList(
   return response.data;
 }
 
-export async function apiEcommerceAdminCartItemsCreate(
-  data: CartItemCreate
+export async function ecommerceAdminCartItemsCreate(
+  data: CartItemCreateRequest
 ): Promise<CartItemCreate> {
   const response = await axios.post(`/api/ecommerce/admin/cart-items/`, data);
   return response.data;
 }
 
-export async function apiEcommerceAdminCartItemsRetrieve(id: number): Promise<CartItem> {
+export async function ecommerceAdminCartItemsRetrieve(id: number): Promise<CartItem> {
   const response = await axios.get(`/api/ecommerce/admin/cart-items/${id}/`);
   return response.data;
 }
 
-export async function apiEcommerceAdminCartItemsUpdate(
+export async function ecommerceAdminCartItemsUpdate(
   id: number,
-  data: CartItemCreate
+  data: CartItemCreateRequest
 ): Promise<CartItemCreate> {
   const response = await axios.put(`/api/ecommerce/admin/cart-items/${id}/`, data);
   return response.data;
 }
 
-export async function apiEcommerceAdminCartItemsPartialUpdate(
+export async function ecommerceAdminCartItemsPartialUpdate(
   id: number,
-  data: PatchedCartItemCreate
+  data: PatchedCartItemCreateRequest
 ): Promise<CartItemCreate> {
   const response = await axios.patch(`/api/ecommerce/admin/cart-items/${id}/`, data);
   return response.data;
 }
 
-export async function apiEcommerceAdminCartItemsDestroy(id: number): Promise<any> {
+export async function ecommerceAdminCartItemsDestroy(id: number): Promise<any> {
   const response = await axios.delete(`/api/ecommerce/admin/cart-items/${id}/`);
   return response.data;
 }
 
-export async function apiEcommerceAdminCartRetrieve(id: number): Promise<Cart> {
+export async function ecommerceAdminCartRetrieve(id: number): Promise<Cart> {
   const response = await axios.get(`/api/ecommerce/admin/cart/${id}/`);
   return response.data;
 }
 
-export async function apiEcommerceAdminCartUpdate(id: number, data: Cart): Promise<Cart> {
+export async function ecommerceAdminCartUpdate(id: number, data: CartRequest): Promise<Cart> {
   const response = await axios.put(`/api/ecommerce/admin/cart/${id}/`, data);
   return response.data;
 }
 
-export async function apiEcommerceAdminCartPartialUpdate(
+export async function ecommerceAdminCartPartialUpdate(
   id: number,
-  data: PatchedCart
+  data: PatchedCartRequest
 ): Promise<Cart> {
   const response = await axios.patch(`/api/ecommerce/admin/cart/${id}/`, data);
   return response.data;
 }
 
-export async function apiEcommerceAdminCartDestroy(id: number): Promise<any> {
+export async function ecommerceAdminCartDestroy(id: number): Promise<any> {
   const response = await axios.delete(`/api/ecommerce/admin/cart/${id}/`);
   return response.data;
 }
 
-export async function apiEcommerceAdminCartClearCreate(id: number, data: Cart): Promise<Cart> {
+export async function ecommerceAdminCartClearCreate(id: number, data: CartRequest): Promise<Cart> {
   const response = await axios.post(`/api/ecommerce/admin/cart/${id}/clear/`, data);
   return response.data;
 }
 
-export async function apiEcommerceAdminCartSetAddressCreate(id: number, data: Cart): Promise<Cart> {
+export async function ecommerceAdminCartSetAddressCreate(
+  id: number,
+  data: CartRequest
+): Promise<Cart> {
   const response = await axios.post(`/api/ecommerce/admin/cart/${id}/set_address/`, data);
   return response.data;
 }
 
-export async function apiEcommerceAdminClientsList(
+export async function ecommerceAdminClientsList(
   isActive?: boolean,
   isVerified?: boolean,
   ordering?: string,
@@ -1863,40 +1990,40 @@ export async function apiEcommerceAdminClientsList(
   return response.data;
 }
 
-export async function apiEcommerceAdminClientsCreate(
-  data: EcommerceClient
+export async function ecommerceAdminClientsCreate(
+  data: EcommerceClientRequest
 ): Promise<EcommerceClient> {
   const response = await axios.post(`/api/ecommerce/admin/clients/`, data);
   return response.data;
 }
 
-export async function apiEcommerceAdminClientsRetrieve(id: number): Promise<EcommerceClient> {
+export async function ecommerceAdminClientsRetrieve(id: number): Promise<EcommerceClient> {
   const response = await axios.get(`/api/ecommerce/admin/clients/${id}/`);
   return response.data;
 }
 
-export async function apiEcommerceAdminClientsUpdate(
+export async function ecommerceAdminClientsUpdate(
   id: number,
-  data: EcommerceClient
+  data: EcommerceClientRequest
 ): Promise<EcommerceClient> {
   const response = await axios.put(`/api/ecommerce/admin/clients/${id}/`, data);
   return response.data;
 }
 
-export async function apiEcommerceAdminClientsPartialUpdate(
+export async function ecommerceAdminClientsPartialUpdate(
   id: number,
-  data: PatchedEcommerceClient
+  data: PatchedEcommerceClientRequest
 ): Promise<EcommerceClient> {
   const response = await axios.patch(`/api/ecommerce/admin/clients/${id}/`, data);
   return response.data;
 }
 
-export async function apiEcommerceAdminClientsDestroy(id: number): Promise<any> {
+export async function ecommerceAdminClientsDestroy(id: number): Promise<any> {
   const response = await axios.delete(`/api/ecommerce/admin/clients/${id}/`);
   return response.data;
 }
 
-export async function apiEcommerceAdminFavoritesList(
+export async function ecommerceAdminFavoritesList(
   client?: number,
   ordering?: string,
   page?: number,
@@ -1916,40 +2043,40 @@ export async function apiEcommerceAdminFavoritesList(
   return response.data;
 }
 
-export async function apiEcommerceAdminFavoritesCreate(
-  data: FavoriteProductCreate
+export async function ecommerceAdminFavoritesCreate(
+  data: FavoriteProductCreateRequest
 ): Promise<FavoriteProductCreate> {
   const response = await axios.post(`/api/ecommerce/admin/favorites/`, data);
   return response.data;
 }
 
-export async function apiEcommerceAdminFavoritesRetrieve(id: number): Promise<FavoriteProduct> {
+export async function ecommerceAdminFavoritesRetrieve(id: number): Promise<FavoriteProduct> {
   const response = await axios.get(`/api/ecommerce/admin/favorites/${id}/`);
   return response.data;
 }
 
-export async function apiEcommerceAdminFavoritesUpdate(
+export async function ecommerceAdminFavoritesUpdate(
   id: number,
-  data: FavoriteProduct
+  data: FavoriteProductRequest
 ): Promise<FavoriteProduct> {
   const response = await axios.put(`/api/ecommerce/admin/favorites/${id}/`, data);
   return response.data;
 }
 
-export async function apiEcommerceAdminFavoritesPartialUpdate(
+export async function ecommerceAdminFavoritesPartialUpdate(
   id: number,
-  data: PatchedFavoriteProduct
+  data: PatchedFavoriteProductRequest
 ): Promise<FavoriteProduct> {
   const response = await axios.patch(`/api/ecommerce/admin/favorites/${id}/`, data);
   return response.data;
 }
 
-export async function apiEcommerceAdminFavoritesDestroy(id: number): Promise<any> {
+export async function ecommerceAdminFavoritesDestroy(id: number): Promise<any> {
   const response = await axios.delete(`/api/ecommerce/admin/favorites/${id}/`);
   return response.data;
 }
 
-export async function apiEcommerceAdminFavoritesIsFavoritedRetrieve(
+export async function ecommerceAdminFavoritesIsFavoritedRetrieve(
   client: number,
   product: number
 ): Promise<FavoriteProduct> {
@@ -1965,7 +2092,7 @@ export async function apiEcommerceAdminFavoritesIsFavoritedRetrieve(
   return response.data;
 }
 
-export async function apiEcommerceAdminFavoritesToggleCreate(data: {
+export async function ecommerceAdminFavoritesToggleCreate(data: {
   client?: number;
   product?: number;
 }): Promise<FavoriteProduct> {
@@ -1973,7 +2100,7 @@ export async function apiEcommerceAdminFavoritesToggleCreate(data: {
   return response.data;
 }
 
-export async function apiEcommerceAdminImagesList(
+export async function ecommerceAdminImagesList(
   ordering?: string,
   page?: number,
   product?: number
@@ -1991,38 +2118,38 @@ export async function apiEcommerceAdminImagesList(
   return response.data;
 }
 
-export async function apiEcommerceAdminImagesCreate(data: ProductImage): Promise<ProductImage> {
+export async function ecommerceAdminImagesCreate(data: ProductImageRequest): Promise<ProductImage> {
   const response = await axios.post(`/api/ecommerce/admin/images/`, data);
   return response.data;
 }
 
-export async function apiEcommerceAdminImagesRetrieve(id: number): Promise<ProductImage> {
+export async function ecommerceAdminImagesRetrieve(id: number): Promise<ProductImage> {
   const response = await axios.get(`/api/ecommerce/admin/images/${id}/`);
   return response.data;
 }
 
-export async function apiEcommerceAdminImagesUpdate(
+export async function ecommerceAdminImagesUpdate(
   id: number,
-  data: ProductImage
+  data: ProductImageRequest
 ): Promise<ProductImage> {
   const response = await axios.put(`/api/ecommerce/admin/images/${id}/`, data);
   return response.data;
 }
 
-export async function apiEcommerceAdminImagesPartialUpdate(
+export async function ecommerceAdminImagesPartialUpdate(
   id: number,
-  data: PatchedProductImage
+  data: PatchedProductImageRequest
 ): Promise<ProductImage> {
   const response = await axios.patch(`/api/ecommerce/admin/images/${id}/`, data);
   return response.data;
 }
 
-export async function apiEcommerceAdminImagesDestroy(id: number): Promise<any> {
+export async function ecommerceAdminImagesDestroy(id: number): Promise<any> {
   const response = await axios.delete(`/api/ecommerce/admin/images/${id}/`);
   return response.data;
 }
 
-export async function apiEcommerceAdminLanguagesList(
+export async function ecommerceAdminLanguagesList(
   ordering?: string,
   page?: number
 ): Promise<PaginatedLanguageList> {
@@ -2038,38 +2165,38 @@ export async function apiEcommerceAdminLanguagesList(
   return response.data;
 }
 
-export async function apiEcommerceAdminLanguagesCreate(data: Language): Promise<Language> {
+export async function ecommerceAdminLanguagesCreate(data: LanguageRequest): Promise<Language> {
   const response = await axios.post(`/api/ecommerce/admin/languages/`, data);
   return response.data;
 }
 
-export async function apiEcommerceAdminLanguagesRetrieve(id: number): Promise<Language> {
+export async function ecommerceAdminLanguagesRetrieve(id: number): Promise<Language> {
   const response = await axios.get(`/api/ecommerce/admin/languages/${id}/`);
   return response.data;
 }
 
-export async function apiEcommerceAdminLanguagesUpdate(
+export async function ecommerceAdminLanguagesUpdate(
   id: number,
-  data: Language
+  data: LanguageRequest
 ): Promise<Language> {
   const response = await axios.put(`/api/ecommerce/admin/languages/${id}/`, data);
   return response.data;
 }
 
-export async function apiEcommerceAdminLanguagesPartialUpdate(
+export async function ecommerceAdminLanguagesPartialUpdate(
   id: number,
-  data: PatchedLanguage
+  data: PatchedLanguageRequest
 ): Promise<Language> {
   const response = await axios.patch(`/api/ecommerce/admin/languages/${id}/`, data);
   return response.data;
 }
 
-export async function apiEcommerceAdminLanguagesDestroy(id: number): Promise<any> {
+export async function ecommerceAdminLanguagesDestroy(id: number): Promise<any> {
   const response = await axios.delete(`/api/ecommerce/admin/languages/${id}/`);
   return response.data;
 }
 
-export async function apiEcommerceAdminOrdersList(
+export async function ecommerceAdminOrdersList(
   client?: number,
   ordering?: string,
   page?: number,
@@ -2098,51 +2225,51 @@ export async function apiEcommerceAdminOrdersList(
   return response.data;
 }
 
-export async function apiEcommerceAdminOrdersCreate(data: OrderCreate): Promise<OrderCreate> {
+export async function ecommerceAdminOrdersCreate(data: OrderCreateRequest): Promise<OrderCreate> {
   const response = await axios.post(`/api/ecommerce/admin/orders/`, data);
   return response.data;
 }
 
-export async function apiEcommerceAdminOrdersRetrieve(id: number): Promise<Order> {
+export async function ecommerceAdminOrdersRetrieve(id: number): Promise<Order> {
   const response = await axios.get(`/api/ecommerce/admin/orders/${id}/`);
   return response.data;
 }
 
-export async function apiEcommerceAdminOrdersUpdate(id: number, data: Order): Promise<Order> {
+export async function ecommerceAdminOrdersUpdate(id: number, data: OrderRequest): Promise<Order> {
   const response = await axios.put(`/api/ecommerce/admin/orders/${id}/`, data);
   return response.data;
 }
 
-export async function apiEcommerceAdminOrdersPartialUpdate(
+export async function ecommerceAdminOrdersPartialUpdate(
   id: number,
-  data: PatchedOrder
+  data: PatchedOrderRequest
 ): Promise<Order> {
   const response = await axios.patch(`/api/ecommerce/admin/orders/${id}/`, data);
   return response.data;
 }
 
-export async function apiEcommerceAdminOrdersDestroy(id: number): Promise<any> {
+export async function ecommerceAdminOrdersDestroy(id: number): Promise<any> {
   const response = await axios.delete(`/api/ecommerce/admin/orders/${id}/`);
   return response.data;
 }
 
-export async function apiEcommerceAdminOrdersInitiatePaymentCreate(
+export async function ecommerceAdminOrdersInitiatePaymentCreate(
   id: number,
-  data: Order
+  data: OrderRequest
 ): Promise<Order> {
   const response = await axios.post(`/api/ecommerce/admin/orders/${id}/initiate_payment/`, data);
   return response.data;
 }
 
-export async function apiEcommerceAdminOrdersUpdateStatusCreate(
+export async function ecommerceAdminOrdersUpdateStatusCreate(
   id: number,
-  data: Order
+  data: OrderRequest
 ): Promise<Order> {
   const response = await axios.post(`/api/ecommerce/admin/orders/${id}/update_status/`, data);
   return response.data;
 }
 
-export async function apiEcommerceAdminProductsList(
+export async function ecommerceAdminProductsList(
   inStock?: boolean,
   isFeatured?: boolean,
   lowStock?: boolean,
@@ -2172,48 +2299,48 @@ export async function apiEcommerceAdminProductsList(
   return response.data;
 }
 
-export async function apiEcommerceAdminProductsCreate(
-  data: ProductCreateUpdate
+export async function ecommerceAdminProductsCreate(
+  data: ProductCreateUpdateRequest
 ): Promise<ProductCreateUpdate> {
   const response = await axios.post(`/api/ecommerce/admin/products/`, data);
   return response.data;
 }
 
-export async function apiEcommerceAdminProductsRetrieve(id: number): Promise<ProductDetail> {
+export async function ecommerceAdminProductsRetrieve(id: number): Promise<ProductDetail> {
   const response = await axios.get(`/api/ecommerce/admin/products/${id}/`);
   return response.data;
 }
 
-export async function apiEcommerceAdminProductsUpdate(
+export async function ecommerceAdminProductsUpdate(
   id: number,
-  data: ProductCreateUpdate
+  data: ProductCreateUpdateRequest
 ): Promise<ProductCreateUpdate> {
   const response = await axios.put(`/api/ecommerce/admin/products/${id}/`, data);
   return response.data;
 }
 
-export async function apiEcommerceAdminProductsPartialUpdate(
+export async function ecommerceAdminProductsPartialUpdate(
   id: number,
-  data: PatchedProductCreateUpdate
+  data: PatchedProductCreateUpdateRequest
 ): Promise<ProductCreateUpdate> {
   const response = await axios.patch(`/api/ecommerce/admin/products/${id}/`, data);
   return response.data;
 }
 
-export async function apiEcommerceAdminProductsDestroy(id: number): Promise<any> {
+export async function ecommerceAdminProductsDestroy(id: number): Promise<any> {
   const response = await axios.delete(`/api/ecommerce/admin/products/${id}/`);
   return response.data;
 }
 
-export async function apiEcommerceAdminProductsAddImageCreate(
+export async function ecommerceAdminProductsAddImageCreate(
   id: number,
-  data: ProductDetail
+  data: ProductDetailRequest
 ): Promise<ProductDetail> {
   const response = await axios.post(`/api/ecommerce/admin/products/${id}/add_image/`, data);
   return response.data;
 }
 
-export async function apiEcommerceAdminProductsRemoveImageDestroy(
+export async function ecommerceAdminProductsRemoveImageDestroy(
   id: number,
   imageId: string
 ): Promise<any> {
@@ -2223,25 +2350,25 @@ export async function apiEcommerceAdminProductsRemoveImageDestroy(
   return response.data;
 }
 
-export async function apiEcommerceAdminProductsUpdateAttributesCreate(
+export async function ecommerceAdminProductsUpdateAttributesCreate(
   id: number,
-  data: ProductDetail
+  data: ProductDetailRequest
 ): Promise<ProductDetail> {
   const response = await axios.post(`/api/ecommerce/admin/products/${id}/update_attributes/`, data);
   return response.data;
 }
 
-export async function apiEcommerceAdminProductsFeaturedRetrieve(): Promise<ProductDetail> {
+export async function ecommerceAdminProductsFeaturedRetrieve(): Promise<ProductDetail> {
   const response = await axios.get(`/api/ecommerce/admin/products/featured/`);
   return response.data;
 }
 
-export async function apiEcommerceAdminProductsLowStockRetrieve(): Promise<ProductDetail> {
+export async function ecommerceAdminProductsLowStockRetrieve(): Promise<ProductDetail> {
   const response = await axios.get(`/api/ecommerce/admin/products/low_stock/`);
   return response.data;
 }
 
-export async function apiEcommerceAdminSettingsList(
+export async function ecommerceAdminSettingsList(
   ordering?: string,
   page?: number,
   search?: string
@@ -2259,40 +2386,40 @@ export async function apiEcommerceAdminSettingsList(
   return response.data;
 }
 
-export async function apiEcommerceAdminSettingsCreate(
-  data: EcommerceSettings
+export async function ecommerceAdminSettingsCreate(
+  data: EcommerceSettingsRequest
 ): Promise<EcommerceSettings> {
   const response = await axios.post(`/api/ecommerce/admin/settings/`, data);
   return response.data;
 }
 
-export async function apiEcommerceAdminSettingsRetrieve(id: string): Promise<EcommerceSettings> {
+export async function ecommerceAdminSettingsRetrieve(id: string): Promise<EcommerceSettings> {
   const response = await axios.get(`/api/ecommerce/admin/settings/${id}/`);
   return response.data;
 }
 
-export async function apiEcommerceAdminSettingsUpdate(
+export async function ecommerceAdminSettingsUpdate(
   id: string,
-  data: EcommerceSettings
+  data: EcommerceSettingsRequest
 ): Promise<EcommerceSettings> {
   const response = await axios.put(`/api/ecommerce/admin/settings/${id}/`, data);
   return response.data;
 }
 
-export async function apiEcommerceAdminSettingsPartialUpdate(
+export async function ecommerceAdminSettingsPartialUpdate(
   id: string,
-  data: PatchedEcommerceSettings
+  data: PatchedEcommerceSettingsRequest
 ): Promise<EcommerceSettings> {
   const response = await axios.patch(`/api/ecommerce/admin/settings/${id}/`, data);
   return response.data;
 }
 
-export async function apiEcommerceAdminSettingsDestroy(id: string): Promise<any> {
+export async function ecommerceAdminSettingsDestroy(id: string): Promise<any> {
   const response = await axios.delete(`/api/ecommerce/admin/settings/${id}/`);
   return response.data;
 }
 
-export async function apiEcommerceAdminVariantsList(
+export async function ecommerceAdminVariantsList(
   isActive?: boolean,
   ordering?: string,
   page?: number,
@@ -2314,40 +2441,40 @@ export async function apiEcommerceAdminVariantsList(
   return response.data;
 }
 
-export async function apiEcommerceAdminVariantsCreate(
-  data: ProductVariant
+export async function ecommerceAdminVariantsCreate(
+  data: ProductVariantRequest
 ): Promise<ProductVariant> {
   const response = await axios.post(`/api/ecommerce/admin/variants/`, data);
   return response.data;
 }
 
-export async function apiEcommerceAdminVariantsRetrieve(id: number): Promise<ProductVariant> {
+export async function ecommerceAdminVariantsRetrieve(id: number): Promise<ProductVariant> {
   const response = await axios.get(`/api/ecommerce/admin/variants/${id}/`);
   return response.data;
 }
 
-export async function apiEcommerceAdminVariantsUpdate(
+export async function ecommerceAdminVariantsUpdate(
   id: number,
-  data: ProductVariant
+  data: ProductVariantRequest
 ): Promise<ProductVariant> {
   const response = await axios.put(`/api/ecommerce/admin/variants/${id}/`, data);
   return response.data;
 }
 
-export async function apiEcommerceAdminVariantsPartialUpdate(
+export async function ecommerceAdminVariantsPartialUpdate(
   id: number,
-  data: PatchedProductVariant
+  data: PatchedProductVariantRequest
 ): Promise<ProductVariant> {
   const response = await axios.patch(`/api/ecommerce/admin/variants/${id}/`, data);
   return response.data;
 }
 
-export async function apiEcommerceAdminVariantsDestroy(id: number): Promise<any> {
+export async function ecommerceAdminVariantsDestroy(id: number): Promise<any> {
   const response = await axios.delete(`/api/ecommerce/admin/variants/${id}/`);
   return response.data;
 }
 
-export async function apiEcommerceClientAddressesList(
+export async function ecommerceClientAddressesList(
   ordering?: string,
   page?: number
 ): Promise<PaginatedClientAddressList> {
@@ -2363,48 +2490,68 @@ export async function apiEcommerceClientAddressesList(
   return response.data;
 }
 
-export async function apiEcommerceClientAddressesCreate(
-  data: ClientAddress
+export async function ecommerceClientAddressesCreate(
+  data: ClientAddressRequest
 ): Promise<ClientAddress> {
   const response = await axios.post(`/api/ecommerce/client/addresses/`, data);
   return response.data;
 }
 
-export async function apiEcommerceClientAddressesRetrieve(id: string): Promise<ClientAddress> {
+export async function ecommerceClientAddressesRetrieve(id: string): Promise<ClientAddress> {
   const response = await axios.get(`/api/ecommerce/client/addresses/${id}/`);
   return response.data;
 }
 
-export async function apiEcommerceClientAddressesUpdate(
+export async function ecommerceClientAddressesUpdate(
   id: string,
-  data: ClientAddress
+  data: ClientAddressRequest
 ): Promise<ClientAddress> {
   const response = await axios.put(`/api/ecommerce/client/addresses/${id}/`, data);
   return response.data;
 }
 
-export async function apiEcommerceClientAddressesPartialUpdate(
+export async function ecommerceClientAddressesPartialUpdate(
   id: string,
-  data: PatchedClientAddress
+  data: PatchedClientAddressRequest
 ): Promise<ClientAddress> {
   const response = await axios.patch(`/api/ecommerce/client/addresses/${id}/`, data);
   return response.data;
 }
 
-export async function apiEcommerceClientAddressesDestroy(id: string): Promise<any> {
+export async function ecommerceClientAddressesDestroy(id: string): Promise<any> {
   const response = await axios.delete(`/api/ecommerce/client/addresses/${id}/`);
   return response.data;
 }
 
-export async function apiEcommerceClientAddressesSetDefaultCreate(
+export async function ecommerceClientAddressesSetDefaultCreate(
   id: string,
-  data: ClientAddress
+  data: ClientAddressRequest
 ): Promise<ClientAddress> {
   const response = await axios.post(`/api/ecommerce/client/addresses/${id}/set_default/`, data);
   return response.data;
 }
 
-export async function apiEcommerceClientCartList(
+export async function ecommerceClientCardsRetrieve(): Promise<any> {
+  const response = await axios.get(`/api/ecommerce/client/cards/`);
+  return response.data;
+}
+
+export async function ecommerceClientCardsDeleteDestroy(cardId: number): Promise<any> {
+  const response = await axios.delete(`/api/ecommerce/client/cards/${cardId}/delete/`);
+  return response.data;
+}
+
+export async function ecommerceClientCardsSetDefaultCreate(cardId: number): Promise<any> {
+  const response = await axios.post(`/api/ecommerce/client/cards/${cardId}/set-default/`);
+  return response.data;
+}
+
+export async function ecommerceClientCardsAddCreate(): Promise<any> {
+  const response = await axios.post(`/api/ecommerce/client/cards/add/`);
+  return response.data;
+}
+
+export async function ecommerceClientCartList(
   ordering?: string,
   page?: number
 ): Promise<PaginatedCartList> {
@@ -2420,87 +2567,80 @@ export async function apiEcommerceClientCartList(
   return response.data;
 }
 
-export async function apiEcommerceClientCartCreate(data: Cart): Promise<Cart> {
+export async function ecommerceClientCartCreate(data: CartRequest): Promise<Cart> {
   const response = await axios.post(`/api/ecommerce/client/cart/`, data);
   return response.data;
 }
 
-export async function apiEcommerceClientCartItemsList(
-  page?: number
-): Promise<PaginatedCartItemList> {
+export async function ecommerceClientCartItemsList(page?: number): Promise<PaginatedCartItemList> {
   const response = await axios.get(
     `/api/ecommerce/client/cart-items/${page ? "?page=" + encodeURIComponent(page) : ""}`
   );
   return response.data;
 }
 
-export async function apiEcommerceClientCartItemsCreate(
-  data: CartItemCreate
+export async function ecommerceClientCartItemsCreate(
+  data: CartItemCreateRequest
 ): Promise<CartItemCreate> {
   const response = await axios.post(`/api/ecommerce/client/cart-items/`, data);
   return response.data;
 }
 
-export async function apiEcommerceClientCartItemsRetrieve(id: string): Promise<CartItem> {
+export async function ecommerceClientCartItemsRetrieve(id: string): Promise<CartItem> {
   const response = await axios.get(`/api/ecommerce/client/cart-items/${id}/`);
   return response.data;
 }
 
-export async function apiEcommerceClientCartItemsUpdate(
+export async function ecommerceClientCartItemsUpdate(
   id: string,
-  data: CartItemCreate
+  data: CartItemCreateRequest
 ): Promise<CartItemCreate> {
   const response = await axios.put(`/api/ecommerce/client/cart-items/${id}/`, data);
   return response.data;
 }
 
-export async function apiEcommerceClientCartItemsPartialUpdate(
+export async function ecommerceClientCartItemsPartialUpdate(
   id: string,
-  data: PatchedCartItemCreate
+  data: PatchedCartItemCreateRequest
 ): Promise<CartItemCreate> {
   const response = await axios.patch(`/api/ecommerce/client/cart-items/${id}/`, data);
   return response.data;
 }
 
-export async function apiEcommerceClientCartItemsDestroy(id: string): Promise<any> {
+export async function ecommerceClientCartItemsDestroy(id: string): Promise<any> {
   const response = await axios.delete(`/api/ecommerce/client/cart-items/${id}/`);
   return response.data;
 }
 
-export async function apiEcommerceClientCartRetrieve(id: string): Promise<Cart> {
+export async function ecommerceClientCartRetrieve(id: string): Promise<Cart> {
   const response = await axios.get(`/api/ecommerce/client/cart/${id}/`);
   return response.data;
 }
 
-export async function apiEcommerceClientCartUpdate(id: string, data: Cart): Promise<Cart> {
+export async function ecommerceClientCartUpdate(id: string, data: CartRequest): Promise<Cart> {
   const response = await axios.put(`/api/ecommerce/client/cart/${id}/`, data);
   return response.data;
 }
 
-export async function apiEcommerceClientCartPartialUpdate(
+export async function ecommerceClientCartPartialUpdate(
   id: string,
-  data: PatchedCart
+  data: PatchedCartRequest
 ): Promise<Cart> {
   const response = await axios.patch(`/api/ecommerce/client/cart/${id}/`, data);
   return response.data;
 }
 
-export async function apiEcommerceClientCartDestroy(id: string): Promise<any> {
+export async function ecommerceClientCartDestroy(id: string): Promise<any> {
   const response = await axios.delete(`/api/ecommerce/client/cart/${id}/`);
   return response.data;
 }
 
-export async function apiEcommerceClientCartGetOrCreateRetrieve(): Promise<Cart> {
+export async function ecommerceClientCartGetOrCreateRetrieve(): Promise<Cart> {
   const response = await axios.get(`/api/ecommerce/client/cart/get_or_create/`);
   return response.data;
 }
 
-export async function apiEcommerceClientCartSetAddressCreate(data: Cart): Promise<Cart> {
-  const response = await axios.post(`/api/ecommerce/client/cart/set_address/`, data);
-  return response.data;
-}
-
-export async function apiEcommerceClientFavoritesList(
+export async function ecommerceClientFavoritesList(
   ordering?: string,
   page?: number
 ): Promise<PaginatedFavoriteProductList> {
@@ -2516,40 +2656,40 @@ export async function apiEcommerceClientFavoritesList(
   return response.data;
 }
 
-export async function apiEcommerceClientFavoritesCreate(
-  data: FavoriteProductCreate
+export async function ecommerceClientFavoritesCreate(
+  data: FavoriteProductCreateRequest
 ): Promise<FavoriteProductCreate> {
   const response = await axios.post(`/api/ecommerce/client/favorites/`, data);
   return response.data;
 }
 
-export async function apiEcommerceClientFavoritesRetrieve(id: string): Promise<FavoriteProduct> {
+export async function ecommerceClientFavoritesRetrieve(id: string): Promise<FavoriteProduct> {
   const response = await axios.get(`/api/ecommerce/client/favorites/${id}/`);
   return response.data;
 }
 
-export async function apiEcommerceClientFavoritesUpdate(
+export async function ecommerceClientFavoritesUpdate(
   id: string,
-  data: FavoriteProduct
+  data: FavoriteProductRequest
 ): Promise<FavoriteProduct> {
   const response = await axios.put(`/api/ecommerce/client/favorites/${id}/`, data);
   return response.data;
 }
 
-export async function apiEcommerceClientFavoritesPartialUpdate(
+export async function ecommerceClientFavoritesPartialUpdate(
   id: string,
-  data: PatchedFavoriteProduct
+  data: PatchedFavoriteProductRequest
 ): Promise<FavoriteProduct> {
   const response = await axios.patch(`/api/ecommerce/client/favorites/${id}/`, data);
   return response.data;
 }
 
-export async function apiEcommerceClientFavoritesDestroy(id: string): Promise<any> {
+export async function ecommerceClientFavoritesDestroy(id: string): Promise<any> {
   const response = await axios.delete(`/api/ecommerce/client/favorites/${id}/`);
   return response.data;
 }
 
-export async function apiEcommerceClientOrdersList(
+export async function ecommerceClientOrdersList(
   ordering?: string,
   page?: number
 ): Promise<PaginatedOrderList> {
@@ -2565,35 +2705,35 @@ export async function apiEcommerceClientOrdersList(
   return response.data;
 }
 
-export async function apiEcommerceClientOrdersCreate(data: OrderCreate): Promise<OrderCreate> {
+export async function ecommerceClientOrdersCreate(data: OrderCreateRequest): Promise<OrderCreate> {
   const response = await axios.post(`/api/ecommerce/client/orders/`, data);
   return response.data;
 }
 
-export async function apiEcommerceClientOrdersRetrieve(id: string): Promise<Order> {
+export async function ecommerceClientOrdersRetrieve(id: string): Promise<Order> {
   const response = await axios.get(`/api/ecommerce/client/orders/${id}/`);
   return response.data;
 }
 
-export async function apiEcommerceClientOrdersUpdate(id: string, data: Order): Promise<Order> {
+export async function ecommerceClientOrdersUpdate(id: string, data: OrderRequest): Promise<Order> {
   const response = await axios.put(`/api/ecommerce/client/orders/${id}/`, data);
   return response.data;
 }
 
-export async function apiEcommerceClientOrdersPartialUpdate(
+export async function ecommerceClientOrdersPartialUpdate(
   id: string,
-  data: PatchedOrder
+  data: PatchedOrderRequest
 ): Promise<Order> {
   const response = await axios.patch(`/api/ecommerce/client/orders/${id}/`, data);
   return response.data;
 }
 
-export async function apiEcommerceClientOrdersDestroy(id: string): Promise<any> {
+export async function ecommerceClientOrdersDestroy(id: string): Promise<any> {
   const response = await axios.delete(`/api/ecommerce/client/orders/${id}/`);
   return response.data;
 }
 
-export async function apiEcommerceClientProductsList(
+export async function ecommerceClientProductsList(
   isFeatured?: boolean,
   ordering?: string,
   page?: number,
@@ -2613,29 +2753,24 @@ export async function apiEcommerceClientProductsList(
   return response.data;
 }
 
-export async function apiEcommerceClientProductsRetrieve(id: number): Promise<ProductDetail> {
+export async function ecommerceClientProductsRetrieve(id: number): Promise<ProductDetail> {
   const response = await axios.get(`/api/ecommerce/client/products/${id}/`);
   return response.data;
 }
 
-export async function apiEcommerceClientProfileMeRetrieve(): Promise<EcommerceClient> {
+export async function ecommerceClientProfileMeRetrieve(): Promise<EcommerceClient> {
   const response = await axios.get(`/api/ecommerce/client/profile/me/`);
   return response.data;
 }
 
-export async function apiEcommerceClientProfileUpdateProfilePartialUpdate(
-  data: PatchedEcommerceClient
+export async function ecommerceClientProfileUpdateProfilePartialUpdate(
+  data: PatchedEcommerceClientRequest
 ): Promise<EcommerceClient> {
   const response = await axios.patch(`/api/ecommerce/client/profile/update_profile/`, data);
   return response.data;
 }
 
-export async function loginClient(data: ClientLogin): Promise<{
-  message: string;
-  client: EcommerceClient;
-  access: string;
-  refresh: string;
-}> {
+export async function loginClient(data: ClientLoginRequest): Promise<EcommerceClient> {
   const response = await axios.post(`/api/ecommerce/clients/login/`, data);
   return response.data;
 }
@@ -2645,25 +2780,40 @@ export async function getCurrentClient(): Promise<EcommerceClient> {
   return response.data;
 }
 
-export async function passwordResetConfirm(data: PasswordResetConfirm): Promise<any> {
+export async function passwordResetConfirm(data: PasswordResetConfirmRequest): Promise<any> {
   const response = await axios.post(`/api/ecommerce/clients/password-reset/confirm/`, data);
   return response.data;
 }
 
-export async function passwordResetRequest(data: PasswordResetRequest): Promise<any> {
+export async function passwordResetRequest(data: PasswordResetRequestRequest): Promise<any> {
   const response = await axios.post(`/api/ecommerce/clients/password-reset/request/`, data);
   return response.data;
 }
 
+export async function refreshClientToken(data: { refresh: string }): Promise<{
+  access?: string;
+  refresh?: string;
+}> {
+  const response = await axios.post(`/api/ecommerce/clients/refresh-token/`, data);
+  return response.data;
+}
+
 export async function registerClient(
-  data: ClientRegistration
+  data: ClientRegistrationRequest
 ): Promise<ClientRegistrationResponse> {
   const response = await axios.post(`/api/ecommerce/clients/register/`, data);
   return response.data;
 }
 
+export async function resendVerificationCode(
+  data: ResendVerificationCodeRequestRequest
+): Promise<ResendVerificationCodeResponse> {
+  const response = await axios.post(`/api/ecommerce/clients/resend-code/`, data);
+  return response.data;
+}
+
 export async function verifyEmail(
-  data: EmailVerificationRequest
+  data: EmailVerificationRequestRequest
 ): Promise<EmailVerificationResponse> {
   const response = await axios.post(`/api/ecommerce/clients/verify/`, data);
   return response.data;
@@ -2674,7 +2824,7 @@ export async function ecommercePaymentWebhook(): Promise<any> {
   return response.data;
 }
 
-export async function apiFeaturesList(
+export async function featuresList(
   ordering?: string,
   page?: number,
   search?: string
@@ -2692,12 +2842,12 @@ export async function apiFeaturesList(
   return response.data;
 }
 
-export async function apiFeaturesRetrieve(id: number): Promise<Feature> {
+export async function featuresRetrieve(id: number): Promise<Feature> {
   const response = await axios.get(`/api/features/${id}/`);
   return response.data;
 }
 
-export async function apiFormSubmissionsList(
+export async function formSubmissionsList(
   form?: number,
   ordering?: string,
   page?: number,
@@ -2719,50 +2869,50 @@ export async function apiFormSubmissionsList(
   return response.data;
 }
 
-export async function apiFormSubmissionsCreate(
-  data: TicketFormSubmission
+export async function formSubmissionsCreate(
+  data: TicketFormSubmissionRequest
 ): Promise<TicketFormSubmission> {
   const response = await axios.post(`/api/form-submissions/`, data);
   return response.data;
 }
 
-export async function apiFormSubmissionsRetrieve(id: number): Promise<TicketFormSubmission> {
+export async function formSubmissionsRetrieve(id: number): Promise<TicketFormSubmission> {
   const response = await axios.get(`/api/form-submissions/${id}/`);
   return response.data;
 }
 
-export async function apiFormSubmissionsUpdate(
+export async function formSubmissionsUpdate(
   id: number,
-  data: TicketFormSubmission
+  data: TicketFormSubmissionRequest
 ): Promise<TicketFormSubmission> {
   const response = await axios.put(`/api/form-submissions/${id}/`, data);
   return response.data;
 }
 
-export async function apiFormSubmissionsPartialUpdate(
+export async function formSubmissionsPartialUpdate(
   id: number,
-  data: PatchedTicketFormSubmission
+  data: PatchedTicketFormSubmissionRequest
 ): Promise<TicketFormSubmission> {
   const response = await axios.patch(`/api/form-submissions/${id}/`, data);
   return response.data;
 }
 
-export async function apiFormSubmissionsDestroy(id: number): Promise<any> {
+export async function formSubmissionsDestroy(id: number): Promise<any> {
   const response = await axios.delete(`/api/form-submissions/${id}/`);
   return response.data;
 }
 
-export async function apiFormSubmissionsByFormRetrieve(): Promise<TicketFormSubmission> {
+export async function formSubmissionsByFormRetrieve(): Promise<TicketFormSubmission> {
   const response = await axios.get(`/api/form-submissions/by_form/`);
   return response.data;
 }
 
-export async function apiFormSubmissionsByTicketRetrieve(): Promise<TicketFormSubmission> {
+export async function formSubmissionsByTicketRetrieve(): Promise<TicketFormSubmission> {
   const response = await axios.get(`/api/form-submissions/by_ticket/`);
   return response.data;
 }
 
-export async function apiGroupsList(
+export async function groupsList(
   ordering?: string,
   page?: number,
   search?: string
@@ -2780,47 +2930,47 @@ export async function apiGroupsList(
   return response.data;
 }
 
-export async function apiGroupsCreate(data: GroupCreate): Promise<GroupCreate> {
+export async function groupsCreate(data: GroupCreateRequest): Promise<GroupCreate> {
   const response = await axios.post(`/api/groups/`, data);
   return response.data;
 }
 
-export async function apiGroupsRetrieve(id: number): Promise<Group> {
+export async function groupsRetrieve(id: number): Promise<Group> {
   const response = await axios.get(`/api/groups/${id}/`);
   return response.data;
 }
 
-export async function apiGroupsUpdate(id: number, data: Group): Promise<Group> {
+export async function groupsUpdate(id: number, data: GroupRequest): Promise<Group> {
   const response = await axios.put(`/api/groups/${id}/`, data);
   return response.data;
 }
 
-export async function apiGroupsPartialUpdate(id: number, data: PatchedGroup): Promise<Group> {
+export async function groupsPartialUpdate(id: number, data: PatchedGroupRequest): Promise<Group> {
   const response = await axios.patch(`/api/groups/${id}/`, data);
   return response.data;
 }
 
-export async function apiGroupsDestroy(id: number): Promise<any> {
+export async function groupsDestroy(id: number): Promise<any> {
   const response = await axios.delete(`/api/groups/${id}/`);
   return response.data;
 }
 
-export async function apiGroupsAddUsersCreate(id: number, data: Group): Promise<Group> {
+export async function groupsAddUsersCreate(id: number, data: GroupRequest): Promise<Group> {
   const response = await axios.post(`/api/groups/${id}/add_users/`, data);
   return response.data;
 }
 
-export async function apiGroupsRemoveUsersCreate(id: number, data: Group): Promise<Group> {
+export async function groupsRemoveUsersCreate(id: number, data: GroupRequest): Promise<Group> {
   const response = await axios.post(`/api/groups/${id}/remove_users/`, data);
   return response.data;
 }
 
-export async function apiGroupsAvailablePermissionsRetrieve(): Promise<Group> {
+export async function groupsAvailablePermissionsRetrieve(): Promise<Group> {
   const response = await axios.get(`/api/groups/available_permissions/`);
   return response.data;
 }
 
-export async function apiItemListsList(
+export async function itemListsList(
   ordering?: string,
   page?: number,
   search?: string
@@ -2838,40 +2988,577 @@ export async function apiItemListsList(
   return response.data;
 }
 
-export async function apiItemListsCreate(data: ItemList): Promise<ItemList> {
+export async function itemListsCreate(data: ItemListRequest): Promise<ItemList> {
   const response = await axios.post(`/api/item-lists/`, data);
   return response.data;
 }
 
-export async function apiItemListsRetrieve(id: number): Promise<ItemList> {
+export async function itemListsRetrieve(id: number): Promise<ItemList> {
   const response = await axios.get(`/api/item-lists/${id}/`);
   return response.data;
 }
 
-export async function apiItemListsUpdate(id: number, data: ItemList): Promise<ItemList> {
+export async function itemListsUpdate(id: number, data: ItemListRequest): Promise<ItemList> {
   const response = await axios.put(`/api/item-lists/${id}/`, data);
   return response.data;
 }
 
-export async function apiItemListsPartialUpdate(
+export async function itemListsPartialUpdate(
   id: number,
-  data: PatchedItemList
+  data: PatchedItemListRequest
 ): Promise<ItemList> {
   const response = await axios.patch(`/api/item-lists/${id}/`, data);
   return response.data;
 }
 
-export async function apiItemListsDestroy(id: number): Promise<any> {
+export async function itemListsDestroy(id: number): Promise<any> {
   const response = await axios.delete(`/api/item-lists/${id}/`);
   return response.data;
 }
 
-export async function apiItemListsRootItemsRetrieve(id: number): Promise<ItemList> {
+export async function itemListsRootItemsRetrieve(id: number): Promise<ItemList> {
   const response = await axios.get(`/api/item-lists/${id}/root_items/`);
   return response.data;
 }
 
-export async function apiListItemsList(
+export async function leaveAdminApprovalChainsList(
+  ordering?: string,
+  page?: number
+): Promise<PaginatedLeaveApprovalChainList> {
+  const response = await axios.get(
+    `/api/leave/admin/approval-chains/${(() => {
+      const parts = [
+        ordering ? "ordering=" + encodeURIComponent(ordering) : null,
+        page ? "page=" + encodeURIComponent(page) : null,
+      ].filter(Boolean);
+      return parts.length > 0 ? "?" + parts.join("&") : "";
+    })()}`
+  );
+  return response.data;
+}
+
+export async function leaveAdminApprovalChainsCreate(
+  data: LeaveApprovalChainRequest
+): Promise<LeaveApprovalChain> {
+  const response = await axios.post(`/api/leave/admin/approval-chains/`, data);
+  return response.data;
+}
+
+export async function leaveAdminApprovalChainsRetrieve(id: string): Promise<LeaveApprovalChain> {
+  const response = await axios.get(`/api/leave/admin/approval-chains/${id}/`);
+  return response.data;
+}
+
+export async function leaveAdminApprovalChainsUpdate(
+  id: string,
+  data: LeaveApprovalChainRequest
+): Promise<LeaveApprovalChain> {
+  const response = await axios.put(`/api/leave/admin/approval-chains/${id}/`, data);
+  return response.data;
+}
+
+export async function leaveAdminApprovalChainsPartialUpdate(
+  id: string,
+  data: PatchedLeaveApprovalChainRequest
+): Promise<LeaveApprovalChain> {
+  const response = await axios.patch(`/api/leave/admin/approval-chains/${id}/`, data);
+  return response.data;
+}
+
+export async function leaveAdminApprovalChainsDestroy(id: string): Promise<any> {
+  const response = await axios.delete(`/api/leave/admin/approval-chains/${id}/`);
+  return response.data;
+}
+
+export async function leaveAdminLeaveBalancesList(
+  ordering?: string,
+  page?: number,
+  search?: string
+): Promise<PaginatedLeaveBalanceListList> {
+  const response = await axios.get(
+    `/api/leave/admin/leave-balances/${(() => {
+      const parts = [
+        ordering ? "ordering=" + encodeURIComponent(ordering) : null,
+        page ? "page=" + encodeURIComponent(page) : null,
+        search ? "search=" + encodeURIComponent(search) : null,
+      ].filter(Boolean);
+      return parts.length > 0 ? "?" + parts.join("&") : "";
+    })()}`
+  );
+  return response.data;
+}
+
+export async function leaveAdminLeaveBalancesCreate(
+  data: LeaveBalanceDetailRequest
+): Promise<LeaveBalanceDetail> {
+  const response = await axios.post(`/api/leave/admin/leave-balances/`, data);
+  return response.data;
+}
+
+export async function leaveAdminLeaveBalancesRetrieve(id: string): Promise<LeaveBalanceDetail> {
+  const response = await axios.get(`/api/leave/admin/leave-balances/${id}/`);
+  return response.data;
+}
+
+export async function leaveAdminLeaveBalancesPartialUpdate(
+  id: string,
+  data: PatchedLeaveBalanceUpdateRequest
+): Promise<LeaveBalanceUpdate> {
+  const response = await axios.patch(`/api/leave/admin/leave-balances/${id}/`, data);
+  return response.data;
+}
+
+export async function leaveAdminLeaveBalancesDestroy(id: string): Promise<any> {
+  const response = await axios.delete(`/api/leave/admin/leave-balances/${id}/`);
+  return response.data;
+}
+
+export async function leaveAdminLeaveBalancesCarryForwardCreate(
+  data: CarryForwardRequestRequest
+): Promise<CarryForwardResponse> {
+  const response = await axios.post(`/api/leave/admin/leave-balances/carry_forward/`, data);
+  return response.data;
+}
+
+export async function leaveAdminLeaveBalancesInitializeUserCreate(
+  data: InitializeUserRequestRequest
+): Promise<LeaveBalanceDetail> {
+  const response = await axios.post(`/api/leave/admin/leave-balances/initialize_user/`, data);
+  return response.data;
+}
+
+export async function leaveAdminLeaveRequestsList(
+  ordering?: string,
+  page?: number,
+  search?: string
+): Promise<PaginatedLeaveRequestListList> {
+  const response = await axios.get(
+    `/api/leave/admin/leave-requests/${(() => {
+      const parts = [
+        ordering ? "ordering=" + encodeURIComponent(ordering) : null,
+        page ? "page=" + encodeURIComponent(page) : null,
+        search ? "search=" + encodeURIComponent(search) : null,
+      ].filter(Boolean);
+      return parts.length > 0 ? "?" + parts.join("&") : "";
+    })()}`
+  );
+  return response.data;
+}
+
+export async function leaveAdminLeaveRequestsCreate(
+  data: LeaveRequestCreateRequest
+): Promise<LeaveRequestCreate> {
+  const response = await axios.post(`/api/leave/admin/leave-requests/`, data);
+  return response.data;
+}
+
+export async function leaveAdminLeaveRequestsRetrieve(id: string): Promise<LeaveRequestDetail> {
+  const response = await axios.get(`/api/leave/admin/leave-requests/${id}/`);
+  return response.data;
+}
+
+export async function leaveAdminLeaveRequestsUpdate(
+  id: string,
+  data: LeaveRequestUpdateRequest
+): Promise<LeaveRequestUpdate> {
+  const response = await axios.put(`/api/leave/admin/leave-requests/${id}/`, data);
+  return response.data;
+}
+
+export async function leaveAdminLeaveRequestsPartialUpdate(
+  id: string,
+  data: PatchedLeaveRequestUpdateRequest
+): Promise<LeaveRequestUpdate> {
+  const response = await axios.patch(`/api/leave/admin/leave-requests/${id}/`, data);
+  return response.data;
+}
+
+export async function leaveAdminLeaveRequestsDestroy(id: string): Promise<any> {
+  const response = await axios.delete(`/api/leave/admin/leave-requests/${id}/`);
+  return response.data;
+}
+
+export async function leaveAdminLeaveRequestsApproveCreate(
+  id: string,
+  data: LeaveApprovalRequest
+): Promise<LeaveApproval> {
+  const response = await axios.post(`/api/leave/admin/leave-requests/${id}/approve/`, data);
+  return response.data;
+}
+
+export async function leaveAdminLeaveRequestsCancelCreate(
+  id: string,
+  data: LeaveCancellationRequest
+): Promise<LeaveCancellation> {
+  const response = await axios.post(`/api/leave/admin/leave-requests/${id}/cancel/`, data);
+  return response.data;
+}
+
+export async function leaveAdminLeaveRequestsRejectCreate(
+  id: string,
+  data: LeaveApprovalRequest
+): Promise<LeaveApproval> {
+  const response = await axios.post(`/api/leave/admin/leave-requests/${id}/reject/`, data);
+  return response.data;
+}
+
+export async function leaveAdminLeaveTypesList(
+  ordering?: string,
+  page?: number,
+  search?: string
+): Promise<PaginatedLeaveTypeListList> {
+  const response = await axios.get(
+    `/api/leave/admin/leave-types/${(() => {
+      const parts = [
+        ordering ? "ordering=" + encodeURIComponent(ordering) : null,
+        page ? "page=" + encodeURIComponent(page) : null,
+        search ? "search=" + encodeURIComponent(search) : null,
+      ].filter(Boolean);
+      return parts.length > 0 ? "?" + parts.join("&") : "";
+    })()}`
+  );
+  return response.data;
+}
+
+export async function leaveAdminLeaveTypesCreate(
+  data: LeaveTypeCreateUpdateRequest
+): Promise<LeaveTypeCreateUpdate> {
+  const response = await axios.post(`/api/leave/admin/leave-types/`, data);
+  return response.data;
+}
+
+export async function leaveAdminLeaveTypesRetrieve(id: string): Promise<LeaveTypeDetail> {
+  const response = await axios.get(`/api/leave/admin/leave-types/${id}/`);
+  return response.data;
+}
+
+export async function leaveAdminLeaveTypesUpdate(
+  id: string,
+  data: LeaveTypeCreateUpdateRequest
+): Promise<LeaveTypeCreateUpdate> {
+  const response = await axios.put(`/api/leave/admin/leave-types/${id}/`, data);
+  return response.data;
+}
+
+export async function leaveAdminLeaveTypesPartialUpdate(
+  id: string,
+  data: PatchedLeaveTypeCreateUpdateRequest
+): Promise<LeaveTypeCreateUpdate> {
+  const response = await axios.patch(`/api/leave/admin/leave-types/${id}/`, data);
+  return response.data;
+}
+
+export async function leaveAdminLeaveTypesDestroy(id: string): Promise<any> {
+  const response = await axios.delete(`/api/leave/admin/leave-types/${id}/`);
+  return response.data;
+}
+
+export async function leaveAdminPublicHolidaysList(
+  ordering?: string,
+  page?: number
+): Promise<PaginatedPublicHolidayListList> {
+  const response = await axios.get(
+    `/api/leave/admin/public-holidays/${(() => {
+      const parts = [
+        ordering ? "ordering=" + encodeURIComponent(ordering) : null,
+        page ? "page=" + encodeURIComponent(page) : null,
+      ].filter(Boolean);
+      return parts.length > 0 ? "?" + parts.join("&") : "";
+    })()}`
+  );
+  return response.data;
+}
+
+export async function leaveAdminPublicHolidaysCreate(
+  data: PublicHolidayCreateUpdateRequest
+): Promise<PublicHolidayCreateUpdate> {
+  const response = await axios.post(`/api/leave/admin/public-holidays/`, data);
+  return response.data;
+}
+
+export async function leaveAdminPublicHolidaysRetrieve(id: string): Promise<PublicHolidayDetail> {
+  const response = await axios.get(`/api/leave/admin/public-holidays/${id}/`);
+  return response.data;
+}
+
+export async function leaveAdminPublicHolidaysUpdate(
+  id: string,
+  data: PublicHolidayCreateUpdateRequest
+): Promise<PublicHolidayCreateUpdate> {
+  const response = await axios.put(`/api/leave/admin/public-holidays/${id}/`, data);
+  return response.data;
+}
+
+export async function leaveAdminPublicHolidaysPartialUpdate(
+  id: string,
+  data: PatchedPublicHolidayCreateUpdateRequest
+): Promise<PublicHolidayCreateUpdate> {
+  const response = await axios.patch(`/api/leave/admin/public-holidays/${id}/`, data);
+  return response.data;
+}
+
+export async function leaveAdminPublicHolidaysDestroy(id: string): Promise<any> {
+  const response = await axios.delete(`/api/leave/admin/public-holidays/${id}/`);
+  return response.data;
+}
+
+export async function leaveAdminSettingsList(
+  ordering?: string,
+  page?: number,
+  search?: string
+): Promise<PaginatedLeaveSettingsList> {
+  const response = await axios.get(
+    `/api/leave/admin/settings/${(() => {
+      const parts = [
+        ordering ? "ordering=" + encodeURIComponent(ordering) : null,
+        page ? "page=" + encodeURIComponent(page) : null,
+        search ? "search=" + encodeURIComponent(search) : null,
+      ].filter(Boolean);
+      return parts.length > 0 ? "?" + parts.join("&") : "";
+    })()}`
+  );
+  return response.data;
+}
+
+export async function leaveAdminSettingsCreate(data: LeaveSettingsRequest): Promise<LeaveSettings> {
+  const response = await axios.post(`/api/leave/admin/settings/`, data);
+  return response.data;
+}
+
+export async function leaveAdminSettingsRetrieve(id: string): Promise<LeaveSettings> {
+  const response = await axios.get(`/api/leave/admin/settings/${id}/`);
+  return response.data;
+}
+
+export async function leaveAdminSettingsUpdate(
+  id: string,
+  data: LeaveSettingsRequest
+): Promise<LeaveSettings> {
+  const response = await axios.put(`/api/leave/admin/settings/${id}/`, data);
+  return response.data;
+}
+
+export async function leaveAdminSettingsPartialUpdate(
+  id: string,
+  data: PatchedLeaveSettingsRequest
+): Promise<LeaveSettings> {
+  const response = await axios.patch(`/api/leave/admin/settings/${id}/`, data);
+  return response.data;
+}
+
+export async function leaveEmployeeHolidaysList(
+  ordering?: string,
+  page?: number
+): Promise<PaginatedPublicHolidayListList> {
+  const response = await axios.get(
+    `/api/leave/employee/holidays/${(() => {
+      const parts = [
+        ordering ? "ordering=" + encodeURIComponent(ordering) : null,
+        page ? "page=" + encodeURIComponent(page) : null,
+      ].filter(Boolean);
+      return parts.length > 0 ? "?" + parts.join("&") : "";
+    })()}`
+  );
+  return response.data;
+}
+
+export async function leaveEmployeeHolidaysRetrieve(id: string): Promise<PublicHolidayList> {
+  const response = await axios.get(`/api/leave/employee/holidays/${id}/`);
+  return response.data;
+}
+
+export async function leaveEmployeeHolidaysUpcomingRetrieve(): Promise<PublicHolidayList> {
+  const response = await axios.get(`/api/leave/employee/holidays/upcoming/`);
+  return response.data;
+}
+
+export async function leaveEmployeeLeaveTypesList(
+  ordering?: string,
+  page?: number
+): Promise<PaginatedLeaveTypeListList> {
+  const response = await axios.get(
+    `/api/leave/employee/leave-types/${(() => {
+      const parts = [
+        ordering ? "ordering=" + encodeURIComponent(ordering) : null,
+        page ? "page=" + encodeURIComponent(page) : null,
+      ].filter(Boolean);
+      return parts.length > 0 ? "?" + parts.join("&") : "";
+    })()}`
+  );
+  return response.data;
+}
+
+export async function leaveEmployeeLeaveTypesRetrieve(id: string): Promise<LeaveTypeList> {
+  const response = await axios.get(`/api/leave/employee/leave-types/${id}/`);
+  return response.data;
+}
+
+export async function leaveEmployeeMyBalanceList(
+  ordering?: string,
+  page?: number
+): Promise<PaginatedLeaveBalanceListList> {
+  const response = await axios.get(
+    `/api/leave/employee/my-balance/${(() => {
+      const parts = [
+        ordering ? "ordering=" + encodeURIComponent(ordering) : null,
+        page ? "page=" + encodeURIComponent(page) : null,
+      ].filter(Boolean);
+      return parts.length > 0 ? "?" + parts.join("&") : "";
+    })()}`
+  );
+  return response.data;
+}
+
+export async function leaveEmployeeMyBalanceRetrieve(id: string): Promise<LeaveBalanceDetail> {
+  const response = await axios.get(`/api/leave/employee/my-balance/${id}/`);
+  return response.data;
+}
+
+export async function leaveEmployeeMyBalanceCurrentRetrieve(): Promise<LeaveBalanceDetail> {
+  const response = await axios.get(`/api/leave/employee/my-balance/current/`);
+  return response.data;
+}
+
+export async function leaveEmployeeMyBalanceSummaryRetrieve(): Promise<LeaveBalanceDetail> {
+  const response = await axios.get(`/api/leave/employee/my-balance/summary/`);
+  return response.data;
+}
+
+export async function leaveEmployeeMyRequestsList(
+  ordering?: string,
+  page?: number
+): Promise<PaginatedLeaveRequestListList> {
+  const response = await axios.get(
+    `/api/leave/employee/my-requests/${(() => {
+      const parts = [
+        ordering ? "ordering=" + encodeURIComponent(ordering) : null,
+        page ? "page=" + encodeURIComponent(page) : null,
+      ].filter(Boolean);
+      return parts.length > 0 ? "?" + parts.join("&") : "";
+    })()}`
+  );
+  return response.data;
+}
+
+export async function leaveEmployeeMyRequestsCreate(
+  data: LeaveRequestCreateRequest
+): Promise<LeaveRequestCreate> {
+  const response = await axios.post(`/api/leave/employee/my-requests/`, data);
+  return response.data;
+}
+
+export async function leaveEmployeeMyRequestsRetrieve(id: string): Promise<LeaveRequestDetail> {
+  const response = await axios.get(`/api/leave/employee/my-requests/${id}/`);
+  return response.data;
+}
+
+export async function leaveEmployeeMyRequestsPartialUpdate(
+  id: string,
+  data: PatchedLeaveRequestUpdateRequest
+): Promise<LeaveRequestUpdate> {
+  const response = await axios.patch(`/api/leave/employee/my-requests/${id}/`, data);
+  return response.data;
+}
+
+export async function leaveEmployeeMyRequestsDestroy(id: string): Promise<any> {
+  const response = await axios.delete(`/api/leave/employee/my-requests/${id}/`);
+  return response.data;
+}
+
+export async function leaveEmployeeMyRequestsCancelCreate(
+  id: string,
+  data: LeaveCancellationRequest
+): Promise<LeaveCancellation> {
+  const response = await axios.post(`/api/leave/employee/my-requests/${id}/cancel/`, data);
+  return response.data;
+}
+
+export async function leaveEmployeeMyRequestsApprovedRetrieve(): Promise<LeaveRequestDetail> {
+  const response = await axios.get(`/api/leave/employee/my-requests/approved/`);
+  return response.data;
+}
+
+export async function leaveEmployeeMyRequestsHistoryRetrieve(): Promise<LeaveRequestDetail> {
+  const response = await axios.get(`/api/leave/employee/my-requests/history/`);
+  return response.data;
+}
+
+export async function leaveEmployeeMyRequestsPendingRetrieve(): Promise<LeaveRequestDetail> {
+  const response = await axios.get(`/api/leave/employee/my-requests/pending/`);
+  return response.data;
+}
+
+export async function leaveManagerTeamBalancesList(
+  ordering?: string,
+  page?: number
+): Promise<PaginatedLeaveBalanceListList> {
+  const response = await axios.get(
+    `/api/leave/manager/team-balances/${(() => {
+      const parts = [
+        ordering ? "ordering=" + encodeURIComponent(ordering) : null,
+        page ? "page=" + encodeURIComponent(page) : null,
+      ].filter(Boolean);
+      return parts.length > 0 ? "?" + parts.join("&") : "";
+    })()}`
+  );
+  return response.data;
+}
+
+export async function leaveManagerTeamBalancesRetrieve(id: string): Promise<LeaveBalanceDetail> {
+  const response = await axios.get(`/api/leave/manager/team-balances/${id}/`);
+  return response.data;
+}
+
+export async function leaveManagerTeamBalancesSummaryRetrieve(): Promise<LeaveBalanceDetail> {
+  const response = await axios.get(`/api/leave/manager/team-balances/summary/`);
+  return response.data;
+}
+
+export async function leaveManagerTeamRequestsList(
+  ordering?: string,
+  page?: number,
+  search?: string
+): Promise<PaginatedLeaveRequestListList> {
+  const response = await axios.get(
+    `/api/leave/manager/team-requests/${(() => {
+      const parts = [
+        ordering ? "ordering=" + encodeURIComponent(ordering) : null,
+        page ? "page=" + encodeURIComponent(page) : null,
+        search ? "search=" + encodeURIComponent(search) : null,
+      ].filter(Boolean);
+      return parts.length > 0 ? "?" + parts.join("&") : "";
+    })()}`
+  );
+  return response.data;
+}
+
+export async function leaveManagerTeamRequestsRetrieve(id: string): Promise<LeaveRequestDetail> {
+  const response = await axios.get(`/api/leave/manager/team-requests/${id}/`);
+  return response.data;
+}
+
+export async function leaveManagerTeamRequestsApproveCreate(
+  id: string,
+  data: LeaveApprovalRequest
+): Promise<LeaveApproval> {
+  const response = await axios.post(`/api/leave/manager/team-requests/${id}/approve/`, data);
+  return response.data;
+}
+
+export async function leaveManagerTeamRequestsRejectCreate(
+  id: string,
+  data: LeaveApprovalRequest
+): Promise<LeaveApproval> {
+  const response = await axios.post(`/api/leave/manager/team-requests/${id}/reject/`, data);
+  return response.data;
+}
+
+export async function leaveManagerTeamRequestsPendingRetrieve(): Promise<LeaveRequestDetail> {
+  const response = await axios.get(`/api/leave/manager/team-requests/pending/`);
+  return response.data;
+}
+
+export async function listItemsList(
   isActive?: boolean,
   itemList?: number,
   ordering?: string,
@@ -2895,53 +3582,53 @@ export async function apiListItemsList(
   return response.data;
 }
 
-export async function apiListItemsCreate(data: ListItem): Promise<ListItem> {
+export async function listItemsCreate(data: ListItemRequest): Promise<ListItem> {
   const response = await axios.post(`/api/list-items/`, data);
   return response.data;
 }
 
-export async function apiListItemsRetrieve(id: number): Promise<ListItem> {
+export async function listItemsRetrieve(id: number): Promise<ListItem> {
   const response = await axios.get(`/api/list-items/${id}/`);
   return response.data;
 }
 
-export async function apiListItemsUpdate(id: number, data: ListItem): Promise<ListItem> {
+export async function listItemsUpdate(id: number, data: ListItemRequest): Promise<ListItem> {
   const response = await axios.put(`/api/list-items/${id}/`, data);
   return response.data;
 }
 
-export async function apiListItemsPartialUpdate(
+export async function listItemsPartialUpdate(
   id: number,
-  data: PatchedListItem
+  data: PatchedListItemRequest
 ): Promise<ListItem> {
   const response = await axios.patch(`/api/list-items/${id}/`, data);
   return response.data;
 }
 
-export async function apiListItemsDestroy(id: number): Promise<any> {
+export async function listItemsDestroy(id: number): Promise<any> {
   const response = await axios.delete(`/api/list-items/${id}/`);
   return response.data;
 }
 
-export async function apiListItemsAllDescendantsRetrieve(id: number): Promise<ListItem> {
+export async function listItemsAllDescendantsRetrieve(id: number): Promise<ListItem> {
   const response = await axios.get(`/api/list-items/${id}/all_descendants/`);
   return response.data;
 }
 
-export async function apiListItemsChildrenRetrieve(id: number): Promise<ListItem> {
+export async function listItemsChildrenRetrieve(id: number): Promise<ListItem> {
   const response = await axios.get(`/api/list-items/${id}/children/`);
   return response.data;
 }
 
-export async function apiListItemsReorderPartialUpdate(
+export async function listItemsReorderPartialUpdate(
   id: number,
-  data: PatchedListItem
+  data: PatchedListItemRequest
 ): Promise<ListItem> {
   const response = await axios.patch(`/api/list-items/${id}/reorder/`, data);
   return response.data;
 }
 
-export async function apiNotificationsList(
+export async function notificationsList(
   ordering?: string,
   page?: number,
   search?: string
@@ -2959,61 +3646,63 @@ export async function apiNotificationsList(
   return response.data;
 }
 
-export async function apiNotificationsCreate(data: Notification): Promise<Notification> {
+export async function notificationsCreate(data: NotificationRequest): Promise<Notification> {
   const response = await axios.post(`/api/notifications/`, data);
   return response.data;
 }
 
-export async function apiNotificationsRetrieve(id: string): Promise<Notification> {
+export async function notificationsRetrieve(id: string): Promise<Notification> {
   const response = await axios.get(`/api/notifications/${id}/`);
   return response.data;
 }
 
-export async function apiNotificationsUpdate(
+export async function notificationsUpdate(
   id: string,
-  data: Notification
+  data: NotificationRequest
 ): Promise<Notification> {
   const response = await axios.put(`/api/notifications/${id}/`, data);
   return response.data;
 }
 
-export async function apiNotificationsPartialUpdate(
+export async function notificationsPartialUpdate(
   id: string,
-  data: PatchedNotification
+  data: PatchedNotificationRequest
 ): Promise<Notification> {
   const response = await axios.patch(`/api/notifications/${id}/`, data);
   return response.data;
 }
 
-export async function apiNotificationsDestroy(id: string): Promise<any> {
+export async function notificationsDestroy(id: string): Promise<any> {
   const response = await axios.delete(`/api/notifications/${id}/`);
   return response.data;
 }
 
-export async function apiNotificationsMarkReadCreate(
+export async function notificationsMarkReadCreate(
   id: string,
-  data: Notification
+  data: NotificationRequest
 ): Promise<Notification> {
   const response = await axios.post(`/api/notifications/${id}/mark_read/`, data);
   return response.data;
 }
 
-export async function apiNotificationsClearAllDestroy(): Promise<any> {
+export async function notificationsClearAllDestroy(): Promise<any> {
   const response = await axios.delete(`/api/notifications/clear_all/`);
   return response.data;
 }
 
-export async function apiNotificationsMarkAllReadCreate(data: Notification): Promise<Notification> {
+export async function notificationsMarkAllReadCreate(
+  data: NotificationRequest
+): Promise<Notification> {
   const response = await axios.post(`/api/notifications/mark_all_read/`, data);
   return response.data;
 }
 
-export async function apiNotificationsUnreadCountRetrieve(): Promise<Notification> {
+export async function notificationsUnreadCountRetrieve(): Promise<Notification> {
   const response = await axios.get(`/api/notifications/unread_count/`);
   return response.data;
 }
 
-export async function apiPackagesList(
+export async function packagesList(
   ordering?: string,
   page?: number,
   search?: string
@@ -3058,7 +3747,7 @@ export async function getPackageFeatures(packageId: number): Promise<{
   return response.data;
 }
 
-export async function apiPackagesRetrieve(id: number): Promise<Package> {
+export async function packagesRetrieve(id: number): Promise<Package> {
   const response = await axios.get(`/api/packages/${id}/`);
   return response.data;
 }
@@ -3113,7 +3802,7 @@ export async function calculatePricing(): Promise<{
   return response.data;
 }
 
-export async function apiPaymentsList(
+export async function paymentsList(
   currency?: string,
   ordering?: string,
   page?: number,
@@ -3135,30 +3824,33 @@ export async function apiPaymentsList(
   return response.data;
 }
 
-export async function apiPaymentsCreate(data: TicketPayment): Promise<TicketPayment> {
+export async function paymentsCreate(data: TicketPaymentRequest): Promise<TicketPayment> {
   const response = await axios.post(`/api/payments/`, data);
   return response.data;
 }
 
-export async function apiPaymentsRetrieve(id: number): Promise<TicketPayment> {
+export async function paymentsRetrieve(id: number): Promise<TicketPayment> {
   const response = await axios.get(`/api/payments/${id}/`);
   return response.data;
 }
 
-export async function apiPaymentsUpdate(id: number, data: TicketPayment): Promise<TicketPayment> {
+export async function paymentsUpdate(
+  id: number,
+  data: TicketPaymentRequest
+): Promise<TicketPayment> {
   const response = await axios.put(`/api/payments/${id}/`, data);
   return response.data;
 }
 
-export async function apiPaymentsPartialUpdate(
+export async function paymentsPartialUpdate(
   id: number,
-  data: PatchedTicketPayment
+  data: PatchedTicketPaymentRequest
 ): Promise<TicketPayment> {
   const response = await axios.patch(`/api/payments/${id}/`, data);
   return response.data;
 }
 
-export async function apiPaymentsDestroy(id: number): Promise<any> {
+export async function paymentsDestroy(id: number): Promise<any> {
   const response = await axios.delete(`/api/payments/${id}/`);
   return response.data;
 }
@@ -3192,12 +3884,14 @@ export async function manualPayment(): Promise<{
   return response.data;
 }
 
-export async function apiPaymentsPaymentSummaryRetrieve(): Promise<TicketPayment> {
+export async function paymentsPaymentSummaryRetrieve(): Promise<TicketPayment> {
   const response = await axios.get(`/api/payments/payment_summary/`);
   return response.data;
 }
 
-export async function apiPaymentsProcessPaymentCreate(data: TicketPayment): Promise<TicketPayment> {
+export async function paymentsProcessPaymentCreate(
+  data: TicketPaymentRequest
+): Promise<TicketPayment> {
   const response = await axios.post(`/api/payments/process_payment/`, data);
   return response.data;
 }
@@ -3212,12 +3906,12 @@ export async function removeSavedCard(): Promise<any> {
   return response.data;
 }
 
-export async function addNewCard(data: AddNewCardRequest): Promise<AddNewCardResponse> {
+export async function addNewCard(data: AddNewCardRequestRequest): Promise<AddNewCardResponse> {
   const response = await axios.post(`/api/payments/saved-card/add/`, data);
   return response.data;
 }
 
-export async function setDefaultCard(data: SetDefaultCardRequest): Promise<any> {
+export async function setDefaultCard(data: SetDefaultCardRequestRequest): Promise<any> {
   const response = await axios.post(`/api/payments/saved-card/set-default/`, data);
   return response.data;
 }
@@ -3232,12 +3926,12 @@ export async function checkPaymentStatus(paymentId: string): Promise<{
   return response.data;
 }
 
-export async function apiPaymentsWebhookCreate(): Promise<any> {
+export async function paymentsWebhookCreate(): Promise<any> {
   const response = await axios.post(`/api/payments/webhook/`);
   return response.data;
 }
 
-export async function apiPermissionsList(
+export async function permissionsList(
   ordering?: string,
   page?: number,
   search?: string
@@ -3255,17 +3949,17 @@ export async function apiPermissionsList(
   return response.data;
 }
 
-export async function apiPermissionsRetrieve(id: number): Promise<Permission> {
+export async function permissionsRetrieve(id: number): Promise<Permission> {
   const response = await axios.get(`/api/permissions/${id}/`);
   return response.data;
 }
 
-export async function apiPreflightTestRetrieve(): Promise<any> {
+export async function preflightTestRetrieve(): Promise<any> {
   const response = await axios.get(`/api/preflight-test/`);
   return response.data;
 }
 
-export async function registerTenant(data: TenantRegistration): Promise<{
+export async function registerTenant(data: TenantRegistrationRequest): Promise<{
   message?: string;
   tenant?: Record<string, any>;
   subscription?: Record<string, any>;
@@ -3276,7 +3970,7 @@ export async function registerTenant(data: TenantRegistration): Promise<{
   return response.data;
 }
 
-export async function registerTenantWithPayment(data: TenantRegistration): Promise<{
+export async function registerTenantWithPayment(data: TenantRegistrationRequest): Promise<{
   payment_url?: string;
   order_id?: string;
   amount?: number;
@@ -3286,7 +3980,7 @@ export async function registerTenantWithPayment(data: TenantRegistration): Promi
   return response.data;
 }
 
-export async function apiSipConfigurationsList(
+export async function sipConfigurationsList(
   ordering?: string,
   page?: number,
   search?: string
@@ -3304,63 +3998,63 @@ export async function apiSipConfigurationsList(
   return response.data;
 }
 
-export async function apiSipConfigurationsCreate(
-  data: SipConfiguration
+export async function sipConfigurationsCreate(
+  data: SipConfigurationRequest
 ): Promise<SipConfiguration> {
   const response = await axios.post(`/api/sip-configurations/`, data);
   return response.data;
 }
 
-export async function apiSipConfigurationsRetrieve(id: number): Promise<SipConfigurationDetail> {
+export async function sipConfigurationsRetrieve(id: number): Promise<SipConfigurationDetail> {
   const response = await axios.get(`/api/sip-configurations/${id}/`);
   return response.data;
 }
 
-export async function apiSipConfigurationsUpdate(
+export async function sipConfigurationsUpdate(
   id: number,
-  data: SipConfiguration
+  data: SipConfigurationRequest
 ): Promise<SipConfiguration> {
   const response = await axios.put(`/api/sip-configurations/${id}/`, data);
   return response.data;
 }
 
-export async function apiSipConfigurationsPartialUpdate(
+export async function sipConfigurationsPartialUpdate(
   id: number,
-  data: PatchedSipConfiguration
+  data: PatchedSipConfigurationRequest
 ): Promise<SipConfiguration> {
   const response = await axios.patch(`/api/sip-configurations/${id}/`, data);
   return response.data;
 }
 
-export async function apiSipConfigurationsDestroy(id: number): Promise<any> {
+export async function sipConfigurationsDestroy(id: number): Promise<any> {
   const response = await axios.delete(`/api/sip-configurations/${id}/`);
   return response.data;
 }
 
-export async function apiSipConfigurationsSetDefaultCreate(
+export async function sipConfigurationsSetDefaultCreate(
   id: number,
-  data: SipConfiguration
+  data: SipConfigurationRequest
 ): Promise<Record<string, any>> {
   const response = await axios.post(`/api/sip-configurations/${id}/set_default/`, data);
   return response.data;
 }
 
-export async function apiSipConfigurationsTestConnectionCreate(
+export async function sipConfigurationsTestConnectionCreate(
   id: number,
-  data: SipConfiguration
+  data: SipConfigurationRequest
 ): Promise<Record<string, any>> {
   const response = await axios.post(`/api/sip-configurations/${id}/test_connection/`, data);
   return response.data;
 }
 
-export async function apiSipConfigurationsWebrtcConfigRetrieve(
+export async function sipConfigurationsWebrtcConfigRetrieve(
   id: number
 ): Promise<SipConfigurationDetail> {
   const response = await axios.get(`/api/sip-configurations/${id}/webrtc_config/`);
   return response.data;
 }
 
-export async function apiSocialFacebookMessagesList(
+export async function socialFacebookMessagesList(
   ordering?: string,
   page?: number,
   search?: string
@@ -3378,12 +4072,12 @@ export async function apiSocialFacebookMessagesList(
   return response.data;
 }
 
-export async function apiSocialFacebookMessagesRetrieve(id: number): Promise<FacebookMessage> {
+export async function socialFacebookMessagesRetrieve(id: number): Promise<FacebookMessage> {
   const response = await axios.get(`/api/social/facebook-messages/${id}/`);
   return response.data;
 }
 
-export async function apiSocialFacebookPagesList(
+export async function socialFacebookPagesList(
   ordering?: string,
   page?: number,
   search?: string
@@ -3401,90 +4095,90 @@ export async function apiSocialFacebookPagesList(
   return response.data;
 }
 
-export async function apiSocialFacebookPagesCreate(
-  data: FacebookPageConnection
+export async function socialFacebookPagesCreate(
+  data: FacebookPageConnectionRequest
 ): Promise<FacebookPageConnection> {
   const response = await axios.post(`/api/social/facebook-pages/`, data);
   return response.data;
 }
 
-export async function apiSocialFacebookPagesRetrieve(id: number): Promise<FacebookPageConnection> {
+export async function socialFacebookPagesRetrieve(id: number): Promise<FacebookPageConnection> {
   const response = await axios.get(`/api/social/facebook-pages/${id}/`);
   return response.data;
 }
 
-export async function apiSocialFacebookPagesUpdate(
+export async function socialFacebookPagesUpdate(
   id: number,
-  data: FacebookPageConnection
+  data: FacebookPageConnectionRequest
 ): Promise<FacebookPageConnection> {
   const response = await axios.put(`/api/social/facebook-pages/${id}/`, data);
   return response.data;
 }
 
-export async function apiSocialFacebookPagesPartialUpdate(
+export async function socialFacebookPagesPartialUpdate(
   id: number,
-  data: PatchedFacebookPageConnection
+  data: PatchedFacebookPageConnectionRequest
 ): Promise<FacebookPageConnection> {
   const response = await axios.patch(`/api/social/facebook-pages/${id}/`, data);
   return response.data;
 }
 
-export async function apiSocialFacebookPagesDestroy(id: number): Promise<any> {
+export async function socialFacebookPagesDestroy(id: number): Promise<any> {
   const response = await axios.delete(`/api/social/facebook-pages/${id}/`);
   return response.data;
 }
 
-export async function apiSocialFacebookApiTestRetrieve(): Promise<any> {
+export async function socialFacebookApiTestRetrieve(): Promise<any> {
   const response = await axios.get(`/api/social/facebook/api/test/`);
   return response.data;
 }
 
-export async function apiSocialFacebookApiTestCreate(): Promise<any> {
+export async function socialFacebookApiTestCreate(): Promise<any> {
   const response = await axios.post(`/api/social/facebook/api/test/`);
   return response.data;
 }
 
-export async function apiSocialFacebookDatabaseDebugRetrieve(): Promise<any> {
+export async function socialFacebookDatabaseDebugRetrieve(): Promise<any> {
   const response = await axios.get(`/api/social/facebook/database/debug/`);
   return response.data;
 }
 
-export async function apiSocialFacebookDatabaseTestRetrieve(): Promise<any> {
+export async function socialFacebookDatabaseTestRetrieve(): Promise<any> {
   const response = await axios.get(`/api/social/facebook/database/test/`);
   return response.data;
 }
 
-export async function apiSocialFacebookDatabaseTestCreate(): Promise<any> {
+export async function socialFacebookDatabaseTestCreate(): Promise<any> {
   const response = await axios.post(`/api/social/facebook/database/test/`);
   return response.data;
 }
 
-export async function apiSocialFacebookDisconnectCreate(): Promise<any> {
+export async function socialFacebookDisconnectCreate(): Promise<any> {
   const response = await axios.post(`/api/social/facebook/disconnect/`);
   return response.data;
 }
 
-export async function apiSocialFacebookOauthCallbackRetrieve(): Promise<any> {
+export async function socialFacebookOauthCallbackRetrieve(): Promise<any> {
   const response = await axios.get(`/api/social/facebook/oauth/callback/`);
   return response.data;
 }
 
-export async function apiSocialFacebookOauthDebugRetrieve(): Promise<any> {
+export async function socialFacebookOauthDebugRetrieve(): Promise<any> {
   const response = await axios.get(`/api/social/facebook/oauth/debug/`);
   return response.data;
 }
 
-export async function apiSocialFacebookOauthStartRetrieve(): Promise<any> {
+export async function socialFacebookOauthStartRetrieve(): Promise<any> {
   const response = await axios.get(`/api/social/facebook/oauth/start/`);
   return response.data;
 }
 
-export async function apiSocialFacebookPagesDebugRetrieve(): Promise<any> {
+export async function socialFacebookPagesDebugRetrieve(): Promise<any> {
   const response = await axios.get(`/api/social/facebook/pages/debug/`);
   return response.data;
 }
 
-export async function apiSocialFacebookSendMessageCreate(data: FacebookSendMessage): Promise<{
+export async function socialFacebookSendMessageCreate(data: FacebookSendMessageRequest): Promise<{
   success?: boolean;
   message?: string;
   facebook_message_id?: string;
@@ -3493,18 +4187,143 @@ export async function apiSocialFacebookSendMessageCreate(data: FacebookSendMessa
   return response.data;
 }
 
-export async function apiSocialFacebookStatusRetrieve(): Promise<any> {
+export async function socialFacebookStatusRetrieve(): Promise<any> {
   const response = await axios.get(`/api/social/facebook/status/`);
   return response.data;
 }
 
-export async function apiSocialFacebookWebhookTestRetrieve(): Promise<any> {
+export async function socialFacebookWebhookTestRetrieve(): Promise<any> {
   const response = await axios.get(`/api/social/facebook/webhook/test/`);
   return response.data;
 }
 
-export async function apiSocialFacebookWebhookTestCreate(): Promise<any> {
+export async function socialFacebookWebhookTestCreate(): Promise<any> {
   const response = await axios.post(`/api/social/facebook/webhook/test/`);
+  return response.data;
+}
+
+export async function socialInstagramAccountsList(
+  ordering?: string,
+  page?: number,
+  search?: string
+): Promise<PaginatedInstagramAccountConnectionList> {
+  const response = await axios.get(
+    `/api/social/instagram-accounts/${(() => {
+      const parts = [
+        ordering ? "ordering=" + encodeURIComponent(ordering) : null,
+        page ? "page=" + encodeURIComponent(page) : null,
+        search ? "search=" + encodeURIComponent(search) : null,
+      ].filter(Boolean);
+      return parts.length > 0 ? "?" + parts.join("&") : "";
+    })()}`
+  );
+  return response.data;
+}
+
+export async function socialInstagramAccountsCreate(
+  data: InstagramAccountConnectionRequest
+): Promise<InstagramAccountConnection> {
+  const response = await axios.post(`/api/social/instagram-accounts/`, data);
+  return response.data;
+}
+
+export async function socialInstagramAccountsRetrieve(
+  id: number
+): Promise<InstagramAccountConnection> {
+  const response = await axios.get(`/api/social/instagram-accounts/${id}/`);
+  return response.data;
+}
+
+export async function socialInstagramAccountsUpdate(
+  id: number,
+  data: InstagramAccountConnectionRequest
+): Promise<InstagramAccountConnection> {
+  const response = await axios.put(`/api/social/instagram-accounts/${id}/`, data);
+  return response.data;
+}
+
+export async function socialInstagramAccountsPartialUpdate(
+  id: number,
+  data: PatchedInstagramAccountConnectionRequest
+): Promise<InstagramAccountConnection> {
+  const response = await axios.patch(`/api/social/instagram-accounts/${id}/`, data);
+  return response.data;
+}
+
+export async function socialInstagramAccountsDestroy(id: number): Promise<any> {
+  const response = await axios.delete(`/api/social/instagram-accounts/${id}/`);
+  return response.data;
+}
+
+export async function socialInstagramMessagesList(
+  ordering?: string,
+  page?: number,
+  search?: string
+): Promise<PaginatedInstagramMessageList> {
+  const response = await axios.get(
+    `/api/social/instagram-messages/${(() => {
+      const parts = [
+        ordering ? "ordering=" + encodeURIComponent(ordering) : null,
+        page ? "page=" + encodeURIComponent(page) : null,
+        search ? "search=" + encodeURIComponent(search) : null,
+      ].filter(Boolean);
+      return parts.length > 0 ? "?" + parts.join("&") : "";
+    })()}`
+  );
+  return response.data;
+}
+
+export async function socialInstagramMessagesRetrieve(id: number): Promise<InstagramMessage> {
+  const response = await axios.get(`/api/social/instagram-messages/${id}/`);
+  return response.data;
+}
+
+export async function socialInstagramDisconnectCreate(): Promise<any> {
+  const response = await axios.post(`/api/social/instagram/disconnect/`);
+  return response.data;
+}
+
+export async function socialInstagramSendMessageCreate(data: InstagramSendMessageRequest): Promise<{
+  success?: boolean;
+  message?: string;
+  instagram_message_id?: string;
+}> {
+  const response = await axios.post(`/api/social/instagram/send-message/`, data);
+  return response.data;
+}
+
+export async function socialInstagramStatusRetrieve(): Promise<any> {
+  const response = await axios.get(`/api/social/instagram/status/`);
+  return response.data;
+}
+
+export async function socialSettingsRetrieve(): Promise<any> {
+  const response = await axios.get(`/api/social/settings/`);
+  return response.data;
+}
+
+export async function socialSettingsUpdate(): Promise<any> {
+  const response = await axios.put(`/api/social/settings/`);
+  return response.data;
+}
+
+export async function socialSettingsPartialUpdate(): Promise<any> {
+  const response = await axios.patch(`/api/social/settings/`);
+  return response.data;
+}
+
+export async function socialWebhookLogsRetrieve(): Promise<any> {
+  const response = await axios.get(`/api/social/webhook-logs/`);
+  return response.data;
+}
+
+export async function socialWebhookStatusRetrieve(): Promise<any> {
+  const response = await axios.get(`/api/social/webhook-status/`);
+  return response.data;
+}
+
+export async function socialWebhookTestCreate(): Promise<any> {
+  const response = await axios.post(`/api/social/webhook-test/`);
   return response.data;
 }
 
@@ -3531,7 +4350,7 @@ export async function getMySubscription(): Promise<{
   return response.data;
 }
 
-export async function apiTagsList(
+export async function tagsList(
   ordering?: string,
   page?: number,
   search?: string
@@ -3549,32 +4368,32 @@ export async function apiTagsList(
   return response.data;
 }
 
-export async function apiTagsCreate(data: Tag): Promise<Tag> {
+export async function tagsCreate(data: TagRequest): Promise<Tag> {
   const response = await axios.post(`/api/tags/`, data);
   return response.data;
 }
 
-export async function apiTagsRetrieve(id: number): Promise<Tag> {
+export async function tagsRetrieve(id: number): Promise<Tag> {
   const response = await axios.get(`/api/tags/${id}/`);
   return response.data;
 }
 
-export async function apiTagsUpdate(id: number, data: Tag): Promise<Tag> {
+export async function tagsUpdate(id: number, data: TagRequest): Promise<Tag> {
   const response = await axios.put(`/api/tags/${id}/`, data);
   return response.data;
 }
 
-export async function apiTagsPartialUpdate(id: number, data: PatchedTag): Promise<Tag> {
+export async function tagsPartialUpdate(id: number, data: PatchedTagRequest): Promise<Tag> {
   const response = await axios.patch(`/api/tags/${id}/`, data);
   return response.data;
 }
 
-export async function apiTagsDestroy(id: number): Promise<any> {
+export async function tagsDestroy(id: number): Promise<any> {
   const response = await axios.delete(`/api/tags/${id}/`);
   return response.data;
 }
 
-export async function apiTenantFeaturesList(
+export async function tenantFeaturesList(
   ordering?: string,
   page?: number,
   search?: string
@@ -3592,17 +4411,19 @@ export async function apiTenantFeaturesList(
   return response.data;
 }
 
-export async function apiTenantFeaturesRetrieve(id: number): Promise<TenantFeature> {
+export async function tenantFeaturesRetrieve(id: number): Promise<TenantFeature> {
   const response = await axios.get(`/api/tenant-features/${id}/`);
   return response.data;
 }
 
-export async function apiTenantFeaturesCheckCreate(data: TenantFeature): Promise<TenantFeature> {
+export async function tenantFeaturesCheckCreate(
+  data: TenantFeatureRequest
+): Promise<TenantFeature> {
   const response = await axios.post(`/api/tenant-features/check/`, data);
   return response.data;
 }
 
-export async function apiTenantGroupsList(
+export async function tenantGroupsList(
   ordering?: string,
   page?: number,
   search?: string
@@ -3620,64 +4441,66 @@ export async function apiTenantGroupsList(
   return response.data;
 }
 
-export async function apiTenantGroupsCreate(data: TenantGroupCreate): Promise<TenantGroupCreate> {
+export async function tenantGroupsCreate(
+  data: TenantGroupCreateRequest
+): Promise<TenantGroupCreate> {
   const response = await axios.post(`/api/tenant-groups/`, data);
   return response.data;
 }
 
-export async function apiTenantGroupsRetrieve(id: number): Promise<TenantGroup> {
+export async function tenantGroupsRetrieve(id: number): Promise<TenantGroup> {
   const response = await axios.get(`/api/tenant-groups/${id}/`);
   return response.data;
 }
 
-export async function apiTenantGroupsUpdate(
+export async function tenantGroupsUpdate(
   id: number,
-  data: TenantGroupCreate
+  data: TenantGroupCreateRequest
 ): Promise<TenantGroupCreate> {
   const response = await axios.put(`/api/tenant-groups/${id}/`, data);
   return response.data;
 }
 
-export async function apiTenantGroupsPartialUpdate(
+export async function tenantGroupsPartialUpdate(
   id: number,
-  data: PatchedTenantGroupCreate
+  data: PatchedTenantGroupCreateRequest
 ): Promise<TenantGroupCreate> {
   const response = await axios.patch(`/api/tenant-groups/${id}/`, data);
   return response.data;
 }
 
-export async function apiTenantGroupsDestroy(id: number): Promise<any> {
+export async function tenantGroupsDestroy(id: number): Promise<any> {
   const response = await axios.delete(`/api/tenant-groups/${id}/`);
   return response.data;
 }
 
-export async function apiTenantGroupsAddUsersCreate(
+export async function tenantGroupsAddUsersCreate(
   id: number,
-  data: TenantGroup
+  data: TenantGroupRequest
 ): Promise<TenantGroup> {
   const response = await axios.post(`/api/tenant-groups/${id}/add_users/`, data);
   return response.data;
 }
 
-export async function apiTenantGroupsMembersRetrieve(id: number): Promise<TenantGroup> {
+export async function tenantGroupsMembersRetrieve(id: number): Promise<TenantGroup> {
   const response = await axios.get(`/api/tenant-groups/${id}/members/`);
   return response.data;
 }
 
-export async function apiTenantGroupsRemoveUsersCreate(
+export async function tenantGroupsRemoveUsersCreate(
   id: number,
-  data: TenantGroup
+  data: TenantGroupRequest
 ): Promise<TenantGroup> {
   const response = await axios.post(`/api/tenant-groups/${id}/remove_users/`, data);
   return response.data;
 }
 
-export async function apiTenantGroupsAvailableFeaturesRetrieve(): Promise<TenantGroup> {
+export async function tenantGroupsAvailableFeaturesRetrieve(): Promise<TenantGroup> {
   const response = await axios.get(`/api/tenant-groups/available_features/`);
   return response.data;
 }
 
-export async function apiTenantPermissionsList(
+export async function tenantPermissionsList(
   ordering?: string,
   page?: number,
   search?: string
@@ -3695,7 +4518,7 @@ export async function apiTenantPermissionsList(
   return response.data;
 }
 
-export async function apiTenantPermissionsRetrieve(id: number): Promise<TenantPermission> {
+export async function tenantPermissionsRetrieve(id: number): Promise<TenantPermission> {
   const response = await axios.get(`/api/tenant-permissions/${id}/`);
   return response.data;
 }
@@ -3723,7 +4546,7 @@ export async function tenantSettingsUploadLogo(): Promise<{
   return response.data;
 }
 
-export async function apiTenantConfigRetrieve(): Promise<any> {
+export async function tenantConfigRetrieve(): Promise<any> {
   const response = await axios.get(`/api/tenant/config/`);
   return response.data;
 }
@@ -3737,17 +4560,17 @@ export async function getTenantLanguage(): Promise<{
   return response.data;
 }
 
-export async function apiTenantLanguageUpdateUpdate(): Promise<any> {
+export async function tenantLanguageUpdateUpdate(): Promise<any> {
   const response = await axios.put(`/api/tenant/language/update/`);
   return response.data;
 }
 
-export async function apiTenantLanguageUpdatePartialUpdate(): Promise<any> {
+export async function tenantLanguageUpdatePartialUpdate(): Promise<any> {
   const response = await axios.patch(`/api/tenant/language/update/`);
   return response.data;
 }
 
-export async function apiTenantsList(
+export async function tenantsList(
   ordering?: string,
   page?: number,
   search?: string
@@ -3765,47 +4588,53 @@ export async function apiTenantsList(
   return response.data;
 }
 
-export async function apiTenantsCreate(data: TenantCreate): Promise<TenantCreate> {
+export async function tenantsCreate(data: TenantCreateRequest): Promise<TenantCreate> {
   const response = await axios.post(`/api/tenants/`, data);
   return response.data;
 }
 
-export async function apiTenantsRetrieve(id: number): Promise<Tenant> {
+export async function tenantsRetrieve(id: number): Promise<Tenant> {
   const response = await axios.get(`/api/tenants/${id}/`);
   return response.data;
 }
 
-export async function apiTenantsUpdate(id: number, data: Tenant): Promise<Tenant> {
+export async function tenantsUpdate(id: number, data: TenantRequest): Promise<Tenant> {
   const response = await axios.put(`/api/tenants/${id}/`, data);
   return response.data;
 }
 
-export async function apiTenantsPartialUpdate(id: number, data: PatchedTenant): Promise<Tenant> {
+export async function tenantsPartialUpdate(
+  id: number,
+  data: PatchedTenantRequest
+): Promise<Tenant> {
   const response = await axios.patch(`/api/tenants/${id}/`, data);
   return response.data;
 }
 
-export async function apiTenantsDestroy(id: number): Promise<any> {
+export async function tenantsDestroy(id: number): Promise<any> {
   const response = await axios.delete(`/api/tenants/${id}/`);
   return response.data;
 }
 
-export async function apiTenantsCreateAdminUserCreate(id: number, data: Tenant): Promise<Tenant> {
+export async function tenantsCreateAdminUserCreate(
+  id: number,
+  data: TenantRequest
+): Promise<Tenant> {
   const response = await axios.post(`/api/tenants/${id}/create_admin_user/`, data);
   return response.data;
 }
 
-export async function apiTenantsUsersRetrieve(id: number): Promise<Tenant> {
+export async function tenantsUsersRetrieve(id: number): Promise<Tenant> {
   const response = await axios.get(`/api/tenants/${id}/users/`);
   return response.data;
 }
 
-export async function apiTenantsListRetrieve(): Promise<any> {
+export async function tenantsListRetrieve(): Promise<any> {
   const response = await axios.get(`/api/tenants/list/`);
   return response.data;
 }
 
-export async function apiTicketFormsList(
+export async function ticketFormsList(
   ordering?: string,
   page?: number,
   search?: string
@@ -3823,53 +4652,53 @@ export async function apiTicketFormsList(
   return response.data;
 }
 
-export async function apiTicketFormsCreate(data: TicketForm): Promise<TicketForm> {
+export async function ticketFormsCreate(data: TicketFormRequest): Promise<TicketForm> {
   const response = await axios.post(`/api/ticket-forms/`, data);
   return response.data;
 }
 
-export async function apiTicketFormsRetrieve(id: number): Promise<TicketForm> {
+export async function ticketFormsRetrieve(id: number): Promise<TicketForm> {
   const response = await axios.get(`/api/ticket-forms/${id}/`);
   return response.data;
 }
 
-export async function apiTicketFormsUpdate(id: number, data: TicketForm): Promise<TicketForm> {
+export async function ticketFormsUpdate(id: number, data: TicketFormRequest): Promise<TicketForm> {
   const response = await axios.put(`/api/ticket-forms/${id}/`, data);
   return response.data;
 }
 
-export async function apiTicketFormsPartialUpdate(
+export async function ticketFormsPartialUpdate(
   id: number,
-  data: PatchedTicketForm
+  data: PatchedTicketFormRequest
 ): Promise<TicketForm> {
   const response = await axios.patch(`/api/ticket-forms/${id}/`, data);
   return response.data;
 }
 
-export async function apiTicketFormsDestroy(id: number): Promise<any> {
+export async function ticketFormsDestroy(id: number): Promise<any> {
   const response = await axios.delete(`/api/ticket-forms/${id}/`);
   return response.data;
 }
 
-export async function apiTicketFormsSetDefaultCreate(
+export async function ticketFormsSetDefaultCreate(
   id: number,
-  data: TicketForm
+  data: TicketFormRequest
 ): Promise<TicketForm> {
   const response = await axios.post(`/api/ticket-forms/${id}/set_default/`, data);
   return response.data;
 }
 
-export async function apiTicketFormsWithListsRetrieve(id: number): Promise<TicketForm> {
+export async function ticketFormsWithListsRetrieve(id: number): Promise<TicketForm> {
   const response = await axios.get(`/api/ticket-forms/${id}/with_lists/`);
   return response.data;
 }
 
-export async function apiTicketFormsDefaultRetrieve(): Promise<TicketForm> {
+export async function ticketFormsDefaultRetrieve(): Promise<TicketForm> {
   const response = await axios.get(`/api/ticket-forms/default/`);
   return response.data;
 }
 
-export async function apiTicketsList(
+export async function ticketsList(
   assignedGroups?: number[],
   assignedTo?: number,
   column?: number,
@@ -3902,50 +4731,53 @@ export async function apiTicketsList(
   return response.data;
 }
 
-export async function apiTicketsCreate(data: Ticket): Promise<Ticket> {
+export async function ticketsCreate(data: TicketRequest): Promise<Ticket> {
   const response = await axios.post(`/api/tickets/`, data);
   return response.data;
 }
 
-export async function apiTicketsRetrieve(id: number): Promise<Ticket> {
+export async function ticketsRetrieve(id: number): Promise<Ticket> {
   const response = await axios.get(`/api/tickets/${id}/`);
   return response.data;
 }
 
-export async function apiTicketsUpdate(id: number, data: Ticket): Promise<Ticket> {
+export async function ticketsUpdate(id: number, data: TicketRequest): Promise<Ticket> {
   const response = await axios.put(`/api/tickets/${id}/`, data);
   return response.data;
 }
 
-export async function apiTicketsPartialUpdate(id: number, data: PatchedTicket): Promise<Ticket> {
+export async function ticketsPartialUpdate(
+  id: number,
+  data: PatchedTicketRequest
+): Promise<Ticket> {
   const response = await axios.patch(`/api/tickets/${id}/`, data);
   return response.data;
 }
 
-export async function apiTicketsDestroy(id: number): Promise<any> {
+export async function ticketsDestroy(id: number): Promise<any> {
   const response = await axios.delete(`/api/tickets/${id}/`);
   return response.data;
 }
 
-export async function apiTicketsAddCommentCreate(id: number, data: Ticket): Promise<Ticket> {
+export async function ticketsAddCommentCreate(id: number, data: TicketRequest): Promise<Ticket> {
   const response = await axios.post(`/api/tickets/${id}/add_comment/`, data);
   return response.data;
 }
 
-export async function apiTicketsAssignPartialUpdate(
+export async function ticketsAssignPartialUpdate(
   id: number,
-  data: PatchedTicket
+  data: PatchedTicketRequest
 ): Promise<Ticket> {
   const response = await axios.patch(`/api/tickets/${id}/assign/`, data);
   return response.data;
 }
 
-export async function apiTicketsCommentsRetrieve(id: number): Promise<Ticket> {
+export async function ticketsCommentsRetrieve(id: number): Promise<Ticket> {
   const response = await axios.get(`/api/tickets/${id}/comments/`);
   return response.data;
 }
 
-export async function apiTicketsHistoryRetrieve(id: number): Promise<Ticket> {
+export async function ticketsHistoryRetrieve(id: number): Promise<Ticket> {
   const response = await axios.get(`/api/tickets/${id}/history/`);
   return response.data;
 }
@@ -3955,15 +4787,15 @@ export async function moveTicketToColumn(id: number): Promise<Ticket> {
   return response.data;
 }
 
-export async function apiTicketsReorderInColumnPartialUpdate(
+export async function ticketsReorderInColumnPartialUpdate(
   id: number,
-  data: PatchedTicket
+  data: PatchedTicketRequest
 ): Promise<Ticket> {
   const response = await axios.patch(`/api/tickets/${id}/reorder_in_column/`, data);
   return response.data;
 }
 
-export async function apiTicketsAssignmentsList(
+export async function ticketsAssignmentsList(
   ticketPk: number,
   ordering?: string,
   page?: number,
@@ -3982,15 +4814,15 @@ export async function apiTicketsAssignmentsList(
   return response.data;
 }
 
-export async function apiTicketsAssignmentsCreate(
+export async function ticketsAssignmentsCreate(
   ticketPk: number,
-  data: TicketAssignment
+  data: TicketAssignmentRequest
 ): Promise<TicketAssignment> {
   const response = await axios.post(`/api/tickets/${ticketPk}/assignments/`, data);
   return response.data;
 }
 
-export async function apiTicketsAssignmentsRetrieve(
+export async function ticketsAssignmentsRetrieve(
   id: number,
   ticketPk: number
 ): Promise<TicketAssignment> {
@@ -3998,53 +4830,53 @@ export async function apiTicketsAssignmentsRetrieve(
   return response.data;
 }
 
-export async function apiTicketsAssignmentsUpdate(
+export async function ticketsAssignmentsUpdate(
   id: number,
   ticketPk: number,
-  data: TicketAssignment
+  data: TicketAssignmentRequest
 ): Promise<TicketAssignment> {
   const response = await axios.put(`/api/tickets/${ticketPk}/assignments/${id}/`, data);
   return response.data;
 }
 
-export async function apiTicketsAssignmentsPartialUpdate(
+export async function ticketsAssignmentsPartialUpdate(
   id: number,
   ticketPk: number,
-  data: PatchedTicketAssignment
+  data: PatchedTicketAssignmentRequest
 ): Promise<TicketAssignment> {
   const response = await axios.patch(`/api/tickets/${ticketPk}/assignments/${id}/`, data);
   return response.data;
 }
 
-export async function apiTicketsAssignmentsDestroy(id: number, ticketPk: number): Promise<any> {
+export async function ticketsAssignmentsDestroy(id: number, ticketPk: number): Promise<any> {
   const response = await axios.delete(`/api/tickets/${ticketPk}/assignments/${id}/`);
   return response.data;
 }
 
-export async function apiTicketsAssignmentsBulkAssignCreate(
+export async function ticketsAssignmentsBulkAssignCreate(
   ticketPk: number,
-  data: TicketAssignment
+  data: TicketAssignmentRequest
 ): Promise<TicketAssignment> {
   const response = await axios.post(`/api/tickets/${ticketPk}/assignments/bulk_assign/`, data);
   return response.data;
 }
 
-export async function apiTicketsAssignmentsBulkUnassignDestroy(ticketPk: number): Promise<any> {
+export async function ticketsAssignmentsBulkUnassignDestroy(ticketPk: number): Promise<any> {
   const response = await axios.delete(`/api/tickets/${ticketPk}/assignments/bulk_unassign/`);
   return response.data;
 }
 
-export async function apiTicketsAssignedToMeRetrieve(): Promise<Ticket> {
+export async function ticketsAssignedToMeRetrieve(): Promise<Ticket> {
   const response = await axios.get(`/api/tickets/assigned_to_me/`);
   return response.data;
 }
 
-export async function apiTicketsMyTicketsRetrieve(): Promise<Ticket> {
+export async function ticketsMyTicketsRetrieve(): Promise<Ticket> {
   const response = await axios.get(`/api/tickets/my_tickets/`);
   return response.data;
 }
 
-export async function apiTimeLogsList(
+export async function timeLogsList(
   ordering?: string,
   page?: number
 ): Promise<PaginatedTicketTimeLogList> {
@@ -4060,17 +4892,35 @@ export async function apiTimeLogsList(
   return response.data;
 }
 
-export async function apiTimeLogsRetrieve(id: string): Promise<TicketTimeLog> {
+export async function timeLogsRetrieve(id: string): Promise<TicketTimeLog> {
   const response = await axios.get(`/api/time-logs/${id}/`);
   return response.data;
 }
 
-export async function apiTimeLogsMyTimeSummaryRetrieve(
-  days?: number
-): Promise<TimeTrackingSummary> {
+export async function timeLogsMyTimeSummaryRetrieve(days?: number): Promise<TimeTrackingSummary> {
   const response = await axios.get(
     `/api/time-logs/my_time_summary/${days ? "?days=" + encodeURIComponent(days) : ""}`
   );
+  return response.data;
+}
+
+export async function upgradeCancelScheduledCreate(): Promise<any> {
+  const response = await axios.post(`/api/upgrade/cancel-scheduled/`);
+  return response.data;
+}
+
+export async function upgradeImmediateCreate(): Promise<any> {
+  const response = await axios.post(`/api/upgrade/immediate/`);
+  return response.data;
+}
+
+export async function upgradePreviewRetrieve(): Promise<any> {
+  const response = await axios.get(`/api/upgrade/preview/`);
+  return response.data;
+}
+
+export async function upgradeScheduledCreate(): Promise<any> {
+  const response = await axios.post(`/api/upgrade/scheduled/`);
   return response.data;
 }
 
@@ -4082,7 +4932,7 @@ export async function uploadImage(): Promise<{
   return response.data;
 }
 
-export async function apiUsersList(
+export async function usersList(
   ordering?: string,
   page?: number,
   search?: string
@@ -4100,45 +4950,45 @@ export async function apiUsersList(
   return response.data;
 }
 
-export async function apiUsersCreate(data: UserCreate): Promise<UserCreate> {
+export async function usersCreate(data: UserCreateRequest): Promise<UserCreate> {
   const response = await axios.post(`/api/users/`, data);
   return response.data;
 }
 
-export async function apiUsersRetrieve(id: number): Promise<User> {
+export async function usersRetrieve(id: number): Promise<User> {
   const response = await axios.get(`/api/users/${id}/`);
   return response.data;
 }
 
-export async function apiUsersUpdate(id: number, data: UserUpdate): Promise<UserUpdate> {
+export async function usersUpdate(id: number, data: UserUpdateRequest): Promise<UserUpdate> {
   const response = await axios.put(`/api/users/${id}/`, data);
   return response.data;
 }
 
-export async function apiUsersPartialUpdate(
+export async function usersPartialUpdate(
   id: number,
-  data: PatchedUserUpdate
+  data: PatchedUserUpdateRequest
 ): Promise<UserUpdate> {
   const response = await axios.patch(`/api/users/${id}/`, data);
   return response.data;
 }
 
-export async function apiUsersDestroy(id: number): Promise<any> {
+export async function usersDestroy(id: number): Promise<any> {
   const response = await axios.delete(`/api/users/${id}/`);
   return response.data;
 }
 
-export async function apiUsersChangePasswordCreate(id: number, data: User): Promise<User> {
+export async function usersChangePasswordCreate(id: number, data: UserRequest): Promise<User> {
   const response = await axios.post(`/api/users/${id}/change_password/`, data);
   return response.data;
 }
 
-export async function apiUsersBulkActionCreate(data: User): Promise<User> {
+export async function usersBulkActionCreate(data: UserRequest): Promise<User> {
   const response = await axios.post(`/api/users/bulk_action/`, data);
   return response.data;
 }
 
-export async function apiWebhooksRecordingCreate(data: {
+export async function webhooksRecordingCreate(data: {
   call_id: string;
   recording_id?: string;
   status: "started" | "completed" | "failed";
@@ -4151,7 +5001,7 @@ export async function apiWebhooksRecordingCreate(data: {
   return response.data;
 }
 
-export async function apiWebhooksSipCreate(data: {
+export async function webhooksSipCreate(data: {
   event_type: "call_initiated" | "call_ringing" | "call_answered" | "call_ended" | "call_failed";
   call_id?: string;
   sip_call_id: string;

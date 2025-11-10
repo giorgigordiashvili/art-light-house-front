@@ -2,11 +2,11 @@
 import React, { useEffect, useMemo, useState } from "react";
 import Image from "next/image";
 import {
-  apiEcommerceClientFavoritesList,
-  apiEcommerceClientFavoritesCreate,
-  apiEcommerceClientFavoritesDestroy,
+  ecommerceClientFavoritesList,
+  ecommerceClientFavoritesCreate,
+  ecommerceClientFavoritesDestroy,
 } from "@/api/generated/api";
-import { apiEcommerceClientProfileMeRetrieve } from "@/api/generated/api";
+import { ecommerceClientProfileMeRetrieve } from "@/api/generated/api";
 import { useAuthModal } from "@/contexts/AuthModalContext";
 
 type Props = {
@@ -45,7 +45,7 @@ const ProductHeartIcon = ({ productId, defaultIsFavorite, size = 30 }: Props) =>
         // Hard cap to avoid excessive requests; adjust if needed
         const MAX_PAGES = 10;
         while (!found && page <= MAX_PAGES) {
-          const resp = await apiEcommerceClientFavoritesList(undefined, page);
+          const resp = await ecommerceClientFavoritesList(undefined, page);
           const list = (resp as any)?.results || [];
           if (list.length > 0) {
             found = list.some((f: any) => {
@@ -98,7 +98,7 @@ const ProductHeartIcon = ({ productId, defaultIsFavorite, size = 30 }: Props) =>
       // Always query to find existing record id robustly
       let favoriteId: string | null = null;
       try {
-        const response = await apiEcommerceClientFavoritesList();
+        const response = await ecommerceClientFavoritesList();
         const list = response.results || [];
         const existing = list.find((f: any) => {
           const pid = typeof f.product === "object" ? f.product?.id : f.product;
@@ -109,23 +109,23 @@ const ProductHeartIcon = ({ productId, defaultIsFavorite, size = 30 }: Props) =>
 
       if (favoriteId) {
         // Remove from favorites
-        await apiEcommerceClientFavoritesDestroy(favoriteId);
+        await ecommerceClientFavoritesDestroy(favoriteId);
         setIsFilled(false);
       } else {
         // Add to favorites; include client id from profile
         let clientId: number | undefined;
         try {
-          const me = await apiEcommerceClientProfileMeRetrieve();
+          const me = await ecommerceClientProfileMeRetrieve();
           clientId = (me as any)?.id;
         } catch {}
         const payload = { client: clientId, product: productId } as any;
-        await apiEcommerceClientFavoritesCreate(payload);
+        await ecommerceClientFavoritesCreate(payload);
         setIsFilled(true);
       }
 
       // Sync header by dispatching updated count
       try {
-        const response = await apiEcommerceClientFavoritesList();
+        const response = await ecommerceClientFavoritesList();
         const list = response.results || [];
         const count = list.length;
         if (typeof window !== "undefined") {

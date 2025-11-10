@@ -4,7 +4,7 @@ import type { Locale } from "@/config/i18n";
 import { PageProps } from "@/models/lang.model";
 import type { Metadata } from "next";
 // TODO: Projects API not available - backend needs to implement
-// import { apiEcommerceClientProjectsRetrieve } from "@/api/generated/api";
+// import { ecommerceClientProjectsRetrieve } from "@/api/generated/api";
 
 function isLocale(lang: string): lang is Locale {
   return ["ge", "en"].includes(lang);
@@ -19,7 +19,7 @@ export async function generateMetadata({ params }: ProjectPageProps): Promise<Me
 
   try {
     // TODO: Projects API not available
-    // const project = await apiEcommerceClientProjectsRetrieve(slug);
+    // const project = await ecommerceClientProjectsRetrieve(slug);
     throw new Error("Projects API not implemented");
     // return {
     //   title: `${project.title} | Art Lighthouse Projects`,

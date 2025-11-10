@@ -7,9 +7,9 @@ import PrimaryButton from "../Buttons/PrimaryButton";
 import SummaryPrice from "./SummaryPrice";
 import EmptyCartModal from "./EmptyCartModal";
 import {
-  apiEcommerceClientCartGetOrCreateRetrieve,
-  apiEcommerceClientCartItemsPartialUpdate,
-  apiEcommerceClientCartItemsDestroy,
+  ecommerceClientCartGetOrCreateRetrieve,
+  ecommerceClientCartItemsPartialUpdate,
+  ecommerceClientCartItemsDestroy,
 } from "@/api/generated/api";
 import type { Cart } from "@/api/generated/interfaces";
 import { useAuth } from "@/contexts/AuthContext";
@@ -143,7 +143,7 @@ const CartModal = ({ onClose, dictionary }: Props) => {
   const fetchCart = async () => {
     try {
       setLoading(true);
-      const data = await apiEcommerceClientCartGetOrCreateRetrieve();
+      const data = await ecommerceClientCartGetOrCreateRetrieve();
       const normalized = (data as any)?.cart ? (data as any).cart : (data as any);
       setCart(normalized as Cart);
     } catch {
@@ -251,8 +251,8 @@ const CartModal = ({ onClose, dictionary }: Props) => {
 
   const handleIncrease = async (itemId: number, current: number) => {
     try {
-      await apiEcommerceClientCartItemsPartialUpdate(String(itemId), { quantity: current + 1 });
-      const updated = await apiEcommerceClientCartGetOrCreateRetrieve();
+      await ecommerceClientCartItemsPartialUpdate(String(itemId), { quantity: current + 1 });
+      const updated = await ecommerceClientCartGetOrCreateRetrieve();
       const normalized = (updated as any)?.cart ? (updated as any).cart : (updated as any);
       setCart(normalized as Cart);
       try {
@@ -275,8 +275,8 @@ const CartModal = ({ onClose, dictionary }: Props) => {
       return;
     }
     try {
-      await apiEcommerceClientCartItemsPartialUpdate(String(itemId), { quantity: current - 1 });
-      const updated = await apiEcommerceClientCartGetOrCreateRetrieve();
+      await ecommerceClientCartItemsPartialUpdate(String(itemId), { quantity: current - 1 });
+      const updated = await ecommerceClientCartGetOrCreateRetrieve();
       const normalized = (updated as any)?.cart ? (updated as any).cart : (updated as any);
       setCart(normalized as Cart);
       try {
@@ -295,8 +295,8 @@ const CartModal = ({ onClose, dictionary }: Props) => {
 
   const handleRemove = async (itemId: number) => {
     try {
-      await apiEcommerceClientCartItemsDestroy(String(itemId));
-      const updated = await apiEcommerceClientCartGetOrCreateRetrieve();
+      await ecommerceClientCartItemsDestroy(String(itemId));
+      const updated = await ecommerceClientCartGetOrCreateRetrieve();
       const normalized = (updated as any)?.cart ? (updated as any).cart : (updated as any);
       setCart(normalized as Cart);
       try {

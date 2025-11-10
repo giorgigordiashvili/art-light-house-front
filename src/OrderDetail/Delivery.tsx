@@ -76,8 +76,8 @@ const Delivery = ({ dictionary, order }: DeliveryProps) => {
         <Image src={"/assets/Delivery Icon.svg"} alt="icon" width={24} height={24} />
       </IconWrapper>
       <InfoWrapper>
-        <Title>{order.delivery_method_display}</Title>
-        <Time>{order.delivery_notes || "No delivery notes"}</Time>
+        <Title>{order.payment_method || "Standard Delivery"}</Title>
+        <Time>{order.notes || "No delivery notes"}</Time>
       </InfoWrapper>
     </DeliveryCard>
   );

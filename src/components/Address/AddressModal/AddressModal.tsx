@@ -10,10 +10,10 @@ import GoogleMap from "@/components/Contact/GoogleMap";
 import ToggleDefaultButton from "@/components/Buttons/ToggleDefaultButton";
 import { AddressData } from "@/types";
 import {
-  apiEcommerceClientAddressesCreate,
-  apiEcommerceClientAddressesPartialUpdate,
+  ecommerceClientAddressesCreate,
+  ecommerceClientAddressesPartialUpdate,
 } from "@/api/generated/api";
-import { PatchedClientAddress, ClientAddress } from "@/api/generated/interfaces";
+import { PatchedClientAddressRequest, ClientAddress } from "@/api/generated/interfaces";
 import { mapPlaceToAddressType } from "@/utils/addressHelpers";
 
 const StyledContainer = styled.div`
@@ -110,7 +110,7 @@ const AddressModal = ({ onClose, onSave, initialData, dictionary }: Props) => {
 
       if (isEditing) {
         // Update existing address
-        const updateData: PatchedClientAddress = {
+        const updateData: PatchedClientAddressRequest = {
           address,
           extra_instructions: additionalInfo || undefined,
           latitude: roundedLat,
@@ -118,7 +118,7 @@ const AddressModal = ({ onClose, onSave, initialData, dictionary }: Props) => {
           is_default: isDefault,
         };
 
-        await apiEcommerceClientAddressesPartialUpdate(String(initialData.id!), updateData);
+        await ecommerceClientAddressesPartialUpdate(String(initialData.id!), updateData);
       } else {
         // Create new address
         // NOTE: Backend expects client to be null (it associates from auth), and requires city field
@@ -133,7 +133,7 @@ const AddressModal = ({ onClose, onSave, initialData, dictionary }: Props) => {
           is_default: isDefault,
         } as unknown as ClientAddress;
 
-        await apiEcommerceClientAddressesCreate(addressData);
+        await ecommerceClientAddressesCreate(addressData);
       }
 
       // Call the parent callback to trigger refresh

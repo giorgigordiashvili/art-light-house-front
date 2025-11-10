@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { apiEcommerceClientProductsList } from "@/api/generated/api";
+import { ecommerceClientProductsList } from "@/api/generated/api";
 import { ProductList } from "@/api/generated/interfaces";
 
 interface UseFeaturedProductsResult {
@@ -20,11 +20,11 @@ export const useFeaturedProducts = (): UseFeaturedProductsResult => {
         setError(null);
 
         // Fetch products with is_featured = true
-        const response = await apiEcommerceClientProductsList(
+        const response = await ecommerceClientProductsList(
           true, // isFeatured
-          undefined, // ordering
-          undefined, // page
-          undefined // search
+          undefined,
+          undefined,
+          undefined
         );
 
         setFeaturedProducts(response.results || []);

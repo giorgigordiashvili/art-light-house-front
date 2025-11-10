@@ -76,7 +76,7 @@ const Container = ({ dictionary, order }: ContainerProps) => {
         ))}
       </ProductsWrapper>
       <SectionTitle>{dictionary?.succsessOrder?.address}</SectionTitle>
-      <Address dictionary={dictionary} address={order.delivery_address_data} />
+      <Address dictionary={dictionary} address={order.delivery_address} />
       <SectionTitle>{dictionary?.succsessOrder?.delivery}</SectionTitle>
 
       <Delivery dictionary={dictionary} order={order} />
