@@ -8,6 +8,9 @@ import TextContainer from "@/components/Checkout/TextContainer";
 import Summery from "@/components/CartPage/Summary";
 import AddressSelectionModal from "@/components/Checkout/AddressSelectionModal";
 import { useAddresses } from "@/hooks/useAddresses";
+import PaymentMethodSelectionModal from "@/components/Checkout/PaymentMethodSelectionModal";
+import { ecommerceClientCardsRetrieve } from "@/api/generated/api";
+import { PaymentMethodData } from "@/types";
 import { ClientAddress, Cart, OrderCreate as OrderCreateRequest } from "@/api/generated/interfaces";
 import {
   ecommerceClientCartGetOrCreateRetrieve,
@@ -155,6 +158,10 @@ const Checkout: React.FC<CheckoutProps> = ({ dictionary }) => {
   const [cart, setCart] = useState<Cart | null>(null);
   const [loadingCart, setLoadingCart] = useState(true);
   const [submitting, setSubmitting] = useState(false);
+  const [paymentMethods, setPaymentMethods] = useState<PaymentMethodData[]>([]);
+  const [loadingCards, setLoadingCards] = useState(false);
+  const [selectedPaymentMethodId, setSelectedPaymentMethodId] = useState<string | null>(null);
+  const [isPaymentMethodModalOpen, setIsPaymentMethodModalOpen] = useState(false);
 
   // Fetch addresses
   const { addresses } = useAddresses();
@@ -175,6 +182,40 @@ const Checkout: React.FC<CheckoutProps> = ({ dictionary }) => {
     };
 
     fetchCart();
+  }, []);
+
+  // Fetch payment methods (cards)
+  useEffect(() => {
+    const fetchCards = async () => {
+      try {
+        setLoadingCards(true);
+        const response = await ecommerceClientCardsRetrieve();
+        if (response && Array.isArray(response)) {
+          const transformed: PaymentMethodData[] = response.map((card: any) => ({
+            id: card.id?.toString() || "",
+            cardType: (card.card_type?.toLowerCase() === "mastercard"
+              ? "mastercard"
+              : card.card_type?.toLowerCase() === "amex"
+                ? "amex"
+                : "visa") as "visa" | "mastercard" | "amex",
+            cardNumber: card.masked_card_number || "",
+            cvv: "",
+            expiry: card.card_expiry || "",
+            lastFourDigits: card.masked_card_number?.slice(-4) || "",
+          }));
+          setPaymentMethods(transformed);
+          // Select default card if backend marks one, else first
+          const defaultCard = (response as any).find((c: any) => c.is_default) || transformed[0];
+          if (defaultCard) setSelectedPaymentMethodId(defaultCard.id || null);
+        }
+      } catch (e) {
+        console.error("Failed to fetch payment methods", e);
+        setPaymentMethods([]);
+      } finally {
+        setLoadingCards(false);
+      }
+    };
+    fetchCards();
   }, []);
 
   // Get default address or first address
@@ -244,6 +285,11 @@ const Checkout: React.FC<CheckoutProps> = ({ dictionary }) => {
       return;
     }
 
+    if (paymentMethods.length > 0 && !selectedPaymentMethodId) {
+      alert("Please select a payment card");
+      return;
+    }
+
     if (!cart || cart.items.length === 0) {
       alert("Your cart is empty");
       return;
@@ -292,6 +338,37 @@ const Checkout: React.FC<CheckoutProps> = ({ dictionary }) => {
     }
   };
 
+  // Helpers for payment method display
+  const selectedPaymentMethod =
+    paymentMethods.find((pm) => pm.id === selectedPaymentMethodId) || null;
+  const getCardLogo = (cardType?: string) => {
+    switch (cardType) {
+      case "visa":
+        return "/assets/visa-logo.svg";
+      case "mastercard":
+        return "/assets/mastercard-logo.svg";
+      case "amex":
+        return "/assets/amex-logo.svg";
+      default:
+        return "/assets/paymentIcon.svg";
+    }
+  };
+  const maskNumber = (pm: PaymentMethodData) => {
+    const last4 = pm.lastFourDigits || pm.cardNumber.slice(-4);
+    return `✲✲✲✲ ✲✲✲✲ ✲✲✲✲  ${last4}`;
+  };
+  const paymentMethodLabel = selectedPaymentMethod
+    ? maskNumber(selectedPaymentMethod)
+    : loadingCards
+      ? "Loading cards..."
+      : paymentMethods.length === 0
+        ? "No cards saved"
+        : "Select card";
+
+  const paymentMethodTitle = selectedPaymentMethod
+    ? dictionary?.checkout?.cardTitle2 || "ბარათი"
+    : dictionary?.checkout?.cardTitle2 || "ბარათი";
+
   return (
     <Container>
       <DesktopWrapper>
@@ -325,13 +402,11 @@ const Checkout: React.FC<CheckoutProps> = ({ dictionary }) => {
 
             <CheckoutCard
               label={dictionary?.checkout?.subTitle2 || "გადახდის მეთოდი"}
-              method={dictionary?.checkout?.cardTitle2 || "ბარათი"}
-              desc={
-                dictionary?.checkout?.cardDescription2 ||
-                "ტრანზაქციის შემდეგ თქვენი ბარათის მონაცემები შეინახება ბანკის დაცულ სერვერზე"
-              }
-              imageSrc="/assets/icons/gadaxda.svg"
-              showChangeButton={false}
+              method={paymentMethodTitle}
+              desc={paymentMethodLabel}
+              imageSrc={getCardLogo(selectedPaymentMethod?.cardType)}
+              showChangeButton={true}
+              onChangeClick={() => setIsPaymentMethodModalOpen(true)}
               dictionary={dictionary?.checkout}
             />
           </LeftSection>
@@ -419,13 +494,11 @@ const Checkout: React.FC<CheckoutProps> = ({ dictionary }) => {
 
         <CheckoutCard
           label={dictionary?.checkout?.subTitle2 || "გადახდის მეთოდი"}
-          method={dictionary?.checkout?.cardTitle2 || "ბარათი"}
-          desc={
-            dictionary?.checkout?.cardDescription2 ||
-            "ტრანზაქციის შემდეგ თქვენი ბარათის მონაცემები შეინახება ბანკის დაცულ სერვერზე"
-          }
-          imageSrc="/assets/icons/gadaxda.svg"
-          showChangeButton={false}
+          method={paymentMethodTitle}
+          desc={paymentMethodLabel}
+          imageSrc={getCardLogo(selectedPaymentMethod?.cardType)}
+          showChangeButton={true}
+          onChangeClick={() => setIsPaymentMethodModalOpen(true)}
           dictionary={dictionary?.checkout}
         />
 
@@ -489,6 +562,18 @@ const Checkout: React.FC<CheckoutProps> = ({ dictionary }) => {
           currentAddressId={currentAddress?.id || null}
           onSelect={handleAddressSelect}
           onClose={() => setIsAddressModalOpen(false)}
+          dictionary={dictionary?.checkout}
+        />
+      )}
+      {isPaymentMethodModalOpen && (
+        <PaymentMethodSelectionModal
+          cards={paymentMethods}
+          currentCardId={selectedPaymentMethodId}
+          onSelect={(pm) => {
+            setSelectedPaymentMethodId(pm.id || null);
+            setIsPaymentMethodModalOpen(false);
+          }}
+          onClose={() => setIsPaymentMethodModalOpen(false)}
           dictionary={dictionary?.checkout}
         />
       )}
