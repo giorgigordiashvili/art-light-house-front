@@ -283,6 +283,11 @@
     "itemCount": "Items",
     "status": "Status"
   },
+  "failedPayment": {
+    "title": "Payment Failed",
+    "message": "The operation could not be completed. Please try again or contact support if the problem persists.",
+    "button": "Return to Home"
+  },
   "address": {
     "title": "My addresses",
     "detailBar1": "My details",
@@ -522,6 +527,10 @@
     "success": {
       "title": "Order Success - Art Lighthouse",
       "subTitle": "Your order has been completed successfully."
+    },
+    "paymentFailed": {
+      "title": "Payment Failed - Art Lighthouse",
+      "subTitle": "The payment could not be completed."
     }
   }
 }
