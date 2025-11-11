@@ -98,9 +98,9 @@ const createAxiosInstance = (baseURL?: string): AxiosInstance => {
           // Only attempt refresh if we have both tokens and access token is not "cookie-based"
           if (refreshToken && accessToken && accessToken !== "cookie-based") {
             try {
-              // Call refresh token endpoint
+              // Call ecommerce client refresh token endpoint
               const response = await axios.post(
-                `${getApiUrl()}/api/auth/token/refresh/`,
+                `${getApiUrl()}/api/ecommerce/clients/refresh-token/`,
                 { refresh: refreshToken },
                 {
                   headers: {
@@ -112,6 +112,11 @@ const createAxiosInstance = (baseURL?: string): AxiosInstance => {
               if (response.data.access) {
                 // Store new access token
                 localStorage.setItem("auth_access_token", response.data.access);
+
+                // If a new refresh token is provided, update it as well
+                if (response.data.refresh) {
+                  localStorage.setItem("auth_refresh_token", response.data.refresh);
+                }
 
                 // Update the failed request with new token
                 originalRequest.headers.Authorization = `Bearer ${response.data.access}`;
