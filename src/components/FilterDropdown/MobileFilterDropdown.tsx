@@ -11,6 +11,7 @@ import { useFilterContext } from "@/contexts/FilterContext";
 import { useFilterAttributeGroups, FilterGroup } from "@/hooks/useFilterAttributeGroups";
 import { usePathname } from "next/navigation";
 import { getLocaleFromPath } from "@/utils/getLocaleFromPath";
+import FiltersLoadingSkeleton from "../FilterSidebar/FiltersLoadingSkeleton";
 
 const slideUp = keyframes`
   from {
@@ -197,10 +198,8 @@ const MobileFilterDropdown: React.FC<MobileFilterDropdownProps> = ({ onClose, di
     ));
   };
 
-  const statusMessage = filtersLoading
-    ? (dictionary.filter?.loadingFilters ?? "Loading filters...")
-    : filtersError;
-
+  const showSkeleton = filtersLoading;
+  const showError = !filtersLoading && !!filtersError;
   const canRenderGroups = !filtersLoading && !filtersError;
 
   return (
@@ -211,7 +210,8 @@ const MobileFilterDropdown: React.FC<MobileFilterDropdownProps> = ({ onClose, di
           <CloseButton onClick={onClose}>{dictionary.filter.clear}</CloseButton>
           <Title>{dictionary.filter.title}</Title>
           <Line />
-          {statusMessage && <SectionMessage>{statusMessage}</SectionMessage>}
+          {showSkeleton && <FiltersLoadingSkeleton sections={2} rowsPerSection={4} compact />}
+          {showError && <SectionMessage>{filtersError}</SectionMessage>}
           {canRenderGroups && renderCategoryGroups()}
           <Line />
           <PriceFilter dictionary={dictionary.filter} />

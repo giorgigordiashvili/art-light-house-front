@@ -11,6 +11,7 @@ import CheckboxGroup from "./CheckboxGroup";
 import { useFilterAttributeGroups, FilterGroup } from "@/hooks/useFilterAttributeGroups";
 import { usePathname } from "next/navigation";
 import { getLocaleFromPath } from "@/utils/getLocaleFromPath";
+import FiltersLoadingSkeleton from "./FiltersLoadingSkeleton";
 
 const SidebarWrapper = styled.div`
   width: 308px;
@@ -154,17 +155,16 @@ function FilterSidebar({ dictionary }: FilterSidebarProps) {
     ));
   };
 
-  const statusMessage = filtersLoading
-    ? (dictionary?.loadingFilters ?? "Loading filters...")
-    : filtersError;
-
+  const showSkeleton = filtersLoading;
+  const showError = !filtersLoading && !!filtersError;
   const canRenderGroups = !filtersLoading && !filtersError;
 
   return (
     <SidebarWrapper>
       <Title>{dictionary.title}</Title>
       <Line />
-      {statusMessage && <SectionMessage>{statusMessage}</SectionMessage>}
+      {showSkeleton && <FiltersLoadingSkeleton sections={2} rowsPerSection={4} />}
+      {showError && <SectionMessage>{filtersError}</SectionMessage>}
       {canRenderGroups && renderCategoryGroups()}
       <Line />
       <PriceFilter dictionary={dictionary} />
