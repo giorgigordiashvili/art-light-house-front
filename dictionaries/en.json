@@ -453,7 +453,32 @@
     "detailBar3": "My orders",
     "detailBar4": "Payment methods",
     "detailBar5": "Settings",
-    "detailBar6": "Logout"
+    "detailBar6": "Logout",
+    "password": {
+      "resetTitle": "Reset Password",
+      "confirmTitle": "Enter Reset Code",
+      "emailLabel": "Email Address",
+      "emailPlaceholder": "Enter your email",
+      "resetInstructions": "Enter your email address and we'll send you instructions to reset your password.",
+      "sendResetButton": "Send Reset Email",
+      "emailRequired": "Please enter your email address",
+      "invalidEmail": "Please enter a valid email address",
+      "resetEmailSent": "Password reset instructions have been sent to your email. Please check your inbox.",
+      "resetRequestFailed": "Failed to send reset email. Please try again.",
+      "codeLabel": "6-digit Code",
+      "codePlaceholder": "Enter 6-digit code from email",
+      "codeRequired": "Please enter the 6-digit code from your email",
+      "invalidCode": "Please enter a valid 6-digit code",
+      "newPasswordLabel": "New Password",
+      "newPasswordPlaceholder": "Enter new password",
+      "confirmPasswordLabel": "Confirm New Password",
+      "confirmPasswordPlaceholder": "Confirm new password",
+      "passwordMinLength": "Password must be at least 8 characters long",
+      "mismatch": "Passwords do not match",
+      "resetButton": "Reset Password",
+      "resetSuccess": "Password has been reset successfully! You can now login with your new password.",
+      "resetConfirmFailed": "Failed to reset password. The code may be invalid or expired."
+    }
   },
   "projects": {
     "title": "Our Projects",

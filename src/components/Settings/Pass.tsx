@@ -91,6 +91,7 @@ const Title = styled.p`
 
 const Pass = ({ dictionary }: any) => {
   const { user } = useAuth();
+  const passwordDictionary = dictionary?.password ?? {};
   const [step, setStep] = useState<"request" | "confirm">("request");
 
   // Step 1: Request reset
@@ -118,14 +119,14 @@ const Pass = ({ dictionary }: any) => {
     setSuccess(null);
 
     if (!email || !email.trim()) {
-      setError(dictionary?.password?.emailRequired || "Please enter your email address");
+      setError(passwordDictionary?.emailRequired || "Please enter your email address");
       return;
     }
 
     // Basic email validation
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
-      setError(dictionary?.password?.invalidEmail || "Please enter a valid email address");
+      setError(passwordDictionary?.invalidEmail || "Please enter a valid email address");
       return;
     }
 
@@ -137,7 +138,7 @@ const Pass = ({ dictionary }: any) => {
       setIsLoading(true);
       await passwordResetRequest(payload);
       setSuccess(
-        dictionary?.password?.resetEmailSent ||
+        passwordDictionary?.resetEmailSent ||
           "Password reset instructions have been sent to your email. Please check your inbox."
       );
       // Move to confirmation step after 2 seconds
@@ -153,7 +154,7 @@ const Pass = ({ dictionary }: any) => {
         (typeof e?.response?.data === "string" ? e.response.data : null);
       setError(
         apiMsg ||
-          dictionary?.password?.resetRequestFailed ||
+          passwordDictionary?.resetRequestFailed ||
           "Failed to send reset email. Please try again."
       );
     } finally {
@@ -166,26 +167,24 @@ const Pass = ({ dictionary }: any) => {
     setSuccess(null);
 
     if (!code || !code.trim()) {
-      setError(
-        dictionary?.password?.codeRequired || "Please enter the 6-digit code from your email"
-      );
+      setError(passwordDictionary?.codeRequired || "Please enter the 6-digit code from your email");
       return;
     }
 
     if (code.trim().length !== 6 || !/^\d{6}$/.test(code.trim())) {
-      setError(dictionary?.password?.invalidCode || "Please enter a valid 6-digit code");
+      setError(passwordDictionary?.invalidCode || "Please enter a valid 6-digit code");
       return;
     }
 
     if (!newPassword || newPassword.length < 8) {
       setError(
-        dictionary?.password?.passwordMinLength || "Password must be at least 8 characters long"
+        passwordDictionary?.passwordMinLength || "Password must be at least 8 characters long"
       );
       return;
     }
 
     if (newPassword !== confirmPassword) {
-      setError(dictionary?.password?.mismatch || "Passwords do not match");
+      setError(passwordDictionary?.mismatch || "Passwords do not match");
       return;
     }
 
@@ -200,7 +199,7 @@ const Pass = ({ dictionary }: any) => {
       setIsLoading(true);
       await passwordResetConfirm(payload);
       setSuccess(
-        dictionary?.password?.resetSuccess ||
+        passwordDictionary?.resetSuccess ||
           "Password has been reset successfully! You can now login with your new password."
       );
       // Reset form after success
@@ -217,7 +216,7 @@ const Pass = ({ dictionary }: any) => {
         (typeof e?.response?.data === "string" ? e.response.data : null);
       setError(
         apiMsg ||
-          dictionary?.password?.resetConfirmFailed ||
+          passwordDictionary?.resetConfirmFailed ||
           "Failed to reset password. The code may be invalid or expired."
       );
     } finally {
@@ -254,8 +253,8 @@ const Pass = ({ dictionary }: any) => {
     <StylePass>
       <Title>
         {step === "request"
-          ? dictionary?.password?.resetTitle || "Reset Password"
-          : dictionary?.password?.confirmTitle || "Enter Reset Code"}
+          ? passwordDictionary?.resetTitle || "Reset Password"
+          : passwordDictionary?.confirmTitle || "Enter Reset Code"}
       </Title>
 
       {/* Success/Error Messages */}
@@ -294,14 +293,14 @@ const Pass = ({ dictionary }: any) => {
             <LeftColumn>
               <InputWithLabel
                 icon="/assets/icons/pass1.svg"
-                label={dictionary?.password?.emailLabel || "Email Address"}
-                placeholder={dictionary?.password?.emailPlaceholder || "Enter your email"}
+                label={passwordDictionary?.emailLabel || "Email Address"}
+                placeholder={passwordDictionary?.emailPlaceholder || "Enter your email"}
                 value={email}
                 onChange={setEmail}
                 isPasswordField={false}
               />
               <div style={{ color: "#999", fontSize: "14px", marginTop: "-10px" }}>
-                {dictionary?.password?.resetInstructions ||
+                {passwordDictionary?.resetInstructions ||
                   "Enter your email address and we'll send you instructions to reset your password."}
               </div>
             </LeftColumn>
@@ -312,7 +311,7 @@ const Pass = ({ dictionary }: any) => {
             <SaveButton
               dictionary={{
                 ...dictionary,
-                button1: dictionary?.password?.sendResetButton || "Send Reset Email",
+                button1: passwordDictionary?.sendResetButton || "Send Reset Email",
               }}
               onSave={handleRequestReset}
               disabled={isDisabled}
@@ -326,27 +325,25 @@ const Pass = ({ dictionary }: any) => {
             <LeftColumn>
               <InputWithLabel
                 icon="/assets/icons/pass1.svg"
-                label={dictionary?.password?.codeLabel || "6-digit Code"}
-                placeholder={
-                  dictionary?.password?.codePlaceholder || "Enter 6-digit code from email"
-                }
+                label={passwordDictionary?.codeLabel || "6-digit Code"}
+                placeholder={passwordDictionary?.codePlaceholder || "Enter 6-digit code from email"}
                 value={code}
                 onChange={(val: string) => setCode(String(val).replace(/\D/g, "").slice(0, 6))}
                 isPasswordField={false}
               />
               <InputWithLabel
                 icon="/assets/icons/pass2.svg"
-                label={dictionary?.password?.newPasswordLabel || "New Password"}
-                placeholder={dictionary?.password?.newPasswordPlaceholder || "Enter new password"}
+                label={passwordDictionary?.newPasswordLabel || "New Password"}
+                placeholder={passwordDictionary?.newPasswordPlaceholder || "Enter new password"}
                 value={newPassword}
                 onChange={setNewPassword}
                 isPasswordField
               />
               <InputWithLabel
                 icon="/assets/icons/pass2.svg"
-                label={dictionary?.password?.confirmPasswordLabel || "Confirm New Password"}
+                label={passwordDictionary?.confirmPasswordLabel || "Confirm New Password"}
                 placeholder={
-                  dictionary?.password?.confirmPasswordPlaceholder || "Confirm new password"
+                  passwordDictionary?.confirmPasswordPlaceholder || "Confirm new password"
                 }
                 value={confirmPassword}
                 onChange={setConfirmPassword}
@@ -360,7 +357,7 @@ const Pass = ({ dictionary }: any) => {
             <SaveButton
               dictionary={{
                 ...dictionary,
-                button1: dictionary?.password?.resetButton || "Reset Password",
+                button1: passwordDictionary?.resetButton || "Reset Password",
               }}
               onSave={handleConfirmReset}
               disabled={isDisabled}
