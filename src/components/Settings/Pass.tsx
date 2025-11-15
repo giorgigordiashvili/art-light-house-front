@@ -5,7 +5,10 @@ import InputWithLabel from "../Profile/Input";
 import SaveButton from "@/ProfileButton/Save";
 import Cancel from "@/ProfileButton/Cancel";
 import { passwordResetRequest, passwordResetConfirm } from "@/api/generated/api";
-import type { PasswordResetRequest, PasswordResetConfirm } from "@/api/generated/interfaces";
+import type {
+  PasswordResetRequestRequest,
+  PasswordResetConfirmRequest,
+} from "@/api/generated/interfaces";
 import { useAuth } from "@/contexts/AuthContext";
 const StylePass = styled.div`
   /* width: 800px; */
@@ -130,7 +133,7 @@ const Pass = ({ dictionary }: any) => {
       return;
     }
 
-    const payload: PasswordResetRequest = {
+    const payload: PasswordResetRequestRequest = {
       email: email.trim(),
     };
 
@@ -188,7 +191,7 @@ const Pass = ({ dictionary }: any) => {
       return;
     }
 
-    const payload: PasswordResetConfirm = {
+    const payload: PasswordResetConfirmRequest = {
       email: email.trim(),
       code: code.trim(),
       new_password: newPassword,
