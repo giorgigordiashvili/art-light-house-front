@@ -1,14 +1,14 @@
 "use client";
 
 import React, { createContext, useContext, useEffect, useState, ReactNode } from "react";
-import { EcommerceClient, TenantLoginRequest } from "@/api/generated/interfaces";
-import { tenantLogin, getCurrentClient } from "@/api/generated/api";
+import { EcommerceClient, ClientLoginRequest } from "@/api/generated/interfaces";
+import { loginClient, getCurrentClient } from "@/api/generated/api";
 
 interface AuthContextType {
   user: EcommerceClient | null;
   isAuthenticated: boolean;
   isLoading: boolean;
-  login: (credentials: TenantLoginRequest) => Promise<void>;
+  login: (credentials: ClientLoginRequest) => Promise<void>;
   logout: () => Promise<void>;
   updateUser: (userData: EcommerceClient) => void;
   token: string | null;
@@ -85,34 +85,55 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     };
   }, []);
 
-  const login = async (credentials: TenantLoginRequest): Promise<void> => {
+  const login = async (credentials: ClientLoginRequest): Promise<void> => {
     setIsLoading(true);
     try {
-      // Use tenantLogin endpoint to authenticate and get token
-      const response = await tenantLogin(credentials);
+      type LoginResponseShape =
+        | EcommerceClient
+        | (EcommerceClient & { access?: string; refresh?: string })
+        | { client: EcommerceClient; access?: string; refresh?: string };
 
-      if (!response?.token) {
+      const response = (await loginClient(credentials)) as LoginResponseShape;
+
+      let client: EcommerceClient | null = null;
+      let accessToken: string | null = null;
+      let refreshToken: string | null = null;
+
+      if ("client" in response) {
+        client = response.client;
+        accessToken = response.access ?? null;
+        refreshToken = response.refresh ?? null;
+      } else {
+        client = response;
+        accessToken = (response as any)?.access ?? null;
+        refreshToken = (response as any)?.refresh ?? null;
+      }
+
+      if (!client) {
+        client = await getCurrentClient();
+      }
+
+      if (!client) {
         throw new Error("Login failed");
       }
 
-      // Store token
-      localStorage.setItem(TOKEN_KEY, response.token);
-      // Clear any old refresh token if present (tenant login doesn't provide refresh)
-      localStorage.removeItem(REFRESH_KEY);
+      if (accessToken) {
+        loginWithTokens(client, accessToken, refreshToken ?? "");
+      } else {
+        // Cookie-based fallback – tokens managed via httpOnly cookies
+        localStorage.setItem(TOKEN_KEY, "cookie-based");
+        if (refreshToken) {
+          localStorage.setItem(REFRESH_KEY, refreshToken);
+        } else {
+          localStorage.removeItem(REFRESH_KEY);
+        }
+        localStorage.setItem(USER_KEY, JSON.stringify(client));
+        setToken("cookie-based");
+        setUser(client);
 
-      // Fetch current ecommerce client profile after login
-      const client = await getCurrentClient();
-
-      // Store user data
-      localStorage.setItem(USER_KEY, JSON.stringify(client));
-
-      // Update state
-      setToken(response.token);
-      setUser(client);
-
-      // Dispatch auth change event
-      if (typeof window !== "undefined") {
-        window.dispatchEvent(new CustomEvent("authChange"));
+        if (typeof window !== "undefined") {
+          window.dispatchEvent(new CustomEvent("authChange"));
+        }
       }
     } catch (error) {
       throw error;

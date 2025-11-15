@@ -8,7 +8,11 @@ import ModalInput from "./ModalInput";
 import InputTitle from "./InputTitle";
 import AdditionalAction from "./AdditionalAction";
 import { useAuth } from "@/contexts/AuthContext";
-import { ClientRegistration, ClientLogin } from "@/api/generated/interfaces";
+import {
+  ClientRegistrationRequest,
+  ClientLoginRequest,
+  EcommerceClient,
+} from "@/api/generated/interfaces";
 import { registerClient, loginClient } from "@/api/generated/api";
 import Image from "next/image";
 
@@ -210,12 +214,16 @@ const AuthorizationModal: React.FC<AuthorizationModalProps> = ({
     try {
       if (activeTab === "auth") {
         // Storefront sign in via ecommerce clients login (identifier + password)
-        const payload: ClientLogin = {
+        const payload: ClientLoginRequest = {
           identifier: email,
           password,
         };
 
-        const resp = await loginClient(payload);
+        const resp = (await loginClient(payload)) as {
+          client?: EcommerceClient;
+          access?: string;
+          refresh?: string;
+        };
         if (resp?.client && resp?.access && resp?.refresh) {
           // Persist tokens and user in AuthContext
           loginWithTokens(resp.client, resp.access, resp.refresh);
@@ -301,7 +309,7 @@ const AuthorizationModal: React.FC<AuthorizationModalProps> = ({
           }
         }
 
-        const payload: ClientRegistration = {
+        const payload: ClientRegistrationRequest = {
           email,
           first_name: firstName,
           last_name: lastName,
