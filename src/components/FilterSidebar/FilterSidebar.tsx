@@ -70,22 +70,19 @@ function FilterSidebar({ dictionary }: FilterSidebarProps) {
     return new Set(filters.selectedAttributes.split(",").filter(Boolean));
   }, [filters.selectedAttributes]);
   const hasActiveFilters =
-    (filters.selectedCategoryIds && filters.selectedCategoryIds.length > 0) ||
+    (filters.selectedCategoryFilters && filters.selectedCategoryFilters.length > 0) ||
     filters.minPrice !== undefined ||
     filters.maxPrice !== undefined ||
     !!filters.selectedAttributes ||
     !!filters.ordering;
 
   const handleCategoryChange = (value: string) => {
-    const categoryId = Number(value);
-    if (!Number.isFinite(categoryId)) return;
+    const isSelected = filters.selectedCategoryFilters.includes(value);
+    const updatedFilters = isSelected
+      ? filters.selectedCategoryFilters.filter((entry) => entry !== value)
+      : [...filters.selectedCategoryFilters, value];
 
-    const isSelected = filters.selectedCategoryIds.includes(categoryId);
-    const updatedIds = isSelected
-      ? filters.selectedCategoryIds.filter((id) => id !== categoryId)
-      : [...filters.selectedCategoryIds, categoryId];
-
-    updateCategoryFilter(updatedIds);
+    updateCategoryFilter(updatedFilters);
   };
 
   const handleAttributeChange = (value: string) => {
@@ -105,11 +102,14 @@ function FilterSidebar({ dictionary }: FilterSidebarProps) {
   const buildCategoryOptions = (group: FilterGroup) =>
     group.options
       .filter((option) => typeof option.categoryId === "number")
-      .map((option) => ({
-        label: option.label,
-        value: String(option.categoryId),
-        checked: filters.selectedCategoryIds.includes(option.categoryId!),
-      }));
+      .map((option) => {
+        const serializedValue = `${group.key}:${option.optionId}`;
+        return {
+          label: option.label,
+          value: serializedValue,
+          checked: filters.selectedCategoryFilters.includes(serializedValue),
+        };
+      });
 
   const buildAttributeOptions = (group: FilterGroup) =>
     group.options.map((option) => {

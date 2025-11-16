@@ -120,15 +120,12 @@ const MobileFilterDropdown: React.FC<MobileFilterDropdownProps> = ({ onClose, di
   }, [filters.selectedAttributes]);
 
   const handleCategoryChange = (value: string) => {
-    const categoryId = Number(value);
-    if (!Number.isFinite(categoryId)) return;
+    const isSelected = filters.selectedCategoryFilters.includes(value);
+    const updatedFilters = isSelected
+      ? filters.selectedCategoryFilters.filter((entry) => entry !== value)
+      : [...filters.selectedCategoryFilters, value];
 
-    const isSelected = filters.selectedCategoryIds.includes(categoryId);
-    const updatedIds = isSelected
-      ? filters.selectedCategoryIds.filter((id) => id !== categoryId)
-      : [...filters.selectedCategoryIds, categoryId];
-
-    updateCategoryFilter(updatedIds);
+    updateCategoryFilter(updatedFilters);
   };
 
   const handleAttributeChange = (value: string) => {
@@ -148,11 +145,14 @@ const MobileFilterDropdown: React.FC<MobileFilterDropdownProps> = ({ onClose, di
   const buildCategoryOptions = (group: FilterGroup) =>
     group.options
       .filter((option) => typeof option.categoryId === "number")
-      .map((option) => ({
-        label: option.label,
-        value: String(option.categoryId),
-        checked: filters.selectedCategoryIds.includes(option.categoryId!),
-      }));
+      .map((option) => {
+        const serialized = `${group.key}:${option.optionId}`;
+        return {
+          label: option.label,
+          value: serialized,
+          checked: filters.selectedCategoryFilters.includes(serialized),
+        };
+      });
 
   const buildAttributeOptions = (group: FilterGroup) =>
     group.options.map((option) => {

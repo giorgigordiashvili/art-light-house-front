@@ -223,7 +223,7 @@ function ProductsMain({ dictionary }: any) {
     hasPreviousPage,
     fetchPage,
     applyFilters,
-  } = useProducts({ skipInitialFetch: true }); // Skip initial fetch to wait for URL filters
+  } = useProducts({ skipInitialFetch: true });
 
   const isReady = !loading && !error;
   const zeroResultsText = dictionary?.results?.zero ?? "0 products found";
@@ -239,7 +239,7 @@ function ProductsMain({ dictionary }: any) {
     const handleImmediateFilter = async (filters: any) => {
       // Reset to page 1 when filters change
       await applyFilters({
-        categoryIds: filters.selectedCategoryIds,
+        categoryFilters: filters.selectedCategoryFilters,
         minPrice: filters.minPrice,
         maxPrice: filters.maxPrice,
         attributes: filters.selectedAttributes,
@@ -260,7 +260,7 @@ function ProductsMain({ dictionary }: any) {
     if (!isInitialized || hasAppliedInitialFilters.current) return;
 
     const hasFilters =
-      filters.selectedCategoryIds.length > 0 ||
+      filters.selectedCategoryFilters.length > 0 ||
       filters.minPrice ||
       filters.maxPrice ||
       filters.selectedAttributes ||
@@ -269,7 +269,7 @@ function ProductsMain({ dictionary }: any) {
     if (hasFilters) {
       // Apply URL filters
       applyFilters({
-        categoryIds: filters.selectedCategoryIds,
+        categoryFilters: filters.selectedCategoryFilters,
         minPrice: filters.minPrice,
         maxPrice: filters.maxPrice,
         attributes: filters.selectedAttributes,

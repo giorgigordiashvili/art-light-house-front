@@ -12,8 +12,11 @@ type AttributeCacheRecord = {
 
 type AttributeOptionSource = Record<string, any>;
 
+let attributeKeyMapCache: Map<number, AttributeDefinition> | null = null;
+
 export interface FilterGroupOption {
   attributeId: number;
+  attributeKey: string;
   optionId: string;
   label: string;
   categoryId?: number;
@@ -150,9 +153,11 @@ const normalizeOptions = (
       }
 
       const optionId = String(optionIdCandidate);
+      const attributeKey = attribute.key || `attribute-${attribute.id}`;
 
       const baseOption: FilterGroupOption = {
         attributeId: attribute.id,
+        attributeKey,
         optionId,
         label,
       };
@@ -185,6 +190,7 @@ const fetchAttributeDefinitions = async (force = false): Promise<AttributeDefini
 
   if (force) {
     cache.data = null;
+    attributeKeyMapCache = null;
   }
 
   if (cache.data) {
@@ -221,6 +227,17 @@ const fetchAttributeDefinitions = async (force = false): Promise<AttributeDefini
   })();
 
   return cache.promise;
+};
+
+export const getAttributeKeyMap = async (): Promise<Map<number, AttributeDefinition>> => {
+  if (attributeKeyMapCache) {
+    return attributeKeyMapCache;
+  }
+
+  const attributes = await fetchAttributeDefinitions();
+  attributeKeyMapCache = new Map();
+  attributes.forEach((attribute) => attributeKeyMapCache!.set(attribute.id, attribute));
+  return attributeKeyMapCache;
 };
 
 const buildFilterGroups = (attributes: AttributeDefinition[], language: Locale): FilterGroup[] => {

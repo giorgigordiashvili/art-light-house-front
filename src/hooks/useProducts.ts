@@ -1,9 +1,10 @@
 import { useState, useEffect, useCallback } from "react";
-import { ecommerceClientProductsList } from "@/api/generated/api";
 import { ProductList } from "@/api/generated/interfaces";
+import { fetchClientProducts, ProductQueryParams } from "@/api/products";
+import { getAttributeKeyMap } from "@/hooks/useFilterAttributeGroups";
 
 interface UseProductsOptions {
-  categoryIds?: number[];
+  categoryFilters?: string[];
   minPrice?: number;
   maxPrice?: number;
   attributes?: string;
@@ -41,32 +42,73 @@ export const useProducts = (options: UseProductsOptions = {}): UseProductsResult
         setError(null);
 
         const filtersToUse = filterOptions ?? activeFilters;
-
-        // New API has different parameters: isFeatured, ordering, page, search
-        const response = await ecommerceClientProductsList(
-          undefined, // isFeatured - not used in this context
-          filtersToUse.ordering,
+        const params: ProductQueryParams = {
           page,
-          filtersToUse.search
-        );
+        };
+
+        if (filtersToUse.ordering) {
+          params.ordering = filtersToUse.ordering;
+        }
+        if (filtersToUse.search) {
+          params.search = filtersToUse.search;
+        }
+        if (filtersToUse.minPrice !== undefined) {
+          params.min_price = filtersToUse.minPrice;
+        }
+        if (filtersToUse.maxPrice !== undefined) {
+          params.max_price = filtersToUse.maxPrice;
+        }
+
+        const attributeFilterMap = new Map<string, Set<string>>();
+        const addFilterValue = (key?: string, value?: string) => {
+          if (!key || !value) return;
+          if (!attributeFilterMap.has(key)) {
+            attributeFilterMap.set(key, new Set());
+          }
+          attributeFilterMap.get(key)!.add(value);
+        };
+
+        if (filtersToUse.categoryFilters && filtersToUse.categoryFilters.length > 0) {
+          filtersToUse.categoryFilters.forEach((entry) => {
+            const [attributeKey, value] = entry.split(":");
+            addFilterValue(attributeKey, value);
+          });
+        }
+
+        if (filtersToUse.attributes) {
+          const attributePairs = filtersToUse.attributes
+            .split(",")
+            .map((item) => item.trim())
+            .filter(Boolean);
+
+          if (attributePairs.length > 0) {
+            const attributeKeyMap = await getAttributeKeyMap();
+            attributePairs.forEach((pair) => {
+              const [attributeIdStr, option] = pair.split(":");
+              const attributeId = Number(attributeIdStr);
+              if (!Number.isFinite(attributeId) || !option) return;
+              const attribute = attributeKeyMap.get(attributeId);
+              if (!attribute) return;
+              const attributeKey = attribute.key || `attribute-${attribute.id}`;
+              addFilterValue(attributeKey, option);
+            });
+          }
+        }
+
+        attributeFilterMap.forEach((values, key) => {
+          if (values.size > 0) {
+            params[`attr_${key}`] = Array.from(values).join(",");
+          }
+        });
+
+        const response = await fetchClientProducts(params);
 
         // Extract results from paginated response
         const fetchedProducts = response.results || [];
 
-        // Apply client-side filters
+        // Apply client-side filters where backend support is unavailable
         let filteredProducts = fetchedProducts;
 
-        // Price filtering
-        if (filtersToUse.minPrice !== undefined || filtersToUse.maxPrice !== undefined) {
-          filteredProducts = filteredProducts.filter((p) => {
-            const price = parseFloat(p.price || "0");
-            const minOk = filtersToUse.minPrice === undefined || price >= filtersToUse.minPrice;
-            const maxOk = filtersToUse.maxPrice === undefined || price <= filtersToUse.maxPrice;
-            return minOk && maxOk;
-          });
-        }
-
-        // Stock filtering
         if (filtersToUse.inStock) {
           filteredProducts = filteredProducts.filter((p) => p.is_in_stock);
         }
