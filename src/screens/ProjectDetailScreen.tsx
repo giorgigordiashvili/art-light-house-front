@@ -2,11 +2,26 @@
 import { useState, useEffect, useCallback } from "react";
 import styled from "styled-components";
 import Link from "next/link";
-// TODO: Projects API not available in new API - backend needs to implement
-// import { ecommerceClientProjectsRetrieve } from "@/api/generated/api";
+import {
+  ecommerceClientItemListsList,
+  ecommerceClientItemListsRetrieve,
+  ecommerceClientItemListsItemsRetrieve,
+} from "@/api/generated/api";
 import NewCircle from "@/components/ui/NewCircle";
+import BigCircle from "@/components/ui/BigCircle";
 
-// Local type for Project (not in generated API - Projects feature not implemented)
+interface ProjectDetailScreenProps {
+  slug: string;
+  dictionary: any;
+  lang: string;
+}
+
+type ProjectGalleryImage = {
+  id: string;
+  image_url: string;
+  alt_text?: string;
+};
+
 interface ProjectDetail {
   id: number;
   title: string;
@@ -18,14 +33,139 @@ interface ProjectDetail {
   location?: string;
   is_featured?: boolean;
   primary_image_url?: string;
-  images?: Array<{
-    id: number;
-    image_url: string;
-    alt_text?: string;
-  }>;
+  images: ProjectGalleryImage[];
 }
-import Circle from "@/components/ui/Circle";
-import BigCircle from "@/components/ui/BigCircle";
+
+const parseListItems = (items: unknown): any[] => {
+  if (Array.isArray(items)) {
+    return items as any[];
+  }
+
+  try {
+    const serialized = typeof items === "string" ? (items as string) : JSON.stringify(items ?? []);
+    const parsed = JSON.parse(serialized || "[]");
+    return Array.isArray(parsed) ? parsed : [];
+  } catch {
+    return [];
+  }
+};
+
+const toGalleryArray = (gallery: unknown): any[] => {
+  if (!gallery) return [];
+  if (Array.isArray(gallery)) return gallery;
+
+  if (typeof gallery === "string") {
+    try {
+      const parsed = JSON.parse(gallery);
+      if (Array.isArray(parsed)) {
+        return parsed;
+      }
+    } catch {
+      return [gallery];
+    }
+    return [gallery];
+  }
+
+  return [gallery];
+};
+
+const parseCustomData = (customData: unknown): Record<string, any> => {
+  if (!customData) return {};
+  if (typeof customData === "string") {
+    try {
+      const parsed = JSON.parse(customData);
+      return parsed && typeof parsed === "object" ? parsed : {};
+    } catch {
+      return {};
+    }
+  }
+
+  if (typeof customData === "object") {
+    return customData as Record<string, any>;
+  }
+
+  return {};
+};
+
+const buildGalleryImages = (gallery: any, fallbackTitle: string): ProjectGalleryImage[] =>
+  toGalleryArray(gallery)
+    .map((entry: any, index: number): ProjectGalleryImage | null => {
+      if (!entry) return null;
+      if (typeof entry === "string") {
+        return {
+          id: `gallery-${index}`,
+          image_url: entry,
+          alt_text: fallbackTitle,
+        };
+      }
+
+      if (typeof entry === "object") {
+        const imageUrl =
+          entry.image_url ||
+          entry.image ||
+          entry.url ||
+          entry.src ||
+          (typeof entry.file === "string" ? entry.file : undefined);
+        if (!imageUrl) return null;
+        return {
+          id: String(entry.id ?? `gallery-${index}`),
+          image_url: imageUrl,
+          alt_text: entry.alt_text || entry.title || fallbackTitle,
+        };
+      }
+
+      return null;
+    })
+    .filter((value): value is ProjectGalleryImage => value !== null);
+
+const getItemSlugCandidates = (item: any) => {
+  const customData = parseCustomData(item?.custom_data);
+  return [customData.slug, item?.custom_id, item?.id != null ? String(item.id) : null]
+    .filter(Boolean)
+    .map((value) => String(value).trim().toLowerCase());
+};
+
+const buildProjectDetail = (item: any): ProjectDetail => {
+  const customData = parseCustomData(item?.custom_data);
+  const galleryImages = buildGalleryImages(
+    customData.gallery || customData.images,
+    customData.title || item?.label || "Project"
+  );
+  const imageFromCustom = customData.image || customData.primary_image;
+  const numericId = typeof item?.id === "number" ? item.id : Number(item?.id ?? 0);
+  const imageFallback = imageFromCustom
+    ? [
+        {
+          id: "primary",
+          image_url: imageFromCustom,
+          alt_text: customData.title || item?.label,
+        },
+      ]
+    : [];
+  const images = galleryImages.length > 0 ? galleryImages : imageFallback;
+
+  return {
+    id: Number.isNaN(numericId) ? 0 : numericId,
+    title: customData.title || item?.label || `Project ${item?.id}`,
+    short_description: customData.short_description,
+    description: customData.description,
+    client: customData.client,
+    category: customData.category || customData.type,
+    year: customData.year,
+    location: customData.location,
+    is_featured: Boolean(customData.is_featured ?? item?.is_active),
+    primary_image_url: images[0]?.image_url,
+    images,
+  };
+};
+
+const normalizeSlugValue = (value: string) => {
+  try {
+    return decodeURIComponent(value).trim().toLowerCase();
+  } catch {
+    return value.trim().toLowerCase();
+  }
+};
 
 const StyledComponent = styled.div`
   background: #0b0b0b;
@@ -236,24 +376,8 @@ const ErrorContainer = styled.div`
   }
 `;
 
-const StyledCircle = styled.div`
-  position: absolute;
-  bottom: -1200px;
-  left: 38%;
-  transform: translateX(-50%);
-  @media (max-width: 1080px) {
-    display: none;
-  }
-`;
-
-interface ProjectDetailScreenProps {
-  slug: string;
-  dictionary: any;
-  lang: string;
-}
-
-const ProjectDetailScreen = ({ dictionary, lang }: ProjectDetailScreenProps) => {
-  const [project] = useState<ProjectDetail | null>(null);
+const ProjectDetailScreen = ({ dictionary, lang, slug }: ProjectDetailScreenProps) => {
+  const [project, setProject] = useState<ProjectDetail | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
@@ -262,17 +386,50 @@ const ProjectDetailScreen = ({ dictionary, lang }: ProjectDetailScreenProps) => 
     try {
       setLoading(true);
       setError(null);
-      // TODO: Projects API not available - backend needs to implement ecommerceClientProjectsRetrieve
-      // const data = await ecommerceClientProjectsRetrieve(slug);
-      // setProject(data);
-      throw new Error("Projects API not implemented");
+
+      const listsResponse = await ecommerceClientItemListsList();
+      const activeList = listsResponse.results?.[0];
+
+      if (!activeList) {
+        throw new Error("Projects list is not configured yet.");
+      }
+
+      const listDetail = await ecommerceClientItemListsRetrieve(activeList.id);
+      const rawItems = parseListItems(listDetail.items);
+      const normalizedSlug = normalizeSlugValue(slug);
+
+      const targetItem = rawItems.find((item: any) => {
+        const candidates = getItemSlugCandidates(item);
+        return candidates.includes(normalizedSlug);
+      });
+
+      if (!targetItem) {
+        throw new Error("Project not found.");
+      }
+
+      if (!targetItem.id) {
+        throw new Error("Project item is missing an identifier.");
+      }
+
+      const detailedItem = await ecommerceClientItemListsItemsRetrieve(
+        activeList.id,
+        String(targetItem.id)
+      );
+
+      setProject(buildProjectDetail(detailedItem));
+      setSelectedImageIndex(0);
     } catch (err) {
       console.error("Failed to load project:", err);
-      setError("Failed to load project. It may not exist or has been removed.");
+      const message =
+        (err as any)?.response?.data?.message ||
+        (err instanceof Error ? err.message : null) ||
+        "Failed to load project. It may not exist or has been removed.";
+      setError(message);
+      setProject(null);
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [slug]);
 
   useEffect(() => {
     loadProject();
@@ -293,8 +450,8 @@ const ProjectDetailScreen = ({ dictionary, lang }: ProjectDetailScreenProps) => 
       <StyledComponent>
         <Container>
           <ErrorContainer>
-            <h3>Project Not Found</h3>
-            <p>{error}</p>
+            <h3>{dictionary.projects?.errorTitle ?? "Project Not Found"}</h3>
+            <p>{error || dictionary.projects?.errorDescription || "Please try again later."}</p>
             <BackButton href={`/${lang}/projects`}>
               <svg fill="currentColor" viewBox="0 0 24 24">
                 <path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z" />
@@ -308,8 +465,9 @@ const ProjectDetailScreen = ({ dictionary, lang }: ProjectDetailScreenProps) => 
   }
 
   const images = project.images || [];
+  const hasImages = images.length > 0 || Boolean(project.primary_image_url);
   const currentImage = images[selectedImageIndex] || {
-    image_url: project.primary_image_url,
+    image_url: project.primary_image_url || "/assets/placeholder.png",
     alt_text: project.title,
   };
 
@@ -352,7 +510,7 @@ const ProjectDetailScreen = ({ dictionary, lang }: ProjectDetailScreenProps) => 
           )}
         </Header>
 
-        {images.length > 0 && (
+        {hasImages && (
           <ImageGallery>
             <MainImage>
               {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -393,9 +551,6 @@ const ProjectDetailScreen = ({ dictionary, lang }: ProjectDetailScreenProps) => 
       </Container>
 
       <NewCircle size="small" top="1000px" right="142px" media="no" />
-      <StyledCircle>
-        <Circle size="large" />
-      </StyledCircle>
       <BigCircle variant={2} setZIndex />
     </StyledComponent>
   );
