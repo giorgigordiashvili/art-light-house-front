@@ -2,7 +2,11 @@ import React from "react";
 import Image from "next/image";
 import styled from "styled-components";
 import { ProductList } from "@/api/generated/interfaces";
-import { cartAddItem } from "@/api/generated/api";
+import {
+  ecommerceClientCartItemsCreate,
+  ecommerceClientCartGetOrCreateRetrieve,
+  ecommerceClientCartItemsPartialUpdate,
+} from "@/api/generated/api";
 import { useAuthModal } from "@/contexts/AuthModalContext";
 
 const StyledAddButton = styled.div`
@@ -57,14 +61,35 @@ const AddButton = ({
     }
 
     try {
-      const payload = { product_id: product.id, quantity: 1 };
-      const cart = await cartAddItem(payload);
+      // Ensure we have a cart id
+      const data = await ecommerceClientCartGetOrCreateRetrieve();
+      const normalized = (data as any)?.cart ? (data as any).cart : (data as any);
+      const cartId = normalized?.id;
+      if (!cartId) return;
+      // If already present, increase quantity instead of creating duplicate
+      const existing = Array.isArray(normalized?.items)
+        ? (normalized.items as any[]).find((it: any) => {
+            const pid = typeof it.product === "object" ? it.product?.id : it.product;
+            return pid === product.id;
+          })
+        : undefined;
+
+      if (existing) {
+        await ecommerceClientCartItemsPartialUpdate(String(existing.id), {
+          quantity: (existing.quantity || 0) + 1,
+        } as any);
+      } else {
+        const payload = { cart: cartId, product: product.id, variant: null, quantity: 1 } as any;
+        await ecommerceClientCartItemsCreate(payload);
+      }
+      const cart = await ecommerceClientCartGetOrCreateRetrieve();
+      const n = (cart as any)?.cart ? (cart as any).cart : (cart as any);
       try {
-        const count = Array.isArray(cart?.items)
-          ? cart.items.reduce((acc: number, it: any) => acc + (it.quantity || 0), 0)
+        const count = Array.isArray(n?.items)
+          ? n.items.reduce((acc: number, it: any) => acc + (it.quantity || 0), 0)
           : 0;
         if (typeof window !== "undefined") {
-          window.dispatchEvent(new CustomEvent("cartUpdated", { detail: { count, cart } }));
+          window.dispatchEvent(new CustomEvent("cartUpdated", { detail: { count, cart: n } }));
         }
       } catch {}
       onClick?.();

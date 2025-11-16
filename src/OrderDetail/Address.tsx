@@ -1,6 +1,6 @@
 import styled from "styled-components";
 import Image from "next/image";
-import type { Address as AddressType } from "@/api/generated/interfaces";
+import type { ClientAddress as AddressType } from "@/api/generated/interfaces";
 
 const AddressCard = styled.div`
   display: flex;
@@ -86,28 +86,14 @@ const Address = ({ dictionary, address }: AddressProps) => {
     );
   }
 
-  const getAddressTypeLabel = (type?: unknown) => {
-    const typeStr = type as string;
-    switch (typeStr) {
-      case "home":
-        return "Home";
-      case "work":
-        return "Work";
-      case "other":
-        return "Other";
-      default:
-        return "Address";
-    }
-  };
-
   return (
     <AddressCard>
       <IconWrapper>
         <Image src={"/assets/addressIcon.svg"} alt="icon" width={24} height={24} />
       </IconWrapper>
       <InfoWrapper>
-        <Title>{getAddressTypeLabel(address.address_type)}</Title>
-        <Add>{address.address_string}</Add>
+        <Title>{address.label || "Address"}</Title>
+        <Add>{address.address || address.city}</Add>
       </InfoWrapper>
     </AddressCard>
   );

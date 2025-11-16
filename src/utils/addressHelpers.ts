@@ -1,22 +1,31 @@
-import { Address } from "@/api/generated/interfaces";
+import { ClientAddress } from "@/api/generated/interfaces";
 import { AddressData } from "@/types";
 
 /**
  * Maps API address types to dictionary keys for display
  */
-export const mapAddressTypeToPlace = (addressType: any, dictionary: any): string => {
-  const typeString = typeof addressType === "string" ? addressType : String(addressType || "");
+export const mapAddressTypeToPlace = (label: any, dictionary: any): string => {
+  const raw = typeof label === "string" ? label : String(label || "");
+  const typeString = raw.trim().toLowerCase();
 
-  switch (typeString) {
-    case "home":
-      return dictionary.cardTitle2 || dictionary.addressOption1 || "Home";
-    case "work":
-      return dictionary.cardTitle3 || dictionary.addressOption2 || "Work";
-    case "other":
-      return dictionary.cardTitle4 || dictionary.addressOption3 || "Other";
-    default:
-      return dictionary.cardTitle4 || dictionary.addressOption3 || "Other";
+  // Handle canonical types
+  if (typeString === "home") return dictionary.cardTitle2 || dictionary.addressOption1 || "Home";
+  if (typeString === "work") return dictionary.cardTitle3 || dictionary.addressOption2 || "Work";
+  if (typeString === "other") return dictionary.cardTitle4 || dictionary.addressOption3 || "Other";
+
+  // Handle already-localized labels falling back to known dictionary values
+  if (raw === dictionary.cardTitle2 || raw === dictionary.addressOption1) {
+    return dictionary.cardTitle2 || dictionary.addressOption1 || "Home";
   }
+  if (raw === dictionary.cardTitle3 || raw === dictionary.addressOption2) {
+    return dictionary.cardTitle3 || dictionary.addressOption2 || "Work";
+  }
+  if (raw === dictionary.cardTitle4 || raw === dictionary.addressOption3) {
+    return dictionary.cardTitle4 || dictionary.addressOption3 || "Other";
+  }
+
+  // Default
+  return dictionary.cardTitle4 || dictionary.addressOption3 || "Other";
 };
 
 /**
@@ -36,15 +45,18 @@ export const mapPlaceToAddressType = (place: string, dictionary: any): string =>
 /**
  * Converts API Address object to AddressData for component use
  */
-export const convertAddressToAddressData = (address: Address, dictionary: any): AddressData => {
+export const convertAddressToAddressData = (
+  address: ClientAddress,
+  dictionary: any
+): AddressData => {
   return {
     id: address.id,
-    place: mapAddressTypeToPlace(address.address_type, dictionary),
-    address: address.address_string,
-    additionalInfo: address.extra_details,
+    place: mapAddressTypeToPlace(address.label, dictionary),
+    address: address.address,
+    additionalInfo: address.extra_instructions,
     latitude: address.latitude,
     longitude: address.longitude,
-    address_type: address.address_type as unknown as string,
+    address_type: address.label as unknown as string,
     is_default: address.is_default,
     created_at: address.created_at,
     updated_at: address.updated_at,
@@ -56,11 +68,11 @@ export const convertAddressToAddressData = (address: Address, dictionary: any): 
  */
 export const convertAddressDataToAddressRequest = (addressData: AddressData, dictionary: any) => {
   return {
-    address_type: mapPlaceToAddressType(addressData.place, dictionary) as any,
-    address_string: addressData.address,
-    extra_details: addressData.additionalInfo || undefined,
+    label: mapPlaceToAddressType(addressData.place, dictionary) as any,
+    address: addressData.address,
+    extra_instructions: addressData.additionalInfo || undefined,
     latitude: addressData.latitude,
     longitude: addressData.longitude,
     is_default: addressData.is_default || false,
-  };
+  } as Partial<ClientAddress>;
 };

@@ -16,6 +16,11 @@ const nextConfig: NextConfig = {
         hostname: "art-light-house-images.fra1.cdn.digitaloceanspaces.com",
         pathname: "**",
       },
+      {
+        protocol: "https",
+        hostname: "echodesk-spaces.fra1.digitaloceanspaces.com",
+        pathname: "**",
+      },
     ],
   },
 };

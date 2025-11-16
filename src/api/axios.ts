@@ -1,15 +1,13 @@
 import axios, { AxiosInstance, AxiosResponse, InternalAxiosRequestConfig } from "axios";
 
-// Function to get the API URL based on current subdomain or path
+// Function to get the API URL from environment variable
 const getApiUrl = (): string => {
-  if (typeof window === "undefined") {
-    return "https://testapi.artlighthouse.ge"; // fallback for SSR
-  }
-
-  // Default fallback
-  const fallbackUrl = "https://testapi.artlighthouse.ge";
-
-  return fallbackUrl;
+  // Use API_URL from environment variable or fallback
+  const apiUrl =
+    process.env.NEXT_PUBLIC_API_URL ||
+    process.env.API_URL ||
+    "https://artlighthouse.api.echodesk.ge";
+  return apiUrl;
 };
 
 // Create axios instance with base configuration
@@ -32,10 +30,28 @@ const createAxiosInstance = (baseURL?: string): AxiosInstance => {
         config.baseURL = baseURL;
       }
 
+      // Endpoints that must be called WITHOUT Authorization header
+      const authFreePaths = [
+        "/api/ecommerce/clients/login/",
+        "/api/ecommerce/clients/register/",
+        "/api/ecommerce/clients/verify/",
+        "/api/ecommerce/clients/password-reset/request/",
+        "/api/ecommerce/clients/password-reset/confirm/",
+      ];
+
+      const urlPath = (config.url || "").toString();
+      const isAuthFree = authFreePaths.some((p) => urlPath.includes(p));
+
       const token =
         typeof window !== "undefined" ? localStorage.getItem("auth_access_token") : null;
-      if (token && config.headers) {
+      // Only add Authorization header if we have a valid token (not "cookie-based" placeholder)
+      if (!isAuthFree && token && token !== "cookie-based" && config.headers) {
         config.headers.Authorization = `Bearer ${token}`;
+      }
+
+      // Ensure Authorization header is not present for auth-free endpoints
+      if (isAuthFree && config.headers && (config.headers as any).Authorization) {
+        delete (config.headers as any).Authorization;
       }
 
       // Do not set 'Origin' header manually; browser controls it for CORS
@@ -62,35 +78,87 @@ const createAxiosInstance = (baseURL?: string): AxiosInstance => {
     }
   );
 
-  // Response interceptor for error handling
+  // Response interceptor for error handling and token refresh
   instance.interceptors.response.use(
     (response: AxiosResponse) => {
       return response;
     },
-    (error) => {
-      if (error.response?.status === 401) {
-        // Handle unauthorized access - token expired or invalid
+    async (error) => {
+      const originalRequest = error.config;
+
+      // Check if error is 401 and we haven't already tried to refresh
+      if (error.response?.status === 401 && !originalRequest._retry) {
+        originalRequest._retry = true;
+
+        // Try to refresh the token
         if (typeof window !== "undefined") {
-          // Clear all authentication tokens and user data
-          localStorage.removeItem("auth_access_token");
-          localStorage.removeItem("auth_refresh_token");
-          localStorage.removeItem("auth_user");
+          const refreshToken = localStorage.getItem("auth_refresh_token");
+          const accessToken = localStorage.getItem("auth_access_token");
 
-          // Clear any filter state to avoid issues after logout
-          localStorage.removeItem("artLightHouse_filters");
+          // Only attempt refresh if we have both tokens and access token is not "cookie-based"
+          if (refreshToken && accessToken && accessToken !== "cookie-based") {
+            try {
+              // Call ecommerce client refresh token endpoint
+              const response = await axios.post(
+                `${getApiUrl()}/api/ecommerce/clients/refresh-token/`,
+                { refresh: refreshToken },
+                {
+                  headers: {
+                    "Content-Type": "application/json",
+                  },
+                }
+              );
 
-          // Dispatch a custom event to notify AuthContext about the forced logout
-          const logoutEvent = new CustomEvent("forceLogout", {
-            detail: { reason: "tokenExpired" },
-          });
-          window.dispatchEvent(logoutEvent);
+              if (response.data.access) {
+                // Store new access token
+                localStorage.setItem("auth_access_token", response.data.access);
 
-          // Redirect to login/home page
-          if (window.location.pathname !== "/" && !window.location.pathname.startsWith("/auth")) {
-            window.location.href = "/";
+                // If a new refresh token is provided, update it as well
+                if (response.data.refresh) {
+                  localStorage.setItem("auth_refresh_token", response.data.refresh);
+                }
+
+                // Update the failed request with new token
+                originalRequest.headers.Authorization = `Bearer ${response.data.access}`;
+
+                // Retry the original request
+                return instance(originalRequest);
+              }
+            } catch (refreshError) {
+              // Refresh token failed or expired - force logout only if user was authenticated
+              if (accessToken && accessToken !== "cookie-based") {
+                localStorage.removeItem("auth_access_token");
+                localStorage.removeItem("auth_refresh_token");
+                localStorage.removeItem("auth_user");
+                localStorage.removeItem("artLightHouse_filters");
+
+                // Dispatch a custom event to notify AuthContext about the forced logout
+                const logoutEvent = new CustomEvent("forceLogout", {
+                  detail: { reason: "tokenExpired" },
+                });
+                window.dispatchEvent(logoutEvent);
+
+                // Only redirect if we're on a protected page
+                const currentPath = window.location.pathname;
+                if (
+                  !currentPath.startsWith("/ge") &&
+                  !currentPath.startsWith("/en") &&
+                  currentPath !== "/"
+                ) {
+                  window.location.href = "/";
+                }
+              }
+
+              return Promise.reject(refreshError);
+            }
+          } else {
+            // No valid tokens - just return the error without redirecting
+            // This allows unauthenticated users to browse public pages
+            return Promise.reject(error);
           }
         }
       }
+
       return Promise.reject(error);
     }
   );

@@ -46,13 +46,18 @@ const ResultsTitle = styled.h2`
   line-height: 24px;
   color: #ffffff90;
   margin-top: -10px;
-  margin-bottom: 32px;
 
   @media (max-width: 1080px) {
     font-size: 16px;
     margin-top: -10px;
-    margin-bottom: 32px;
   }
+`;
+
+const EmptyResultsTitle = styled.h2`
+  position: relative;
+  margin-top: -10px;
+  height: 24px;
+  width: 100%;
 `;
 
 const ContentWrapper = styled.div`
@@ -67,6 +72,7 @@ const SortWrapper = styled.div`
   justify-content: flex-end;
   align-items: center;
   margin-bottom: 18px;
+  padding-top: 10px;
   @media (max-width: 1080px) {
     justify-content: space-between;
   }
@@ -217,7 +223,7 @@ function ProductsMain({ dictionary }: any) {
     hasPreviousPage,
     fetchPage,
     applyFilters,
-  } = useProducts({ skipInitialFetch: true }); // Skip initial fetch to wait for URL filters
+  } = useProducts({ skipInitialFetch: true });
 
   const isReady = !loading && !error;
   const zeroResultsText = dictionary?.results?.zero ?? "0 products found";
@@ -233,7 +239,7 @@ function ProductsMain({ dictionary }: any) {
     const handleImmediateFilter = async (filters: any) => {
       // Reset to page 1 when filters change
       await applyFilters({
-        categoryIds: filters.selectedCategoryIds,
+        categoryFilters: filters.selectedCategoryFilters,
         minPrice: filters.minPrice,
         maxPrice: filters.maxPrice,
         attributes: filters.selectedAttributes,
@@ -254,7 +260,7 @@ function ProductsMain({ dictionary }: any) {
     if (!isInitialized || hasAppliedInitialFilters.current) return;
 
     const hasFilters =
-      filters.selectedCategoryIds.length > 0 ||
+      filters.selectedCategoryFilters.length > 0 ||
       filters.minPrice ||
       filters.maxPrice ||
       filters.selectedAttributes ||
@@ -263,7 +269,7 @@ function ProductsMain({ dictionary }: any) {
     if (hasFilters) {
       // Apply URL filters
       applyFilters({
-        categoryIds: filters.selectedCategoryIds,
+        categoryFilters: filters.selectedCategoryFilters,
         minPrice: filters.minPrice,
         maxPrice: filters.maxPrice,
         attributes: filters.selectedAttributes,
@@ -331,7 +337,11 @@ function ProductsMain({ dictionary }: any) {
     <StyledComponent>
       <Container>
         <PageTitle>{dictionary.title}</PageTitle>
-        {resultsTitleMessage && <ResultsTitle>{resultsTitleMessage}</ResultsTitle>}
+        {resultsTitleMessage ? (
+          <ResultsTitle>{resultsTitleMessage}</ResultsTitle>
+        ) : (
+          <EmptyResultsTitle />
+        )}
         <SortWrapper>
           <OnMobile>
             <FilterButton onClick={toggleMobileFilterDropdown} dictionary={dictionary} />

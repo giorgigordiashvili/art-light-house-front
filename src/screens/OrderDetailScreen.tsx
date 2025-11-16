@@ -1,11 +1,12 @@
 "use client";
 import styled from "styled-components";
 import Container from "@/OrderDetail/Container";
+import OrderDetailSkeleton from "@/OrderDetail/OrderDetailSkeleton";
 import BigCircle from "@/components/ui/BigCircle";
 import LeftCircle from "@/components/ui/LeftCircle";
 import NewCircle from "@/components/ui/NewCircle";
 import { useEffect, useState } from "react";
-import { ordersRetrieve } from "@/api/generated/api";
+import { ecommerceClientOrdersRetrieve } from "@/api/generated/api";
 import type { Order } from "@/api/generated/interfaces";
 
 const StyledComponent = styled.div`
@@ -31,7 +32,7 @@ const OrderDetailScreen = ({ dictionary, orderId }: OrderDetailScreenProps) => {
     const fetchOrder = async () => {
       try {
         setLoading(true);
-        const orderData = await ordersRetrieve(orderId);
+        const orderData = await ecommerceClientOrdersRetrieve(orderId);
         setOrder(orderData);
       } catch {
         setError("Failed to fetch order");
@@ -47,7 +48,10 @@ const OrderDetailScreen = ({ dictionary, orderId }: OrderDetailScreenProps) => {
     return (
       <StyledComponent>
         <BigCircle variant={2} />
-        <div style={{ color: "white", fontSize: "24px" }}>Loading...</div>
+        <NewCircle size="small" right="142px" top="200px" media="yes" />
+        <LeftCircle size="small" left="-140px" top="900px" media="yes" />
+        <NewCircle size="small" right="142px" top="1000px" media="yes" />
+        <OrderDetailSkeleton />
       </StyledComponent>
     );
   }

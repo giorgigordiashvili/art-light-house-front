@@ -37,14 +37,14 @@ const MobileOnlyIcons = styled.div`
 `;
 
 const LampaImage = ({ product }: { product: ProductList }) => {
-  // Extract image URL from primary_image object
-  const imageUrl =
-    product.primary_image && typeof product.primary_image === "object"
-      ? (product.primary_image as any).image
-      : product.primary_image;
+  // Use image field from ProductList interface
+  const imageUrl = product.image;
 
-  // Check if we have a valid primary image (not null, undefined, or empty string)
+  // Check if we have a valid image (not null, undefined, or empty string)
   const hasValidImage = imageUrl && typeof imageUrl === "string" && imageUrl.trim() !== "";
+
+  // Get product name for alt text (name is translatable, could be string or object)
+  const altText = typeof product.name === "string" ? product.name : "Product";
 
   return (
     <StyledLampaImage>
@@ -52,7 +52,7 @@ const LampaImage = ({ product }: { product: ProductList }) => {
         {hasValidImage ? (
           <Image
             src={imageUrl}
-            alt={product.title}
+            alt={altText}
             layout="fill"
             objectFit="contain"
             priority
@@ -73,7 +73,7 @@ const LampaImage = ({ product }: { product: ProductList }) => {
         {hasValidImage ? (
           <Image
             src={imageUrl}
-            alt={product.title}
+            alt={altText}
             layout="fill"
             objectFit="contain"
             priority

@@ -1,44 +1,93 @@
-import { useState, useEffect } from "react";
-import { addressList } from "@/api/generated/api";
-import { Address } from "@/api/generated/interfaces";
+import { useState, useEffect, useCallback } from "react";
+import { ecommerceClientAddressesList } from "@/api/generated/api";
+import { ClientAddress } from "@/api/generated/interfaces";
+import { useAuth } from "@/contexts/AuthContext";
 
 interface UseAddressesResult {
-  addresses: Address[];
+  addresses: ClientAddress[];
   loading: boolean;
   error: string | null;
   refetch: () => Promise<void>;
+  isAuthenticated: boolean;
 }
 
 export const useAddresses = (): UseAddressesResult => {
-  const [addresses, setAddresses] = useState<Address[]>([]);
+  const [addresses, setAddresses] = useState<ClientAddress[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const { isAuthenticated: authContextIsAuthenticated, isLoading: authContextIsLoading } =
+    useAuth();
+  const [isAuthenticated, setIsAuthenticated] = useState(authContextIsAuthenticated);
 
-  const fetchAddresses = async () => {
+  const fetchAddresses = useCallback(async () => {
     try {
       setLoading(true);
       setError(null);
 
-      const fetchedAddresses = await addressList();
-      setAddresses(fetchedAddresses);
+      // If auth state is still initializing, keep skeleton active
+      if (authContextIsLoading) {
+        setLoading(true);
+        return;
+      }
+
+      // If auth finished and user is not authenticated, stop loading with empty data
+      if (!authContextIsAuthenticated) {
+        setIsAuthenticated(false);
+        setAddresses([]);
+        setLoading(false);
+        return;
+      }
+
+      setIsAuthenticated(true);
+      const response = await ecommerceClientAddressesList();
+      setAddresses(response.results || []);
     } catch (err: any) {
-      setError(err?.response?.data?.message || err?.message || "Failed to fetch addresses");
+      // Check if it's a 401 authentication error
+      if (err?.response?.status === 401) {
+        setIsAuthenticated(false);
+        setError(null); // Don't show error for authentication issues
+      } else {
+        setError(err?.response?.data?.message || err?.message || "Failed to fetch addresses");
+      }
     } finally {
       setLoading(false);
     }
-  };
+  }, [authContextIsAuthenticated, authContextIsLoading]);
 
   useEffect(() => {
-    const timeoutId = setTimeout(() => {
+    // Update local isAuthenticated state when AuthContext changes
+    setIsAuthenticated(authContextIsAuthenticated);
+  }, [authContextIsAuthenticated]);
+
+  useEffect(() => {
+    fetchAddresses();
+
+    // Listen for storage changes (when user logs in/out in another tab)
+    const handleStorageChange = (e: StorageEvent) => {
+      if (e.key === "auth_access_token") {
+        fetchAddresses();
+      }
+    };
+
+    // Listen for custom auth events (when user logs in/out in same tab)
+    const handleAuthChange = () => {
       fetchAddresses();
-    }, 0);
-    return () => clearTimeout(timeoutId);
-  }, []);
+    };
+
+    window.addEventListener("storage", handleStorageChange);
+    window.addEventListener("authChange", handleAuthChange);
+
+    return () => {
+      window.removeEventListener("storage", handleStorageChange);
+      window.removeEventListener("authChange", handleAuthChange);
+    };
+  }, [fetchAddresses]); // Re-run when fetchAddresses changes (which happens when auth state changes)
 
   return {
     addresses,
     loading,
     error,
     refetch: fetchAddresses,
+    isAuthenticated,
   };
 };

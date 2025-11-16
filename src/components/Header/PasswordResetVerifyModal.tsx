@@ -6,7 +6,7 @@ import CloseIcon from "./CloseIcon";
 import ModalDescription from "./ModalDescription";
 import PrimaryButton from "../Buttons/PrimaryButton";
 import ModalTitle from "./ModalTitle";
-import { resetPassword } from "@/api/generated/api";
+import { passwordResetConfirm } from "@/api/generated/api";
 import type { PasswordResetConfirmRequest } from "@/api/generated/interfaces";
 
 const StyledOverlayWrapper = styled.div`
@@ -146,13 +146,13 @@ const PasswordResetVerifyModal = ({
       setLoading(true);
 
       const requestData: PasswordResetConfirmRequest = {
-        email: email,
+        email: email.trim(),
         code: code.trim(),
         new_password: newPassword,
         new_password_confirm: confirmPassword,
       };
 
-      await resetPassword(requestData);
+      await passwordResetConfirm(requestData);
       setSuccess("Password reset successfully!");
 
       // Wait a moment to show success message then close

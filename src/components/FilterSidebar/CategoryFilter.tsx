@@ -3,8 +3,14 @@ import React, { useState, useEffect } from "react";
 import CheckboxGroup from "./CheckboxGroup";
 import { useCategories } from "../../hooks/useCategories";
 import { CheckboxOption } from "./types";
-import { Category } from "@/api/generated/interfaces";
 import { useFilterContext } from "../../contexts/FilterContext";
+
+// Local type definition for Category (not in generated API)
+interface Category {
+  id: number;
+  name: string;
+  subcategories?: Array<{ id: number; name: string }>;
+}
 
 interface CategoryFilterProps {
   dictionary: any;
@@ -22,19 +28,21 @@ function CategoryFilter({ dictionary }: CategoryFilterProps) {
 
       categories.forEach((category: Category) => {
         // Add main category
+        const serializedValue = `category:${category.id}`;
         options.push({
           label: category.name,
-          value: category.id.toString(),
-          checked: filters.selectedCategoryIds.includes(category.id),
+          value: serializedValue,
+          checked: filters.selectedCategoryFilters.includes(serializedValue),
         });
 
         // Add subcategories if they exist
         if (category.subcategories && Array.isArray(category.subcategories)) {
           category.subcategories.forEach((subcategory: any) => {
+            const subValue = `category:${subcategory.id}`;
             options.push({
-              label: `${subcategory.name}`, // Use bullet point for subcategories
-              value: subcategory.id.toString(),
-              checked: filters.selectedCategoryIds.includes(subcategory.id),
+              label: `${subcategory.name}`,
+              value: subValue,
+              checked: filters.selectedCategoryFilters.includes(subValue),
             });
           });
         }
@@ -42,22 +50,19 @@ function CategoryFilter({ dictionary }: CategoryFilterProps) {
 
       setCategoryOptions(options);
     }
-  }, [categories, filters.selectedCategoryIds]);
+  }, [categories, filters.selectedCategoryFilters]);
 
   const handleCategoryChange = (val: string) => {
-    const categoryId = parseInt(val, 10);
-    const isCurrentlySelected = filters.selectedCategoryIds.includes(categoryId);
+    const isCurrentlySelected = filters.selectedCategoryFilters.includes(val);
 
-    let newSelectedIds;
+    let newSelections;
     if (isCurrentlySelected) {
-      // Remove category from selection
-      newSelectedIds = filters.selectedCategoryIds.filter((id) => id !== categoryId);
+      newSelections = filters.selectedCategoryFilters.filter((entry) => entry !== val);
     } else {
-      // Add category to selection
-      newSelectedIds = [...filters.selectedCategoryIds, categoryId];
+      newSelections = [...filters.selectedCategoryFilters, val];
     }
 
-    updateCategoryFilter(newSelectedIds);
+    updateCategoryFilter(newSelections);
   };
 
   if (loading) {

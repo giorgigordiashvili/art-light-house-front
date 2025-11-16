@@ -2,7 +2,7 @@ import React, { createContext, useContext, useState, ReactNode, useRef, useEffec
 import { useRouter, usePathname } from "next/navigation";
 
 interface FilterState {
-  selectedCategoryIds: number[];
+  selectedCategoryFilters: string[];
   minPrice?: number;
   maxPrice?: number;
   selectedAttributes?: string;
@@ -13,7 +13,7 @@ interface FilterState {
 
 interface FilterContextType {
   filters: FilterState;
-  updateCategoryFilter: (categoryIds: number[]) => void;
+  updateCategoryFilter: (categoryFilters: string[]) => void;
   updatePriceFilter: (minPrice?: number, maxPrice?: number) => void;
   updateAttributeFilter: (attributes?: string) => void;
   updateOrdering: (ordering?: string) => void;
@@ -32,7 +32,7 @@ export const FilterProvider: React.FC<FilterProviderProps> = ({ children }) => {
   const router = useRouter();
   const pathname = usePathname();
   const [filters, setFilters] = useState<FilterState>({
-    selectedCategoryIds: [],
+    selectedCategoryFilters: [],
   });
   const [isInitialized, setIsInitialized] = useState(false);
   const onFilterChangeRef = useRef<((filters: FilterState) => void) | null>(null);
@@ -41,14 +41,17 @@ export const FilterProvider: React.FC<FilterProviderProps> = ({ children }) => {
   useEffect(() => {
     // Use direct URL parsing to avoid dependency on getFilterParams
     const urlSearchParams = new URLSearchParams(window.location.search);
+    const parseCategoryFilters = (raw: string | null): string[] => {
+      if (!raw) return [];
+      return raw
+        .split(",")
+        .map((entry) => entry.trim())
+        .filter(Boolean)
+        .map((entry) => (entry.includes(":") || entry.includes("|") ? entry : `category:${entry}`));
+    };
+
     const initialFilters: FilterState = {
-      selectedCategoryIds: urlSearchParams.get("categories")
-        ? urlSearchParams
-            .get("categories")!
-            .split(",")
-            .map((id) => parseInt(id, 10))
-            .filter((id) => !isNaN(id))
-        : [],
+      selectedCategoryFilters: parseCategoryFilters(urlSearchParams.get("categories")),
       minPrice: urlSearchParams.get("minPrice")
         ? parseFloat(urlSearchParams.get("minPrice")!)
         : undefined,
@@ -74,8 +77,8 @@ export const FilterProvider: React.FC<FilterProviderProps> = ({ children }) => {
     current.delete("page");
 
     // Update parameters
-    if (newFilters.selectedCategoryIds.length > 0) {
-      current.set("categories", newFilters.selectedCategoryIds.join(","));
+    if (newFilters.selectedCategoryFilters.length > 0) {
+      current.set("categories", newFilters.selectedCategoryFilters.join(","));
     } else {
       current.delete("categories");
     }
@@ -114,10 +117,10 @@ export const FilterProvider: React.FC<FilterProviderProps> = ({ children }) => {
     router.replace(newUrl, { scroll: false });
   };
 
-  const updateCategoryFilter = (categoryIds: number[]) => {
+  const updateCategoryFilter = (categoryFilters: string[]) => {
     const newFilters = {
       ...filters,
-      selectedCategoryIds: categoryIds,
+      selectedCategoryFilters: categoryFilters,
     };
     setFilters(newFilters);
     syncFiltersToUrl(newFilters);
@@ -169,7 +172,7 @@ export const FilterProvider: React.FC<FilterProviderProps> = ({ children }) => {
 
   const clearFilters = () => {
     const newFilters = {
-      selectedCategoryIds: [],
+      selectedCategoryFilters: [],
       minPrice: undefined,
       maxPrice: undefined,
       selectedAttributes: undefined,

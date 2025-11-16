@@ -1,13 +1,17 @@
 "use client";
-import React from "react";
+import React, { useMemo } from "react";
 import styled, { keyframes } from "styled-components";
-import CategoryFilter from "../FilterSidebar/CategoryFilter";
 import Line from "../FilterSidebar/Line";
-import AttributeFilter from "../FilterSidebar/AttributeFilter";
 import PriceFilter from "../FilterSidebar/PriceFilter";
 import ButtonFilter from "./ButtonFilter";
 import PriceRangeSlider from "../FilterSidebar/PriceRangeSlider";
 import PriceInput from "@/components/ListProductCard/PriceInput";
+import CheckboxGroup from "../FilterSidebar/CheckboxGroup";
+import { useFilterContext } from "@/contexts/FilterContext";
+import { useFilterAttributeGroups, FilterGroup } from "@/hooks/useFilterAttributeGroups";
+import { usePathname } from "next/navigation";
+import { getLocaleFromPath } from "@/utils/getLocaleFromPath";
+import FiltersLoadingSkeleton from "../FilterSidebar/FiltersLoadingSkeleton";
 
 const slideUp = keyframes`
   from {
@@ -86,6 +90,13 @@ const InputsRow = styled.div`
   margin-top: 8px;
 `;
 
+const SectionMessage = styled.p`
+  margin: 0 0 12px;
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 14px;
+  line-height: 20px;
+`;
+
 interface MobileFilterDropdownProps {
   onClose: () => void;
   dictionary: any;
@@ -93,6 +104,103 @@ interface MobileFilterDropdownProps {
 
 const MobileFilterDropdown: React.FC<MobileFilterDropdownProps> = ({ onClose, dictionary }) => {
   // Since filtering is now immediate, the button just closes the dropdown
+  const pathname = usePathname();
+  const language = getLocaleFromPath(pathname);
+  const { filters, updateCategoryFilter, updateAttributeFilter } = useFilterContext();
+  const {
+    groups,
+    loading: filtersLoading,
+    error: filtersError,
+  } = useFilterAttributeGroups(language);
+  const categoryGroups = useMemo(() => groups.filter((group) => group.isCategoryGroup), [groups]);
+  const attributeGroups = useMemo(() => groups.filter((group) => !group.isCategoryGroup), [groups]);
+  const selectedAttributeSet = useMemo(() => {
+    if (!filters.selectedAttributes) return new Set<string>();
+    return new Set(filters.selectedAttributes.split(",").filter(Boolean));
+  }, [filters.selectedAttributes]);
+
+  const handleCategoryChange = (value: string) => {
+    const isSelected = filters.selectedCategoryFilters.includes(value);
+    const updatedFilters = isSelected
+      ? filters.selectedCategoryFilters.filter((entry) => entry !== value)
+      : [...filters.selectedCategoryFilters, value];
+
+    updateCategoryFilter(updatedFilters);
+  };
+
+  const handleAttributeChange = (value: string) => {
+    const entries = filters.selectedAttributes
+      ? filters.selectedAttributes.split(",").filter(Boolean)
+      : [];
+    const nextSet = new Set(entries);
+    if (nextSet.has(value)) {
+      nextSet.delete(value);
+    } else {
+      nextSet.add(value);
+    }
+    const serialized = nextSet.size > 0 ? Array.from(nextSet).join(",") : undefined;
+    updateAttributeFilter(serialized);
+  };
+
+  const buildCategoryOptions = (group: FilterGroup) =>
+    group.options
+      .filter((option) => typeof option.categoryId === "number")
+      .map((option) => {
+        const serialized = `${group.key}:${option.optionId}`;
+        return {
+          label: option.label,
+          value: serialized,
+          checked: filters.selectedCategoryFilters.includes(serialized),
+        };
+      });
+
+  const buildAttributeOptions = (group: FilterGroup) =>
+    group.options.map((option) => {
+      const serialized = `${option.attributeId}:${option.optionId}`;
+      return {
+        label: option.label,
+        value: serialized,
+        checked: selectedAttributeSet.has(serialized),
+      };
+    });
+
+  const renderCategoryGroups = () => {
+    if (!categoryGroups.length) {
+      return null;
+    }
+
+    return categoryGroups.map((group, index) => (
+      <React.Fragment key={group.key}>
+        {index > 0 && <Line />}
+        <CheckboxGroup
+          title={group.title}
+          options={buildCategoryOptions(group)}
+          onChange={handleCategoryChange}
+        />
+      </React.Fragment>
+    ));
+  };
+
+  const renderAttributeGroups = () => {
+    if (!attributeGroups.length) {
+      return null;
+    }
+
+    return attributeGroups.map((group, index) => (
+      <React.Fragment key={group.key}>
+        {index > 0 && <Line />}
+        <CheckboxGroup
+          title={group.title}
+          options={buildAttributeOptions(group)}
+          onChange={handleAttributeChange}
+        />
+      </React.Fragment>
+    ));
+  };
+
+  const showSkeleton = filtersLoading;
+  const showError = !filtersLoading && !!filtersError;
+  const canRenderGroups = !filtersLoading && !filtersError;
 
   return (
     <>
@@ -102,7 +210,9 @@ const MobileFilterDropdown: React.FC<MobileFilterDropdownProps> = ({ onClose, di
           <CloseButton onClick={onClose}>{dictionary.filter.clear}</CloseButton>
           <Title>{dictionary.filter.title}</Title>
           <Line />
-          <CategoryFilter dictionary={dictionary.filter} />
+          {showSkeleton && <FiltersLoadingSkeleton sections={2} rowsPerSection={4} compact />}
+          {showError && <SectionMessage>{filtersError}</SectionMessage>}
+          {canRenderGroups && renderCategoryGroups()}
           <Line />
           <PriceFilter dictionary={dictionary.filter} />
           <InputsRow>
@@ -110,10 +220,12 @@ const MobileFilterDropdown: React.FC<MobileFilterDropdownProps> = ({ onClose, di
             <PriceInput text={dictionary.filter?.placeholder2 ?? "მდე"} type="max" />
           </InputsRow>
           <PriceRangeSlider min={0} max={10000} />
-          <Line />
-          <AttributeFilter attributeName="სტილი" title={dictionary.filter.subTitle3} />
-          <Line />
-          <AttributeFilter attributeName="განათების ტიპი" title={dictionary.filter.subTitle4} />
+          {canRenderGroups && attributeGroups.length > 0 && (
+            <>
+              <Line />
+              {renderAttributeGroups()}
+            </>
+          )}
         </ScrollArea>
 
         <BottomBar>

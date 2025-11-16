@@ -17,7 +17,11 @@ import ReturnIcon from "../Header/ReturnIcon";
 import { useProductDetail } from "@/hooks/useProductDetail";
 import { useSimilarProducts } from "@/hooks/useSimilarProducts";
 import { useAuthModal } from "@/contexts/AuthModalContext";
-import { cartAddItem } from "@/api/generated/api";
+import {
+  ecommerceClientCartItemsCreate,
+  ecommerceClientCartGetOrCreateRetrieve,
+  ecommerceClientCartItemsPartialUpdate,
+} from "@/api/generated/api";
 
 const StyledComponent = styled.div`
   background: #0b0b0b;
@@ -509,7 +513,7 @@ function DetailMain({ dictionary, productId }: { dictionary: any; productId: num
     similarProducts,
     loading: similarLoading,
     error: similarError,
-  } = useSimilarProducts(product?.category, productId, 30); // fetch more to allow horizontal scroll
+  } = useSimilarProducts(undefined, productId, 30); // category not available on ProductDetail; fetch more to allow horizontal scroll
 
   // Horizontal scroll + drag state for similar products (when more than 4)
   const scrollRef = useRef<HTMLDivElement | null>(null);
@@ -607,16 +611,36 @@ function DetailMain({ dictionary, productId }: { dictionary: any; productId: num
     }
 
     try {
-      const payload = { product_id: product.id, quantity: 1 };
-      const cart = await cartAddItem(payload);
+      // Ensure we have a cart id first
+      const data = await ecommerceClientCartGetOrCreateRetrieve();
+      const normalized = (data as any)?.cart ? (data as any).cart : (data as any);
+      const cartId = normalized?.id;
+      if (!cartId) return;
 
-      // Update cart count in header
+      // If product already exists in cart, just increase its quantity
+      const existing = Array.isArray(normalized?.items)
+        ? (normalized.items as any[]).find((it: any) => {
+            const pid = typeof it.product === "object" ? it.product?.id : it.product;
+            return pid === product.id;
+          })
+        : undefined;
+
+      if (existing) {
+        await ecommerceClientCartItemsPartialUpdate(String(existing.id), {
+          quantity: (existing.quantity || 0) + 1,
+        } as any);
+      } else {
+        const payload = { cart: cartId, product: product.id, variant: null, quantity: 1 } as any;
+        await ecommerceClientCartItemsCreate(payload);
+      }
+
+      // Update cart count in header - fetch latest cart
       try {
-        const count = Array.isArray(cart?.items)
-          ? cart.items.reduce((acc: number, it: any) => acc + (it.quantity || 0), 0)
-          : 0;
+        const updated = await ecommerceClientCartGetOrCreateRetrieve();
+        const n = (updated as any)?.cart ? (updated as any).cart : (updated as any);
+        const count = n.items?.reduce((acc: number, it: any) => acc + (it.quantity || 0), 0) || 0;
         if (typeof window !== "undefined") {
-          window.dispatchEvent(new CustomEvent("cartUpdated", { detail: { count, cart } }));
+          window.dispatchEvent(new CustomEvent("cartUpdated", { detail: { count, cart: n } }));
         }
       } catch {}
     } catch {}

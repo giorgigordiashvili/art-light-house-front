@@ -4,8 +4,12 @@ import { useState } from "react";
 import InputWithLabel from "../Profile/Input";
 import SaveButton from "@/ProfileButton/Save";
 import Cancel from "@/ProfileButton/Cancel";
-import { userChangePassword } from "@/api/generated/api";
-import type { PasswordChangeRequest } from "@/api/generated/interfaces";
+import { passwordResetRequest, passwordResetConfirm } from "@/api/generated/api";
+import type {
+  PasswordResetRequestRequest,
+  PasswordResetConfirmRequest,
+} from "@/api/generated/interfaces";
+import { useAuth } from "@/contexts/AuthContext";
 const StylePass = styled.div`
   /* width: 800px; */
   width: 100%;
@@ -89,52 +93,134 @@ const Title = styled.p`
 `;
 
 const Pass = ({ dictionary }: any) => {
-  const [currentPassword, setCurrentPassword] = useState("");
+  const { user } = useAuth();
+  const passwordDictionary = dictionary?.password ?? {};
+  const [step, setStep] = useState<"request" | "confirm">("request");
+
+  // Step 1: Request reset
+  const [email, setEmail] = useState(user?.email || "");
+
+  // Step 2: Confirm reset (6-digit code)
+  const [code, setCode] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
 
   const resetForm = () => {
-    setCurrentPassword("");
+    setCode("");
     setNewPassword("");
     setConfirmPassword("");
+    setError(null);
+    setSuccess(null);
   };
 
-  const handleSave = async () => {
+  const handleRequestReset = async () => {
     setError(null);
     setSuccess(null);
 
-    if (!currentPassword || !newPassword || !confirmPassword) {
-      setError(dictionary?.password?.required || "Please fill in all fields");
-      return;
-    }
-    if (newPassword !== confirmPassword) {
-      setError(dictionary?.password?.mismatch || "New passwords do not match");
+    if (!email || !email.trim()) {
+      setError(passwordDictionary?.emailRequired || "Please enter your email address");
       return;
     }
 
-    const payload: PasswordChangeRequest = {
-      current_password: currentPassword,
+    // Basic email validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      setError(passwordDictionary?.invalidEmail || "Please enter a valid email address");
+      return;
+    }
+
+    const payload: PasswordResetRequestRequest = {
+      email: email.trim(),
+    };
+
+    try {
+      setIsLoading(true);
+      await passwordResetRequest(payload);
+      setSuccess(
+        passwordDictionary?.resetEmailSent ||
+          "Password reset instructions have been sent to your email. Please check your inbox."
+      );
+      // Move to confirmation step after 2 seconds
+      setTimeout(() => {
+        setStep("confirm");
+        setSuccess(null);
+      }, 2000);
+    } catch (e: any) {
+      const apiMsg =
+        e?.response?.data?.detail ||
+        e?.response?.data?.message ||
+        e?.response?.data?.error ||
+        (typeof e?.response?.data === "string" ? e.response.data : null);
+      setError(
+        apiMsg ||
+          passwordDictionary?.resetRequestFailed ||
+          "Failed to send reset email. Please try again."
+      );
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleConfirmReset = async () => {
+    setError(null);
+    setSuccess(null);
+
+    if (!code || !code.trim()) {
+      setError(passwordDictionary?.codeRequired || "Please enter the 6-digit code from your email");
+      return;
+    }
+
+    if (code.trim().length !== 6 || !/^\d{6}$/.test(code.trim())) {
+      setError(passwordDictionary?.invalidCode || "Please enter a valid 6-digit code");
+      return;
+    }
+
+    if (!newPassword || newPassword.length < 8) {
+      setError(
+        passwordDictionary?.passwordMinLength || "Password must be at least 8 characters long"
+      );
+      return;
+    }
+
+    if (newPassword !== confirmPassword) {
+      setError(passwordDictionary?.mismatch || "Passwords do not match");
+      return;
+    }
+
+    const payload: PasswordResetConfirmRequest = {
+      email: email.trim(),
+      code: code.trim(),
       new_password: newPassword,
       new_password_confirm: confirmPassword,
     };
 
     try {
       setIsLoading(true);
-      await userChangePassword(payload);
-      setSuccess(dictionary?.password?.changeSuccess || "Password changed successfully!");
-      resetForm();
+      await passwordResetConfirm(payload);
+      setSuccess(
+        passwordDictionary?.resetSuccess ||
+          "Password has been reset successfully! You can now login with your new password."
+      );
+      // Reset form after success
+      setTimeout(() => {
+        resetForm();
+        setStep("request");
+        setEmail(user?.email || "");
+      }, 3000);
     } catch (e: any) {
       const apiMsg =
         e?.response?.data?.detail ||
         e?.response?.data?.message ||
+        e?.response?.data?.error ||
         (typeof e?.response?.data === "string" ? e.response.data : null);
       setError(
         apiMsg ||
-          dictionary?.password?.changeFailed ||
-          "Failed to change password. Please try again."
+          passwordDictionary?.resetConfirmFailed ||
+          "Failed to reset password. The code may be invalid or expired."
       );
     } finally {
       setIsLoading(false);
@@ -144,15 +230,36 @@ const Pass = ({ dictionary }: any) => {
   const handleCancel = () => {
     setError(null);
     setSuccess(null);
-    resetForm();
+    if (step === "confirm") {
+      resetForm();
+      setStep("request");
+    } else {
+      setEmail(user?.email || "");
+    }
   };
 
-  const hasChanges = !!(currentPassword || newPassword || confirmPassword);
-  const isDisabled = isLoading || !hasChanges;
+  // Simple validators
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  const canRequest = !!email && emailRegex.test(email.trim());
+  const canConfirm =
+    !!email?.trim() &&
+    !!code?.trim() &&
+    code.trim().length === 6 &&
+    /^\d{6}$/.test(code.trim()) &&
+    !!newPassword &&
+    newPassword.length >= 8 &&
+    newPassword === confirmPassword;
+
+  const isDisabled = isLoading || (step === "request" ? !canRequest : !canConfirm);
 
   return (
     <StylePass>
-      <Title>{dictionary?.title2}</Title>
+      <Title>
+        {step === "request"
+          ? passwordDictionary?.resetTitle || "Reset Password"
+          : passwordDictionary?.confirmTitle || "Enter Reset Code"}
+      </Title>
+
       {/* Success/Error Messages */}
       {success && (
         <div
@@ -182,48 +289,86 @@ const Pass = ({ dictionary }: any) => {
           {error}
         </div>
       )}
-      <InputsWrapper>
-        <LeftColumn>
-          <InputWithLabel
-            icon="/assets/icons/pass1.svg"
-            label={dictionary?.subTitle1}
-            placeholder={dictionary?.placeHolder1}
-            value={currentPassword}
-            onChange={setCurrentPassword}
-            isPasswordField
-          />
-          <InputWithLabel
-            icon="/assets/icons/pass2.svg"
-            label={dictionary?.subTitle2}
-            placeholder={dictionary?.placeHolder2}
-            value={newPassword}
-            onChange={setNewPassword}
-            isPasswordField
-          />
-          <InputWithLabel
-            icon="/assets/icons/pass2.svg"
-            label={dictionary?.subTitle3}
-            placeholder={dictionary?.placeHolder3}
-            value={confirmPassword}
-            onChange={setConfirmPassword}
-            isPasswordField
-          />
-        </LeftColumn>
-      </InputsWrapper>
 
-      <ButtonRow>
-        <Cancel
-          dictionary={dictionary}
-          onCancel={handleCancel}
-          disabled={!hasChanges || isLoading}
-        />
-        <SaveButton
-          dictionary={dictionary}
-          onSave={handleSave}
-          disabled={isDisabled}
-          isLoading={isLoading}
-        />
-      </ButtonRow>
+      {step === "request" ? (
+        <>
+          <InputsWrapper>
+            <LeftColumn>
+              <InputWithLabel
+                icon="/assets/icons/pass1.svg"
+                label={passwordDictionary?.emailLabel || "Email Address"}
+                placeholder={passwordDictionary?.emailPlaceholder || "Enter your email"}
+                value={email}
+                onChange={setEmail}
+                isPasswordField={false}
+              />
+              <div style={{ color: "#999", fontSize: "14px", marginTop: "-10px" }}>
+                {passwordDictionary?.resetInstructions ||
+                  "Enter your email address and we'll send you instructions to reset your password."}
+              </div>
+            </LeftColumn>
+          </InputsWrapper>
+
+          <ButtonRow>
+            <Cancel dictionary={dictionary} onCancel={handleCancel} disabled={isLoading} />
+            <SaveButton
+              dictionary={{
+                ...dictionary,
+                button1: passwordDictionary?.sendResetButton || "Send Reset Email",
+              }}
+              onSave={handleRequestReset}
+              disabled={isDisabled}
+              isLoading={isLoading}
+            />
+          </ButtonRow>
+        </>
+      ) : (
+        <>
+          <InputsWrapper>
+            <LeftColumn>
+              <InputWithLabel
+                icon="/assets/icons/pass1.svg"
+                label={passwordDictionary?.codeLabel || "6-digit Code"}
+                placeholder={passwordDictionary?.codePlaceholder || "Enter 6-digit code from email"}
+                value={code}
+                onChange={(val: string) => setCode(String(val).replace(/\D/g, "").slice(0, 6))}
+                isPasswordField={false}
+              />
+              <InputWithLabel
+                icon="/assets/icons/pass2.svg"
+                label={passwordDictionary?.newPasswordLabel || "New Password"}
+                placeholder={passwordDictionary?.newPasswordPlaceholder || "Enter new password"}
+                value={newPassword}
+                onChange={setNewPassword}
+                isPasswordField
+              />
+              <InputWithLabel
+                icon="/assets/icons/pass2.svg"
+                label={passwordDictionary?.confirmPasswordLabel || "Confirm New Password"}
+                placeholder={
+                  passwordDictionary?.confirmPasswordPlaceholder || "Confirm new password"
+                }
+                value={confirmPassword}
+                onChange={setConfirmPassword}
+                isPasswordField
+              />
+            </LeftColumn>
+          </InputsWrapper>
+
+          <ButtonRow>
+            <Cancel dictionary={dictionary} onCancel={handleCancel} disabled={isLoading} />
+            <SaveButton
+              dictionary={{
+                ...dictionary,
+                button1: passwordDictionary?.resetButton || "Reset Password",
+              }}
+              onSave={handleConfirmReset}
+              disabled={isDisabled}
+              isLoading={isLoading}
+            />
+          </ButtonRow>
+        </>
+      )}
     </StylePass>
   );
 };

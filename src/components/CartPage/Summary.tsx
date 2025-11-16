@@ -59,9 +59,9 @@ const Summary = ({ dictionary, cart, onPayment, submitting }: SummaryProps) => {
   const locale = pathname.split("/")[1];
   const isCheckoutPage = pathname.includes("/checkout");
 
-  // Calculate totals
-  const subtotal = cart?.total_price ? parseFloat(cart.total_price) : 0;
-  const deliveryFee = 10.0; // Fixed delivery fee for now
+  // Calculate totals dynamically from cart like in CartModal
+  const subtotal = cart?.total_amount ? parseFloat(String(cart.total_amount)) : 0;
+  const deliveryFee = 0.0; // Fixed delivery fee
   const serviceFee = 0.0; // No service fee
   const total = subtotal + deliveryFee + serviceFee;
 

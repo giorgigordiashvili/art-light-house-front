@@ -1,8 +1,30 @@
 "use client";
 import React, { createContext, useContext, useState, useEffect, ReactNode } from "react";
-import { User, UserLoginRequest } from "@/api/generated/interfaces";
-import { userLogin, userLogout } from "@/api/generated/api";
 import adminAxios from "@/api/admin-axios";
+
+// Admin-specific types (not part of ecommerce client API)
+interface TenantLogin {
+  email: string;
+  password: string;
+}
+
+interface User {
+  id: number;
+  email: string;
+  first_name?: string;
+  last_name?: string;
+  is_admin?: boolean | string;
+}
+
+// Admin login/logout API functions
+const tenantLogin = async (data: TenantLogin): Promise<{ token?: string; message?: string }> => {
+  const response = await adminAxios.post(`/api/auth/tenant-login/`, data);
+  return response.data;
+};
+
+const tenantLogout = async (): Promise<void> => {
+  await adminAxios.post(`/api/auth/tenant-logout/`);
+};
 
 // The User interface now includes is_admin field from the API
 // We can use it directly without extending the interface
@@ -94,27 +116,30 @@ export const AdminAuthProvider = ({ children }: { children: ReactNode }) => {
   const signIn = async (email: string, password: string): Promise<boolean> => {
     setIsLoading(true);
     try {
-      const credentials: UserLoginRequest = { email, password };
+      const credentials: TenantLogin = { email, password };
 
-      const response = await userLogin(credentials);
+      const response = await tenantLogin(credentials);
 
-      // Check if the logged-in user has admin privileges
-      const isAdmin = checkAdminStatus(response.user);
-
-      if (!isAdmin) {
-        // User doesn't have admin privileges
+      // Check if we have a valid token
+      if (!response.token) {
         return false;
       }
 
-      // Store admin tokens separately from regular user tokens
-      localStorage.setItem(ADMIN_TOKEN_KEY, response.access);
-      localStorage.setItem(ADMIN_REFRESH_KEY, response.refresh);
+      // Store admin tokens
+      localStorage.setItem(ADMIN_TOKEN_KEY, response.token);
+      // Note: tenantLogin doesn't return refresh token, store the same token or handle differently
+      localStorage.setItem(ADMIN_REFRESH_KEY, response.token);
 
-      // The API response now includes is_admin field
-      localStorage.setItem(ADMIN_USER_KEY, JSON.stringify(response.user));
-      setUser(response.user);
-
-      return true;
+      // Fetch user profile after successful login
+      try {
+        const profile = await adminUserProfile();
+        localStorage.setItem(ADMIN_USER_KEY, JSON.stringify(profile));
+        setUser(profile);
+        return true;
+      } catch {
+        // Failed to fetch profile
+        return false;
+      }
     } catch {
       return false;
     } finally {
@@ -126,7 +151,7 @@ export const AdminAuthProvider = ({ children }: { children: ReactNode }) => {
     setIsLoading(true);
     try {
       // Call logout API
-      await userLogout();
+      await tenantLogout();
     } catch {
       // Continue with logout even if API call fails
     } finally {

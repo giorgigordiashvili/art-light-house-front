@@ -3,7 +3,8 @@ import { getDictionary } from "@/config/get-dictionary";
 import type { Locale } from "@/config/i18n";
 import { PageProps } from "@/models/lang.model";
 import type { Metadata } from "next";
-import { projectsDetail } from "@/api/generated/api";
+// TODO: Projects API not available - backend needs to implement
+// import { ecommerceClientProjectsRetrieve } from "@/api/generated/api";
 
 function isLocale(lang: string): lang is Locale {
   return ["ge", "en"].includes(lang);
@@ -14,14 +15,16 @@ interface ProjectPageProps extends PageProps {
 }
 
 export async function generateMetadata({ params }: ProjectPageProps): Promise<Metadata> {
-  const { slug } = await params;
+  await params; // Consume params to avoid unused variable warning
 
   try {
-    const project = await projectsDetail(slug);
-    return {
-      title: `${project.title} | Art Lighthouse Projects`,
-      description: project.short_description || project.description.substring(0, 160),
-    };
+    // TODO: Projects API not available
+    // const project = await ecommerceClientProjectsRetrieve(slug);
+    throw new Error("Projects API not implemented");
+    // return {
+    //   title: `${project.title} | Art Lighthouse Projects`,
+    //   description: project.short_description || project.description.substring(0, 160),
+    // };
   } catch {
     return {
       title: "Project | Art Lighthouse",

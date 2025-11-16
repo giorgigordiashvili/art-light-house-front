@@ -6,7 +6,11 @@ import CartProduct from "./CartProduct";
 import PrimaryButton from "../Buttons/PrimaryButton";
 import SummaryPrice from "./SummaryPrice";
 import EmptyCartModal from "./EmptyCartModal";
-import { cartGet, cartRemoveItem, cartUpdateItem } from "@/api/generated/api";
+import {
+  ecommerceClientCartGetOrCreateRetrieve,
+  ecommerceClientCartItemsPartialUpdate,
+  ecommerceClientCartItemsDestroy,
+} from "@/api/generated/api";
 import type { Cart } from "@/api/generated/interfaces";
 import { useAuth } from "@/contexts/AuthContext";
 
@@ -117,6 +121,19 @@ const StyledCardWrapper = styled.div``;
 
 const StyledButtonAndSummaryWrapper = styled.div``;
 
+function pickLocalized(value: any, fallback = ""): string {
+  if (typeof value === "string") return value;
+  if (value && typeof value === "object") {
+    let lang = "ka";
+    if (typeof window !== "undefined") {
+      const seg = (window.location.pathname.split("/")[1] || "").toLowerCase();
+      lang = seg === "en" ? "en" : "ka";
+    }
+    return value[lang] || value.en || value.ka || fallback;
+  }
+  return fallback;
+}
+
 const CartModal = ({ onClose, dictionary }: Props) => {
   const router = useRouter();
   const [cart, setCart] = useState<Cart | null>(null);
@@ -126,14 +143,19 @@ const CartModal = ({ onClose, dictionary }: Props) => {
   const fetchCart = async () => {
     try {
       setLoading(true);
-      const data = await cartGet();
-      setCart(data);
+      const data = await ecommerceClientCartGetOrCreateRetrieve();
+      const normalized = (data as any)?.cart ? (data as any).cart : (data as any);
+      setCart(normalized as Cart);
     } catch {
       setCart({
         id: 0,
+        client: 0,
+        delivery_address: null as any,
+        status: undefined,
+        notes: "",
         items: [],
-        total_items: "0",
-        total_price: "0",
+        total_items: 0,
+        total_amount: "0",
         created_at: "",
         updated_at: "",
       } as any);
@@ -146,9 +168,13 @@ const CartModal = ({ onClose, dictionary }: Props) => {
     if (!isAuthenticated) {
       setCart({
         id: 0,
+        client: 0,
+        delivery_address: null as any,
+        status: undefined,
+        notes: "",
         items: [],
-        total_items: "0",
-        total_price: "0",
+        total_items: 0,
+        total_amount: "0",
         created_at: "",
         updated_at: "",
       } as any);
@@ -156,6 +182,32 @@ const CartModal = ({ onClose, dictionary }: Props) => {
     }
     fetchCart();
   }, [isAuthenticated]);
+
+  // Keep modal in sync with external cart changes
+  useEffect(() => {
+    const onCartUpdated = (e: Event) => {
+      try {
+        const detail = (e as CustomEvent).detail as { cart?: any };
+        if (detail?.cart) {
+          const normalized = (detail.cart as any)?.cart ? detail.cart.cart : detail.cart;
+          setCart(normalized as Cart);
+        } else {
+          // fallback refetch
+          fetchCart();
+        }
+      } catch {
+        fetchCart();
+      }
+    };
+    if (typeof window !== "undefined") {
+      window.addEventListener("cartUpdated", onCartUpdated as EventListener);
+    }
+    return () => {
+      if (typeof window !== "undefined") {
+        window.removeEventListener("cartUpdated", onCartUpdated as EventListener);
+      }
+    };
+  }, []);
 
   const handleRedirect = (e?: React.MouseEvent) => {
     if (e && (e.ctrlKey || e.metaKey)) {
@@ -182,16 +234,15 @@ const CartModal = ({ onClose, dictionary }: Props) => {
   };
 
   const totalPrice = useMemo(() => {
-    if (!cart?.items) return 0;
-    const sum = cart.total_price;
-    return sum;
+    if (!cart) return "0";
+    return cart.total_amount || "0";
   }, [cart]);
 
   const totalItems = useMemo(() => {
-    if (!cart?.items) return 0;
-    // total_items comes as string, but we can calculate from items as well
-    const sum = cart.items.reduce((acc, it) => acc + (it.quantity || 0), 0);
-    return sum;
+    if (!cart) return 0;
+    // Prefer backend-provided total_items (number); fallback to sum of quantities
+    if (typeof cart.total_items === "number") return cart.total_items;
+    return cart.items?.reduce((acc, it) => acc + (it.quantity || 0), 0) || 0;
   }, [cart]);
 
   const isEmpty = useMemo(() => {
@@ -200,13 +251,16 @@ const CartModal = ({ onClose, dictionary }: Props) => {
 
   const handleIncrease = async (itemId: number, current: number) => {
     try {
-      const updated = await cartUpdateItem(itemId, { quantity: current + 1 });
-      setCart(updated);
+      await ecommerceClientCartItemsPartialUpdate(String(itemId), { quantity: current + 1 });
+      const updated = await ecommerceClientCartGetOrCreateRetrieve();
+      const normalized = (updated as any)?.cart ? (updated as any).cart : (updated as any);
+      setCart(normalized as Cart);
       try {
-        const count = updated.items?.reduce((acc, it) => acc + (it.quantity || 0), 0) || 0;
+        const count =
+          normalized.items?.reduce((acc: number, it: any) => acc + (it.quantity || 0), 0) || 0;
         if (typeof window !== "undefined") {
           window.dispatchEvent(
-            new CustomEvent("cartUpdated", { detail: { count, cart: updated } })
+            new CustomEvent("cartUpdated", { detail: { count, cart: normalized } })
           );
         }
       } catch {}
@@ -221,13 +275,16 @@ const CartModal = ({ onClose, dictionary }: Props) => {
       return;
     }
     try {
-      const updated = await cartUpdateItem(itemId, { quantity: current - 1 });
-      setCart(updated);
+      await ecommerceClientCartItemsPartialUpdate(String(itemId), { quantity: current - 1 });
+      const updated = await ecommerceClientCartGetOrCreateRetrieve();
+      const normalized = (updated as any)?.cart ? (updated as any).cart : (updated as any);
+      setCart(normalized as Cart);
       try {
-        const count = updated.items?.reduce((acc, it) => acc + (it.quantity || 0), 0) || 0;
+        const count =
+          normalized.items?.reduce((acc: number, it: any) => acc + (it.quantity || 0), 0) || 0;
         if (typeof window !== "undefined") {
           window.dispatchEvent(
-            new CustomEvent("cartUpdated", { detail: { count, cart: updated } })
+            new CustomEvent("cartUpdated", { detail: { count, cart: normalized } })
           );
         }
       } catch {}
@@ -238,13 +295,16 @@ const CartModal = ({ onClose, dictionary }: Props) => {
 
   const handleRemove = async (itemId: number) => {
     try {
-      const updated = await cartRemoveItem(itemId);
-      setCart(updated);
+      await ecommerceClientCartItemsDestroy(String(itemId));
+      const updated = await ecommerceClientCartGetOrCreateRetrieve();
+      const normalized = (updated as any)?.cart ? (updated as any).cart : (updated as any);
+      setCart(normalized as Cart);
       try {
-        const count = updated.items?.reduce((acc, it) => acc + (it.quantity || 0), 0) || 0;
+        const count =
+          normalized.items?.reduce((acc: number, it: any) => acc + (it.quantity || 0), 0) || 0;
         if (typeof window !== "undefined") {
           window.dispatchEvent(
-            new CustomEvent("cartUpdated", { detail: { count, cart: updated } })
+            new CustomEvent("cartUpdated", { detail: { count, cart: normalized } })
           );
         }
       } catch {}
@@ -272,10 +332,10 @@ const CartModal = ({ onClose, dictionary }: Props) => {
                     <ProductWrapper key={it.id}>
                       <CartProduct
                         dictionary={dictionary}
-                        title={it.product_details?.title}
-                        price={`${it.product_details?.price} ₾`}
+                        title={pickLocalized(it.product?.name)}
+                        price={`${it.product?.price ?? it.price_at_add} ₾`}
                         quantity={it.quantity || 1}
-                        imageSrc={it.product_details?.primary_image}
+                        imageSrc={it.product?.image || ""}
                         onIncrease={() => handleIncrease(it.id, it.quantity || 1)}
                         onDecrease={() => handleDecrease(it.id, it.quantity || 1)}
                         onRemove={() => handleRemove(it.id)}

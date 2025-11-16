@@ -8,14 +8,18 @@ import ModalInput from "./ModalInput";
 import InputTitle from "./InputTitle";
 import AdditionalAction from "./AdditionalAction";
 import { useAuth } from "@/contexts/AuthContext";
-import { UserLoginRequest, UserRegistrationRequest } from "@/api/generated/interfaces";
-import { userRegister } from "@/api/generated/api";
+import {
+  ClientRegistrationRequest,
+  ClientLoginRequest,
+  EcommerceClient,
+} from "@/api/generated/interfaces";
+import { registerClient, loginClient } from "@/api/generated/api";
 import Image from "next/image";
 
 interface AuthorizationModalProps {
   onClose: () => void;
   onRecoverPasswordClick?: () => void;
-  onRegisterSuccess?: (email?: string) => void;
+  onRegisterSuccess?: (email?: string, verificationToken?: string) => void;
   dictionary?: any;
 }
 
@@ -161,7 +165,7 @@ const AuthorizationModal: React.FC<AuthorizationModalProps> = ({
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
 
-  const { login } = useAuth();
+  const { loginWithTokens } = useAuth();
 
   const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setEmail(e.target.value);
@@ -209,14 +213,26 @@ const AuthorizationModal: React.FC<AuthorizationModalProps> = ({
 
     try {
       if (activeTab === "auth") {
-        // Sign In with our custom API
-        const credentials: UserLoginRequest = {
-          email,
+        // Storefront sign in via ecommerce clients login (identifier + password)
+        const payload: ClientLoginRequest = {
+          identifier: email,
           password,
         };
 
-        await login(credentials);
-        onClose();
+        const resp = (await loginClient(payload)) as {
+          client?: EcommerceClient;
+          access?: string;
+          refresh?: string;
+        };
+        if (resp?.client && resp?.access && resp?.refresh) {
+          // Persist tokens and user in AuthContext
+          loginWithTokens(resp.client, resp.access, resp.refresh);
+          onClose();
+        } else {
+          setError(
+            dictionary?.authorizationModal?.invalidCredentials || "Invalid email or password"
+          );
+        }
       } else {
         // Sign Up via custom API
         if (!firstName) {
@@ -293,20 +309,25 @@ const AuthorizationModal: React.FC<AuthorizationModalProps> = ({
           }
         }
 
-        const payload: UserRegistrationRequest = {
+        const payload: ClientRegistrationRequest = {
           email,
           first_name: firstName,
           last_name: lastName,
-          phone_number: phoneNumber || undefined,
+          phone_number: phoneNumber || "",
           date_of_birth: birthDate || undefined,
           password,
           password_confirm: confirmPassword,
         };
 
-        const resp = await userRegister(payload);
-        if (resp?.message && resp?.email) {
-          onRegisterSuccess?.(resp.email);
+        const resp = await registerClient(payload);
+        // Pass both email and verification_token to parent component
+        if (resp?.client?.email && resp?.verification_token) {
+          onRegisterSuccess?.(resp.client.email, resp.verification_token);
           onClose();
+        } else {
+          setError(
+            dictionary?.registrationModal?.alert2 || "Registration failed. Please try again."
+          );
         }
       }
     } catch (error: any) {

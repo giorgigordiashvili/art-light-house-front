@@ -6,7 +6,7 @@ import CloseIcon from "./CloseIcon";
 import ModalDescription from "./ModalDescription";
 import PrimaryButton from "../Buttons/PrimaryButton";
 import ModalTitle from "./ModalTitle";
-import { requestPasswordReset } from "@/api/generated/api";
+import { passwordResetRequest } from "@/api/generated/api";
 import type { PasswordResetRequestRequest } from "@/api/generated/interfaces";
 
 const StyledOverlayWrapper = styled.div`
@@ -112,7 +112,7 @@ const RecoverPasswordModal = ({
         email: email.trim(),
       };
 
-      await requestPasswordReset(requestData);
+      await passwordResetRequest(requestData);
       setSuccess("Reset code sent to your email");
 
       // Wait a moment to show success message then proceed to verification

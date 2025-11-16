@@ -1,6 +1,6 @@
 import styled from "styled-components";
-import Image from "next/image";
 import type { OrderItem } from "@/api/generated/interfaces";
+import { useParams } from "next/navigation";
 
 const ProductsCard = styled.div`
   display: flex;
@@ -74,7 +74,25 @@ interface ProductProps {
   orderItem?: OrderItem;
 }
 
+// Helper to safely resolve localized fields that may arrive as {en: string, ka: string}
+function resolveLocalized(value: any, lang: string): string {
+  if (!value) return "";
+  if (typeof value === "string") return value;
+  // Backend seems to use 'ka' for Georgian while frontend route uses 'ge'
+  const backendLang = lang === "ge" ? "ka" : lang;
+  return (
+    value[backendLang] ||
+    value[lang] ||
+    value.en ||
+    // first string value in object
+    Object.values(value).find((v) => typeof v === "string") ||
+    ""
+  );
+}
+
 const Product = ({ orderItem }: ProductProps) => {
+  const params = useParams();
+  const langParam = (params?.lang as string) || "ge";
   // If no orderItem provided, show placeholder
   if (!orderItem) {
     return (
@@ -92,23 +110,11 @@ const Product = ({ orderItem }: ProductProps) => {
   }
   return (
     <ProductsCard>
-      <ImagePlaceholder>
-        {orderItem.product_image_url ? (
-          <Image
-            src={orderItem.product_image_url}
-            alt={orderItem.product_title}
-            width={73}
-            height={73}
-            style={{ objectFit: "cover" }}
-          />
-        ) : (
-          "Product image"
-        )}
-      </ImagePlaceholder>
+      <ImagePlaceholder>Product image</ImagePlaceholder>
       <InfoWrapper>
-        <Title>{orderItem.product_title}</Title>
+        <Title>{resolveLocalized(orderItem.product_name, langParam) || "Product"}</Title>
         <PriceRow>
-          <Price>{orderItem.total_price} ₾</Price>
+          <Price>{orderItem.subtotal} ₾</Price>
           <Quantity>x {orderItem.quantity}</Quantity>
         </PriceRow>
       </InfoWrapper>

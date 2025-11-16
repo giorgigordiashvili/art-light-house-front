@@ -1,18 +1,18 @@
 "use client";
 
 import React, { createContext, useContext, useEffect, useState, ReactNode } from "react";
-import { User, UserLoginRequest } from "@/api/generated/interfaces";
-import { userLogin, userLogout } from "@/api/generated/api";
+import { EcommerceClient, ClientLoginRequest } from "@/api/generated/interfaces";
+import { loginClient, getCurrentClient } from "@/api/generated/api";
 
 interface AuthContextType {
-  user: User | null;
+  user: EcommerceClient | null;
   isAuthenticated: boolean;
   isLoading: boolean;
-  login: (credentials: UserLoginRequest) => Promise<void>;
+  login: (credentials: ClientLoginRequest) => Promise<void>;
   logout: () => Promise<void>;
-  updateUser: (userData: User) => void;
+  updateUser: (userData: EcommerceClient) => void;
   token: string | null;
-  loginWithTokens: (user: User, access: string, refresh: string) => void;
+  loginWithTokens: (user: EcommerceClient, access: string, refresh: string) => void;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -26,21 +26,36 @@ const REFRESH_KEY = "auth_refresh_token";
 const USER_KEY = "auth_user";
 
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
-  const [user, setUser] = useState<User | null>(null);
+  const [user, setUser] = useState<EcommerceClient | null>(null);
   const [token, setToken] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
-  // Initialize auth state from localStorage
+  // Initialize auth state from localStorage or API
   useEffect(() => {
-    const initializeAuth = () => {
+    const initializeAuth = async () => {
       try {
         const storedToken = localStorage.getItem(TOKEN_KEY);
         const storedUser = localStorage.getItem(USER_KEY);
 
-        if (storedToken && storedUser) {
+        if (storedToken && storedToken !== "cookie-based" && storedUser) {
+          // We have a token stored, verify it's still valid
+          try {
+            const currentUser = await getCurrentClient();
+            setUser(currentUser);
+            setToken(storedToken);
+            localStorage.setItem(USER_KEY, JSON.stringify(currentUser));
+          } catch {
+            // Token invalid, clear storage
+            localStorage.removeItem(TOKEN_KEY);
+            localStorage.removeItem(REFRESH_KEY);
+            localStorage.removeItem(USER_KEY);
+          }
+        } else if (storedToken === "cookie-based" && storedUser) {
+          // Using cookie-based auth, just load user from storage
           setToken(storedToken);
           setUser(JSON.parse(storedUser));
         }
+        // If no token at all, user is not authenticated - don't call API
       } catch {
         // Clear corrupted data
         localStorage.removeItem(TOKEN_KEY);
@@ -70,19 +85,56 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     };
   }, []);
 
-  const login = async (credentials: UserLoginRequest): Promise<void> => {
+  const login = async (credentials: ClientLoginRequest): Promise<void> => {
     setIsLoading(true);
     try {
-      const response = await userLogin(credentials);
+      type LoginResponseShape =
+        | EcommerceClient
+        | (EcommerceClient & { access?: string; refresh?: string })
+        | { client: EcommerceClient; access?: string; refresh?: string };
 
-      // Store tokens and user data
-      localStorage.setItem(TOKEN_KEY, response.access);
-      localStorage.setItem(REFRESH_KEY, response.refresh);
-      localStorage.setItem(USER_KEY, JSON.stringify(response.user));
+      const response = (await loginClient(credentials)) as LoginResponseShape;
 
-      // Update state
-      setToken(response.access);
-      setUser(response.user);
+      let client: EcommerceClient | null = null;
+      let accessToken: string | null = null;
+      let refreshToken: string | null = null;
+
+      if ("client" in response) {
+        client = response.client;
+        accessToken = response.access ?? null;
+        refreshToken = response.refresh ?? null;
+      } else {
+        client = response;
+        accessToken = (response as any)?.access ?? null;
+        refreshToken = (response as any)?.refresh ?? null;
+      }
+
+      if (!client) {
+        client = await getCurrentClient();
+      }
+
+      if (!client) {
+        throw new Error("Login failed");
+      }
+
+      if (accessToken) {
+        loginWithTokens(client, accessToken, refreshToken ?? "");
+      } else {
+        // Cookie-based fallback – tokens managed via httpOnly cookies
+        localStorage.setItem(TOKEN_KEY, "cookie-based");
+        if (refreshToken) {
+          localStorage.setItem(REFRESH_KEY, refreshToken);
+        } else {
+          localStorage.removeItem(REFRESH_KEY);
+        }
+        localStorage.setItem(USER_KEY, JSON.stringify(client));
+        setToken("cookie-based");
+        setUser(client);
+
+        if (typeof window !== "undefined") {
+          window.dispatchEvent(new CustomEvent("authChange"));
+        }
+      }
     } catch (error) {
       throw error;
     } finally {
@@ -93,8 +145,9 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const logout = async (): Promise<void> => {
     setIsLoading(true);
     try {
-      // Call logout API if needed
-      await userLogout();
+      // Call logout API if available (cookies will be cleared by backend)
+      // Note: There's no specific client logout endpoint in new API,
+      // tokens are httpOnly cookies cleared by backend
     } catch {
       // Continue with local logout even if API fails
     } finally {
@@ -107,10 +160,15 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       setToken(null);
       setUser(null);
       setIsLoading(false);
+
+      // Dispatch auth change event
+      if (typeof window !== "undefined") {
+        window.dispatchEvent(new CustomEvent("authChange"));
+      }
     }
   };
 
-  const updateUser = (userData: User): void => {
+  const updateUser = (userData: EcommerceClient): void => {
     try {
       // Update localStorage with new user data
       localStorage.setItem(USER_KEY, JSON.stringify(userData));
@@ -122,13 +180,18 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     }
   };
 
-  const loginWithTokens = (userData: User, access: string, refresh: string): void => {
+  const loginWithTokens = (userData: EcommerceClient, access: string, refresh: string): void => {
     try {
       localStorage.setItem(TOKEN_KEY, access);
       localStorage.setItem(REFRESH_KEY, refresh);
       localStorage.setItem(USER_KEY, JSON.stringify(userData));
       setToken(access);
       setUser(userData);
+
+      // Dispatch auth change event
+      if (typeof window !== "undefined") {
+        window.dispatchEvent(new CustomEvent("authChange"));
+      }
     } catch {
       // Failed to store tokens
     }

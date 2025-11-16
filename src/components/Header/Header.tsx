@@ -23,7 +23,7 @@ import LanguageSwitcherModal from "./LanguageSwitcher/LanguageSwitcherModal";
 import { useAuth } from "@/contexts/AuthContext";
 import { useAuthModal } from "@/contexts/AuthModalContext";
 import { usePathname, useRouter } from "next/navigation";
-import { cartGet } from "@/api/generated/api";
+import { ecommerceClientCartGetOrCreateRetrieve } from "@/api/generated/api";
 import { Locale, i18n } from "@/config/i18n";
 
 const ensureValidLanguage = (lang: string): Locale => {
@@ -307,9 +307,12 @@ const Header = ({ header, dictionary }: HeaderProps) => {
           const hasToken =
             typeof window !== "undefined" && !!localStorage.getItem("auth_access_token");
           if (hasToken) {
-            cartGet()
+            ecommerceClientCartGetOrCreateRetrieve()
               .then((data) => {
-                const count = data.items?.reduce((acc, it) => acc + (it.quantity || 0), 0) || 0;
+                const normalized = (data as any)?.cart ? (data as any).cart : (data as any);
+                const count =
+                  normalized.items?.reduce((acc: number, it: any) => acc + (it.quantity || 0), 0) ||
+                  0;
                 setCartItemCount(count);
               })
               .catch(() => {});
@@ -358,8 +361,10 @@ const Header = ({ header, dictionary }: HeaderProps) => {
     }
 
     try {
-      const data = await cartGet();
-      const count = data.items?.reduce((acc, it) => acc + (it.quantity || 0), 0) || 0;
+      const data = await ecommerceClientCartGetOrCreateRetrieve();
+      const normalized = (data as any)?.cart ? (data as any).cart : (data as any);
+      const count =
+        normalized.items?.reduce((acc: number, it: any) => acc + (it.quantity || 0), 0) || 0;
       setCartItemCount(count);
       if (count === 0) {
         if (isEmptyCartModalOpen) {
@@ -397,8 +402,10 @@ const Header = ({ header, dictionary }: HeaderProps) => {
         return;
       }
       try {
-        const data = await cartGet();
-        const count = data.items?.reduce((acc, it) => acc + (it.quantity || 0), 0) || 0;
+        const data = await ecommerceClientCartGetOrCreateRetrieve();
+        const normalized = (data as any)?.cart ? (data as any).cart : (data as any);
+        const count =
+          normalized.items?.reduce((acc: number, it: any) => acc + (it.quantity || 0), 0) || 0;
         setCartItemCount(count);
       } catch {
         setCartItemCount(0);
@@ -551,11 +558,13 @@ const Header = ({ header, dictionary }: HeaderProps) => {
                       setIsUserMenuOpen(false);
                       setIsRecoverPasswordOpen(true);
                     }}
-                    onRegisterSuccess={(email?: string) => {
+                    onRegisterSuccess={(email?: string, verificationToken?: string) => {
                       setIsUserMenuOpen(false);
                       setIsRegistrationCodeOpen(true);
-                      // Store email temporarily on window for passing to code modal
+                      // Store email and verification token temporarily on window for passing to code modal
                       if (email) (window as any).__reg_email = email;
+                      if (verificationToken)
+                        (window as any).__reg_verification_token = verificationToken;
                     }}
                     dictionary={header}
                   />
@@ -610,6 +619,7 @@ const Header = ({ header, dictionary }: HeaderProps) => {
               setIsRegistrationSuccessOpen(true);
             }}
             email={(window as any).__reg_email || ""}
+            verificationToken={(window as any).__reg_verification_token || ""}
             dictionary={dictionary}
           />
         </>
@@ -685,11 +695,13 @@ const Header = ({ header, dictionary }: HeaderProps) => {
                   closeAuthModal();
                   setIsRecoverPasswordOpen(true);
                 }}
-                onRegisterSuccess={(email?: string) => {
+                onRegisterSuccess={(email?: string, verificationToken?: string) => {
                   closeAuthModal();
                   setIsRegistrationCodeOpen(true);
-                  // Store email temporarily on window for passing to code modal
+                  // Store email and verification token temporarily on window for passing to code modal
                   if (email) (window as any).__reg_email = email;
+                  if (verificationToken)
+                    (window as any).__reg_verification_token = verificationToken;
                 }}
                 dictionary={header}
               />

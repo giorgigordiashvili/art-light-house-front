@@ -101,25 +101,17 @@ const SummaryBlock = ({ dictionary, order }: SummaryBlockProps) => {
       <Divider />
 
       <DetailRow>
-        <DetailLabel>{dictionary?.succsessOrder?.productCost || "Subtotal"}</DetailLabel>
-        <DetailPrice>{order.subtotal} ₾</DetailPrice>
+        <DetailLabel>{dictionary?.succsessOrder?.orderNumber || "Order Number"}</DetailLabel>
+        <DetailPrice>{order.order_number}</DetailPrice>
       </DetailRow>
       <DetailRow>
-        <DetailLabel>{dictionary?.succsessOrder?.deliveryCost || "Delivery"}</DetailLabel>
-        <DetailPrice>{order.delivery_fee ? order.delivery_fee : "10.00"} ₾</DetailPrice>
+        <DetailLabel>{dictionary?.succsessOrder?.itemCount || "Items"}</DetailLabel>
+        <DetailPrice>{order.total_items}</DetailPrice>
       </DetailRow>
-      {order.tax_amount && parseFloat(order.tax_amount) > 0 && (
-        <DetailRow>
-          <DetailLabel>{dictionary?.succsessOrder?.tax || "Tax"}</DetailLabel>
-          <DetailPrice>{order.tax_amount} ₾</DetailPrice>
-        </DetailRow>
-      )}
-      {order.discount_amount && parseFloat(order.discount_amount) > 0 && (
-        <DetailRow>
-          <DetailLabel>{dictionary?.succsessOrder?.discount || "Discount"}</DetailLabel>
-          <DetailPrice>-{order.discount_amount} ₾</DetailPrice>
-        </DetailRow>
-      )}
+      <DetailRow>
+        <DetailLabel>{dictionary?.succsessOrder?.status || "Status"}</DetailLabel>
+        <DetailPrice>{String(order.status || "pending")}</DetailPrice>
+      </DetailRow>
     </SummaryContainer>
   );
 };

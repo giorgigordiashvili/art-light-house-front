@@ -1,9 +1,10 @@
 import { useState, useEffect, useCallback } from "react";
-import { productList } from "@/api/generated/api";
 import { ProductList } from "@/api/generated/interfaces";
+import { fetchClientProducts, ProductQueryParams } from "@/api/products";
+import { getAttributeKeyMap } from "@/hooks/useFilterAttributeGroups";
 
 interface UseProductsOptions {
-  categoryIds?: number[];
+  categoryFilters?: string[];
   minPrice?: number;
   maxPrice?: number;
   attributes?: string;
@@ -26,8 +27,6 @@ interface UseProductsResult {
   applyFilters: (filterOptions: UseProductsOptions) => Promise<void>;
 }
 
-const PRODUCTS_PER_PAGE = 12;
-
 export const useProducts = (options: UseProductsOptions = {}): UseProductsResult => {
   const [products, setProducts] = useState<ProductList[]>([]);
   const [loading, setLoading] = useState(true);
@@ -43,45 +42,82 @@ export const useProducts = (options: UseProductsOptions = {}): UseProductsResult
         setError(null);
 
         const filtersToUse = filterOptions ?? activeFilters;
+        const params: ProductQueryParams = {
+          page,
+        };
 
-        // Build comma-separated category IDs string for API (supports multiple IDs)
-        const categoryFilter =
-          filtersToUse.categoryIds && filtersToUse.categoryIds.length > 0
-            ? filtersToUse.categoryIds.join(",")
-            : undefined;
+        if (filtersToUse.ordering) {
+          params.ordering = filtersToUse.ordering;
+        }
+        if (filtersToUse.search) {
+          params.search = filtersToUse.search;
+        }
+        if (filtersToUse.minPrice !== undefined) {
+          params.min_price = filtersToUse.minPrice;
+        }
+        if (filtersToUse.maxPrice !== undefined) {
+          params.max_price = filtersToUse.maxPrice;
+        }
 
-        // Fetch products from API with filters
-        const fetchedProducts = await productList(
-          filtersToUse.attributes,
-          categoryFilter,
-          filtersToUse.inStock,
-          undefined, // isFeatured
-          filtersToUse.maxPrice,
-          filtersToUse.minPrice,
-          filtersToUse.ordering,
-          filtersToUse.search
-        );
-
-        // Exclude out-of-stock products (stock_quantity === 0). Fallback to is_in_stock when missing.
-        const availableProducts = fetchedProducts.filter((p) => {
-          if (typeof p.stock_quantity === "number") {
-            return p.stock_quantity > 0;
+        const attributeFilterMap = new Map<string, Set<string>>();
+        const addFilterValue = (key?: string, value?: string) => {
+          if (!key || !value) return;
+          if (!attributeFilterMap.has(key)) {
+            attributeFilterMap.set(key, new Set());
           }
-          if (typeof p.is_in_stock === "string") {
-            const v = p.is_in_stock.toLowerCase();
-            return v === "true" || v === "1" || v === "yes";
+          attributeFilterMap.get(key)!.add(value);
+        };
+
+        if (filtersToUse.categoryFilters && filtersToUse.categoryFilters.length > 0) {
+          filtersToUse.categoryFilters.forEach((entry) => {
+            const [attributeKey, value] = entry.split(":");
+            addFilterValue(attributeKey, value);
+          });
+        }
+
+        if (filtersToUse.attributes) {
+          const attributePairs = filtersToUse.attributes
+            .split(",")
+            .map((item) => item.trim())
+            .filter(Boolean);
+
+          if (attributePairs.length > 0) {
+            const attributeKeyMap = await getAttributeKeyMap();
+            attributePairs.forEach((pair) => {
+              const [attributeIdStr, option] = pair.split(":");
+              const attributeId = Number(attributeIdStr);
+              if (!Number.isFinite(attributeId) || !option) return;
+              const attribute = attributeKeyMap.get(attributeId);
+              if (!attribute) return;
+              const attributeKey = attribute.key || `attribute-${attribute.id}`;
+              addFilterValue(attributeKey, option);
+            });
           }
-          return true; // keep if unknown
+        }
+
+        attributeFilterMap.forEach((values, key) => {
+          if (values.size > 0) {
+            params[`attr_${key}`] = Array.from(values).join(",");
+          }
         });
 
-        // Client-side pagination
-        const startIndex = (page - 1) * PRODUCTS_PER_PAGE;
-        const endIndex = startIndex + PRODUCTS_PER_PAGE;
-        const paginatedProducts = availableProducts.slice(startIndex, endIndex);
+        const response = await fetchClientProducts(params);
 
-        setProducts(paginatedProducts);
+        // Extract results from paginated response
+        const fetchedProducts = response.results || [];
+
+        // Apply client-side filters where backend support is unavailable
+        let filteredProducts = fetchedProducts;
+
+        if (filtersToUse.inStock) {
+          filteredProducts = filteredProducts.filter((p) => p.is_in_stock);
+        }
+
+        setProducts(filteredProducts);
         setCurrentPage(page);
-        setTotalPages(Math.ceil(availableProducts.length / PRODUCTS_PER_PAGE));
+        // Calculate total pages from count
+        const totalCount = response.count || 0;
+        setTotalPages(Math.ceil(totalCount / 12)); // Assuming 12 items per page
       } catch (err: any) {
         setError(err?.response?.data?.message || err?.message || "Failed to fetch products");
       } finally {

@@ -47,14 +47,17 @@ const DescriptionText = styled.div`
 
 const ProductText = ({ product }: { product: ProductList }) => {
   // Format price with discount if available
-  const formattedPrice = product.compare_price
-    ? `${product.price} ₾ (${product.compare_price} ₾)`
+  const formattedPrice = product.compare_at_price
+    ? `${product.price} ₾ (${product.compare_at_price} ₾)`
     : `${product.price} ₾`;
+
+  // Get product name (could be string or translatable object)
+  const productName = typeof product.name === "string" ? product.name : "";
 
   return (
     <TextWrapper>
       <PriceText>{formattedPrice}</PriceText>
-      <DescriptionText>{product.title}</DescriptionText>
+      <DescriptionText>{productName}</DescriptionText>
     </TextWrapper>
   );
 };

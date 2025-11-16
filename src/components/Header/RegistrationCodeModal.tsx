@@ -9,6 +9,10 @@ import CloseIcon from "./CloseIcon";
 import ReturnIcon from "./ReturnIcon";
 import AdditionalAction from "./AdditionalAction";
 import { verifyEmail, resendVerificationCode } from "@/api/generated/api";
+import type {
+  EmailVerificationRequestRequest,
+  ResendVerificationCodeRequestRequest,
+} from "@/api/generated/interfaces";
 import { useAuth } from "@/contexts/AuthContext";
 
 const StyledContainer = styled.div`
@@ -78,6 +82,7 @@ interface RegistrationCodeModalProps {
   onReturn: () => void;
   onConfirm: () => void;
   email: string;
+  verificationToken?: string;
   dictionary?: any;
 }
 
@@ -86,6 +91,7 @@ const RegistrationCodeModal = ({
   onReturn,
   onConfirm,
   email,
+  verificationToken = "",
   dictionary,
 }: RegistrationCodeModalProps) => {
   const [code, setCode] = useState("");
@@ -94,6 +100,8 @@ const RegistrationCodeModal = ({
   const [isResending, setIsResending] = useState(false);
   const [resendInfo, setResendInfo] = useState("");
   const [resendError, setResendError] = useState("");
+  // Track the freshest verification token locally so we don't keep using a stale prop value after resends
+  const [currentToken, setCurrentToken] = useState<string>(verificationToken);
   const { loginWithTokens } = useAuth();
   const handleClickInside = (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -103,13 +111,45 @@ const RegistrationCodeModal = ({
     try {
       setIsLoading(true);
       setError("");
-      const resp = await verifyEmail({ email, code });
-      if (resp?.access && resp?.refresh && resp?.user) {
-        loginWithTokens(resp.user, resp.access, resp.refresh);
+      // Always pull the latest token from local state; if missing, fall back to window
+      const token =
+        currentToken ||
+        (typeof window !== "undefined" ? (window as any).__reg_verification_token || "" : "");
+
+      const trimmedCode = code.trim();
+
+      if (!token) {
+        setError(
+          dictionary?.header?.registrationCodeModal?.missingToken ||
+            "Verification session expired. Please start registration again."
+        );
+        return;
+      }
+
+      if (!trimmedCode) {
+        setError(
+          dictionary?.header?.registrationCodeModal?.missingCode ||
+            "Please enter the verification code."
+        );
+        return;
+      }
+
+      const requestData: EmailVerificationRequestRequest = {
+        verification_token: token,
+        code: trimmedCode,
+      };
+      const resp = await verifyEmail(requestData);
+      if (resp?.access && resp?.refresh && resp?.client) {
+        loginWithTokens(resp.client, resp.access, resp.refresh);
         onConfirm();
       }
-    } catch {
-      setError("Invalid or expired code. Please try again.");
+    } catch (e: any) {
+      const apiMessage = e?.response?.data?.message || e?.response?.data?.error;
+      setError(
+        apiMessage ||
+          dictionary?.header?.registrationCodeModal?.invalidCode ||
+          "Invalid or expired code. Please try again."
+      );
     } finally {
       setIsLoading(false);
     }
@@ -121,14 +161,30 @@ const RegistrationCodeModal = ({
       setIsResending(true);
       setResendInfo("");
       setResendError("");
-      await resendVerificationCode({ email });
+
+      const requestData: ResendVerificationCodeRequestRequest = {
+        email: email,
+      };
+
+      const response = await resendVerificationCode(requestData);
+
+      // Update the verification token if provided in response
+      if (response?.verification_token) {
+        setCurrentToken(response.verification_token); // update local token
+        if (typeof window !== "undefined") {
+          (window as any).__reg_verification_token = response.verification_token;
+        }
+      }
+
       setResendInfo(
-        dictionary?.header?.registrationCodeModal?.resendInfo ||
-          "The code has been resent to your email"
+        response?.message ||
+          dictionary?.header?.registrationCodeModal?.resendInfo ||
+          "Verification code has been resent. Please check your email."
       );
-    } catch {
+    } catch (error: any) {
       setResendError(
-        dictionary?.header?.registrationCodeModal?.resendError ||
+        error?.response?.data?.message ||
+          dictionary?.header?.registrationCodeModal?.resendError ||
           "Failed to send the code. Please try again."
       );
     } finally {
@@ -189,7 +245,7 @@ const RegistrationCodeModal = ({
           width="460px"
           height="50px"
           onClick={handleVerify}
-          disabled={isLoading}
+          disabled={isLoading || !code.trim()}
         />
       </StyledPrimaryButton>
     </StyledContainer>

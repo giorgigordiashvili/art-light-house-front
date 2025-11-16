@@ -178,14 +178,14 @@ const NewProductCard = ({ product }: { product: ProductList; dictionary: any }) 
   const pathname = usePathname();
   const locale = (pathname?.split("/")[1] || "ge").toLowerCase();
 
-  // Extract image URL from primary_image (same as LampaImage component in products page)
-  const imageUrl =
-    product.primary_image && typeof product.primary_image === "object"
-      ? (product.primary_image as any).image
-      : product.primary_image;
+  // Use image field from ProductList interface
+  const imageUrl = product.image;
 
   // Check if we have a valid image URL
   const hasValidImage = imageUrl && typeof imageUrl === "string" && imageUrl.trim() !== "";
+
+  // Get product name (could be string or translatable object)
+  const productName = typeof product.name === "string" ? product.name : "";
 
   const handleCardClick = (e: React.MouseEvent) => {
     const target = e.target as HTMLElement;
@@ -219,7 +219,7 @@ const NewProductCard = ({ product }: { product: ProductList; dictionary: any }) 
         {hasValidImage ? (
           <ZoomedImage
             src={imageUrl}
-            alt={product.title}
+            alt={productName || "Product"}
             width={isMobile ? 175 : 239}
             height={isMobile ? 188 : 257}
             draggable="false"
@@ -235,8 +235,8 @@ const NewProductCard = ({ product }: { product: ProductList; dictionary: any }) 
         )}
       </StyledImageWrapper>
       <StyledActions>
-        <ProductHeartIcon productId={product.id} defaultIsFavorite={product.is_favorite} />
-        <CardText name={product.title} price={`${product.price} ₾`} />
+        <ProductHeartIcon productId={product.id} />
+        <CardText name={productName} price={`${product.price} ₾`} />
         <PlusButton product={product} />
       </StyledActions>
     </StyledContainer>

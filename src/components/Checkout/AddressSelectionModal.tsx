@@ -1,7 +1,7 @@
 import React from "react";
 import styled from "styled-components";
 import Image from "next/image";
-import { Address } from "@/api/generated/interfaces";
+import { ClientAddress } from "@/api/generated/interfaces";
 
 const Overlay = styled.div`
   position: fixed;
@@ -146,9 +146,9 @@ const EmptyState = styled.div`
 `;
 
 type Props = {
-  addresses: Address[];
+  addresses: ClientAddress[];
   currentAddressId: number | null;
-  onSelect: (address: Address) => void;
+  onSelect: (address: ClientAddress) => void;
   onClose: () => void;
   dictionary?: any;
 };
@@ -210,20 +210,21 @@ const AddressSelectionModal = ({
               >
                 <IconWrapper>
                   <Image
-                    src={getAddressTypeIcon(address.address_type as any)}
+                    src={getAddressTypeIcon(address.label as any)}
                     alt="address icon"
                     width={20}
                     height={20}
                   />
                 </IconWrapper>
                 <AddressInfo>
-                  <AddressType>
-                    {getAddressTypeName(address.address_type as any, dictionary)}
-                  </AddressType>
-                  <AddressText>{address.address_string}</AddressText>
-                  {address.extra_details && (
+                  <AddressType>{getAddressTypeName(address.label as any, dictionary)}</AddressType>
+                  <AddressText>
+                    {address.address}
+                    {address.city ? `, ${address.city}` : ""}
+                  </AddressText>
+                  {address.extra_instructions && (
                     <AddressText style={{ fontSize: "12px", color: "#999" }}>
-                      {address.extra_details}
+                      {address.extra_instructions}
                     </AddressText>
                   )}
                   {address.is_default && (

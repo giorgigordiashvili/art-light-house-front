@@ -80,7 +80,7 @@ const Address = ({ dictionary }: any) => {
   const [editingAddress, setEditingAddress] = useState<AddressData | null>(null);
 
   // Fetch addresses from API
-  const { addresses: apiAddresses, loading, error, refetch } = useAddresses();
+  const { addresses: apiAddresses, loading, error, refetch, isAuthenticated } = useAddresses();
 
   // Convert API addresses to AddressData format
   const addresses = apiAddresses.map((address) => convertAddressToAddressData(address, dictionary));
@@ -130,7 +130,17 @@ const Address = ({ dictionary }: any) => {
           <StyledMobileDetail>
             <MobileDetailDropdown dictionary={dictionary} />
           </StyledMobileDetail>
-          {error ? (
+          {loading ? (
+            // Show skeleton via AddressBar while loading regardless of auth state
+            <AddressBar
+              onOpenModal={() => setIsModalOpen(true)}
+              addresses={[]}
+              onEditAddress={handleEditAddress}
+              onDeleteAddress={handleDeleteAddress}
+              dictionary={dictionary}
+              loading={true}
+            />
+          ) : error ? (
             <div
               style={{
                 color: "#ff4444",
@@ -142,14 +152,16 @@ const Address = ({ dictionary }: any) => {
               Error loading addresses: {error}
             </div>
           ) : (
-            <AddressBar
-              onOpenModal={() => setIsModalOpen(true)}
-              addresses={addresses}
-              onEditAddress={handleEditAddress}
-              onDeleteAddress={handleDeleteAddress}
-              dictionary={dictionary}
-              loading={loading}
-            />
+            isAuthenticated && (
+              <AddressBar
+                onOpenModal={() => setIsModalOpen(true)}
+                addresses={addresses}
+                onEditAddress={handleEditAddress}
+                onDeleteAddress={handleDeleteAddress}
+                dictionary={dictionary}
+                loading={false}
+              />
+            )
           )}
         </StyledBars>
       </StyledContainer>

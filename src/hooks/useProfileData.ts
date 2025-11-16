@@ -1,25 +1,25 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { userProfile } from "@/api/generated/api";
-import { User } from "@/api/generated/interfaces";
+import { getCurrentClient } from "@/api/generated/api";
+import { EcommerceClient } from "@/api/generated/interfaces";
 import { useAuth } from "@/contexts/AuthContext";
 
 interface UseProfileDataReturn {
-  profileData: User | null;
+  profileData: EcommerceClient | null;
   isLoading: boolean;
   error: string | null;
   refetch: () => Promise<void>;
 }
 
 export const useProfileData = (): UseProfileDataReturn => {
-  const [profileData, setProfileData] = useState<User | null>(null);
+  const [profileData, setProfileData] = useState<EcommerceClient | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const { isAuthenticated, token } = useAuth();
+  const { isAuthenticated } = useAuth();
 
   const fetchProfile = async () => {
-    if (!isAuthenticated || !token) {
+    if (!isAuthenticated) {
       setIsLoading(false);
       setError("User not authenticated");
       return;
@@ -28,7 +28,7 @@ export const useProfileData = (): UseProfileDataReturn => {
     try {
       setIsLoading(true);
       setError(null);
-      const data = await userProfile();
+      const data = await getCurrentClient();
       setProfileData(data);
     } catch (err: any) {
       setError(err?.message || "Failed to fetch profile data");
@@ -38,14 +38,14 @@ export const useProfileData = (): UseProfileDataReturn => {
   };
 
   useEffect(() => {
-    if (isAuthenticated && token) {
+    if (isAuthenticated) {
       fetchProfile();
     } else {
       setIsLoading(false);
       setProfileData(null);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isAuthenticated, token]);
+  }, [isAuthenticated]);
 
   const refetch = async () => {
     await fetchProfile();

@@ -9,8 +9,11 @@ import ModalTitle from "./ModalTitle";
 import GoogleMap from "@/components/Contact/GoogleMap";
 import ToggleDefaultButton from "@/components/Buttons/ToggleDefaultButton";
 import { AddressData } from "@/types";
-import { addressCreate, addressUpdate } from "@/api/generated/api";
-import { AddressRequest, PatchedAddressUpdateRequest } from "@/api/generated/interfaces";
+import {
+  ecommerceClientAddressesCreate,
+  ecommerceClientAddressesPartialUpdate,
+} from "@/api/generated/api";
+import { PatchedClientAddressRequest, ClientAddress } from "@/api/generated/interfaces";
 import { mapPlaceToAddressType } from "@/utils/addressHelpers";
 
 const StyledContainer = styled.div`
@@ -107,27 +110,30 @@ const AddressModal = ({ onClose, onSave, initialData, dictionary }: Props) => {
 
       if (isEditing) {
         // Update existing address
-        const updateData: PatchedAddressUpdateRequest = {
-          address_string: address,
-          extra_details: additionalInfo || undefined,
+        const updateData: PatchedClientAddressRequest = {
+          address,
+          extra_instructions: additionalInfo || undefined,
           latitude: roundedLat,
           longitude: roundedLng,
           is_default: isDefault,
         };
 
-        await addressUpdate(initialData.id!, updateData);
+        await ecommerceClientAddressesPartialUpdate(String(initialData.id!), updateData);
       } else {
         // Create new address
-        const addressData: AddressRequest = {
-          address_type: mapPlaceToAddressType(selectedPlace, dictionary) as any,
-          address_string: address,
-          extra_details: additionalInfo || undefined,
+        // NOTE: Backend expects client to be null (it associates from auth), and requires city field
+        const addressData = {
+          client: null as any,
+          label: mapPlaceToAddressType(selectedPlace, dictionary) as any,
+          address,
+          city: "tbilisi", // default city; adjust if UI adds city selection
+          extra_instructions: additionalInfo || undefined,
           latitude: roundedLat,
           longitude: roundedLng,
           is_default: isDefault,
-        };
+        } as unknown as ClientAddress;
 
-        await addressCreate(addressData);
+        await ecommerceClientAddressesCreate(addressData);
       }
 
       // Call the parent callback to trigger refresh

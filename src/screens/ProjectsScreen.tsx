@@ -2,9 +2,22 @@
 import { useState, useEffect } from "react";
 import styled from "styled-components";
 import Link from "next/link";
-import { projectsList } from "@/api/generated/api";
-import { ProjectList } from "@/api/generated/interfaces";
+// TODO: Projects API not available in new API - backend needs to implement
+// import { ecommerceClientProjectsList } from "@/api/generated/api";
 import NewCircle from "@/components/ui/NewCircle";
+
+// Local type for Project (not in generated API - Projects feature not implemented)
+interface ProjectList {
+  id: number;
+  slug: string;
+  title: string;
+  short_description?: string;
+  category?: string;
+  year?: string;
+  location?: string;
+  is_featured?: boolean;
+  primary_image_url?: string;
+}
 import BigCircle from "@/components/ui/BigCircle";
 
 const StyledComponent = styled.div`
@@ -284,13 +297,14 @@ const ProjectsScreen = ({ dictionary }: ProjectsScreenProps) => {
 
   useEffect(() => {
     loadProjects();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [categoryFilter]);
 
   const loadProjects = async () => {
     try {
       setLoading(true);
-      const data = await projectsList(categoryFilter);
+      // TODO: Projects API not available - backend needs to implement ecommerceClientProjectsList
+      // const data = await ecommerceClientProjectsList(categoryFilter);
+      const data: ProjectList[] = []; // Temporary empty array
       setProjects(data);
 
       // Extract unique categories

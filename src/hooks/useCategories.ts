@@ -1,6 +1,11 @@
 import { useState, useEffect } from "react";
-import { Category } from "@/api/generated/interfaces";
-import { categoryList } from "@/api/generated/api";
+
+// TODO: Category interface needs to be added to new API
+interface Category {
+  id: number;
+  name: string;
+  [key: string]: any;
+}
 
 interface UseCategoriesReturn {
   categories: Category[];
@@ -45,7 +50,10 @@ export const useCategories = (): UseCategoriesReturn => {
         return;
       }
 
-      cache.promise = categoryList();
+      // TODO: Replace with actual API call when categories endpoint is available
+      // cache.promise = ecommerceClientCategoriesList();
+      // For now, return empty array
+      cache.promise = Promise.resolve([]);
       const data = await cache.promise;
       cache.data = data;
       cache.promise = null;

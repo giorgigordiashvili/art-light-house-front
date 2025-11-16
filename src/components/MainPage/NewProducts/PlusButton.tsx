@@ -1,8 +1,12 @@
 import React from "react";
 import styled from "styled-components";
 import Image from "next/image";
-import { ProductList, AddToCartRequest } from "@/api/generated/interfaces";
-import { cartAddItem } from "@/api/generated/api";
+import { ProductList } from "@/api/generated/interfaces";
+import {
+  ecommerceClientCartItemsCreate,
+  ecommerceClientCartGetOrCreateRetrieve,
+  ecommerceClientCartItemsPartialUpdate,
+} from "@/api/generated/api";
 import { useAuthModal } from "@/contexts/AuthModalContext";
 
 const StyledButton = styled.button`
@@ -43,14 +47,35 @@ const PlusButton = ({ product }: { product?: ProductList }) => {
     }
 
     try {
-      const payload: AddToCartRequest = { product_id: product.id, quantity: 1 };
-      const cart = await cartAddItem(payload);
+      // Ensure we have a cart id
+      const data = await ecommerceClientCartGetOrCreateRetrieve();
+      const normalized = (data as any)?.cart ? (data as any).cart : (data as any);
+      const cartId = normalized?.id;
+      if (!cartId) return;
+      // If already in cart, bump quantity; else create
+      const existing = Array.isArray(normalized?.items)
+        ? (normalized.items as any[]).find((it: any) => {
+            const pid = typeof it.product === "object" ? it.product?.id : it.product;
+            return pid === product.id;
+          })
+        : undefined;
+
+      if (existing) {
+        await ecommerceClientCartItemsPartialUpdate(String(existing.id), {
+          quantity: (existing.quantity || 0) + 1,
+        } as any);
+      } else {
+        const payload = { cart: cartId, product: product.id, variant: null, quantity: 1 } as any;
+        await ecommerceClientCartItemsCreate(payload);
+      }
+      const cart = await ecommerceClientCartGetOrCreateRetrieve();
+      const n = (cart as any)?.cart ? (cart as any).cart : (cart as any);
       try {
-        const count = Array.isArray(cart?.items)
-          ? cart.items.reduce((acc: number, it: any) => acc + (it.quantity || 0), 0)
+        const count = Array.isArray(n?.items)
+          ? n.items.reduce((acc: number, it: any) => acc + (it.quantity || 0), 0)
           : 0;
         if (typeof window !== "undefined") {
-          window.dispatchEvent(new CustomEvent("cartUpdated", { detail: { count, cart } }));
+          window.dispatchEvent(new CustomEvent("cartUpdated", { detail: { count, cart: n } }));
         }
       } catch {}
     } catch {}
