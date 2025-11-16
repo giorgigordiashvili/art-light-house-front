@@ -28,6 +28,9 @@ import type {
   PatchedFavoriteProductRequest,
   PaginatedItemListMinimalList,
   ItemListDetail,
+  ListItem,
+  PaginatedLanguageList,
+  Language,
   PaginatedOrderList,
   OrderCreateRequest,
   OrderCreate,
@@ -319,6 +322,35 @@ export async function ecommerceClientItemListsRetrieve(id: number): Promise<Item
   return response.data;
 }
 
+export async function ecommerceClientItemListsItemsRetrieve(
+  id: number,
+  itemId: string
+): Promise<ListItem> {
+  const response = await axios.get(`/api/ecommerce/client/item-lists/${id}/items/${itemId}/`);
+  return response.data;
+}
+
+export async function ecommerceClientLanguagesList(
+  ordering?: string,
+  page?: number
+): Promise<PaginatedLanguageList> {
+  const response = await axios.get(
+    `/api/ecommerce/client/languages/${(() => {
+      const parts = [
+        ordering ? "ordering=" + encodeURIComponent(ordering) : null,
+        page ? "page=" + encodeURIComponent(page) : null,
+      ].filter(Boolean);
+      return parts.length > 0 ? "?" + parts.join("&") : "";
+    })()}`
+  );
+  return response.data;
+}
+
+export async function ecommerceClientLanguagesRetrieve(id: number): Promise<Language> {
+  const response = await axios.get(`/api/ecommerce/client/languages/${id}/`);
+  return response.data;
+}
+
 export async function ecommerceClientOrdersList(
   ordering?: string,
   page?: number
@@ -364,7 +396,15 @@ export async function ecommerceClientOrdersDestroy(id: string): Promise<any> {
 }
 
 export async function ecommerceClientProductsList(
+  attrCategory?: string,
+  attrMaterial?: string,
+  attrNumberOfLamps?: string,
+  attrSubcategory?: string,
   isFeatured?: boolean,
+  language?: string,
+  maxPrice?: number,
+  minPrice?: number,
+  onSale?: boolean,
   ordering?: string,
   page?: number,
   search?: string
@@ -372,7 +412,15 @@ export async function ecommerceClientProductsList(
   const response = await axios.get(
     `/api/ecommerce/client/products/${(() => {
       const parts = [
+        attrCategory ? "attr_category=" + encodeURIComponent(attrCategory) : null,
+        attrMaterial ? "attr_material=" + encodeURIComponent(attrMaterial) : null,
+        attrNumberOfLamps ? "attr_number_of_lamps=" + encodeURIComponent(attrNumberOfLamps) : null,
+        attrSubcategory ? "attr_subcategory=" + encodeURIComponent(attrSubcategory) : null,
         isFeatured ? "is_featured=" + encodeURIComponent(isFeatured) : null,
+        language ? "language=" + encodeURIComponent(language) : null,
+        maxPrice ? "max_price=" + encodeURIComponent(maxPrice) : null,
+        minPrice ? "min_price=" + encodeURIComponent(minPrice) : null,
+        onSale ? "on_sale=" + encodeURIComponent(onSale) : null,
         ordering ? "ordering=" + encodeURIComponent(ordering) : null,
         page ? "page=" + encodeURIComponent(page) : null,
         search ? "search=" + encodeURIComponent(search) : null,

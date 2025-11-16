@@ -213,6 +213,27 @@ export interface ItemListMinimal {
   updated_at: string;
 }
 
+export interface Language {
+  id: number;
+  code: string;
+  name: any;
+  is_default?: boolean;
+  is_active?: boolean;
+  sort_order?: number;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface ListItem {
+  id: number;
+  label: string;
+  custom_id?: string;
+  position?: number;
+  is_active?: boolean;
+  custom_data?: any;
+  children: string;
+}
+
 export interface Order {
   id: number;
   order_number: string;
@@ -332,6 +353,13 @@ export interface PaginatedItemListMinimalList {
   results: ItemListMinimal[];
 }
 
+export interface PaginatedLanguageList {
+  count: number;
+  next?: string;
+  previous?: string;
+  results: Language[];
+}
+
 export interface PaginatedOrderList {
   count: number;
   next?: string;
@@ -423,6 +451,15 @@ export interface ProductAttributeValue {
   updated_at: string;
 }
 
+export interface ProductAttributeValueRequest {
+  attribute_id: number;
+  value_text?: string;
+  value_number?: string;
+  value_boolean?: boolean;
+  value_date?: string;
+  value_json?: any;
+}
+
 export interface ProductDetail {
   id: number;
   sku: string;
@@ -480,6 +517,7 @@ export interface ProductList {
   is_featured?: boolean;
   is_low_stock: boolean;
   is_in_stock: boolean;
+  attribute_values: ProductAttributeValue[];
   created_at: string;
   updated_at: string;
 }
