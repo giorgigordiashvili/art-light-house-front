@@ -8,6 +8,7 @@ import {
   ecommerceClientItemListsItemsRetrieve,
 } from "@/api/generated/api";
 import NewCircle from "@/components/ui/NewCircle";
+import Circle from "@/components/ui/Circle";
 import BigCircle from "@/components/ui/BigCircle";
 
 interface ProjectDetailScreenProps {
@@ -350,13 +351,118 @@ const ContentSection = styled.div`
   }
 `;
 
-const LoadingContainer = styled.div`
+const SkeletonWrapper = styled.div`
+  @keyframes shimmer {
+    0% {
+      background-position: -1000px 0;
+    }
+    100% {
+      background-position: 1000px 0;
+    }
+  }
+`;
+
+const SkeletonBox = styled.div<{ width?: string; height?: string; borderRadius?: string }>`
+  width: ${(props) => props.width || "100%"};
+  height: ${(props) => props.height || "20px"};
+  border-radius: ${(props) => props.borderRadius || "8px"};
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0.05) 0%,
+    rgba(255, 255, 255, 0.1) 50%,
+    rgba(255, 255, 255, 0.05) 100%
+  );
+  background-size: 1000px 100%;
+  animation: shimmer 2s infinite;
+`;
+
+const SkeletonHeader = styled.div`
+  margin-bottom: 50px;
+`;
+
+const SkeletonTitle = styled(SkeletonBox)`
+  width: 60%;
+  height: 48px;
+  margin-bottom: 24px;
+
+  @media (max-width: 768px) {
+    width: 80%;
+    height: 32px;
+  }
+`;
+
+const SkeletonMetaRow = styled.div`
   display: flex;
-  justify-content: center;
-  align-items: center;
-  min-height: 400px;
-  color: white;
-  font-size: 1.125rem;
+  gap: 24px;
+  flex-wrap: wrap;
+  margin-bottom: 16px;
+`;
+
+const SkeletonMetaItem = styled(SkeletonBox)`
+  width: 120px;
+  height: 16px;
+`;
+
+const SkeletonBadge = styled(SkeletonBox)`
+  width: 100px;
+  height: 32px;
+  border-radius: 20px;
+`;
+
+const SkeletonImageGallery = styled.div`
+  margin-bottom: 50px;
+`;
+
+const SkeletonMainImage = styled(SkeletonBox)`
+  width: 100%;
+  height: 600px;
+  border-radius: 16px;
+  margin-bottom: 20px;
+
+  @media (max-width: 768px) {
+    height: 400px;
+  }
+`;
+
+const SkeletonThumbnailGrid = styled.div`
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 12px;
+
+  @media (max-width: 768px) {
+    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+  }
+`;
+
+const SkeletonThumbnail = styled(SkeletonBox)`
+  height: 120px;
+  border-radius: 8px;
+`;
+
+const SkeletonContentSection = styled.div`
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 16px;
+  padding: 40px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  margin-bottom: 40px;
+
+  @media (max-width: 768px) {
+    padding: 24px;
+  }
+`;
+
+const SkeletonContentTitle = styled(SkeletonBox)`
+  width: 200px;
+  height: 28px;
+  margin-bottom: 24px;
+`;
+
+const SkeletonTextLine = styled(SkeletonBox)`
+  margin-bottom: 12px;
+
+  &:last-child {
+    width: 75%;
+  }
 `;
 
 const ErrorContainer = styled.div`
@@ -373,6 +479,16 @@ const ErrorContainer = styled.div`
   p {
     font-size: 1rem;
     margin-bottom: 24px;
+  }
+`;
+
+const DecorCircleWrapper = styled.div`
+  position: absolute;
+  bottom: -1200px;
+  left: 38%;
+  transform: translateX(-50%);
+  @media (max-width: 1080px) {
+    display: none;
   }
 `;
 
@@ -439,8 +555,49 @@ const ProjectDetailScreen = ({ dictionary, lang, slug }: ProjectDetailScreenProp
     return (
       <StyledComponent>
         <Container>
-          <LoadingContainer>Loading project...</LoadingContainer>
+          <BackButton href={`/${lang}/projects`}>
+            <svg fill="currentColor" viewBox="0 0 24 24">
+              <path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z" />
+            </svg>
+            {dictionary.projects.backToProjects}
+          </BackButton>
+
+          <SkeletonWrapper>
+            <SkeletonHeader>
+              <SkeletonTitle />
+              <SkeletonMetaRow>
+                <SkeletonMetaItem />
+                <SkeletonMetaItem />
+                <SkeletonMetaItem />
+              </SkeletonMetaRow>
+              <SkeletonBadge />
+            </SkeletonHeader>
+
+            <SkeletonImageGallery>
+              <SkeletonMainImage />
+              <SkeletonThumbnailGrid>
+                <SkeletonThumbnail />
+                <SkeletonThumbnail />
+                <SkeletonThumbnail />
+                <SkeletonThumbnail />
+              </SkeletonThumbnailGrid>
+            </SkeletonImageGallery>
+
+            <SkeletonContentSection>
+              <SkeletonContentTitle />
+              <SkeletonTextLine />
+              <SkeletonTextLine />
+              <SkeletonTextLine />
+              <SkeletonTextLine />
+            </SkeletonContentSection>
+          </SkeletonWrapper>
         </Container>
+
+        <NewCircle size="small" top="1000px" right="142px" media="no" />
+        <DecorCircleWrapper>
+          <Circle size="large" />
+        </DecorCircleWrapper>
+        <BigCircle variant={2} setZIndex />
       </StyledComponent>
     );
   }
