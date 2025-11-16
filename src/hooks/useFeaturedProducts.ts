@@ -21,10 +21,11 @@ export const useFeaturedProducts = (): UseFeaturedProductsResult => {
 
         // Fetch products with is_featured = true
         const response = await ecommerceClientProductsList(
-          true, // isFeatured
-          undefined,
-          undefined,
-          undefined
+          undefined, // attrCategory
+          undefined, // attrMaterial
+          undefined, // attrNumberOfLamps
+          undefined, // attrSubcategory
+          true // isFeatured
         );
 
         setFeaturedProducts(response.results || []);

@@ -3,8 +3,14 @@ import React, { useState, useEffect } from "react";
 import CheckboxGroup from "./CheckboxGroup";
 import { useCategories } from "../../hooks/useCategories";
 import { CheckboxOption } from "./types";
-import { Category } from "@/api/generated/interfaces";
 import { useFilterContext } from "../../contexts/FilterContext";
+
+// Local type definition for Category (not in generated API)
+interface Category {
+  id: number;
+  name: string;
+  subcategories?: Array<{ id: number; name: string }>;
+}
 
 interface CategoryFilterProps {
   dictionary: any;

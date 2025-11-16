@@ -4,8 +4,26 @@ import styled from "styled-components";
 import Link from "next/link";
 // TODO: Projects API not available in new API - backend needs to implement
 // import { ecommerceClientProjectsRetrieve } from "@/api/generated/api";
-import { ProjectDetail } from "@/api/generated/interfaces";
 import NewCircle from "@/components/ui/NewCircle";
+
+// Local type for Project (not in generated API - Projects feature not implemented)
+interface ProjectDetail {
+  id: number;
+  title: string;
+  short_description?: string;
+  description?: string;
+  client?: string;
+  category?: string;
+  year?: string;
+  location?: string;
+  is_featured?: boolean;
+  primary_image_url?: string;
+  images?: Array<{
+    id: number;
+    image_url: string;
+    alt_text?: string;
+  }>;
+}
 import Circle from "@/components/ui/Circle";
 import BigCircle from "@/components/ui/BigCircle";
 
@@ -238,7 +256,7 @@ const ProjectDetailScreen = ({ dictionary, lang }: ProjectDetailScreenProps) => 
   const [project] = useState<ProjectDetail | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [selectedImageIndex] = useState(0);
+  const [selectedImageIndex, setSelectedImageIndex] = useState(0);
 
   const loadProject = useCallback(async () => {
     try {
@@ -368,7 +386,7 @@ const ProjectDetailScreen = ({ dictionary, lang }: ProjectDetailScreenProps) => 
             )}
             <div
               className="description-content"
-              dangerouslySetInnerHTML={{ __html: project.description }}
+              dangerouslySetInnerHTML={{ __html: project.description || "" }}
             />
           </ContentSection>
         )}

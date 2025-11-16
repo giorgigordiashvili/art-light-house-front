@@ -137,6 +137,10 @@ export interface ClientRegistrationResponse {
   message: string;
 }
 
+export interface DisplayModeEnum {
+  [key: string]: any;
+}
+
 export interface EcommerceClient {
   id: number;
   first_name: string;
@@ -187,6 +191,22 @@ export interface FavoriteProductCreateRequest {
 
 export interface FavoriteProductRequest {
   client: number;
+}
+
+export interface HomepageSectionPublic {
+  id: number;
+  title: any;
+  subtitle?: any;
+  section_type: SectionTypeEnum;
+  position?: number;
+  display_mode?: DisplayModeEnum;
+  settings?: any;
+  background_color?: string;
+  background_image_url?: string;
+  text_color?: string;
+  attribute_key?: string;
+  attribute_value?: string;
+  data: string;
 }
 
 export interface ItemListDetail {
@@ -578,6 +598,10 @@ export interface ResendVerificationCodeRequestRequest {
 export interface ResendVerificationCodeResponse {
   verification_token: string;
   message: string;
+}
+
+export interface SectionTypeEnum {
+  [key: string]: any;
 }
 
 export interface StatusF43enum {

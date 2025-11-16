@@ -1,8 +1,30 @@
 "use client";
 import React, { createContext, useContext, useState, useEffect, ReactNode } from "react";
-import { User, TenantLogin } from "@/api/generated/interfaces";
-import { tenantLogin, tenantLogout } from "@/api/generated/api";
 import adminAxios from "@/api/admin-axios";
+
+// Admin-specific types (not part of ecommerce client API)
+interface TenantLogin {
+  email: string;
+  password: string;
+}
+
+interface User {
+  id: number;
+  email: string;
+  first_name?: string;
+  last_name?: string;
+  is_admin?: boolean | string;
+}
+
+// Admin login/logout API functions
+const tenantLogin = async (data: TenantLogin): Promise<{ token?: string; message?: string }> => {
+  const response = await adminAxios.post(`/api/auth/tenant-login/`, data);
+  return response.data;
+};
+
+const tenantLogout = async (): Promise<void> => {
+  await adminAxios.post(`/api/auth/tenant-logout/`);
+};
 
 // The User interface now includes is_admin field from the API
 // We can use it directly without extending the interface

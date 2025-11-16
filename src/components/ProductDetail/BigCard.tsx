@@ -245,7 +245,9 @@ const BigCard = ({
         <MainImageWrapper>
           <Image
             src={displayImage.image}
-            alt={displayImage.alt_text || product.title}
+            alt={
+              displayImage.alt_text || (typeof product.name === "string" ? product.name : "Product")
+            }
             fill
             style={{ objectFit: "contain" }}
           />

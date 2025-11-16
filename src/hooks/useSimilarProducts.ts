@@ -30,7 +30,19 @@ export const useSimilarProducts = (
         setError(null);
 
         // Fetch products (category filtering will need to be done client-side or backend needs update)
-        const response = await ecommerceClientProductsList(false, undefined, 1, undefined);
+        const response = await ecommerceClientProductsList(
+          undefined, // attrCategory
+          undefined, // attrMaterial
+          undefined, // attrNumberOfLamps
+          undefined, // attrSubcategory
+          undefined, // isFeatured
+          undefined, // language
+          undefined, // maxPrice
+          undefined, // minPrice
+          undefined, // onSale
+          undefined, // ordering
+          1 // page
+        );
 
         // Filter out the current product and limit the results
         const filtered = (response.results || [])

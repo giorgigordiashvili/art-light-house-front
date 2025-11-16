@@ -7,7 +7,7 @@ import ModalDescription from "./ModalDescription";
 import PrimaryButton from "../Buttons/PrimaryButton";
 import ModalTitle from "./ModalTitle";
 import { passwordResetRequest } from "@/api/generated/api";
-import type { PasswordResetRequest } from "@/api/generated/interfaces";
+import type { PasswordResetRequestRequest } from "@/api/generated/interfaces";
 
 const StyledOverlayWrapper = styled.div`
   position: fixed;
@@ -108,7 +108,7 @@ const RecoverPasswordModal = ({
       setError("");
       setSuccess("");
 
-      const requestData: PasswordResetRequest = {
+      const requestData: PasswordResetRequestRequest = {
         email: email.trim(),
       };
 

@@ -143,7 +143,7 @@ const Container = ({ dictionary }: { dictionary: any }) => {
           ))}
         </ProductsWrapper>
         <SectionTitle>{dictionary?.succsessOrder?.address}</SectionTitle>
-        <Address dictionary={dictionary} address={latestOrder?.delivery_address_data} />
+        <Address dictionary={dictionary} address={latestOrder?.delivery_address} />
         <SectionTitle>{dictionary?.succsessOrder?.delivery}</SectionTitle>
         <Delivery dictionary={dictionary} order={latestOrder || undefined} />
         <SummaryBlock dictionary={dictionary} order={latestOrder || undefined} />

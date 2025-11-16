@@ -7,7 +7,7 @@ import ModalDescription from "./ModalDescription";
 import PrimaryButton from "../Buttons/PrimaryButton";
 import ModalTitle from "./ModalTitle";
 import { passwordResetConfirm } from "@/api/generated/api";
-import type { PasswordResetConfirm } from "@/api/generated/interfaces";
+import type { PasswordResetConfirmRequest } from "@/api/generated/interfaces";
 
 const StyledOverlayWrapper = styled.div`
   position: fixed;
@@ -145,7 +145,7 @@ const PasswordResetVerifyModal = ({
     try {
       setLoading(true);
 
-      const requestData: PasswordResetConfirm = {
+      const requestData: PasswordResetConfirmRequest = {
         email: email.trim(),
         code: code.trim(),
         new_password: newPassword,

@@ -4,8 +4,20 @@ import styled from "styled-components";
 import Link from "next/link";
 // TODO: Projects API not available in new API - backend needs to implement
 // import { ecommerceClientProjectsList } from "@/api/generated/api";
-import { ProjectList } from "@/api/generated/interfaces";
 import NewCircle from "@/components/ui/NewCircle";
+
+// Local type for Project (not in generated API - Projects feature not implemented)
+interface ProjectList {
+  id: number;
+  slug: string;
+  title: string;
+  short_description?: string;
+  category?: string;
+  year?: string;
+  location?: string;
+  is_featured?: boolean;
+  primary_image_url?: string;
+}
 import BigCircle from "@/components/ui/BigCircle";
 
 const StyledComponent = styled.div`

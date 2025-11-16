@@ -3,8 +3,14 @@ import React, { useState, useEffect } from "react";
 import CheckboxGroup from "./CheckboxGroup";
 // TODO: Attributes endpoint not available in new API - need backend implementation
 // import { ecommerceClientAttributesList } from "@/api/generated/api";
-import { Attribute } from "@/api/generated/interfaces";
 import { useFilterContext } from "@/contexts/FilterContext";
+
+// Local type definition for Attribute (not in generated API)
+interface Attribute {
+  id: number;
+  name: string;
+  values: Array<{ id: number; value: string }>;
+}
 
 interface AttributeFilterProps {
   attributeName: string; // "სტილი" or "განათების ტიპი"

@@ -4,12 +4,18 @@ import { useState, useEffect, useMemo } from "react";
 import InputWithLabel from "./Input";
 import SaveButton from "@/ProfileButton/Save";
 import Cancel from "@/ProfileButton/Cancel";
-import { User } from "@/api/generated/interfaces";
+import { EcommerceClient } from "@/api/generated/interfaces";
 import { useProfileUpdate } from "@/hooks/useProfileUpdate";
 import { useAuth } from "@/contexts/AuthContext";
 // TODO: Password change endpoint not available for clients in new API
 // import { ecommerceClientPasswordChangeCreate } from "@/api/generated/api";
-import type { PasswordChangeRequest } from "@/api/generated/interfaces";
+
+// Local type for password change request (not in generated API)
+interface PasswordChangeRequest {
+  current_password: string;
+  new_password: string;
+  new_password_confirm: string;
+}
 const StylePersonal = styled.div`
   width: 100%;
   max-width: 800px;
@@ -105,7 +111,7 @@ const Personal = ({
   variant = "data",
 }: {
   dictionary: any;
-  profileData: User | null;
+  profileData: EcommerceClient | null;
   isLoading: boolean;
   variant?: "data" | "password";
 }) => {

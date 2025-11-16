@@ -110,7 +110,7 @@ function Card({ product, dictionary }: { product: ProductList; dictionary: any }
   return (
     <StyledRectangle onClick={handleCardClick} onMouseDown={handleMouseDown}>
       <ClickableArea>
-        <ProductHeartIcon productId={product.id} defaultIsFavorite={product.is_favorite} />
+        <ProductHeartIcon productId={product.id} />
         <LampaImage product={product} />
         <ProductText product={product} />
         <AddButton product={product} dictionary={dictionary} />

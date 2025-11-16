@@ -26,6 +26,7 @@ import type {
   FavoriteProduct,
   FavoriteProductRequest,
   PatchedFavoriteProductRequest,
+  HomepageSectionPublic,
   PaginatedItemListMinimalList,
   ItemListDetail,
   ListItem,
@@ -296,6 +297,11 @@ export async function ecommerceClientFavoritesPartialUpdate(
 
 export async function ecommerceClientFavoritesDestroy(id: string): Promise<any> {
   const response = await axios.delete(`/api/ecommerce/client/favorites/${id}/`);
+  return response.data;
+}
+
+export async function ecommerceClientHomepageList(): Promise<HomepageSectionPublic[]> {
+  const response = await axios.get(`/api/ecommerce/client/homepage/`);
   return response.data;
 }
 
