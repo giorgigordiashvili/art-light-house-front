@@ -13,9 +13,18 @@ const TextWrapper = styled.div`
   }
 `;
 
-const PriceText = styled.div`
-  width: auto;
+const PriceWrapper = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 8px;
   height: 24px;
+  @media (max-width: 1080px) {
+    height: 14px;
+    gap: 6px;
+  }
+`;
+
+const PriceText = styled.div`
   font-family: "Helvetica", sans-serif;
   font-weight: 700;
   font-size: 20px;
@@ -24,7 +33,21 @@ const PriceText = styled.div`
   color: white;
   @media (max-width: 1080px) {
     font-size: 14px;
-    height: 14px;
+    line-height: 14px;
+  }
+`;
+
+const OldPriceText = styled.div`
+  font-family: "Helvetica", sans-serif;
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 24px;
+  letter-spacing: 0%;
+  color: #ffffff80;
+  text-decoration: line-through;
+  @media (max-width: 1080px) {
+    font-size: 12px;
+    line-height: 14px;
   }
 `;
 
@@ -46,17 +69,18 @@ const DescriptionText = styled.div`
 `;
 
 const ProductText = ({ product }: { product: ProductList }) => {
-  // Format price with discount if available
-  const formattedPrice = product.compare_at_price
-    ? `${product.price} ₾ (${product.compare_at_price} ₾)`
-    : `${product.price} ₾`;
+  // Check if product is on sale
+  const isOnSale = product.compare_at_price && product.compare_at_price > product.price;
 
   // Get product name (could be string or translatable object)
   const productName = typeof product.name === "string" ? product.name : "";
 
   return (
     <TextWrapper>
-      <PriceText>{formattedPrice}</PriceText>
+      <PriceWrapper>
+        <PriceText>{product.price} ₾</PriceText>
+        {isOnSale && <OldPriceText>{product.compare_at_price} ₾</OldPriceText>}
+      </PriceWrapper>
       <DescriptionText>{productName}</DescriptionText>
     </TextWrapper>
   );
