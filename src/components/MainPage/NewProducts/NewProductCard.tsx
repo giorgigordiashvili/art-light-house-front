@@ -86,6 +86,7 @@ import CardText from "./CardText";
 import { ProductList } from "@/api/generated/interfaces";
 import { usePathname, useRouter } from "next/navigation";
 import ProductHeartIcon from "@/components/ListProductCard/ProductHeartIcon";
+import { getLocaleFromPath } from "@/utils/getLocaleFromPath";
 
 const useIsMobile = (breakpoint = 1080) => {
   const [isMobile, setIsMobile] = useState(false);
@@ -112,6 +113,7 @@ const StyledContainer = styled.div`
   padding: 13px 20px 20px 17px;
   position: relative;
   overflow: hidden;
+  transition: 0.3s ease;
   cursor: pointer;
 
   @media (max-width: 768px) {
@@ -176,6 +178,7 @@ const NewProductCard = ({ product }: { product: ProductList; dictionary: any }) 
   const isMobile = useIsMobile();
   const router = useRouter();
   const pathname = usePathname();
+  const language = getLocaleFromPath(pathname);
   const locale = (pathname?.split("/")[1] || "ge").toLowerCase();
 
   // Use image field from ProductList interface
@@ -184,8 +187,20 @@ const NewProductCard = ({ product }: { product: ProductList; dictionary: any }) 
   // Check if we have a valid image URL
   const hasValidImage = imageUrl && typeof imageUrl === "string" && imageUrl.trim() !== "";
 
-  // Get product name (could be string or translatable object)
-  const productName = typeof product.name === "string" ? product.name : "";
+  // Get product name based on current language
+  const getProductName = () => {
+    if (typeof product.name === "string") {
+      return product.name;
+    }
+    if (product.name && typeof product.name === "object") {
+      // Map 'ge' to 'ka' for Georgian language
+      const langKey = language === "ge" ? "ka" : language;
+      return (product.name as any)[langKey] || product.name.en || "";
+    }
+    return "";
+  };
+
+  const productName = getProductName();
 
   const handleCardClick = (e: React.MouseEvent) => {
     const target = e.target as HTMLElement;

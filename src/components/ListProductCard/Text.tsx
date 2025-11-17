@@ -1,6 +1,8 @@
 import React from "react";
 import styled from "styled-components";
+import { usePathname } from "next/navigation";
 import { ProductList } from "@/api/generated/interfaces";
+import { getLocaleFromPath } from "@/utils/getLocaleFromPath";
 
 const TextWrapper = styled.div`
   position: absolute;
@@ -69,11 +71,26 @@ const DescriptionText = styled.div`
 `;
 
 const ProductText = ({ product }: { product: ProductList }) => {
+  const pathname = usePathname();
+  const language = getLocaleFromPath(pathname);
+
   // Check if product is on sale
   const isOnSale = product.compare_at_price && product.compare_at_price > product.price;
 
-  // Get product name (could be string or translatable object)
-  const productName = typeof product.name === "string" ? product.name : "";
+  // Get product name based on current language
+  const getProductName = () => {
+    if (typeof product.name === "string") {
+      return product.name;
+    }
+    if (product.name && typeof product.name === "object") {
+      // Map 'ge' to 'ka' for Georgian language
+      const langKey = language === "ge" ? "ka" : language;
+      return (product.name as any)[langKey] || product.name.en || "";
+    }
+    return "";
+  };
+
+  const productName = getProductName();
 
   return (
     <TextWrapper>

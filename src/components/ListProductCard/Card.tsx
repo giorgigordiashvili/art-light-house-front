@@ -16,7 +16,7 @@ const StyledRectangle = styled.div`
   z-index: 2;
   backdrop-filter: blur(114px);
   cursor: pointer;
-  transition: transform 0.2s ease;
+  transition: transform 0.3s ease;
 
   &:hover {
     transform: translateY(-5px);
