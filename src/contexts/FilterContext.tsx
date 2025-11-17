@@ -9,6 +9,7 @@ interface FilterState {
   inStock?: boolean;
   search?: string;
   ordering?: string;
+  onSale?: boolean;
 }
 
 interface FilterContextType {
@@ -17,6 +18,7 @@ interface FilterContextType {
   updatePriceFilter: (minPrice?: number, maxPrice?: number) => void;
   updateAttributeFilter: (attributes?: string) => void;
   updateOrdering: (ordering?: string) => void;
+  updateOnSaleFilter: (onSale?: boolean) => void;
   clearFilters: () => void;
   setOnFilterChange: (callback: ((filters: FilterState) => void) | null) => void;
   isInitialized: boolean;
@@ -61,6 +63,7 @@ export const FilterProvider: React.FC<FilterProviderProps> = ({ children }) => {
       selectedAttributes: urlSearchParams.get("attributes") || undefined,
       search: urlSearchParams.get("search") || undefined,
       ordering: urlSearchParams.get("ordering") || undefined,
+      onSale: urlSearchParams.get("on_sale") === "true" ? true : undefined,
     };
 
     setFilters(initialFilters);
@@ -111,6 +114,12 @@ export const FilterProvider: React.FC<FilterProviderProps> = ({ children }) => {
       current.set("ordering", newFilters.ordering);
     } else {
       current.delete("ordering");
+    }
+
+    if (newFilters.onSale) {
+      current.set("on_sale", "true");
+    } else {
+      current.delete("on_sale");
     }
 
     const newUrl = `${pathname}?${current.toString()}`;
@@ -170,6 +179,19 @@ export const FilterProvider: React.FC<FilterProviderProps> = ({ children }) => {
     }
   };
 
+  const updateOnSaleFilter = (onSale?: boolean) => {
+    const newFilters = {
+      ...filters,
+      onSale,
+    };
+    setFilters(newFilters);
+    syncFiltersToUrl(newFilters);
+    // Trigger immediate filtering when onSale changes
+    if (onFilterChangeRef.current) {
+      onFilterChangeRef.current(newFilters);
+    }
+  };
+
   const clearFilters = () => {
     const newFilters = {
       selectedCategoryFilters: [],
@@ -178,6 +200,7 @@ export const FilterProvider: React.FC<FilterProviderProps> = ({ children }) => {
       selectedAttributes: undefined,
       search: undefined,
       ordering: undefined,
+      onSale: undefined,
     };
     setFilters(newFilters);
     syncFiltersToUrl(newFilters);
@@ -199,6 +222,7 @@ export const FilterProvider: React.FC<FilterProviderProps> = ({ children }) => {
         updatePriceFilter,
         updateAttributeFilter,
         updateOrdering,
+        updateOnSaleFilter,
         clearFilters,
         setOnFilterChange,
         isInitialized,

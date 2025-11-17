@@ -211,7 +211,9 @@
       "filterOption18": "RGB განათება",
       "iconAlt": "ფილტრის ხატულა",
       "clear": "გასუფთავება",
-      "filterButton": "ყველა ფილტრის წაშლა"
+      "filterButton": "ყველა ფილტრის წაშლა",
+      "onSaleTitle": "ფასდაკლება",
+      "onSaleLabel": "ფასდაკლებული პროდუქტები"
     },
     "cardTitle": "ეზოს სანათი"
   },

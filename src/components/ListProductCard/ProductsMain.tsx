@@ -244,6 +244,7 @@ function ProductsMain({ dictionary }: any) {
         maxPrice: filters.maxPrice,
         attributes: filters.selectedAttributes,
         ordering: filters.ordering,
+        onSale: filters.onSale,
       });
     };
 
@@ -264,7 +265,8 @@ function ProductsMain({ dictionary }: any) {
       filters.minPrice ||
       filters.maxPrice ||
       filters.selectedAttributes ||
-      filters.ordering;
+      filters.ordering ||
+      filters.onSale;
 
     if (hasFilters) {
       // Apply URL filters
@@ -274,6 +276,7 @@ function ProductsMain({ dictionary }: any) {
         maxPrice: filters.maxPrice,
         attributes: filters.selectedAttributes,
         ordering: filters.ordering,
+        onSale: filters.onSale,
       });
     } else {
       // No filters from URL, fetch all products
