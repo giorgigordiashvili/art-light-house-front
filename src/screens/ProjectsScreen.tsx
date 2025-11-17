@@ -6,7 +6,6 @@ import {
   ecommerceClientItemListsList,
   ecommerceClientItemListsRetrieve,
 } from "@/api/generated/api";
-import NewCircle from "@/components/ui/NewCircle";
 import BigCircle from "@/components/ui/BigCircle";
 
 const StyledComponent = styled.div`
@@ -485,7 +484,6 @@ const ProjectsScreen = ({ dictionary }: ProjectsScreenProps) => {
         )}
       </Container>
 
-      <NewCircle size="small" top="1000px" right="142px" media="no" />
       <BigCircle variant={2} setZIndex />
     </StyledComponent>
   );
