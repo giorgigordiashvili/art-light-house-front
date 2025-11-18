@@ -118,9 +118,10 @@ const StyledCategoryTitle = styled.div`
 interface HeroAndCategoryProps {
   dictionary: any;
   homepageSections: HomepageSection[];
+  lang: string;
 }
 
-const HeroAndCategory = ({ dictionary, homepageSections }: HeroAndCategoryProps) => {
+const HeroAndCategory = ({ dictionary, homepageSections, lang }: HeroAndCategoryProps) => {
   // Extract hero banner section from API
   const heroSection = homepageSections?.find(
     (section: HomepageSection) => section.section_type === "hero_banner"
@@ -133,13 +134,17 @@ const HeroAndCategory = ({ dictionary, homepageSections }: HeroAndCategoryProps)
       ?.sort((a: any, b: any) => a.position - b.position)
       ?.slice(0, 3)
       ?.map((item: any) => {
-        const title = item.custom_data?.title_ka || "";
+        const titleKey = lang === "en" ? "title_en" : "title_ka";
+        const descriptionKey = lang === "en" ? "description_en" : "description_ka";
+        const buttonTextKey = lang === "en" ? "button_text_en" : "button_text_ka";
+
+        const title = item.custom_data?.[titleKey] || "";
         const titleWords = title.split(" ");
         return {
           lightText: titleWords[0] || "",
           text: titleWords.slice(1).join(" ") || "",
-          description: item.custom_data?.description_ka || "",
-          buttonText: item.custom_data?.button_text_ka || "",
+          description: item.custom_data?.[descriptionKey] || "",
+          buttonText: item.custom_data?.[buttonTextKey] || "",
           href: item.custom_data?.button_link || "/products",
         };
       }) || [];
@@ -191,7 +196,7 @@ const HeroAndCategory = ({ dictionary, homepageSections }: HeroAndCategoryProps)
               <SectionTitle
                 text={
                   homepageSections?.find((s: HomepageSection) => s.section_type === "category_grid")
-                    ?.title?.ka || dictionary.CategoryTitle
+                    ?.title?.[lang] || dictionary.CategoryTitle
                 }
                 image="category"
                 imageUrl={
@@ -202,7 +207,7 @@ const HeroAndCategory = ({ dictionary, homepageSections }: HeroAndCategoryProps)
             </StyledCategoryTitle>
           </Container>
         </StyledCategorySection>
-        <CategorySection dictionary={dictionary} homepageSections={homepageSections} />
+        <CategorySection dictionary={dictionary} homepageSections={homepageSections} lang={lang} />
       </ContentWrapper>
     </StyledContainer>
   );

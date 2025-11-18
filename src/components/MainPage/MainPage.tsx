@@ -32,9 +32,10 @@ const fadeInUp = {
 interface MainPageProps {
   dictionary: any;
   homepageSections: HomepageSection[];
+  lang: string;
 }
 
-const MainPage = ({ dictionary, homepageSections }: MainPageProps) => {
+const MainPage = ({ dictionary, homepageSections, lang }: MainPageProps) => {
   return (
     <>
       <motion.div initial="hidden" animate="visible" variants={scaleUp}>
@@ -44,6 +45,7 @@ const MainPage = ({ dictionary, homepageSections }: MainPageProps) => {
             ...dictionary.category,
           }}
           homepageSections={homepageSections}
+          lang={lang}
         />
       </motion.div>
 
@@ -62,7 +64,11 @@ const MainPage = ({ dictionary, homepageSections }: MainPageProps) => {
         viewport={{ once: true, amount: 0.2 }}
         variants={fadeInUp}
       >
-        <PopularProducts dictionary={dictionary.popularProducts} />
+        <PopularProducts
+          dictionary={dictionary.popularProducts}
+          homepageSections={homepageSections}
+          lang={lang}
+        />
       </motion.div>
 
       <motion.div

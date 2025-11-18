@@ -9,6 +9,7 @@ import type { HomepageSection } from "@/types/homepage";
 interface Props {
   dictionary: any;
   homepageSections?: HomepageSection[];
+  lang: string;
 }
 
 // ✅ Custom hook to detect window width
@@ -196,7 +197,7 @@ const Card = styled.div<{
   }
 `;
 
-const CategorySection = ({ homepageSections }: Props) => {
+const CategorySection = ({ homepageSections, lang }: Props) => {
   const width = useWindowWidth();
   const [mounted, setMounted] = useState(false);
   const circleSize = width <= 522 ? "mobile" : "medium";
@@ -247,8 +248,9 @@ const CategorySection = ({ homepageSections }: Props) => {
             <Row className="first-row">
               {firstRowCategories.map((category: any, index: number) => {
                 const dimensions = getCardDimensions(0, index);
+                const nameKey = lang === "en" ? "name_en" : "name_ka";
                 const categoryLabel =
-                  category.custom_data?.name_ka || category.label?.ka || category.label;
+                  category.custom_data?.[nameKey] || category.label?.[lang] || category.label;
                 const categoryImage = category.custom_data?.image || category.image;
                 const categoryGradient = category.custom_data?.gradient_style || category.gradient;
 
@@ -269,8 +271,9 @@ const CategorySection = ({ homepageSections }: Props) => {
             <Row isSecond className="second-row">
               {secondRowCategories.map((category: any, index: number) => {
                 const dimensions = getCardDimensions(1, index);
+                const nameKey = lang === "en" ? "name_en" : "name_ka";
                 const categoryLabel =
-                  category.custom_data?.name_ka || category.label?.ka || category.label;
+                  category.custom_data?.[nameKey] || category.label?.[lang] || category.label;
                 const categoryImage = category.custom_data?.image || category.image;
                 const categoryGradient = category.custom_data?.gradient_style || category.gradient;
 

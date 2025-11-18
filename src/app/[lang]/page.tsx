@@ -26,8 +26,9 @@ export async function generateMetadata(props: {
 
 export default async function HomePage(props: { params: Promise<{ lang: string }> }) {
   const { lang } = await props.params;
+  const locale = isLocale(lang) ? lang : "ge";
 
-  const dictionary = await getDictionary(isLocale(lang) ? lang : "ge");
+  const dictionary = await getDictionary(locale);
 
   // Fetch homepage sections server-side
   let homepageSections: HomepageSection[] = [];
@@ -44,5 +45,5 @@ export default async function HomePage(props: { params: Promise<{ lang: string }
     console.error("Failed to fetch homepage sections:", error);
   }
 
-  return <HomeScreen dictionary={dictionary} homepageSections={homepageSections} />;
+  return <HomeScreen dictionary={dictionary} homepageSections={homepageSections} lang={locale} />;
 }

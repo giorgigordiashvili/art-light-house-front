@@ -15,13 +15,14 @@ const StyledComponent = styled.div`
 interface HomeScreenProps {
   dictionary: any;
   homepageSections: HomepageSection[];
+  lang: string;
 }
 
-const HomeScreen = ({ dictionary, homepageSections }: HomeScreenProps) => {
+const HomeScreen = ({ dictionary, homepageSections, lang }: HomeScreenProps) => {
   return (
     <StyledComponent>
       <BigCircle variant={1} />
-      <MainPage dictionary={dictionary} homepageSections={homepageSections} />
+      <MainPage dictionary={dictionary} homepageSections={homepageSections} lang={lang} />
     </StyledComponent>
   );
 };
