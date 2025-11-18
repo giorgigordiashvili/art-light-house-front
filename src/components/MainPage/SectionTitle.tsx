@@ -34,10 +34,11 @@ type ImageType = "category" | "newProduct" | "family" | "address";
 
 type Props = {
   text: string;
-  image: ImageType;
+  image: ImageType | string;
+  imageUrl?: string;
 };
 
-const getImageSrc = (type: ImageType) => {
+const getImageSrc = (type: ImageType | string) => {
   switch (type) {
     case "category":
       return "/assets/stars.svg";
@@ -48,16 +49,17 @@ const getImageSrc = (type: ImageType) => {
     case "address":
       return "/assets/marker.svg";
     default:
-      return "";
+      return type.startsWith("/") || type.startsWith("http") ? type : "";
   }
 };
 
-const SectionTitle: React.FC<Props> = ({ text, image }) => {
+const SectionTitle: React.FC<Props> = ({ text, image, imageUrl }) => {
   const isCategory = image === "category";
+  const imageSrc = imageUrl || getImageSrc(image);
 
   return (
     <StyledContainer $isCategory={isCategory}>
-      <Image src={getImageSrc(image)} alt={image} width={32} height={32} />
+      {imageSrc && <Image src={imageSrc} alt={image as string} width={32} height={32} />}
       <StyledText>{text}</StyledText>
     </StyledContainer>
   );

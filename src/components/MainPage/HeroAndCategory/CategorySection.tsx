@@ -1,11 +1,14 @@
+"use client";
 import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import Container from "../../ui/Container";
 import ProductTitle from "./ProductTitle";
 import Circle from "@/components/ui/Circle";
+import type { HomepageSection } from "@/types/homepage";
 
 interface Props {
   dictionary: any;
+  homepageSections?: HomepageSection[];
 }
 
 // ✅ Custom hook to detect window width
@@ -193,7 +196,7 @@ const Card = styled.div<{
   }
 `;
 
-const CategorySection = ({ dictionary }: Props) => {
+const CategorySection = ({ homepageSections }: Props) => {
   const width = useWindowWidth();
   const [mounted, setMounted] = useState(false);
   const circleSize = width <= 522 ? "mobile" : "medium";
@@ -202,6 +205,39 @@ const CategorySection = ({ dictionary }: Props) => {
     setMounted(true);
   }, []);
 
+  // Find category_grid section from API
+  const categorySection = homepageSections?.find(
+    (section: HomepageSection) => section.section_type === "category_grid"
+  );
+
+  // Get categories from API and filter active ones
+  const apiCategories =
+    categorySection?.data
+      ?.filter((item: any) => item.is_active)
+      ?.sort((a: any, b: any) => a.position - b.position)
+      ?.slice(0, 6) || [];
+
+  // Use empty categories while loading (when homepageSections is undefined)
+  const categories = !homepageSections ? [] : apiCategories;
+
+  // Split categories into two rows (first row: 3 items, second row: 3 items)
+  const firstRowCategories = categories.slice(0, 3);
+  const secondRowCategories = categories.slice(3, 6);
+
+  // Define card dimensions for each position
+  const getCardDimensions = (rowIndex: number, cardIndex: number) => {
+    if (rowIndex === 0) {
+      return { width: cardIndex === 2 ? 505 : 374, height: 222 };
+    } else {
+      return { width: cardIndex === 0 ? 505 : 374, height: 222 };
+    }
+  };
+
+  // Don't render cards while loading
+  if (!homepageSections || categories.length === 0) {
+    return null;
+  }
+
   return (
     <Container>
       <StyledContainer>
@@ -209,47 +245,47 @@ const CategorySection = ({ dictionary }: Props) => {
         <ScrollableWrapper>
           <RowWrapper>
             <Row className="first-row">
-              <Card
-                width={374}
-                height={222}
-                gradient="linear-gradient(116.95deg, rgba(255, 255, 255, 0.03) 3.48%, rgba(246, 202, 86, 0.45) 98.94%)"
-                $backgroundImage="/assets/light.png"
-              >
-                <ProductTitle text={dictionary.light} />
-              </Card>
-              <Card
-                width={374}
-                height={222}
-                gradient="linear-gradient(240.36deg, rgba(255, 255, 255, 0.03) 1.87%, rgba(246, 202, 86, 0.45) 93.88%)"
-                $backgroundImage="/assets/PillarLight.png"
-              >
-                <ProductTitle text={dictionary.gardenLight} />
-              </Card>
-              <Card width={505} height={222} $backgroundImage="/assets/furniture.png">
-                <ProductTitle text={dictionary.furniture} />
-              </Card>
+              {firstRowCategories.map((category: any, index: number) => {
+                const dimensions = getCardDimensions(0, index);
+                const categoryLabel =
+                  category.custom_data?.name_ka || category.label?.ka || category.label;
+                const categoryImage = category.custom_data?.image || category.image;
+                const categoryGradient = category.custom_data?.gradient_style || category.gradient;
+
+                return (
+                  <Card
+                    key={category.id || index}
+                    width={dimensions.width}
+                    height={dimensions.height}
+                    gradient={categoryGradient}
+                    $backgroundImage={categoryImage}
+                  >
+                    <ProductTitle text={categoryLabel} />
+                  </Card>
+                );
+              })}
             </Row>
 
             <Row isSecond className="second-row">
-              <Card
-                width={505}
-                height={222}
-                gradient="linear-gradient(79.22deg, rgba(255, 255, 255, 0.03) 2.74%, rgba(246, 202, 86, 0.45) 81.45%)"
-                $backgroundImage="/assets/decorations.png"
-              >
-                <ProductTitle text={dictionary.decorations} />
-              </Card>
-              <Card
-                width={374}
-                height={222}
-                gradient="linear-gradient(330deg, rgba(255, 255, 255, 0.03) 3.22%, rgba(246, 202, 86, 0.45) 97.55%)"
-                $backgroundImage="/assets/moon.png"
-              >
-                <ProductTitle text={dictionary.decorates} />
-              </Card>
-              <Card width={374} height={222} $backgroundImage="/assets/stars.svg">
-                <ProductTitle text={dictionary.mirror} />
-              </Card>
+              {secondRowCategories.map((category: any, index: number) => {
+                const dimensions = getCardDimensions(1, index);
+                const categoryLabel =
+                  category.custom_data?.name_ka || category.label?.ka || category.label;
+                const categoryImage = category.custom_data?.image || category.image;
+                const categoryGradient = category.custom_data?.gradient_style || category.gradient;
+
+                return (
+                  <Card
+                    key={category.id || index}
+                    width={dimensions.width}
+                    height={dimensions.height}
+                    gradient={categoryGradient}
+                    $backgroundImage={categoryImage}
+                  >
+                    <ProductTitle text={categoryLabel} />
+                  </Card>
+                );
+              })}
             </Row>
           </RowWrapper>
         </ScrollableWrapper>

@@ -5,6 +5,7 @@ import NewProducts from "./NewProducts/NewProducts";
 import PopularProducts from "./PopularProducts/PopularProducts";
 import Accomplishments from "./Accomplishments/Accomplishments";
 import Contact from "../Contact/Contact";
+import type { HomepageSection } from "@/types/homepage";
 
 const scaleUp = {
   hidden: { opacity: 0, scale: 0.8 },
@@ -28,7 +29,12 @@ const fadeInUp = {
   },
 };
 
-const MainPage = ({ dictionary }: any) => {
+interface MainPageProps {
+  dictionary: any;
+  homepageSections: HomepageSection[];
+}
+
+const MainPage = ({ dictionary, homepageSections }: MainPageProps) => {
   return (
     <>
       <motion.div initial="hidden" animate="visible" variants={scaleUp}>
@@ -37,6 +43,7 @@ const MainPage = ({ dictionary }: any) => {
             ...dictionary.hero,
             ...dictionary.category,
           }}
+          homepageSections={homepageSections}
         />
       </motion.div>
 

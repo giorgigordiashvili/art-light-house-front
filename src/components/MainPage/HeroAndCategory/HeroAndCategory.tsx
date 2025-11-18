@@ -13,6 +13,7 @@ import DividerLine from "./DividerLine";
 import SectionTitle from "../SectionTitle";
 import Container from "../../ui/Container";
 import CategorySection from "./CategorySection";
+import type { HomepageSection } from "@/types/homepage";
 
 const StyledContainer = styled.div`
   position: relative;
@@ -114,37 +115,47 @@ const StyledCategoryTitle = styled.div`
   }
 `;
 
-const HeroAndCategory = ({ dictionary }: any) => {
-  const heroSlides = [
-    {
-      lightText: dictionary.title.split(" ")[0],
-      text: dictionary.title.split(" ")[1] + " " + dictionary.title.split(" ")[2],
-      description: dictionary.description,
-      buttonText: dictionary.button,
-      href: "/products",
-    },
-    {
-      lightText: dictionary.title2.split(" ")[0],
-      text: dictionary.title2.split(" ")[1] + " " + dictionary.title2.split(" ")[2],
-      description: dictionary.description2,
-      buttonText: dictionary.button2,
-      href: "/",
-    },
-    {
-      lightText: dictionary.title3.split(" ")[0],
-      text: dictionary.title3.split(" ")[1] + " " + dictionary.title3.split(" ")[2],
-      description: dictionary.description3,
-      buttonText: dictionary.button3,
-      href: "/",
-    },
-  ];
+interface HeroAndCategoryProps {
+  dictionary: any;
+  homepageSections: HomepageSection[];
+}
+
+const HeroAndCategory = ({ dictionary, homepageSections }: HeroAndCategoryProps) => {
+  // Extract hero banner section from API
+  const heroSection = homepageSections?.find(
+    (section: HomepageSection) => section.section_type === "hero_banner"
+  );
+
+  // Map API data to hero slides format
+  const heroSlides =
+    heroSection?.data
+      ?.filter((item: any) => item.is_active)
+      ?.sort((a: any, b: any) => a.position - b.position)
+      ?.slice(0, 3)
+      ?.map((item: any) => {
+        const title = item.custom_data?.title_ka || "";
+        const titleWords = title.split(" ");
+        return {
+          lightText: titleWords[0] || "",
+          text: titleWords.slice(1).join(" ") || "",
+          description: item.custom_data?.description_ka || "",
+          buttonText: item.custom_data?.button_text_ka || "",
+          href: item.custom_data?.button_link || "/products",
+        };
+      }) || [];
+
+  const slides = heroSlides;
+
+  // Get background image and color from API or use defaults
+  const backgroundImage = heroSection?.background_image_url || "/assets/BackgroundImage.png";
+  const backgroundColor = heroSection?.background_color;
 
   return (
-    <StyledContainer>
+    <StyledContainer style={backgroundColor ? { backgroundColor } : undefined}>
       <StyledLinearGradient />
       <StyledComponent>
         <Image
-          src="/assets/BackgroundImage.png"
+          src={backgroundImage}
           alt="Hero background"
           fill
           priority
@@ -156,30 +167,42 @@ const HeroAndCategory = ({ dictionary }: any) => {
         />
       </StyledComponent>
       <ContentWrapper>
-        <SwiperWrapper>
-          <Swiper modules={[Navigation]} navigation={true} loop className="hero-swiper">
-            {heroSlides.map((slide, index) => (
-              <SwiperSlide key={index}>
-                <HeroTitle lightText={slide.lightText} text={slide.text} />
-                <StyledDescription>
-                  <HeroDescription text={slide.description} />
-                </StyledDescription>
-                <StyledButton>
-                  <ViewPageButton text={slide.buttonText} href={slide.href} />
-                </StyledButton>
-              </SwiperSlide>
-            ))}
-          </Swiper>
-        </SwiperWrapper>
+        {slides.length > 0 && (
+          <SwiperWrapper>
+            <Swiper modules={[Navigation]} navigation={true} loop className="hero-swiper">
+              {slides.map((slide: any, index: number) => (
+                <SwiperSlide key={index}>
+                  <HeroTitle lightText={slide.lightText} text={slide.text} />
+                  <StyledDescription>
+                    <HeroDescription text={slide.description} />
+                  </StyledDescription>
+                  <StyledButton>
+                    <ViewPageButton text={slide.buttonText} href={slide.href} />
+                  </StyledButton>
+                </SwiperSlide>
+              ))}
+            </Swiper>
+          </SwiperWrapper>
+        )}
         <StyledCategorySection>
           <DividerLine />
           <Container>
             <StyledCategoryTitle>
-              <SectionTitle text={dictionary.CategoryTitle} image="category" />
+              <SectionTitle
+                text={
+                  homepageSections?.find((s: HomepageSection) => s.section_type === "category_grid")
+                    ?.title?.ka || dictionary.CategoryTitle
+                }
+                image="category"
+                imageUrl={
+                  homepageSections?.find((s: HomepageSection) => s.section_type === "category_grid")
+                    ?.settings?.icon_url
+                }
+              />
             </StyledCategoryTitle>
           </Container>
         </StyledCategorySection>
-        <CategorySection dictionary={dictionary} />
+        <CategorySection dictionary={dictionary} homepageSections={homepageSections} />
       </ContentWrapper>
     </StyledContainer>
   );
