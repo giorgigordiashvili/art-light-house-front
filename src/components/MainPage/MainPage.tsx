@@ -77,7 +77,11 @@ const MainPage = ({ dictionary, homepageSections, lang }: MainPageProps) => {
         viewport={{ once: true, amount: 0.2 }}
         variants={fadeInUp}
       >
-        <Accomplishments dictionary={dictionary.accomplihsments} />
+        <Accomplishments
+          dictionary={dictionary.accomplihsments}
+          homepageSections={homepageSections}
+          lang={lang}
+        />
       </motion.div>
 
       <motion.div

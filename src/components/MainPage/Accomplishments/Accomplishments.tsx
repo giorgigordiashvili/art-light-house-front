@@ -6,6 +6,13 @@ import Counts from "./Counts";
 import CountLine from "./CountLine";
 import Container from "../../ui/Container";
 import Circle from "@/components/ui/Circle";
+import type { HomepageSection } from "@/types/homepage";
+
+interface AccomplishmentsProps {
+  dictionary: any;
+  homepageSections: HomepageSection[];
+  lang: string;
+}
 
 const StyledComponent = styled.div`
   position: relative;
@@ -100,7 +107,32 @@ const StyledLine = styled.div`
   }
 `;
 
-const Accomplishments = ({ dictionary }: any) => {
+const Accomplishments = ({ dictionary, homepageSections, lang }: AccomplishmentsProps) => {
+  // Extract statistics section from API
+  const statisticsSection = homepageSections?.find(
+    (section: HomepageSection) => section.section_type === "statistics"
+  );
+
+  // Map lang to API language key (ge -> ka)
+  const apiLang = lang === "ge" ? "ka" : lang;
+
+  // Get title and subtitle
+  const title = statisticsSection?.title?.[apiLang] || dictionary.title1;
+  const subtitle = statisticsSection?.subtitle?.[apiLang] || dictionary.description;
+
+  // Get statistics data and sort by position
+  const statistics =
+    statisticsSection?.data
+      ?.filter((item: any) => item.is_active)
+      ?.sort((a: any, b: any) => a.position - b.position) || [];
+
+  // Map statistics to counts
+  const labelKey = lang === "en" ? "label_en" : "label_ka";
+  const counts = statistics.map((stat: any) => ({
+    count: stat.custom_data?.count || stat.label,
+    label: stat.custom_data?.[labelKey] || "",
+  }));
+
   return (
     <Container>
       <StyledComponent>
@@ -112,26 +144,23 @@ const Accomplishments = ({ dictionary }: any) => {
         </StyledRightCircle>
         <BorderWrapper>
           <StyledContainer>
-            <AccomplishmentTitle text={dictionary.title1} />
+            <AccomplishmentTitle text={title} />
             <StyledDescription>
-              <AccomplishmentDescription text={dictionary.description} />
+              <AccomplishmentDescription text={subtitle} />
             </StyledDescription>
             <StyledCountsWrapper>
-              <StyledCounts>
-                <Counts count="140+" subTitle={dictionary.done} />
-              </StyledCounts>
-              <StyledLine>
-                <CountLine />
-              </StyledLine>
-              <StyledCounts>
-                <Counts count="19" subTitle={dictionary.parthner} />
-              </StyledCounts>
-              <StyledLine>
-                <CountLine />
-              </StyledLine>
-              <StyledCounts>
-                <Counts count="7" subTitle={dictionary.shop} />
-              </StyledCounts>
+              {counts.map((item: any, index: number) => (
+                <React.Fragment key={index}>
+                  <StyledCounts>
+                    <Counts count={item.count} subTitle={item.label} />
+                  </StyledCounts>
+                  {index < counts.length - 1 && (
+                    <StyledLine>
+                      <CountLine />
+                    </StyledLine>
+                  )}
+                </React.Fragment>
+              ))}
             </StyledCountsWrapper>
           </StyledContainer>
         </BorderWrapper>

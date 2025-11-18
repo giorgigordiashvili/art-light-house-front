@@ -34,13 +34,16 @@ interface PopularProductsProps {
 }
 
 const PopularProducts = ({ dictionary, homepageSections, lang }: PopularProductsProps) => {
+  // Map lang to API language key (ge -> ka)
+  const apiLang = lang === "ge" ? "ka" : lang;
+
   // Find "Shop by Room" section (position 2, section_type "category_grid")
   const roomSection = homepageSections?.find(
     (section: HomepageSection) => section.position === 2 && section.section_type === "category_grid"
   );
 
   // Get section title
-  const sectionTitle = roomSection?.title?.[lang] || dictionary.title;
+  const sectionTitle = roomSection?.title?.[apiLang] || dictionary.title;
 
   // Get room cards from API data
   const roomCards =

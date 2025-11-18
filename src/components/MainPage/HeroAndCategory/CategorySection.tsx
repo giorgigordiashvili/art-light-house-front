@@ -198,6 +198,9 @@ const Card = styled.div<{
 `;
 
 const CategorySection = ({ homepageSections, lang }: Props) => {
+  // Map lang to API language key (ge -> ka)
+  const apiLang = lang === "ge" ? "ka" : lang;
+
   const width = useWindowWidth();
   const [mounted, setMounted] = useState(false);
   const circleSize = width <= 522 ? "mobile" : "medium";
@@ -250,7 +253,7 @@ const CategorySection = ({ homepageSections, lang }: Props) => {
                 const dimensions = getCardDimensions(0, index);
                 const nameKey = lang === "en" ? "name_en" : "name_ka";
                 const categoryLabel =
-                  category.custom_data?.[nameKey] || category.label?.[lang] || category.label;
+                  category.custom_data?.[nameKey] || category.label?.[apiLang] || category.label;
                 const categoryImage = category.custom_data?.image || category.image;
                 const categoryGradient = category.custom_data?.gradient_style || category.gradient;
 
@@ -273,7 +276,7 @@ const CategorySection = ({ homepageSections, lang }: Props) => {
                 const dimensions = getCardDimensions(1, index);
                 const nameKey = lang === "en" ? "name_en" : "name_ka";
                 const categoryLabel =
-                  category.custom_data?.[nameKey] || category.label?.[lang] || category.label;
+                  category.custom_data?.[nameKey] || category.label?.[apiLang] || category.label;
                 const categoryImage = category.custom_data?.image || category.image;
                 const categoryGradient = category.custom_data?.gradient_style || category.gradient;
 

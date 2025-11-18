@@ -122,6 +122,9 @@ interface HeroAndCategoryProps {
 }
 
 const HeroAndCategory = ({ dictionary, homepageSections, lang }: HeroAndCategoryProps) => {
+  // Map lang to API language key (ge -> ka)
+  const apiLang = lang === "ge" ? "ka" : lang;
+
   // Extract hero banner section from API
   const heroSection = homepageSections?.find(
     (section: HomepageSection) => section.section_type === "hero_banner"
@@ -196,7 +199,7 @@ const HeroAndCategory = ({ dictionary, homepageSections, lang }: HeroAndCategory
               <SectionTitle
                 text={
                   homepageSections?.find((s: HomepageSection) => s.section_type === "category_grid")
-                    ?.title?.[lang] || dictionary.CategoryTitle
+                    ?.title?.[apiLang] || dictionary.CategoryTitle
                 }
                 image="category"
                 imageUrl={
