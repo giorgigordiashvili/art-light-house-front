@@ -3,6 +3,7 @@ import SectionTitle from "../SectionTitle";
 import Container from "../../ui/Container";
 import styled from "styled-components";
 import PopularProductCard from "./PopularProductCard";
+import type { HomepageSection } from "@/types/homepage";
 
 const StyledContainer = styled.div`
   margin-top: 121px;
@@ -26,32 +27,54 @@ const StyledCards = styled.div`
   }
 `;
 
-const PopularProducts = ({ dictionary }: any) => {
+interface PopularProductsProps {
+  dictionary: any;
+  homepageSections: HomepageSection[];
+  lang: string;
+}
+
+const PopularProducts = ({ dictionary, homepageSections, lang }: PopularProductsProps) => {
+  // Map lang to API language key (ge -> ka)
+  const apiLang = lang === "ge" ? "ka" : lang;
+
+  // Find "Shop by Room" section (position 2, section_type "category_grid")
+  const roomSection = homepageSections?.find(
+    (section: HomepageSection) => section.position === 2 && section.section_type === "category_grid"
+  );
+
+  // Get section title
+  const sectionTitle = roomSection?.title?.[apiLang] || dictionary.title;
+
+  // Get room cards from API data
+  const roomCards =
+    roomSection?.data
+      ?.filter((item: any) => item.is_active)
+      ?.sort((a: any, b: any) => a.position - b.position) || [];
+
+  // If no API data, return null (don't show fallback)
+  if (!roomSection || roomCards.length === 0) {
+    return null;
+  }
+
   return (
     <Container>
       <StyledContainer>
-        <SectionTitle text={dictionary.title} image="family" />
+        <SectionTitle text={sectionTitle} image="family" />
         <StyledCards>
-          <PopularProductCard
-            image="/assets/bedroom.svg"
-            label={dictionary.bedroom}
-            width={511}
-            isRightAligned
-            changeHeightMobile
-          />
-          <PopularProductCard
-            image="/assets/livingroom.svg"
-            label={dictionary.livingroom}
-            width={242}
-            isMiddleCard
-          />
-          <PopularProductCard
-            image="/assets/kitchen.svg"
-            label={dictionary.kitchen}
-            width={503}
-            isRightAligned
-            changeHeightMobile
-          />
+          {roomCards.map((room: any) => {
+            const nameKey = lang === "en" ? "name_en" : "name_ka";
+            return (
+              <PopularProductCard
+                key={room.id}
+                image={room.custom_data?.image || "/assets/bedroom.svg"}
+                label={room.custom_data?.[nameKey] || room.label}
+                width={room.custom_data?.width || 511}
+                isRightAligned={room.custom_data?.is_right_aligned || false}
+                isMiddleCard={room.custom_data?.is_middle_card || false}
+                changeHeightMobile={room.custom_data?.change_height_mobile || false}
+              />
+            );
+          })}
         </StyledCards>
       </StyledContainer>
     </Container>

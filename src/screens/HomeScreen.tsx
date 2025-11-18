@@ -2,6 +2,7 @@
 import styled from "styled-components";
 import MainPage from "@/components/MainPage/MainPage";
 import BigCircle from "@/components/ui/BigCircle";
+import type { HomepageSection } from "@/types/homepage";
 
 const StyledComponent = styled.div`
   background: #0b0b0b;
@@ -11,11 +12,17 @@ const StyledComponent = styled.div`
   background-repeat: no-repeat;
 `;
 
-const HomeScreen = ({ dictionary }: any) => {
+interface HomeScreenProps {
+  dictionary: any;
+  homepageSections: HomepageSection[];
+  lang: string;
+}
+
+const HomeScreen = ({ dictionary, homepageSections, lang }: HomeScreenProps) => {
   return (
     <StyledComponent>
       <BigCircle variant={1} />
-      <MainPage dictionary={dictionary} />
+      <MainPage dictionary={dictionary} homepageSections={homepageSections} lang={lang} />
     </StyledComponent>
   );
 };

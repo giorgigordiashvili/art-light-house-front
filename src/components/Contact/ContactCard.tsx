@@ -68,11 +68,25 @@ type Props = {
   side?: "left" | "right";
   dictionary?: any;
   location?: { lat: number; lng: number };
+  branchData?: any;
+  lang?: string;
 };
 
-const ContactCard = ({ side = "left", dictionary, location }: Props) => {
+const ContactCard = ({ side = "left", dictionary, location, branchData, lang = "ge" }: Props) => {
   const defaultPosition = { lat: 41.720542, lng: 44.764789 };
   const mapPosition = location ?? defaultPosition;
+
+  // Map lang to API language key (ge -> ka)
+  const apiLang = lang === "ge" ? "ka" : lang;
+  const cityKey = apiLang === "en" ? "city_en" : "city_ka";
+  const addressKey = apiLang === "en" ? "address_en" : "address_ka";
+
+  // Get data from branchData or fallback to dictionary
+  const city = branchData?.custom_data?.[cityKey] || dictionary.city;
+  const address = branchData?.custom_data?.[addressKey] || dictionary.physicalAddress;
+  const phoneNumber = branchData?.custom_data?.phone_number || dictionary.number;
+  const workingHours = branchData?.custom_data?.working_hours || dictionary.hours;
+  const googleMapsUrl = branchData?.custom_data?.google_maps_url || "";
 
   return (
     <OuterContainer side={side}>
@@ -82,20 +96,20 @@ const ContactCard = ({ side = "left", dictionary, location }: Props) => {
           <div style={{ flex: 1, minWidth: 0 }}>
             <Data
               title={dictionary.address}
-              data={dictionary.city}
+              data={city}
               image="address"
-              secondData={dictionary.physicalAddress}
+              secondData={address}
               withDivider
               boldData
             />
           </div>
-          <GoogleMapButton text={dictionary.button} />
+          <GoogleMapButton text={dictionary.button} url={googleMapsUrl} />
         </StyledAction>
         <StyledData>
-          <Data title={dictionary.phoneNumber} data={dictionary.number} image="phone" />
+          <Data title={dictionary.phoneNumber} data={phoneNumber} image="phone" />
         </StyledData>
         <StyledData>
-          <Data title={dictionary.workHours} data={dictionary.hours} image="time" />
+          <Data title={dictionary.workHours} data={workingHours} image="time" />
         </StyledData>
       </StyledContainer>
     </OuterContainer>

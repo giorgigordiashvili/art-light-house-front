@@ -1,23 +1,11 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import styled from "styled-components";
 import Link from "next/link";
-// TODO: Projects API not available in new API - backend needs to implement
-// import { ecommerceClientProjectsList } from "@/api/generated/api";
-import NewCircle from "@/components/ui/NewCircle";
-
-// Local type for Project (not in generated API - Projects feature not implemented)
-interface ProjectList {
-  id: number;
-  slug: string;
-  title: string;
-  short_description?: string;
-  category?: string;
-  year?: string;
-  location?: string;
-  is_featured?: boolean;
-  primary_image_url?: string;
-}
+import {
+  ecommerceClientItemListsList,
+  ecommerceClientItemListsRetrieve,
+} from "@/api/generated/api";
 import BigCircle from "@/components/ui/BigCircle";
 
 const StyledComponent = styled.div`
@@ -289,35 +277,114 @@ interface ProjectsScreenProps {
   dictionary: any;
 }
 
+type ProjectItem = {
+  id: number;
+  title: string;
+  description?: string;
+  imageUrl?: string;
+  category?: string;
+  year?: string;
+  location?: string;
+  slug?: string;
+  isFeatured?: boolean;
+};
+
+const getFirstGalleryImage = (gallery: any): string | undefined => {
+  if (!gallery) return undefined;
+  if (typeof gallery === "string") return gallery;
+  if (Array.isArray(gallery) && gallery.length > 0) {
+    const first = gallery[0];
+    if (typeof first === "string") return first;
+    if (typeof first?.url === "string") return first.url;
+    if (typeof first?.image === "string") return first.image;
+  }
+  return undefined;
+};
+
+const stripHtml = (value?: string) => {
+  if (!value) return undefined;
+  return value.replace(/<[^>]*>/g, "").trim();
+};
+
 const ProjectsScreen = ({ dictionary }: ProjectsScreenProps) => {
-  const [projects, setProjects] = useState<ProjectList[]>([]);
+  const [projects, setProjects] = useState<ProjectItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [categoryFilter, setCategoryFilter] = useState<string | undefined>(undefined);
   const [categories, setCategories] = useState<string[]>([]);
+  const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    loadProjects();
-  }, [categoryFilter]);
-
-  const loadProjects = async () => {
+  const loadProjects = useCallback(async () => {
     try {
       setLoading(true);
-      // TODO: Projects API not available - backend needs to implement ecommerceClientProjectsList
-      // const data = await ecommerceClientProjectsList(categoryFilter);
-      const data: ProjectList[] = []; // Temporary empty array
-      setProjects(data);
+      setError(null);
 
-      // Extract unique categories
-      const uniqueCategories = Array.from(
-        new Set(data.map((p) => p.category).filter((c): c is string => Boolean(c)))
+      const listsResponse = await ecommerceClientItemListsList();
+      const activeList = listsResponse.results?.[0];
+
+      if (!activeList) {
+        setProjects([]);
+        setCategories([]);
+        return;
+      }
+
+      const listDetail = await ecommerceClientItemListsRetrieve(activeList.id);
+      const rawItemsData = listDetail.items as unknown;
+      const rawItems = Array.isArray(rawItemsData)
+        ? rawItemsData
+        : (() => {
+            try {
+              const serialized =
+                typeof rawItemsData === "string"
+                  ? rawItemsData
+                  : JSON.stringify(rawItemsData ?? []);
+              const parsed = JSON.parse(serialized || "[]");
+              return Array.isArray(parsed) ? parsed : [];
+            } catch {
+              return [];
+            }
+          })();
+
+      const normalized: ProjectItem[] = rawItems
+        .filter((item: any) => item && item.is_active !== false)
+        .map((item: any) => {
+          const customData = item.custom_data || {};
+          return {
+            id: item.id,
+            title: customData.title || item.label || `Project ${item.id}`,
+            description: customData.description,
+            imageUrl: getFirstGalleryImage(customData.gallery),
+            category: customData.category || customData.type,
+            year: customData.year,
+            location: customData.location,
+            slug: customData.slug || item.custom_id || String(item.id),
+            isFeatured: Boolean(customData.is_featured),
+          };
+        });
+
+      setProjects(normalized);
+      setCategories(
+        Array.from(
+          new Set(
+            normalized.map((project) => project.category).filter((c): c is string => Boolean(c))
+          )
+        )
       );
-      setCategories(uniqueCategories);
-    } catch (error) {
-      console.error("Failed to load projects:", error);
+    } catch (err: any) {
+      setError(err?.response?.data?.message || err?.message || "Failed to load projects");
+      setProjects([]);
+      setCategories([]);
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
+
+  useEffect(() => {
+    loadProjects();
+  }, [loadProjects]);
+
+  const filteredProjects = categoryFilter
+    ? projects.filter((project) => project.category === categoryFilter)
+    : projects;
 
   return (
     <StyledComponent>
@@ -344,6 +411,12 @@ const ProjectsScreen = ({ dictionary }: ProjectsScreenProps) => {
           </FilterBar>
         )}
 
+        {error && !loading && (
+          <EmptyState>
+            <h3>{dictionary.projects.errorTitle ?? "Unable to load projects"}</h3>
+            <p>{error}</p>
+          </EmptyState>
+        )}
         {loading ? (
           <ProjectsGrid>
             {[1, 2, 3, 4, 5, 6].map((index) => (
@@ -363,57 +436,54 @@ const ProjectsScreen = ({ dictionary }: ProjectsScreenProps) => {
               </SkeletonCard>
             ))}
           </ProjectsGrid>
-        ) : projects.length === 0 ? (
+        ) : filteredProjects.length === 0 ? (
           <EmptyState>
             <h3>No projects found</h3>
             <p>Check back soon for our latest work</p>
           </EmptyState>
         ) : (
           <ProjectsGrid>
-            {projects.map((project) => (
-              <ProjectCard
-                key={project.id}
-                href={`/projects/${project.slug}`}
-                className="project-card"
-              >
-                <ProjectImageWrapper>
-                  <ProjectImage
-                    src={project.primary_image_url || "/assets/placeholder.png"}
-                    alt={project.title}
-                    className="image"
-                  />
-                  {project.is_featured && <FeaturedBadge>Featured</FeaturedBadge>}
-                </ProjectImageWrapper>
-                <ProjectInfo>
-                  <ProjectTitle>{project.title}</ProjectTitle>
-                  <ProjectMeta>
-                    {project.category && (
-                      <MetaItem>
-                        <strong>Category:</strong> {project.category}
-                      </MetaItem>
-                    )}
-                    {project.year && (
-                      <MetaItem>
-                        <strong>Year:</strong> {project.year}
-                      </MetaItem>
-                    )}
-                    {project.location && (
-                      <MetaItem>
-                        <strong>Location:</strong> {project.location}
-                      </MetaItem>
-                    )}
-                  </ProjectMeta>
-                  {project.short_description && (
-                    <ProjectDescription>{project.short_description}</ProjectDescription>
-                  )}
-                </ProjectInfo>
-              </ProjectCard>
-            ))}
+            {filteredProjects.map((project) => {
+              const projectHref = project.slug ? `/projects/${project.slug}` : "#";
+              const descriptionText = stripHtml(project.description);
+              return (
+                <ProjectCard key={project.id} href={projectHref} className="project-card">
+                  <ProjectImageWrapper>
+                    <ProjectImage
+                      src={project.imageUrl || "/assets/placeholder.png"}
+                      alt={project.title}
+                      className="image"
+                    />
+                    {project.isFeatured && <FeaturedBadge>Featured</FeaturedBadge>}
+                  </ProjectImageWrapper>
+                  <ProjectInfo>
+                    <ProjectTitle>{project.title}</ProjectTitle>
+                    <ProjectMeta>
+                      {project.category && (
+                        <MetaItem>
+                          <strong>Category:</strong> {project.category}
+                        </MetaItem>
+                      )}
+                      {project.year && (
+                        <MetaItem>
+                          <strong>Year:</strong> {project.year}
+                        </MetaItem>
+                      )}
+                      {project.location && (
+                        <MetaItem>
+                          <strong>Location:</strong> {project.location}
+                        </MetaItem>
+                      )}
+                    </ProjectMeta>
+                    {descriptionText && <ProjectDescription>{descriptionText}</ProjectDescription>}
+                  </ProjectInfo>
+                </ProjectCard>
+              );
+            })}
           </ProjectsGrid>
         )}
       </Container>
 
-      <NewCircle size="small" top="1000px" right="142px" media="no" />
       <BigCircle variant={2} setZIndex />
     </StyledComponent>
   );

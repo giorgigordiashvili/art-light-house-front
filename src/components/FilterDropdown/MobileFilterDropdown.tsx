@@ -55,13 +55,14 @@ const ScrollArea = styled.div`
 
 const BottomBar = styled.div`
   width: 100%;
-  height: 111px;
   background-color: #1c1c1c;
   border-top: 1px solid #313131;
   padding: 20px;
   display: flex;
   align-items: center;
   justify-content: center;
+  flex-direction: column;
+  gap: 10px;
 `;
 
 const Title = styled.p`
@@ -97,6 +98,30 @@ const SectionMessage = styled.p`
   line-height: 20px;
 `;
 
+const SaleButton = styled.button<{ $isActive: boolean }>`
+  width: 100%;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: ${(props) => (props.$isActive ? "#ffcb40" : "transparent")};
+  border: 1px solid ${(props) => (props.$isActive ? "#ffcb40" : "#ffffff20")};
+  border-radius: 10px;
+  font-family: HelRom;
+  font-weight: 700;
+  font-size: 16px;
+  line-height: 100%;
+  letter-spacing: 0%;
+  transition: all 0.2s ease;
+  cursor: pointer;
+  color: ${(props) => (props.$isActive ? "#000" : "#fff")};
+
+  &:hover {
+    background-color: ${(props) => (props.$isActive ? "#ffcb40" : "#ffffff10")};
+    border-color: ${(props) => (props.$isActive ? "#ffcb40" : "#ffffff30")};
+  }
+`;
+
 interface MobileFilterDropdownProps {
   onClose: () => void;
   dictionary: any;
@@ -106,7 +131,8 @@ const MobileFilterDropdown: React.FC<MobileFilterDropdownProps> = ({ onClose, di
   // Since filtering is now immediate, the button just closes the dropdown
   const pathname = usePathname();
   const language = getLocaleFromPath(pathname);
-  const { filters, updateCategoryFilter, updateAttributeFilter } = useFilterContext();
+  const { filters, updateCategoryFilter, updateAttributeFilter, updateOnSaleFilter } =
+    useFilterContext();
   const {
     groups,
     loading: filtersLoading,
@@ -140,6 +166,10 @@ const MobileFilterDropdown: React.FC<MobileFilterDropdownProps> = ({ onClose, di
     }
     const serialized = nextSet.size > 0 ? Array.from(nextSet).join(",") : undefined;
     updateAttributeFilter(serialized);
+  };
+
+  const handleOnSaleChange = () => {
+    updateOnSaleFilter(!filters.onSale ? true : undefined);
   };
 
   const buildCategoryOptions = (group: FilterGroup) =>
@@ -213,7 +243,6 @@ const MobileFilterDropdown: React.FC<MobileFilterDropdownProps> = ({ onClose, di
           {showSkeleton && <FiltersLoadingSkeleton sections={2} rowsPerSection={4} compact />}
           {showError && <SectionMessage>{filtersError}</SectionMessage>}
           {canRenderGroups && renderCategoryGroups()}
-          <Line />
           <PriceFilter dictionary={dictionary.filter} />
           <InputsRow>
             <PriceInput text={dictionary.filter?.placeholder1 ?? "დან"} type="min" />
@@ -229,6 +258,9 @@ const MobileFilterDropdown: React.FC<MobileFilterDropdownProps> = ({ onClose, di
         </ScrollArea>
 
         <BottomBar>
+          <SaleButton $isActive={!!filters.onSale} onClick={handleOnSaleChange}>
+            {dictionary?.filter?.onSaleLabel || "ფასდაკლებული პროდუქტები"}
+          </SaleButton>
           <ButtonFilter onClick={onClose} dictionary={dictionary} />
         </BottomBar>
       </DropdownWrapper>

@@ -36,17 +36,17 @@ const StyledText = styled.p`
 
 type Props = {
   text: string;
+  url?: string;
 };
 
-const GoogleMapButton = (props: Props) => {
+const GoogleMapButton = ({ text, url }: Props) => {
+  const defaultUrl =
+    "https://www.google.com/maps/place/41%C2%B043'14.0%22N+44%C2%B045'53.2%22E/@41.720542,44.764789,17z/data=!3m1!4b1!4m4!3m3!8m2!3d41.720542!4d44.764789?entry=ttu&g_ep=EgoyMDI1MDQxNi4xIKXMDSoASAFQAw%3D%3D";
+
   return (
-    <StyledContainer
-      href="https://www.google.com/maps/place/41%C2%B043'14.0%22N+44%C2%B045'53.2%22E/@41.720542,44.764789,17z/data=!3m1!4b1!4m4!3m3!8m2!3d41.720542!4d44.764789?entry=ttu&g_ep=EgoyMDI1MDQxNi4xIKXMDSoASAFQAw%3D%3D"
-      target="_blank"
-      rel="noopener noreferrer"
-    >
+    <StyledContainer href={url || defaultUrl} target="_blank" rel="noopener noreferrer">
       <GoogleMapLogo />
-      <StyledText>{props.text}</StyledText>
+      <StyledText>{text}</StyledText>
     </StyledContainer>
   );
 };

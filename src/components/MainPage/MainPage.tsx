@@ -5,6 +5,7 @@ import NewProducts from "./NewProducts/NewProducts";
 import PopularProducts from "./PopularProducts/PopularProducts";
 import Accomplishments from "./Accomplishments/Accomplishments";
 import Contact from "../Contact/Contact";
+import type { HomepageSection } from "@/types/homepage";
 
 const scaleUp = {
   hidden: { opacity: 0, scale: 0.8 },
@@ -28,7 +29,13 @@ const fadeInUp = {
   },
 };
 
-const MainPage = ({ dictionary }: any) => {
+interface MainPageProps {
+  dictionary: any;
+  homepageSections: HomepageSection[];
+  lang: string;
+}
+
+const MainPage = ({ dictionary, homepageSections, lang }: MainPageProps) => {
   return (
     <>
       <motion.div initial="hidden" animate="visible" variants={scaleUp}>
@@ -37,6 +44,8 @@ const MainPage = ({ dictionary }: any) => {
             ...dictionary.hero,
             ...dictionary.category,
           }}
+          homepageSections={homepageSections}
+          lang={lang}
         />
       </motion.div>
 
@@ -55,7 +64,11 @@ const MainPage = ({ dictionary }: any) => {
         viewport={{ once: true, amount: 0.2 }}
         variants={fadeInUp}
       >
-        <PopularProducts dictionary={dictionary.popularProducts} />
+        <PopularProducts
+          dictionary={dictionary.popularProducts}
+          homepageSections={homepageSections}
+          lang={lang}
+        />
       </motion.div>
 
       <motion.div
@@ -64,7 +77,11 @@ const MainPage = ({ dictionary }: any) => {
         viewport={{ once: true, amount: 0.2 }}
         variants={fadeInUp}
       >
-        <Accomplishments dictionary={dictionary.accomplihsments} />
+        <Accomplishments
+          dictionary={dictionary.accomplihsments}
+          homepageSections={homepageSections}
+          lang={lang}
+        />
       </motion.div>
 
       <motion.div
@@ -73,7 +90,12 @@ const MainPage = ({ dictionary }: any) => {
         viewport={{ once: true, amount: 0.2 }}
         variants={fadeInUp}
       >
-        <Contact variant="2" dictionary={dictionary.contact} />
+        <Contact
+          variant="2"
+          dictionary={dictionary.contact}
+          homepageSections={homepageSections}
+          lang={lang}
+        />
       </motion.div>
     </>
   );

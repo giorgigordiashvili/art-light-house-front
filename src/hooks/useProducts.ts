@@ -11,6 +11,7 @@ interface UseProductsOptions {
   inStock?: boolean;
   search?: string;
   ordering?: string;
+  onSale?: boolean;
   skipInitialFetch?: boolean; // Add option to skip initial fetch
 }
 
@@ -57,6 +58,9 @@ export const useProducts = (options: UseProductsOptions = {}): UseProductsResult
         }
         if (filtersToUse.maxPrice !== undefined) {
           params.max_price = filtersToUse.maxPrice;
+        }
+        if (filtersToUse.onSale) {
+          params.on_sale = true;
         }
 
         const attributeFilterMap = new Map<string, Set<string>>();

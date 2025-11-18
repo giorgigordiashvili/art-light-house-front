@@ -38,15 +38,35 @@ const StyledInputs = styled.div`
   gap: 6px;
 `;
 
-const StyledButton = styled.div`
-  margin-top: 20px;
-`;
-
 const SectionMessage = styled.p`
   margin: 0 0 12px;
   color: rgba(255, 255, 255, 0.7);
   font-size: 14px;
   line-height: 20px;
+`;
+
+const SaleButton = styled.button<{ $isActive: boolean }>`
+  width: 100%;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: ${(props) => (props.$isActive ? "#ffcb40" : "transparent")};
+  border: 1px solid ${(props) => (props.$isActive ? "#ffcb40" : "#ffffff20")};
+  border-radius: 10px;
+  font-family: HelRom;
+  font-weight: 700;
+  font-size: 16px;
+  line-height: 100%;
+  letter-spacing: 0%;
+  transition: all 0.2s ease;
+  cursor: pointer;
+  color: ${(props) => (props.$isActive ? "#000" : "#fff")};
+
+  &:hover {
+    background-color: ${(props) => (props.$isActive ? "#ffcb40" : "#ffffff10")};
+    border-color: ${(props) => (props.$isActive ? "#ffcb40" : "#ffffff30")};
+  }
 `;
 
 interface FilterSidebarProps {
@@ -57,7 +77,8 @@ function FilterSidebar({ dictionary }: FilterSidebarProps) {
   // No longer need manual apply button since filtering is immediate
   const pathname = usePathname();
   const language = getLocaleFromPath(pathname);
-  const { filters, clearFilters, updateCategoryFilter, updateAttributeFilter } = useFilterContext();
+  const { filters, clearFilters, updateCategoryFilter, updateAttributeFilter, updateOnSaleFilter } =
+    useFilterContext();
   const {
     groups,
     loading: filtersLoading,
@@ -74,7 +95,8 @@ function FilterSidebar({ dictionary }: FilterSidebarProps) {
     filters.minPrice !== undefined ||
     filters.maxPrice !== undefined ||
     !!filters.selectedAttributes ||
-    !!filters.ordering;
+    !!filters.ordering ||
+    !!filters.onSale;
 
   const handleCategoryChange = (value: string) => {
     const isSelected = filters.selectedCategoryFilters.includes(value);
@@ -97,6 +119,10 @@ function FilterSidebar({ dictionary }: FilterSidebarProps) {
     }
     const serialized = nextSet.size > 0 ? Array.from(nextSet).join(",") : undefined;
     updateAttributeFilter(serialized);
+  };
+
+  const handleOnSaleChange = () => {
+    updateOnSaleFilter(!filters.onSale ? true : undefined);
   };
 
   const buildCategoryOptions = (group: FilterGroup) =>
@@ -162,10 +188,15 @@ function FilterSidebar({ dictionary }: FilterSidebarProps) {
   return (
     <SidebarWrapper>
       <Title>{dictionary.title}</Title>
-      <Line />
       {showSkeleton && <FiltersLoadingSkeleton sections={2} rowsPerSection={4} />}
       {showError && <SectionMessage>{filtersError}</SectionMessage>}
       {canRenderGroups && renderCategoryGroups()}
+      {canRenderGroups && attributeGroups.length > 0 && (
+        <>
+          <Line />
+          {renderAttributeGroups()}
+        </>
+      )}
       <Line />
       <PriceFilter dictionary={dictionary} />
       <StyledInputs>
@@ -173,21 +204,18 @@ function FilterSidebar({ dictionary }: FilterSidebarProps) {
         <PriceInput text="მდე" type="max" />
       </StyledInputs>
       <PriceRangeSlider min={0} max={10000} />
-      {canRenderGroups && attributeGroups.length > 0 && (
-        <>
-          <Line />
-          {renderAttributeGroups()}
-        </>
-      )}
-      <StyledButton>
-        <PrimaryButton
-          text={dictionary.filterButton}
-          width="100%"
-          height="48px"
-          onClick={clearFilters}
-          disabled={!hasActiveFilters}
-        />
-      </StyledButton>
+      <Line />
+      <SaleButton $isActive={!!filters.onSale} onClick={handleOnSaleChange}>
+        {dictionary.onSaleLabel || "ფასდაკლებული პროდუქტები"}
+      </SaleButton>
+      <Line />
+      <PrimaryButton
+        text={dictionary.filterButton}
+        width="100%"
+        height="48px"
+        onClick={clearFilters}
+        disabled={!hasActiveFilters}
+      />
     </SidebarWrapper>
   );
 }

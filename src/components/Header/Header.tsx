@@ -444,10 +444,22 @@ const Header = ({ header, dictionary }: HeaderProps) => {
             <Logo size="small" href="/" />
             <StyledActionsWrapper>
               <StyledNavigation>
-                <NavItem text={header.products} href="/products" />
-                <NavItem text={header.sale} href="/" />
-                <NavItem text={header.project} href="/projects" />
-                <NavItem text={header.contact} href="/contact" />
+                <NavItem
+                  text={header.products}
+                  href={`/${pathname?.split("/")[1] || "ge"}/products`}
+                />
+                <NavItem
+                  text={header.sale}
+                  href={`/${pathname?.split("/")[1] || "ge"}/products?on_sale=true`}
+                />
+                <NavItem
+                  text={header.project}
+                  href={`/${pathname?.split("/")[1] || "ge"}/projects`}
+                />
+                <NavItem
+                  text={header.contact}
+                  href={`/${pathname?.split("/")[1] || "ge"}/contact`}
+                />
               </StyledNavigation>
               <StyledUserActions>
                 <StyledVerticalLine />
