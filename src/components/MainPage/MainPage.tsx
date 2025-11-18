@@ -90,7 +90,12 @@ const MainPage = ({ dictionary, homepageSections, lang }: MainPageProps) => {
         viewport={{ once: true, amount: 0.2 }}
         variants={fadeInUp}
       >
-        <Contact variant="2" dictionary={dictionary.contact} />
+        <Contact
+          variant="2"
+          dictionary={dictionary.contact}
+          homepageSections={homepageSections}
+          lang={lang}
+        />
       </motion.div>
     </>
   );
