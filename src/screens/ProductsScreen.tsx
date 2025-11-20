@@ -29,16 +29,23 @@ const StyledCircle = styled.div`
 interface ProductsScreenProps {
   dictionary: any;
   initialProductsData?: PaginatedProductListList | null;
+  initialAttributes?: any[] | null;
   initialPage?: number;
 }
 
-const ProductsScreen = ({ dictionary, initialProductsData, initialPage }: ProductsScreenProps) => {
+const ProductsScreen = ({
+  dictionary,
+  initialProductsData,
+  initialAttributes,
+  initialPage,
+}: ProductsScreenProps) => {
   return (
     <FilterProvider>
       <StyledComponent>
         <ProductsMain
           dictionary={dictionary.products}
           initialProductsData={initialProductsData}
+          initialAttributes={initialAttributes}
           initialPage={initialPage}
         />
         <NewCircle size="small" top="1000px" right="142px" media="no" />

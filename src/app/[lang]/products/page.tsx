@@ -3,8 +3,7 @@ import { getDictionary } from "@/config/get-dictionary";
 import type { Locale } from "@/config/i18n";
 import { PageProps } from "@/models/lang.model";
 import type { Metadata } from "next";
-import { fetchServerProducts, ProductQueryParams } from "@/api/products";
-import { PaginatedProductListList } from "@/api/generated/interfaces";
+import { fetchServerProducts, fetchServerAttributes, ProductQueryParams } from "@/api/products";
 
 // Revalidate this page every 60 seconds
 export const revalidate = 60;
@@ -72,18 +71,23 @@ export default async function ProductsPage({
     }
   });
 
-  // Fetch products server-side
-  let initialProductsData: PaginatedProductListList | null = null;
-  try {
-    initialProductsData = await fetchServerProducts(queryParams);
-  } catch (error) {
-    console.error("Failed to fetch products server-side:", error);
-  }
+  // Fetch products and attributes server-side in parallel
+  const [initialProductsData, initialAttributes] = await Promise.all([
+    fetchServerProducts(queryParams).catch((error) => {
+      console.error("Failed to fetch products server-side:", error);
+      return null;
+    }),
+    fetchServerAttributes().catch((error) => {
+      console.error("Failed to fetch attributes server-side:", error);
+      return null;
+    }),
+  ]);
 
   return (
     <ProductsScreen
       dictionary={dictionary}
       initialProductsData={initialProductsData}
+      initialAttributes={initialAttributes}
       initialPage={queryParams.page as number | undefined}
     />
   );

@@ -274,10 +274,13 @@ const buildFilterGroups = (attributes: AttributeDefinition[], language: Locale):
 };
 
 export const useFilterAttributeGroups = (
-  language: Locale = "ge"
+  language: Locale = "ge",
+  initialAttributes?: AttributeDefinition[] | null
 ): UseFilterAttributeGroupsResult => {
-  const [groups, setGroups] = useState<FilterGroup[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [groups, setGroups] = useState<FilterGroup[]>(
+    initialAttributes ? buildFilterGroups(initialAttributes, language) : []
+  );
+  const [loading, setLoading] = useState(!initialAttributes);
   const [error, setError] = useState<string | null>(null);
 
   const refreshGroups = useCallback(
@@ -298,6 +301,9 @@ export const useFilterAttributeGroups = (
   );
 
   useEffect(() => {
+    // Skip initial fetch if we have server-provided initial attributes
+    if (initialAttributes) return;
+
     let cancelled = false;
 
     const load = async () => {
@@ -325,7 +331,7 @@ export const useFilterAttributeGroups = (
     return () => {
       cancelled = true;
     };
-  }, [language]);
+  }, [language, initialAttributes]);
 
   const refetch = useCallback(async () => {
     await refreshGroups(true);

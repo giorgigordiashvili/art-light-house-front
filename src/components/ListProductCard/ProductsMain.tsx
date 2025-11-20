@@ -208,10 +208,16 @@ const SkeletonPrice = styled.div`
 interface ProductsMainProps {
   dictionary: any;
   initialProductsData?: any;
+  initialAttributes?: any[] | null;
   initialPage?: number;
 }
 
-function ProductsMain({ dictionary, initialProductsData, initialPage }: ProductsMainProps) {
+function ProductsMain({
+  dictionary,
+  initialProductsData,
+  initialAttributes,
+  initialPage,
+}: ProductsMainProps) {
   const [isMobileFilterDropdownVisible, setMobileFilterDropdownVisible] = useState(false);
   const { setOnFilterChange, filters, isInitialized } = useFilterContext();
   const router = useRouter();
@@ -372,7 +378,7 @@ function ProductsMain({ dictionary, initialProductsData, initialPage }: Products
         </SortWrapper>
         <ContentWrapper>
           <OnDesktop>
-            <FilterSidebar dictionary={dictionary.filter} />
+            <FilterSidebar dictionary={dictionary.filter} initialAttributes={initialAttributes} />
           </OnDesktop>
           <div style={{ width: "100%" }}>
             {loading ? (
@@ -408,7 +414,11 @@ function ProductsMain({ dictionary, initialProductsData, initialPage }: Products
         </ContentWrapper>
 
         {isMobileFilterDropdownVisible && (
-          <MobileFilterDropdown onClose={toggleMobileFilterDropdown} dictionary={dictionary} />
+          <MobileFilterDropdown
+            onClose={toggleMobileFilterDropdown}
+            dictionary={dictionary}
+            initialAttributes={initialAttributes}
+          />
         )}
       </Container>
     </StyledComponent>
