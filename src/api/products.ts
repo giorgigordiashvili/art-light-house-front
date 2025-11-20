@@ -79,3 +79,22 @@ export const fetchServerAttributes = async (): Promise<AttributeDefinition[]> =>
 
   return results;
 };
+
+// Server-side featured products fetching function with revalidation
+export const fetchServerFeaturedProducts = async (): Promise<PaginatedProductListList> => {
+  const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
+  const url = `${apiUrl}/api/ecommerce/client/products/?is_featured=true`;
+
+  const response = await fetch(url, {
+    next: { revalidate: 60 }, // Revalidate every 60 seconds
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
+
+  if (!response.ok) {
+    throw new Error(`Failed to fetch featured products: ${response.statusText}`);
+  }
+
+  return response.json();
+};
