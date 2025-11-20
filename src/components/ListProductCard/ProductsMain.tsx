@@ -205,14 +205,25 @@ const SkeletonPrice = styled.div`
   }
 `;
 
-function ProductsMain({ dictionary }: any) {
+interface ProductsMainProps {
+  dictionary: any;
+  initialProductsData?: any;
+  initialPage?: number;
+}
+
+function ProductsMain({ dictionary, initialProductsData, initialPage }: ProductsMainProps) {
   const [isMobileFilterDropdownVisible, setMobileFilterDropdownVisible] = useState(false);
   const { setOnFilterChange, filters, isInitialized } = useFilterContext();
   const router = useRouter();
   const pathname = usePathname();
   const hasAppliedInitialFilters = useRef(false);
 
-  // Fetch products without automatic filtering - filtering is manual now
+  // Calculate initial total pages from server data
+  const initialTotalPages = initialProductsData?.count
+    ? Math.ceil(initialProductsData.count / 12)
+    : 1;
+
+  // Fetch products with server-side initial data
   const {
     products,
     loading,
@@ -223,7 +234,12 @@ function ProductsMain({ dictionary }: any) {
     hasPreviousPage,
     fetchPage,
     applyFilters,
-  } = useProducts({ skipInitialFetch: true });
+  } = useProducts({
+    skipInitialFetch: true,
+    initialProducts: initialProductsData?.results || [],
+    initialPage: initialPage || 1,
+    initialTotalPages,
+  });
 
   const isReady = !loading && !error;
   const zeroResultsText = dictionary?.results?.zero ?? "0 products found";
@@ -268,8 +284,10 @@ function ProductsMain({ dictionary }: any) {
       filters.ordering ||
       filters.onSale;
 
+    // Only fetch if we have URL filters AND no initial server data
+    // If we have server data, we already have the products
     if (hasFilters) {
-      // Apply URL filters
+      // Apply URL filters only if they differ from what server provided
       applyFilters({
         categoryFilters: filters.selectedCategoryFilters,
         minPrice: filters.minPrice,
@@ -278,23 +296,24 @@ function ProductsMain({ dictionary }: any) {
         ordering: filters.ordering,
         onSale: filters.onSale,
       });
-    } else {
-      // No filters from URL, fetch all products
+    } else if (!initialProductsData) {
+      // No filters from URL and no server data, fetch all products
       applyFilters({});
     }
 
     hasAppliedInitialFilters.current = true;
-  }, [isInitialized, filters, applyFilters]);
+  }, [isInitialized, filters, applyFilters, initialProductsData]);
 
   // Handle page synchronization from URL (initial load and pagination changes)
   useEffect(() => {
-    if (!isInitialized) return;
+    if (!isInitialized || !hasAppliedInitialFilters.current) return;
 
     // Use direct URL parsing to avoid SSR issues with useSearchParams
     const urlParams = new URLSearchParams(window.location.search);
     const pageFromUrl = urlParams.get("page") ? parseInt(urlParams.get("page")!, 10) : 1;
 
     // Sync page if URL page differs from current page state
+    // But skip if we just loaded with server data on the correct page
     if (pageFromUrl !== currentPage) {
       fetchPage(pageFromUrl);
     }
