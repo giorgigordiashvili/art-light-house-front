@@ -290,10 +290,8 @@ function ProductsMain({
       filters.ordering ||
       filters.onSale;
 
-    // Only fetch if we have URL filters AND no initial server data
-    // If we have server data, we already have the products
     if (hasFilters) {
-      // Apply URL filters only if they differ from what server provided
+      // Apply URL filters
       applyFilters({
         categoryFilters: filters.selectedCategoryFilters,
         minPrice: filters.minPrice,
@@ -303,7 +301,8 @@ function ProductsMain({
         onSale: filters.onSale,
       });
     } else if (!initialProductsData) {
-      // No filters from URL and no server data, fetch all products
+      // Always perform an initial refresh so newly added products
+      // are fetched even when server provided initial data
       applyFilters({});
     }
 
