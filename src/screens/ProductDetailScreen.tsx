@@ -12,11 +12,21 @@ const StyledComponent = styled.div`
   align-items: center;
 `;
 
-const ProductDetailScreen = ({ dictionary, productId }: { dictionary: any; productId: number }) => {
+interface ProductDetailScreenProps {
+  dictionary: any;
+  initialProduct: any; // Using any to avoid broad refactors; ideally import ProductDetail type
+  initialError?: string | null;
+}
+
+const ProductDetailScreen = ({
+  dictionary,
+  initialProduct,
+  initialError,
+}: ProductDetailScreenProps) => {
   return (
     <StyledComponent>
       <BigCircle variant={2} />
-      <DetailMain dictionary={dictionary} productId={productId} />
+      <DetailMain dictionary={dictionary} product={initialProduct} error={initialError} />
     </StyledComponent>
   );
 };

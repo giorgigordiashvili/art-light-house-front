@@ -99,14 +99,17 @@ const BigCard = ({
   const displayImage =
     selectedImage ||
     (product.images as any)?.find((img: any) => img.is_primary) ||
-    (product.images as any)?.[0];
+    (product.images as any)?.[0] ||
+    (product.image
+      ? { id: "primary-fallback", image: product.image, alt_text: product.name }
+      : null);
 
   // Check if we have a valid image URL
   const hasValidImage =
     displayImage &&
-    displayImage.image &&
-    typeof displayImage.image === "string" &&
-    displayImage.image.trim() !== "";
+    (displayImage.image || displayImage.image_url) &&
+    typeof (displayImage.image || displayImage.image_url) === "string" &&
+    (displayImage.image || displayImage.image_url).trim() !== "";
 
   // Get current image index and total images
   const images = (product.images as any) || [];
@@ -244,7 +247,7 @@ const BigCard = ({
       {hasValidImage ? (
         <MainImageWrapper>
           <Image
-            src={displayImage.image}
+            src={displayImage.image || displayImage.image_url}
             alt={
               displayImage.alt_text || (typeof product.name === "string" ? product.name : "Product")
             }

@@ -71,9 +71,10 @@ const SaleButton = styled.button<{ $isActive: boolean }>`
 
 interface FilterSidebarProps {
   dictionary: any;
+  initialAttributes?: any[] | null;
 }
 
-function FilterSidebar({ dictionary }: FilterSidebarProps) {
+function FilterSidebar({ dictionary, initialAttributes }: FilterSidebarProps) {
   // No longer need manual apply button since filtering is immediate
   const pathname = usePathname();
   const language = getLocaleFromPath(pathname);
@@ -83,7 +84,7 @@ function FilterSidebar({ dictionary }: FilterSidebarProps) {
     groups,
     loading: filtersLoading,
     error: filtersError,
-  } = useFilterAttributeGroups(language);
+  } = useFilterAttributeGroups(language, initialAttributes);
   const categoryGroups = useMemo(() => groups.filter((group) => group.isCategoryGroup), [groups]);
   const attributeGroups = useMemo(() => groups.filter((group) => !group.isCategoryGroup), [groups]);
   const selectedAttributeSet = useMemo(() => {

@@ -125,9 +125,14 @@ const SaleButton = styled.button<{ $isActive: boolean }>`
 interface MobileFilterDropdownProps {
   onClose: () => void;
   dictionary: any;
+  initialAttributes?: any[] | null;
 }
 
-const MobileFilterDropdown: React.FC<MobileFilterDropdownProps> = ({ onClose, dictionary }) => {
+const MobileFilterDropdown: React.FC<MobileFilterDropdownProps> = ({
+  onClose,
+  dictionary,
+  initialAttributes,
+}) => {
   // Since filtering is now immediate, the button just closes the dropdown
   const pathname = usePathname();
   const language = getLocaleFromPath(pathname);
@@ -137,7 +142,7 @@ const MobileFilterDropdown: React.FC<MobileFilterDropdownProps> = ({ onClose, di
     groups,
     loading: filtersLoading,
     error: filtersError,
-  } = useFilterAttributeGroups(language);
+  } = useFilterAttributeGroups(language, initialAttributes);
   const categoryGroups = useMemo(() => groups.filter((group) => group.isCategoryGroup), [groups]);
   const attributeGroups = useMemo(() => groups.filter((group) => !group.isCategoryGroup), [groups]);
   const selectedAttributeSet = useMemo(() => {

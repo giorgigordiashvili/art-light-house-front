@@ -1,11 +1,8 @@
 "use client";
-import { useState, useEffect, useCallback } from "react";
+import { useState } from "react";
 import styled from "styled-components";
 import Link from "next/link";
-import {
-  ecommerceClientItemListsList,
-  ecommerceClientItemListsRetrieve,
-} from "@/api/generated/api";
+// Client component receives fully prepared project data from server (ISR) and only handles filtering.
 import BigCircle from "@/components/ui/BigCircle";
 
 const StyledComponent = styled.div`
@@ -178,86 +175,6 @@ const ProjectDescription = styled.p`
   overflow: hidden;
 `;
 
-const SkeletonCard = styled.div`
-  background: rgba(255, 255, 255, 0.03);
-  border-radius: 12px;
-  overflow: hidden;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  position: relative;
-
-  &::before {
-    content: "";
-    position: absolute;
-    top: 0;
-    left: -100%;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(
-      90deg,
-      transparent 0%,
-      rgba(255, 255, 255, 0.05) 50%,
-      transparent 100%
-    );
-    animation: shimmer 1.5s infinite;
-  }
-
-  @keyframes shimmer {
-    0% {
-      left: -100%;
-    }
-    100% {
-      left: 100%;
-    }
-  }
-`;
-
-const SkeletonImage = styled.div`
-  width: 100%;
-  height: 250px;
-  background: rgba(255, 255, 255, 0.05);
-`;
-
-const SkeletonContent = styled.div`
-  padding: 24px;
-`;
-
-const SkeletonTitle = styled.div`
-  width: 70%;
-  height: 24px;
-  background: rgba(255, 255, 255, 0.05);
-  border-radius: 4px;
-  margin-bottom: 12px;
-`;
-
-const SkeletonMeta = styled.div`
-  display: flex;
-  gap: 16px;
-  margin-bottom: 12px;
-`;
-
-const SkeletonMetaItem = styled.div`
-  width: 80px;
-  height: 14px;
-  background: rgba(255, 255, 255, 0.05);
-  border-radius: 4px;
-`;
-
-const SkeletonDescription = styled.div`
-  width: 100%;
-  height: 12px;
-  background: rgba(255, 255, 255, 0.05);
-  border-radius: 4px;
-  margin-bottom: 8px;
-
-  &:nth-child(2) {
-    width: 90%;
-  }
-
-  &:nth-child(3) {
-    width: 75%;
-  }
-`;
-
 const EmptyState = styled.div`
   text-align: center;
   padding: 80px 20px;
@@ -275,6 +192,9 @@ const EmptyState = styled.div`
 
 interface ProjectsScreenProps {
   dictionary: any;
+  initialProjects: ProjectItem[];
+  initialCategories: string[];
+  initialError?: string | null;
 }
 
 type ProjectItem = {
@@ -289,98 +209,23 @@ type ProjectItem = {
   isFeatured?: boolean;
 };
 
-const getFirstGalleryImage = (gallery: any): string | undefined => {
-  if (!gallery) return undefined;
-  if (typeof gallery === "string") return gallery;
-  if (Array.isArray(gallery) && gallery.length > 0) {
-    const first = gallery[0];
-    if (typeof first === "string") return first;
-    if (typeof first?.url === "string") return first.url;
-    if (typeof first?.image === "string") return first.image;
-  }
-  return undefined;
-};
-
 const stripHtml = (value?: string) => {
   if (!value) return undefined;
   return value.replace(/<[^>]*>/g, "").trim();
 };
 
-const ProjectsScreen = ({ dictionary }: ProjectsScreenProps) => {
-  const [projects, setProjects] = useState<ProjectItem[]>([]);
-  const [loading, setLoading] = useState(true);
+const ProjectsScreen = ({
+  dictionary,
+  initialProjects,
+  initialCategories,
+  initialError,
+}: ProjectsScreenProps) => {
   const [categoryFilter, setCategoryFilter] = useState<string | undefined>(undefined);
-  const [categories, setCategories] = useState<string[]>([]);
-  const [error, setError] = useState<string | null>(null);
-
-  const loadProjects = useCallback(async () => {
-    try {
-      setLoading(true);
-      setError(null);
-
-      const listsResponse = await ecommerceClientItemListsList();
-      const activeList = listsResponse.results?.[0];
-
-      if (!activeList) {
-        setProjects([]);
-        setCategories([]);
-        return;
-      }
-
-      const listDetail = await ecommerceClientItemListsRetrieve(activeList.id);
-      const rawItemsData = listDetail.items as unknown;
-      const rawItems = Array.isArray(rawItemsData)
-        ? rawItemsData
-        : (() => {
-            try {
-              const serialized =
-                typeof rawItemsData === "string"
-                  ? rawItemsData
-                  : JSON.stringify(rawItemsData ?? []);
-              const parsed = JSON.parse(serialized || "[]");
-              return Array.isArray(parsed) ? parsed : [];
-            } catch {
-              return [];
-            }
-          })();
-
-      const normalized: ProjectItem[] = rawItems
-        .filter((item: any) => item && item.is_active !== false)
-        .map((item: any) => {
-          const customData = item.custom_data || {};
-          return {
-            id: item.id,
-            title: customData.title || item.label || `Project ${item.id}`,
-            description: customData.description,
-            imageUrl: getFirstGalleryImage(customData.gallery),
-            category: customData.category || customData.type,
-            year: customData.year,
-            location: customData.location,
-            slug: customData.slug || item.custom_id || String(item.id),
-            isFeatured: Boolean(customData.is_featured),
-          };
-        });
-
-      setProjects(normalized);
-      setCategories(
-        Array.from(
-          new Set(
-            normalized.map((project) => project.category).filter((c): c is string => Boolean(c))
-          )
-        )
-      );
-    } catch (err: any) {
-      setError(err?.response?.data?.message || err?.message || "Failed to load projects");
-      setProjects([]);
-      setCategories([]);
-    } finally {
-      setLoading(false);
-    }
-  }, []);
-
-  useEffect(() => {
-    loadProjects();
-  }, [loadProjects]);
+  // Projects & categories are fixed from server; no client re-fetch required.
+  const projects = initialProjects;
+  const categories = initialCategories;
+  const error = initialError || null;
+  const loading = false;
 
   const filteredProjects = categoryFilter
     ? projects.filter((project) => project.category === categoryFilter)
@@ -417,26 +262,7 @@ const ProjectsScreen = ({ dictionary }: ProjectsScreenProps) => {
             <p>{error}</p>
           </EmptyState>
         )}
-        {loading ? (
-          <ProjectsGrid>
-            {[1, 2, 3, 4, 5, 6].map((index) => (
-              <SkeletonCard key={index}>
-                <SkeletonImage />
-                <SkeletonContent>
-                  <SkeletonTitle />
-                  <SkeletonMeta>
-                    <SkeletonMetaItem />
-                    <SkeletonMetaItem />
-                    <SkeletonMetaItem />
-                  </SkeletonMeta>
-                  <SkeletonDescription />
-                  <SkeletonDescription />
-                  <SkeletonDescription />
-                </SkeletonContent>
-              </SkeletonCard>
-            ))}
-          </ProjectsGrid>
-        ) : filteredProjects.length === 0 ? (
+        {filteredProjects.length === 0 ? (
           <EmptyState>
             <h3>No projects found</h3>
             <p>Check back soon for our latest work</p>

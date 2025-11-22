@@ -14,7 +14,6 @@ import NewCircle from "../ui/NewCircle";
 import Circle from "../ui/Circle";
 import RightSlide from "../MainPage/NewProducts/RightSlide";
 import ReturnIcon from "../Header/ReturnIcon";
-import { useProductDetail } from "@/hooks/useProductDetail";
 import { useSimilarProducts } from "@/hooks/useSimilarProducts";
 import { useAuthModal } from "@/contexts/AuthModalContext";
 import {
@@ -503,17 +502,25 @@ const SkeletonProductPrice = styled.div`
   }
 `;
 
-function DetailMain({ dictionary, productId }: { dictionary: any; productId: number }) {
-  const { product, loading, error } = useProductDetail(productId);
+function DetailMain({
+  dictionary,
+  product,
+  error,
+}: {
+  dictionary: any;
+  product: any;
+  error?: string | null;
+}) {
+  const loading = false; // Server-side data provided; no loading state required
   const { openAuthModal } = useAuthModal();
   const [selectedImage, setSelectedImage] = useState<any>(null);
 
-  // Fetch similar products based on the current product's category
+  // Fetch similar products based on shared attribute values
   const {
     similarProducts,
     loading: similarLoading,
     error: similarError,
-  } = useSimilarProducts(undefined, productId, 30); // category not available on ProductDetail; fetch more to allow horizontal scroll
+  } = useSimilarProducts(undefined, product?.id, 30, product); // pass full product to match attributes
 
   // Horizontal scroll + drag state for similar products (when more than 4)
   const scrollRef = useRef<HTMLDivElement | null>(null);

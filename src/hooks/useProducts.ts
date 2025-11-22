@@ -13,6 +13,9 @@ interface UseProductsOptions {
   ordering?: string;
   onSale?: boolean;
   skipInitialFetch?: boolean; // Add option to skip initial fetch
+  initialProducts?: ProductList[]; // Server-side initial products
+  initialPage?: number; // Server-side initial page
+  initialTotalPages?: number; // Server-side total pages
 }
 
 interface UseProductsResult {
@@ -29,11 +32,11 @@ interface UseProductsResult {
 }
 
 export const useProducts = (options: UseProductsOptions = {}): UseProductsResult => {
-  const [products, setProducts] = useState<ProductList[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [products, setProducts] = useState<ProductList[]>(options.initialProducts || []);
+  const [loading, setLoading] = useState(!options.initialProducts); // Don't load if we have initial data
   const [error, setError] = useState<string | null>(null);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(1);
+  const [currentPage, setCurrentPage] = useState(options.initialPage || 1);
+  const [totalPages, setTotalPages] = useState(options.initialTotalPages || 1);
   const [activeFilters, setActiveFilters] = useState<UseProductsOptions>(options);
 
   const fetchProducts = useCallback(
@@ -152,15 +155,15 @@ export const useProducts = (options: UseProductsOptions = {}): UseProductsResult
   );
 
   useEffect(() => {
-    // Skip initial fetch if requested (for URL filter scenarios)
-    if (options.skipInitialFetch) return;
+    // Skip initial fetch if requested (for URL filter scenarios) or if we have initial products from server
+    if (options.skipInitialFetch || options.initialProducts) return;
 
     // Initial fetch with current active filters (defaults to options)
     const timeoutId = setTimeout(() => {
       fetchProducts(1, activeFilters);
     }, 0);
     return () => clearTimeout(timeoutId);
-  }, [fetchProducts, activeFilters, options.skipInitialFetch]);
+  }, [fetchProducts, activeFilters, options.skipInitialFetch, options.initialProducts]);
 
   return {
     products,
