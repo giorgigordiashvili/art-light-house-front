@@ -43,7 +43,6 @@ export default async function ProjectDetailPage({ params }: ProjectPageProps) {
   const { project, error } = await fetchServerProjectDetail(resolvedLang, slug);
   return (
     <ProjectDetailScreen
-      slug={slug}
       dictionary={dictionary}
       lang={resolvedLang}
       initialProject={project}

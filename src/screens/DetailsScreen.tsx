@@ -13,11 +13,11 @@ const StyledComponent = styled.div`
 
 const MyDetails = ({ dictionary }: { dictionary: any }) => {
   // This is a placeholder - this screen might need to be updated or separated from ProductDetail
-  const placeholderProductId = 1;
+  const placeholderProduct: any = null; // No server product provided on this generic screen
 
   return (
     <StyledComponent>
-      <DetailMain dictionary={dictionary} productId={placeholderProductId}></DetailMain>
+      <DetailMain dictionary={dictionary} product={placeholderProduct} />
     </StyledComponent>
   );
 };
