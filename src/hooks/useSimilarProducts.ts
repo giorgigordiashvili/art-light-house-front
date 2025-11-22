@@ -8,18 +8,6 @@ interface UseSimilarProductsResult {
   error: string | null;
 }
 
-// Helper: extract attribute keys from product's attribute_values
-function extractAttributeKeys(product: any): Set<string> {
-  const keys = new Set<string>();
-  if (Array.isArray(product?.attribute_values)) {
-    product.attribute_values.forEach((attrVal: any) => {
-      const key = attrVal.attribute?.key;
-      if (key) keys.add(key);
-    });
-  }
-  return keys;
-}
-
 // Helper: check if two products share at least one attribute key with same value
 function hasSharedAttribute(productA: any, productB: any): boolean {
   if (!Array.isArray(productA?.attribute_values) || !Array.isArray(productB?.attribute_values)) {
