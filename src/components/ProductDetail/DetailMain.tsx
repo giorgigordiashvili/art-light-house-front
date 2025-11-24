@@ -41,6 +41,9 @@ const StyledCircle = styled.div`
   @media (max-width: 1080px) {
     display: none;
   }
+  @media (min-height: 1220px) {
+    display: none;
+  }
 `;
 
 const StyledMenuBar = styled.div`

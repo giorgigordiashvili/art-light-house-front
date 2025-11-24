@@ -14,8 +14,12 @@ const StyledContainer = styled.div`
   padding-top: 186px;
   padding-inline: 20px;
   padding: 186px 20px 118px 20px;
+  min-height: 116dvh;
   @media (max-width: 1080px) {
     padding: 157px 0 45px 0;
+  }
+  @media (min-height: 1080px) {
+    min-height: 100dvh;
   }
 `;
 

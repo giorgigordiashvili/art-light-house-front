@@ -10,6 +10,7 @@ const StyledComponent = styled.div`
   background: #0b0b0b;
   padding-bottom: 130px;
   padding-top: 186px;
+  min-height: 100dvh;
   @media (max-width: 1080px) {
     padding-top: 162px;
     padding-bottom: 0;

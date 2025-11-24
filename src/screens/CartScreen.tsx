@@ -11,6 +11,7 @@ import BigCircle from "@/components/ui/BigCircle";
 const StyledContainer = styled.div`
   background-color: #0b0b0b;
   padding: 186px 20px 164px 20px;
+  min-height: 100dvh;
   @media (max-width: 1080px) {
     padding: 157px 0 45px 0;
   }
