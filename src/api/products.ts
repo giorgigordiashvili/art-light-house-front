@@ -11,7 +11,10 @@ export const fetchClientProducts = async (
   params: ProductQueryParams
 ): Promise<PaginatedProductListList> => {
   const response = await axiosInstance.get("/api/ecommerce/client/products/", {
-    params,
+    params: {
+      ...params,
+      page_size: 12, // Always fetch 12 items per page
+    },
   });
 
   return response.data;
@@ -23,7 +26,7 @@ export const fetchServerProducts = async (
 ): Promise<PaginatedProductListList> => {
   const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
   const queryString = new URLSearchParams(
-    Object.entries(params).reduce(
+    Object.entries({ ...params, page_size: 12 }).reduce(
       (acc, [key, value]) => {
         if (value !== undefined && value !== null) {
           acc[key] = String(value);
@@ -83,7 +86,7 @@ export const fetchServerAttributes = async (): Promise<AttributeDefinition[]> =>
 // Server-side featured products fetching function with revalidation
 export const fetchServerFeaturedProducts = async (): Promise<PaginatedProductListList> => {
   const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
-  const url = `${apiUrl}/api/ecommerce/client/products/?is_featured=true`;
+  const url = `${apiUrl}/api/ecommerce/client/products/?is_featured=true&page_size=12`;
 
   const response = await fetch(url, {
     next: { revalidate: 60 }, // Revalidate every 60 seconds
