@@ -96,8 +96,8 @@ const OnDesktop = styled.div`
 const PaginationWrapper = styled.div`
   display: flex;
   justify-content: center;
-  margin-top: 70px;
-  margin-bottom: 183px;
+  position: relative;
+  bottom: 183px;
 `;
 
 const SkeletonGrid = styled.div`
