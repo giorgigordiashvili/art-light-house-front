@@ -24,6 +24,9 @@ const StyledCircle = styled.div`
   @media (max-width: 1080px) {
     display: none;
   }
+  @media (min-height: 1150px) {
+    display: none;
+  }
 `;
 
 interface ProductsScreenProps {
