@@ -136,7 +136,7 @@ const MobileFilterDropdown: React.FC<MobileFilterDropdownProps> = ({
   // Since filtering is now immediate, the button just closes the dropdown
   const pathname = usePathname();
   const language = getLocaleFromPath(pathname);
-  const { filters, updateCategoryFilter, updateAttributeFilter, updateOnSaleFilter } =
+  const { filters, updateCategoryFilter, updateAttributeFilter, updateOnSaleFilter, clearFilters } =
     useFilterContext();
   const {
     groups,
@@ -266,7 +266,13 @@ const MobileFilterDropdown: React.FC<MobileFilterDropdownProps> = ({
           <SaleButton $isActive={!!filters.onSale} onClick={handleOnSaleChange}>
             {dictionary?.filter?.onSaleLabel || "ფასდაკლებული პროდუქტები"}
           </SaleButton>
-          <ButtonFilter onClick={onClose} dictionary={dictionary} />
+          <ButtonFilter
+            onClick={() => {
+              clearFilters();
+              onClose();
+            }}
+            dictionary={dictionary}
+          />
         </BottomBar>
       </DropdownWrapper>
     </>

@@ -193,7 +193,7 @@ export const FilterProvider: React.FC<FilterProviderProps> = ({ children }) => {
   };
 
   const clearFilters = () => {
-    const newFilters = {
+    const newFilters: FilterState = {
       selectedCategoryFilters: [],
       minPrice: undefined,
       maxPrice: undefined,
@@ -202,8 +202,18 @@ export const FilterProvider: React.FC<FilterProviderProps> = ({ children }) => {
       ordering: undefined,
       onSale: undefined,
     };
+
     setFilters(newFilters);
+
+    // Sync cleared filters to URL (removes all query params and page)
     syncFiltersToUrl(newFilters);
+
+    // Additionally, make sure user is on the base products path
+    // e.g. /ge/products or /en/products (no query string)
+    if (typeof window !== "undefined") {
+      router.replace(pathname, { scroll: false });
+    }
+
     // Trigger immediate filtering when clearing
     if (onFilterChangeRef.current) {
       onFilterChangeRef.current(newFilters);
