@@ -290,8 +290,11 @@ function ProductsMain({
       filters.ordering ||
       filters.onSale;
 
+    // Only fetch if:
+    // 1. There are filters from URL that differ from server data, OR
+    // 2. There's no initial server data at all
     if (hasFilters) {
-      // Apply URL filters
+      // Apply URL filters (this means filters changed from server state)
       applyFilters({
         categoryFilters: filters.selectedCategoryFilters,
         minPrice: filters.minPrice,
@@ -301,40 +304,26 @@ function ProductsMain({
         onSale: filters.onSale,
       });
     } else if (!initialProductsData) {
-      // Always perform an initial refresh so newly added products
-      // are fetched even when server provided initial data
+      // Only fetch if we don't have server data
       applyFilters({});
     }
+    // If we have initialProductsData and no filters, just use the server data (no fetch)
 
     hasAppliedInitialFilters.current = true;
   }, [isInitialized, filters, applyFilters, initialProductsData]);
 
-  // Handle page synchronization from URL (initial load and pagination changes)
-  useEffect(() => {
-    if (!isInitialized || !hasAppliedInitialFilters.current) return;
-
-    // Use direct URL parsing to avoid SSR issues with useSearchParams
-    const urlParams = new URLSearchParams(window.location.search);
-    const pageFromUrl = urlParams.get("page") ? parseInt(urlParams.get("page")!, 10) : 1;
-
-    // Sync page if URL page differs from current page state
-    // But skip if we just loaded with server data on the correct page
-    if (pageFromUrl !== currentPage) {
-      fetchPage(pageFromUrl);
-    }
-  }, [isInitialized, currentPage, fetchPage]);
   const toggleMobileFilterDropdown = () => {
     setMobileFilterDropdownVisible(!isMobileFilterDropdownVisible);
   };
 
   const handlePageChange = async (page: number) => {
-    // Update URL first to ensure state consistency
+    // Update URL to reflect new page (for ISR and browser history)
     const current = new URLSearchParams(window.location.search);
     current.set("page", page.toString());
     const newUrl = `${pathname}?${current.toString()}`;
-    router.replace(newUrl, { scroll: false });
+    router.push(newUrl, { scroll: false });
 
-    // Then fetch the page data
+    // Immediately fetch the page data client-side for instant UI update
     await fetchPage(page);
   };
 
