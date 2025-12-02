@@ -14,7 +14,7 @@ import {
   EcommerceClient,
 } from "@/api/generated/interfaces";
 import { registerClient, loginClient } from "@/api/generated/api";
-import Image from "next/image";
+// import Image from "next/image";
 
 interface AuthorizationModalProps {
   onClose: () => void;
@@ -100,33 +100,33 @@ const StyledPrimaryButton = styled.div<{ $isRegister: boolean }>`
   margin-top: ${({ $isRegister }) => ($isRegister ? "50px" : "24px")};
 `;
 
-const SocialButtons = styled.div`
-  display: flex;
-  justify-content: center;
-  gap: 12px;
-  margin-top: 16px;
-  width: 100%;
-`;
+// const SocialButtons = styled.div`
+//   display: flex;
+//   justify-content: center;
+//   gap: 12px;
+//   margin-top: 16px;
+//   width: 100%;
+// `;
 
-const SocialButton = styled.button`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 100%;
-  height: 50px;
-  background-color: #2a2a2a;
-  border: 1px solid #ffffff12;
-  border-radius: 10px;
-  color: #fff;
-  cursor: pointer;
-  transition: all 0.2s;
-  font-size: 14px;
-  gap: 8px;
+// const SocialButton = styled.button`
+//   display: flex;
+//   align-items: center;
+//   justify-content: center;
+//   width: 100%;
+//   height: 50px;
+//   background-color: #2a2a2a;
+//   border: 1px solid #ffffff12;
+//   border-radius: 10px;
+//   color: #fff;
+//   cursor: pointer;
+//   transition: all 0.2s;
+//   font-size: 14px;
+//   gap: 8px;
 
-  &:hover {
-    background-color: #3a3a3a;
-  }
-`;
+//   &:hover {
+//     background-color: #3a3a3a;
+//   }
+// `;
 
 const ErrorMessage = styled.div`
   color: #ff4d4f;
@@ -379,10 +379,10 @@ const AuthorizationModal: React.FC<AuthorizationModalProps> = ({
     }
   };
 
-  const handleSocialSignIn = async () => {
-    // Social authentication removed - only basic auth is supported
-    setError("Social authentication is not available. Please use email and password.");
-  };
+  // const handleSocialSignIn = async () => {
+  //   // Social authentication removed - only basic auth is supported
+  //   setError("Social authentication is not available. Please use email and password.");
+  // };
 
   return (
     <StyledContainer>
@@ -529,7 +529,7 @@ const AuthorizationModal: React.FC<AuthorizationModalProps> = ({
             disabled={isLoading}
           />
         </StyledPrimaryButton>
-
+        {/* 
         <SocialButtons>
           <SocialButton onClick={() => handleSocialSignIn()}>
             <Image src="/assets/icons/google-icon.svg" width={20} height={20} alt="Google" />
@@ -543,7 +543,7 @@ const AuthorizationModal: React.FC<AuthorizationModalProps> = ({
               ? dictionary?.authorizationModal?.loginWithFacebook
               : dictionary?.authorizationModal?.registerWithFacebook}
           </SocialButton>
-        </SocialButtons>
+        </SocialButtons> */}
       </StyledModal>
     </StyledContainer>
   );
