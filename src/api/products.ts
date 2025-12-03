@@ -24,7 +24,7 @@ export const fetchClientProducts = async (
 export const fetchServerProducts = async (
   params: ProductQueryParams
 ): Promise<PaginatedProductListList> => {
-  const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
+  const apiUrl = process.env.API_URL || "http://localhost:8000";
   const queryString = new URLSearchParams(
     Object.entries({ ...params, page_size: 12 }).reduce(
       (acc, [key, value]) => {
@@ -55,7 +55,7 @@ export const fetchServerProducts = async (
 
 // Server-side attributes fetching function with revalidation
 export const fetchServerAttributes = async (): Promise<AttributeDefinition[]> => {
-  const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
+  const apiUrl = process.env.API_URL || "http://localhost:8000";
   const results: AttributeDefinition[] = [];
   let page = 1;
   let hasNext = false;
