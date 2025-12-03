@@ -8,12 +8,25 @@ interface UseFeaturedProductsResult {
   error: string | null;
 }
 
-export const useFeaturedProducts = (): UseFeaturedProductsResult => {
-  const [featuredProducts, setFeaturedProducts] = useState<ProductList[]>([]);
-  const [loading, setLoading] = useState(true);
+interface UseFeaturedProductsOptions {
+  initialProducts?: ProductList[];
+}
+
+export const useFeaturedProducts = (
+  options: UseFeaturedProductsOptions = {}
+): UseFeaturedProductsResult => {
+  const [featuredProducts, setFeaturedProducts] = useState<ProductList[]>(
+    options.initialProducts || []
+  );
+  const [loading, setLoading] = useState(!options.initialProducts);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
+    // Skip client-side fetch if we have initial products from server
+    if (options.initialProducts) {
+      return;
+    }
+
     const fetchFeaturedProducts = async () => {
       try {
         setLoading(true);
@@ -38,7 +51,7 @@ export const useFeaturedProducts = (): UseFeaturedProductsResult => {
     };
 
     fetchFeaturedProducts();
-  }, []);
+  }, [options.initialProducts]);
 
   return { featuredProducts, loading, error };
 };

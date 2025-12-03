@@ -12,7 +12,7 @@ const StyledFooter = styled.div`
   top: 3910px;
   padding-inline: 16px;
   @media (max-width: 1080px) {
-    height: 856px;
+    height: 900px;
   }
 `;
 

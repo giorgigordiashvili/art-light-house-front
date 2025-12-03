@@ -6,6 +6,7 @@ import RightSlide from "./RightSlide";
 import Container from "../../ui/Container";
 import NewProductCard from "./NewProductCard";
 import { useFeaturedProducts } from "@/hooks/useFeaturedProducts";
+import type { ProductList } from "@/api/generated/interfaces";
 
 const StyledContainer = styled.div`
   margin-top: 120px;
@@ -93,8 +94,15 @@ const ErrorContainer = styled.div`
   text-align: center;
 `;
 
-const NewProducts = ({ dictionary }: any) => {
-  const { featuredProducts, loading, error } = useFeaturedProducts();
+interface NewProductsProps {
+  dictionary: any;
+  initialFeaturedProducts?: ProductList[];
+}
+
+const NewProducts = ({ dictionary, initialFeaturedProducts }: NewProductsProps) => {
+  const { featuredProducts, loading, error } = useFeaturedProducts({
+    initialProducts: initialFeaturedProducts,
+  });
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const [isDragging, setIsDragging] = useState(false);
   const [isPointerDown, setIsPointerDown] = useState(false);

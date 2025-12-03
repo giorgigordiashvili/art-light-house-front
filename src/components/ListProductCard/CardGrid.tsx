@@ -7,7 +7,7 @@ const GridWrapper = styled.div`
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 20px;
-  margin-bottom: 253px;
+  margin-bottom: 304px;
   justify-items: center;
 
   @media (max-width: 1332px) {

@@ -1,20 +1,16 @@
 "use client";
-import { useState, useEffect, useCallback } from "react";
+import { useState } from "react";
 import styled from "styled-components";
 import Link from "next/link";
-import {
-  ecommerceClientItemListsList,
-  ecommerceClientItemListsRetrieve,
-  ecommerceClientItemListsItemsRetrieve,
-} from "@/api/generated/api";
 import NewCircle from "@/components/ui/NewCircle";
-import Circle from "@/components/ui/Circle";
 import BigCircle from "@/components/ui/BigCircle";
 
 interface ProjectDetailScreenProps {
-  slug: string;
+  // slug: string; // Removed slug prop for SSR-only rendering
   dictionary: any;
   lang: string;
+  initialProject: ProjectDetail | null;
+  initialError?: string | null;
 }
 
 type ProjectGalleryImage = {
@@ -37,136 +33,7 @@ interface ProjectDetail {
   images: ProjectGalleryImage[];
 }
 
-const parseListItems = (items: unknown): any[] => {
-  if (Array.isArray(items)) {
-    return items as any[];
-  }
-
-  try {
-    const serialized = typeof items === "string" ? (items as string) : JSON.stringify(items ?? []);
-    const parsed = JSON.parse(serialized || "[]");
-    return Array.isArray(parsed) ? parsed : [];
-  } catch {
-    return [];
-  }
-};
-
-const toGalleryArray = (gallery: unknown): any[] => {
-  if (!gallery) return [];
-  if (Array.isArray(gallery)) return gallery;
-
-  if (typeof gallery === "string") {
-    try {
-      const parsed = JSON.parse(gallery);
-      if (Array.isArray(parsed)) {
-        return parsed;
-      }
-    } catch {
-      return [gallery];
-    }
-    return [gallery];
-  }
-
-  return [gallery];
-};
-
-const parseCustomData = (customData: unknown): Record<string, any> => {
-  if (!customData) return {};
-  if (typeof customData === "string") {
-    try {
-      const parsed = JSON.parse(customData);
-      return parsed && typeof parsed === "object" ? parsed : {};
-    } catch {
-      return {};
-    }
-  }
-
-  if (typeof customData === "object") {
-    return customData as Record<string, any>;
-  }
-
-  return {};
-};
-
-const buildGalleryImages = (gallery: any, fallbackTitle: string): ProjectGalleryImage[] =>
-  toGalleryArray(gallery)
-    .map((entry: any, index: number): ProjectGalleryImage | null => {
-      if (!entry) return null;
-      if (typeof entry === "string") {
-        return {
-          id: `gallery-${index}`,
-          image_url: entry,
-          alt_text: fallbackTitle,
-        };
-      }
-
-      if (typeof entry === "object") {
-        const imageUrl =
-          entry.image_url ||
-          entry.image ||
-          entry.url ||
-          entry.src ||
-          (typeof entry.file === "string" ? entry.file : undefined);
-        if (!imageUrl) return null;
-        return {
-          id: String(entry.id ?? `gallery-${index}`),
-          image_url: imageUrl,
-          alt_text: entry.alt_text || entry.title || fallbackTitle,
-        };
-      }
-
-      return null;
-    })
-    .filter((value): value is ProjectGalleryImage => value !== null);
-
-const getItemSlugCandidates = (item: any) => {
-  const customData = parseCustomData(item?.custom_data);
-  return [customData.slug, item?.custom_id, item?.id != null ? String(item.id) : null]
-    .filter(Boolean)
-    .map((value) => String(value).trim().toLowerCase());
-};
-
-const buildProjectDetail = (item: any): ProjectDetail => {
-  const customData = parseCustomData(item?.custom_data);
-  const galleryImages = buildGalleryImages(
-    customData.gallery || customData.images,
-    customData.title || item?.label || "Project"
-  );
-  const imageFromCustom = customData.image || customData.primary_image;
-  const numericId = typeof item?.id === "number" ? item.id : Number(item?.id ?? 0);
-  const imageFallback = imageFromCustom
-    ? [
-        {
-          id: "primary",
-          image_url: imageFromCustom,
-          alt_text: customData.title || item?.label,
-        },
-      ]
-    : [];
-  const images = galleryImages.length > 0 ? galleryImages : imageFallback;
-
-  return {
-    id: Number.isNaN(numericId) ? 0 : numericId,
-    title: customData.title || item?.label || `Project ${item?.id}`,
-    short_description: customData.short_description,
-    description: customData.description,
-    client: customData.client,
-    category: customData.category || customData.type,
-    year: customData.year,
-    location: customData.location,
-    is_featured: Boolean(customData.is_featured ?? item?.is_active),
-    primary_image_url: images[0]?.image_url,
-    images,
-  };
-};
-
-const normalizeSlugValue = (value: string) => {
-  try {
-    return decodeURIComponent(value).trim().toLowerCase();
-  } catch {
-    return value.trim().toLowerCase();
-  }
-};
+// All transformation now handled server-side. Component is display-only.
 
 const StyledComponent = styled.div`
   background: #0b0b0b;
@@ -351,120 +218,6 @@ const ContentSection = styled.div`
   }
 `;
 
-const SkeletonWrapper = styled.div`
-  @keyframes shimmer {
-    0% {
-      background-position: -1000px 0;
-    }
-    100% {
-      background-position: 1000px 0;
-    }
-  }
-`;
-
-const SkeletonBox = styled.div<{ width?: string; height?: string; borderRadius?: string }>`
-  width: ${(props) => props.width || "100%"};
-  height: ${(props) => props.height || "20px"};
-  border-radius: ${(props) => props.borderRadius || "8px"};
-  background: linear-gradient(
-    90deg,
-    rgba(255, 255, 255, 0.05) 0%,
-    rgba(255, 255, 255, 0.1) 50%,
-    rgba(255, 255, 255, 0.05) 100%
-  );
-  background-size: 1000px 100%;
-  animation: shimmer 2s infinite;
-`;
-
-const SkeletonHeader = styled.div`
-  margin-bottom: 50px;
-`;
-
-const SkeletonTitle = styled(SkeletonBox)`
-  width: 60%;
-  height: 48px;
-  margin-bottom: 24px;
-
-  @media (max-width: 768px) {
-    width: 80%;
-    height: 32px;
-  }
-`;
-
-const SkeletonMetaRow = styled.div`
-  display: flex;
-  gap: 24px;
-  flex-wrap: wrap;
-  margin-bottom: 16px;
-`;
-
-const SkeletonMetaItem = styled(SkeletonBox)`
-  width: 120px;
-  height: 16px;
-`;
-
-const SkeletonBadge = styled(SkeletonBox)`
-  width: 100px;
-  height: 32px;
-  border-radius: 20px;
-`;
-
-const SkeletonImageGallery = styled.div`
-  margin-bottom: 50px;
-`;
-
-const SkeletonMainImage = styled(SkeletonBox)`
-  width: 100%;
-  height: 600px;
-  border-radius: 16px;
-  margin-bottom: 20px;
-
-  @media (max-width: 768px) {
-    height: 400px;
-  }
-`;
-
-const SkeletonThumbnailGrid = styled.div`
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-  gap: 12px;
-
-  @media (max-width: 768px) {
-    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
-  }
-`;
-
-const SkeletonThumbnail = styled(SkeletonBox)`
-  height: 120px;
-  border-radius: 8px;
-`;
-
-const SkeletonContentSection = styled.div`
-  background: rgba(255, 255, 255, 0.03);
-  border-radius: 16px;
-  padding: 40px;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  margin-bottom: 40px;
-
-  @media (max-width: 768px) {
-    padding: 24px;
-  }
-`;
-
-const SkeletonContentTitle = styled(SkeletonBox)`
-  width: 200px;
-  height: 28px;
-  margin-bottom: 24px;
-`;
-
-const SkeletonTextLine = styled(SkeletonBox)`
-  margin-bottom: 12px;
-
-  &:last-child {
-    width: 75%;
-  }
-`;
-
 const ErrorContainer = styled.div`
   text-align: center;
   padding: 80px 20px;
@@ -482,125 +235,16 @@ const ErrorContainer = styled.div`
   }
 `;
 
-const DecorCircleWrapper = styled.div`
-  position: absolute;
-  bottom: -1200px;
-  left: 38%;
-  transform: translateX(-50%);
-  @media (max-width: 1080px) {
-    display: none;
-  }
-`;
-
-const ProjectDetailScreen = ({ dictionary, lang, slug }: ProjectDetailScreenProps) => {
-  const [project, setProject] = useState<ProjectDetail | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+const ProjectDetailScreen = ({
+  dictionary,
+  lang,
+  initialProject,
+  initialError,
+}: ProjectDetailScreenProps) => {
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
-
-  const loadProject = useCallback(async () => {
-    try {
-      setLoading(true);
-      setError(null);
-
-      const listsResponse = await ecommerceClientItemListsList();
-      const activeList = listsResponse.results?.[0];
-
-      if (!activeList) {
-        throw new Error("Projects list is not configured yet.");
-      }
-
-      const listDetail = await ecommerceClientItemListsRetrieve(activeList.id);
-      const rawItems = parseListItems(listDetail.items);
-      const normalizedSlug = normalizeSlugValue(slug);
-
-      const targetItem = rawItems.find((item: any) => {
-        const candidates = getItemSlugCandidates(item);
-        return candidates.includes(normalizedSlug);
-      });
-
-      if (!targetItem) {
-        throw new Error("Project not found.");
-      }
-
-      if (!targetItem.id) {
-        throw new Error("Project item is missing an identifier.");
-      }
-
-      const detailedItem = await ecommerceClientItemListsItemsRetrieve(
-        activeList.id,
-        String(targetItem.id)
-      );
-
-      setProject(buildProjectDetail(detailedItem));
-      setSelectedImageIndex(0);
-    } catch (err) {
-      console.error("Failed to load project:", err);
-      const message =
-        (err as any)?.response?.data?.message ||
-        (err instanceof Error ? err.message : null) ||
-        "Failed to load project. It may not exist or has been removed.";
-      setError(message);
-      setProject(null);
-    } finally {
-      setLoading(false);
-    }
-  }, [slug]);
-
-  useEffect(() => {
-    loadProject();
-  }, [loadProject]);
-
-  if (loading) {
-    return (
-      <StyledComponent>
-        <Container>
-          <BackButton href={`/${lang}/projects`}>
-            <svg fill="currentColor" viewBox="0 0 24 24">
-              <path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z" />
-            </svg>
-            {dictionary.projects.backToProjects}
-          </BackButton>
-
-          <SkeletonWrapper>
-            <SkeletonHeader>
-              <SkeletonTitle />
-              <SkeletonMetaRow>
-                <SkeletonMetaItem />
-                <SkeletonMetaItem />
-                <SkeletonMetaItem />
-              </SkeletonMetaRow>
-              <SkeletonBadge />
-            </SkeletonHeader>
-
-            <SkeletonImageGallery>
-              <SkeletonMainImage />
-              <SkeletonThumbnailGrid>
-                <SkeletonThumbnail />
-                <SkeletonThumbnail />
-                <SkeletonThumbnail />
-                <SkeletonThumbnail />
-              </SkeletonThumbnailGrid>
-            </SkeletonImageGallery>
-
-            <SkeletonContentSection>
-              <SkeletonContentTitle />
-              <SkeletonTextLine />
-              <SkeletonTextLine />
-              <SkeletonTextLine />
-              <SkeletonTextLine />
-            </SkeletonContentSection>
-          </SkeletonWrapper>
-        </Container>
-
-        <NewCircle size="small" top="1000px" right="142px" media="no" />
-        <DecorCircleWrapper>
-          <Circle size="large" />
-        </DecorCircleWrapper>
-        <BigCircle variant={2} setZIndex />
-      </StyledComponent>
-    );
-  }
+  const project = initialProject;
+  const error = initialError || null;
+  // All data is provided via server-side props (ISR). No loading state needed.
 
   if (error || !project) {
     return (

@@ -6,6 +6,7 @@ import PopularProducts from "./PopularProducts/PopularProducts";
 import Accomplishments from "./Accomplishments/Accomplishments";
 import Contact from "../Contact/Contact";
 import type { HomepageSection } from "@/types/homepage";
+import type { ProductList } from "@/api/generated/interfaces";
 
 const scaleUp = {
   hidden: { opacity: 0, scale: 0.8 },
@@ -33,9 +34,15 @@ interface MainPageProps {
   dictionary: any;
   homepageSections: HomepageSection[];
   lang: string;
+  initialFeaturedProducts?: ProductList[];
 }
 
-const MainPage = ({ dictionary, homepageSections, lang }: MainPageProps) => {
+const MainPage = ({
+  dictionary,
+  homepageSections,
+  lang,
+  initialFeaturedProducts,
+}: MainPageProps) => {
   return (
     <>
       <motion.div initial="hidden" animate="visible" variants={scaleUp}>
@@ -55,7 +62,10 @@ const MainPage = ({ dictionary, homepageSections, lang }: MainPageProps) => {
         viewport={{ once: true, amount: 0.2 }}
         variants={fadeInUp}
       >
-        <NewProducts dictionary={dictionary.newProducts} />
+        <NewProducts
+          dictionary={dictionary.newProducts}
+          initialFeaturedProducts={initialFeaturedProducts}
+        />
       </motion.div>
 
       <motion.div

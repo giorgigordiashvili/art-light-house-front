@@ -43,7 +43,8 @@ const SmallCard = ({
   isSelected?: boolean;
 }) => {
   // Check if we have a valid image URL
-  const hasValidImage = image.image && typeof image.image === "string" && image.image.trim() !== "";
+  const rawImage = image.image || (image as any).image_url;
+  const hasValidImage = rawImage && typeof rawImage === "string" && rawImage.trim() !== "";
 
   if (!hasValidImage) {
     return (
@@ -68,7 +69,7 @@ const SmallCard = ({
   return (
     <StyleSmallCard onClick={onClick} $isSelected={isSelected} draggable="false">
       <Image
-        src={image.image}
+        src={rawImage}
         alt={image.alt_text || "Product image"}
         fill
         style={{ objectFit: "cover" }}

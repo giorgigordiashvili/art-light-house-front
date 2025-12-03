@@ -64,11 +64,16 @@ function pickLocalized(value: any, fallback = ""): string {
 }
 
 const DetailDescription = ({ product }: { dictionary: any; product: ProductDetail }) => {
+  const shortDesc = pickLocalized(product.short_description);
+  const fullDesc = pickLocalized(product.description);
   return (
     <Wrapper>
       <Title>{pickLocalized((product as any).title ?? product.name)}</Title>
       <Price>{product.price} ₾</Price>
-      <Description>{pickLocalized(product.description)}</Description>
+      {shortDesc && (
+        <Description style={{ fontWeight: 500, marginBottom: "16px" }}>{shortDesc}</Description>
+      )}
+      <Description>{fullDesc}</Description>
     </Wrapper>
   );
 };

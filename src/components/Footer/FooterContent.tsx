@@ -14,6 +14,7 @@ const TopSection = styled.div`
   @media (max-width: 1080px) {
     flex-direction: column;
     gap: 32px;
+    padding-top: 57px;
   }
 `;
 

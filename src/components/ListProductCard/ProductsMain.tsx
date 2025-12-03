@@ -96,8 +96,8 @@ const OnDesktop = styled.div`
 const PaginationWrapper = styled.div`
   display: flex;
   justify-content: center;
-  margin-top: 70px;
-  margin-bottom: 183px;
+  position: relative;
+  bottom: 183px;
 `;
 
 const SkeletonGrid = styled.div`
@@ -205,14 +205,31 @@ const SkeletonPrice = styled.div`
   }
 `;
 
-function ProductsMain({ dictionary }: any) {
+interface ProductsMainProps {
+  dictionary: any;
+  initialProductsData?: any;
+  initialAttributes?: any[] | null;
+  initialPage?: number;
+}
+
+function ProductsMain({
+  dictionary,
+  initialProductsData,
+  initialAttributes,
+  initialPage,
+}: ProductsMainProps) {
   const [isMobileFilterDropdownVisible, setMobileFilterDropdownVisible] = useState(false);
   const { setOnFilterChange, filters, isInitialized } = useFilterContext();
   const router = useRouter();
   const pathname = usePathname();
   const hasAppliedInitialFilters = useRef(false);
 
-  // Fetch products without automatic filtering - filtering is manual now
+  // Calculate initial total pages from server data
+  const initialTotalPages = initialProductsData?.count
+    ? Math.ceil(initialProductsData.count / 12)
+    : 1;
+
+  // Fetch products with server-side initial data
   const {
     products,
     loading,
@@ -223,7 +240,12 @@ function ProductsMain({ dictionary }: any) {
     hasPreviousPage,
     fetchPage,
     applyFilters,
-  } = useProducts({ skipInitialFetch: true });
+  } = useProducts({
+    skipInitialFetch: true,
+    initialProducts: initialProductsData?.results || [],
+    initialPage: initialPage || 1,
+    initialTotalPages,
+  });
 
   const isReady = !loading && !error;
   const zeroResultsText = dictionary?.results?.zero ?? "0 products found";
@@ -268,8 +290,11 @@ function ProductsMain({ dictionary }: any) {
       filters.ordering ||
       filters.onSale;
 
+    // Only fetch if:
+    // 1. There are filters from URL that differ from server data, OR
+    // 2. There's no initial server data at all
     if (hasFilters) {
-      // Apply URL filters
+      // Apply URL filters (this means filters changed from server state)
       applyFilters({
         categoryFilters: filters.selectedCategoryFilters,
         minPrice: filters.minPrice,
@@ -278,39 +303,27 @@ function ProductsMain({ dictionary }: any) {
         ordering: filters.ordering,
         onSale: filters.onSale,
       });
-    } else {
-      // No filters from URL, fetch all products
+    } else if (!initialProductsData) {
+      // Only fetch if we don't have server data
       applyFilters({});
     }
+    // If we have initialProductsData and no filters, just use the server data (no fetch)
 
     hasAppliedInitialFilters.current = true;
-  }, [isInitialized, filters, applyFilters]);
+  }, [isInitialized, filters, applyFilters, initialProductsData]);
 
-  // Handle page synchronization from URL (initial load and pagination changes)
-  useEffect(() => {
-    if (!isInitialized) return;
-
-    // Use direct URL parsing to avoid SSR issues with useSearchParams
-    const urlParams = new URLSearchParams(window.location.search);
-    const pageFromUrl = urlParams.get("page") ? parseInt(urlParams.get("page")!, 10) : 1;
-
-    // Sync page if URL page differs from current page state
-    if (pageFromUrl !== currentPage) {
-      fetchPage(pageFromUrl);
-    }
-  }, [isInitialized, currentPage, fetchPage]);
   const toggleMobileFilterDropdown = () => {
     setMobileFilterDropdownVisible(!isMobileFilterDropdownVisible);
   };
 
   const handlePageChange = async (page: number) => {
-    // Update URL first to ensure state consistency
+    // Update URL to reflect new page (for ISR and browser history)
     const current = new URLSearchParams(window.location.search);
     current.set("page", page.toString());
     const newUrl = `${pathname}?${current.toString()}`;
-    router.replace(newUrl, { scroll: false });
+    router.push(newUrl, { scroll: false });
 
-    // Then fetch the page data
+    // Immediately fetch the page data client-side for instant UI update
     await fetchPage(page);
   };
 
@@ -353,7 +366,7 @@ function ProductsMain({ dictionary }: any) {
         </SortWrapper>
         <ContentWrapper>
           <OnDesktop>
-            <FilterSidebar dictionary={dictionary.filter} />
+            <FilterSidebar dictionary={dictionary.filter} initialAttributes={initialAttributes} />
           </OnDesktop>
           <div style={{ width: "100%" }}>
             {loading ? (
@@ -389,7 +402,11 @@ function ProductsMain({ dictionary }: any) {
         </ContentWrapper>
 
         {isMobileFilterDropdownVisible && (
-          <MobileFilterDropdown onClose={toggleMobileFilterDropdown} dictionary={dictionary} />
+          <MobileFilterDropdown
+            onClose={toggleMobileFilterDropdown}
+            dictionary={dictionary}
+            initialAttributes={initialAttributes}
+          />
         )}
       </Container>
     </StyledComponent>

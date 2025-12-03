@@ -5,6 +5,7 @@ import styled from "styled-components";
 import NewCircle from "@/components/ui/NewCircle";
 import Circle from "@/components/ui/Circle";
 import BigCircle from "@/components/ui/BigCircle";
+import { PaginatedProductListList } from "@/api/generated/interfaces";
 
 const StyledComponent = styled.div`
   background: #0b0b0b;
@@ -23,13 +24,33 @@ const StyledCircle = styled.div`
   @media (max-width: 1080px) {
     display: none;
   }
+  @media (min-height: 1150px) {
+    display: none;
+  }
 `;
 
-const ProductsScreen = ({ dictionary }: any) => {
+interface ProductsScreenProps {
+  dictionary: any;
+  initialProductsData?: PaginatedProductListList | null;
+  initialAttributes?: any[] | null;
+  initialPage?: number;
+}
+
+const ProductsScreen = ({
+  dictionary,
+  initialProductsData,
+  initialAttributes,
+  initialPage,
+}: ProductsScreenProps) => {
   return (
     <FilterProvider>
       <StyledComponent>
-        <ProductsMain dictionary={dictionary.products} />
+        <ProductsMain
+          dictionary={dictionary.products}
+          initialProductsData={initialProductsData}
+          initialAttributes={initialAttributes}
+          initialPage={initialPage}
+        />
         <NewCircle size="small" top="1000px" right="142px" media="no" />
         <StyledCircle>
           <Circle size="large" />

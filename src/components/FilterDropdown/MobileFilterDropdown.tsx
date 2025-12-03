@@ -125,19 +125,24 @@ const SaleButton = styled.button<{ $isActive: boolean }>`
 interface MobileFilterDropdownProps {
   onClose: () => void;
   dictionary: any;
+  initialAttributes?: any[] | null;
 }
 
-const MobileFilterDropdown: React.FC<MobileFilterDropdownProps> = ({ onClose, dictionary }) => {
+const MobileFilterDropdown: React.FC<MobileFilterDropdownProps> = ({
+  onClose,
+  dictionary,
+  initialAttributes,
+}) => {
   // Since filtering is now immediate, the button just closes the dropdown
   const pathname = usePathname();
   const language = getLocaleFromPath(pathname);
-  const { filters, updateCategoryFilter, updateAttributeFilter, updateOnSaleFilter } =
+  const { filters, updateCategoryFilter, updateAttributeFilter, updateOnSaleFilter, clearFilters } =
     useFilterContext();
   const {
     groups,
     loading: filtersLoading,
     error: filtersError,
-  } = useFilterAttributeGroups(language);
+  } = useFilterAttributeGroups(language, initialAttributes);
   const categoryGroups = useMemo(() => groups.filter((group) => group.isCategoryGroup), [groups]);
   const attributeGroups = useMemo(() => groups.filter((group) => !group.isCategoryGroup), [groups]);
   const selectedAttributeSet = useMemo(() => {
@@ -261,7 +266,13 @@ const MobileFilterDropdown: React.FC<MobileFilterDropdownProps> = ({ onClose, di
           <SaleButton $isActive={!!filters.onSale} onClick={handleOnSaleChange}>
             {dictionary?.filter?.onSaleLabel || "ფასდაკლებული პროდუქტები"}
           </SaleButton>
-          <ButtonFilter onClick={onClose} dictionary={dictionary} />
+          <ButtonFilter
+            onClick={() => {
+              clearFilters();
+              onClose();
+            }}
+            dictionary={dictionary}
+          />
         </BottomBar>
       </DropdownWrapper>
     </>
