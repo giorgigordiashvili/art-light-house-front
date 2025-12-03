@@ -44,7 +44,6 @@ export default async function HomePage(props: { params: Promise<{ lang: string }
       ecommerceClientHomepageList(),
       fetchServerFeaturedProducts(),
     ]);
-
     // Handle sections response
     if (Array.isArray(sectionsResponse)) {
       homepageSections = sectionsResponse as unknown as HomepageSection[];

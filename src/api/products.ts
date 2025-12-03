@@ -85,8 +85,8 @@ export const fetchServerAttributes = async (): Promise<AttributeDefinition[]> =>
 
 // Server-side featured products fetching function with revalidation
 export const fetchServerFeaturedProducts = async (): Promise<PaginatedProductListList> => {
-  const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
-  const url = `${apiUrl}/api/ecommerce/client/products/?is_featured=true&page_size=12`;
+  const apiUrl = process.env.API_URL || "http://localhost:8000";
+  const url = `${apiUrl}/api/ecommerce/client/products/?is_featured=true&language=ka&max_price=500&min_price=0&on_sale=true&ordering=price&page=1&page_size=12`;
 
   const response = await fetch(url, {
     next: { revalidate: 60 }, // Revalidate every 60 seconds
