@@ -24,7 +24,10 @@ export const fetchClientProducts = async (
 export const fetchServerProducts = async (
   params: ProductQueryParams
 ): Promise<PaginatedProductListList> => {
-  const apiUrl = process.env.API_URL || "http://localhost:8000";
+  const apiUrl =
+    process.env.NEXT_PUBLIC_API_URL ||
+    process.env.API_URL ||
+    "https://artlighthouse.api.echodesk.ge";
   const queryString = new URLSearchParams(
     Object.entries({ ...params, page_size: 12 }).reduce(
       (acc, [key, value]) => {
@@ -55,7 +58,10 @@ export const fetchServerProducts = async (
 
 // Server-side attributes fetching function with revalidation
 export const fetchServerAttributes = async (): Promise<AttributeDefinition[]> => {
-  const apiUrl = process.env.API_URL || "http://localhost:8000";
+  const apiUrl =
+    process.env.NEXT_PUBLIC_API_URL ||
+    process.env.API_URL ||
+    "https://artlighthouse.api.echodesk.ge";
   const results: AttributeDefinition[] = [];
   let page = 1;
   let hasNext = false;
@@ -85,7 +91,10 @@ export const fetchServerAttributes = async (): Promise<AttributeDefinition[]> =>
 
 // Server-side featured products fetching function with revalidation
 export const fetchServerFeaturedProducts = async (): Promise<PaginatedProductListList> => {
-  const apiUrl = process.env.API_URL || "http://localhost:8000";
+  const apiUrl =
+    process.env.NEXT_PUBLIC_API_URL ||
+    process.env.API_URL ||
+    "https://artlighthouse.api.echodesk.ge";
   const url = `${apiUrl}/api/ecommerce/client/products/?is_featured=true&language=ka&max_price=500&min_price=0&on_sale=true&ordering=price&page=1&page_size=12`;
 
   const response = await fetch(url, {

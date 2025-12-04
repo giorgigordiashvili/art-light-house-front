@@ -29,7 +29,10 @@ function getFirstGalleryImage(gallery: any): string | undefined {
 }
 
 export async function fetchServerProjects(lang: string): Promise<ServerProjectsResult> {
-  const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
+  const apiUrl =
+    process.env.NEXT_PUBLIC_API_URL ||
+    process.env.API_URL ||
+    "https://artlighthouse.api.echodesk.ge";
   const acceptLanguage = lang === "en" ? "en" : "ka"; // map ge -> ka
 
   try {

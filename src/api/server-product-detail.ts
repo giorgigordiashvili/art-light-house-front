@@ -10,7 +10,10 @@ export async function fetchServerProductDetail(
   lang: string,
   productId: number
 ): Promise<ServerProductDetailResult> {
-  const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
+  const apiUrl =
+    process.env.NEXT_PUBLIC_API_URL ||
+    process.env.API_URL ||
+    "https://artlighthouse.api.echodesk.ge";
   // Map front-end language to backend Accept-Language header
   const apiLang = lang === "en" ? "en" : "ka";
   const url = `${apiUrl}/api/ecommerce/client/products/${productId}/`;
