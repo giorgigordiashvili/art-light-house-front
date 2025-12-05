@@ -107,6 +107,13 @@ const RegistrationCodeModal = ({
     e.stopPropagation();
   };
 
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      handleVerify();
+    }
+  };
+
   const handleVerify = async () => {
     try {
       setIsLoading(true);
@@ -193,7 +200,7 @@ const RegistrationCodeModal = ({
   };
 
   return (
-    <StyledContainer onClick={handleClickInside}>
+    <StyledContainer onClick={handleClickInside} onKeyDown={handleKeyDown} tabIndex={-1}>
       <StyledCloseIcon onClick={onClose}>
         <CloseIcon />
       </StyledCloseIcon>
