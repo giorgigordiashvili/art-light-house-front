@@ -24,17 +24,20 @@ const StyledText = styled.div`
 type Props = {
   text: string;
   href: string;
+  onClick?: () => void;
 };
 
-const NavItem = ({ text, href }: Props) => {
+const NavItem = ({ text, href, onClick }: Props) => {
   const router = useRouter();
 
   const handleClick = (e: React.MouseEvent) => {
     // Check for Ctrl+click (Windows/Linux) or Cmd+click (Mac) or middle-click
     if (e.ctrlKey || e.metaKey || e.button === 1) {
       window.open(href, "_blank");
+      onClick?.();
       return;
     }
+    onClick?.();
     router.push(href);
   };
 

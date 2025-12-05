@@ -92,6 +92,13 @@ const RecoverPasswordModal = ({
     e.stopPropagation();
   };
 
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      handleSubmit();
+    }
+  };
+
   const handleSubmit = async () => {
     if (!email.trim()) {
       setError("Email is required");
@@ -128,7 +135,7 @@ const RecoverPasswordModal = ({
 
   return (
     <StyledOverlayWrapper onClick={onClose}>
-      <StyledContainer onClick={handleClickInside}>
+      <StyledContainer onClick={handleClickInside} onKeyDown={handleKeyDown} tabIndex={-1}>
         <StyledCloseIcon onClick={onClose}>
           <CloseIcon />
         </StyledCloseIcon>

@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, ReactNode, useRef, useEffect } from "react";
-import { useRouter, usePathname } from "next/navigation";
+import { useRouter, usePathname, useSearchParams } from "next/navigation";
 
 interface FilterState {
   selectedCategoryFilters: string[];
@@ -30,49 +30,84 @@ interface FilterProviderProps {
   children: ReactNode;
 }
 
+// Helper to parse filters from URL params
+const parseFiltersFromUrl = (urlSearchParams: URLSearchParams): FilterState => {
+  const parseCategoryFilters = (raw: string | null): string[] => {
+    if (!raw) return [];
+    return raw
+      .split(",")
+      .map((entry) => entry.trim())
+      .filter(Boolean)
+      .map((entry) => (entry.includes(":") || entry.includes("|") ? entry : `category:${entry}`));
+  };
+
+  return {
+    selectedCategoryFilters: parseCategoryFilters(urlSearchParams.get("categories")),
+    minPrice: urlSearchParams.get("minPrice")
+      ? parseFloat(urlSearchParams.get("minPrice")!)
+      : undefined,
+    maxPrice: urlSearchParams.get("maxPrice")
+      ? parseFloat(urlSearchParams.get("maxPrice")!)
+      : undefined,
+    selectedAttributes: urlSearchParams.get("attributes") || undefined,
+    search: urlSearchParams.get("search") || undefined,
+    ordering: urlSearchParams.get("ordering") || undefined,
+    onSale: urlSearchParams.get("on_sale") === "true" ? true : undefined,
+  };
+};
+
 export const FilterProvider: React.FC<FilterProviderProps> = ({ children }) => {
   const router = useRouter();
   const pathname = usePathname();
+  const searchParams = useSearchParams();
   const [filters, setFilters] = useState<FilterState>({
     selectedCategoryFilters: [],
   });
   const [isInitialized, setIsInitialized] = useState(false);
   const onFilterChangeRef = useRef<((filters: FilterState) => void) | null>(null);
+  // Track if we're in the middle of an internal update to avoid loops
+  const isInternalUpdate = useRef(false);
 
-  // Initialize filters from URL on mount (only once)
+  // Initialize filters from URL on mount
   useEffect(() => {
-    // Use direct URL parsing to avoid dependency on getFilterParams
     const urlSearchParams = new URLSearchParams(window.location.search);
-    const parseCategoryFilters = (raw: string | null): string[] => {
-      if (!raw) return [];
-      return raw
-        .split(",")
-        .map((entry) => entry.trim())
-        .filter(Boolean)
-        .map((entry) => (entry.includes(":") || entry.includes("|") ? entry : `category:${entry}`));
-    };
-
-    const initialFilters: FilterState = {
-      selectedCategoryFilters: parseCategoryFilters(urlSearchParams.get("categories")),
-      minPrice: urlSearchParams.get("minPrice")
-        ? parseFloat(urlSearchParams.get("minPrice")!)
-        : undefined,
-      maxPrice: urlSearchParams.get("maxPrice")
-        ? parseFloat(urlSearchParams.get("maxPrice")!)
-        : undefined,
-      selectedAttributes: urlSearchParams.get("attributes") || undefined,
-      search: urlSearchParams.get("search") || undefined,
-      ordering: urlSearchParams.get("ordering") || undefined,
-      onSale: urlSearchParams.get("on_sale") === "true" ? true : undefined,
-    };
-
+    const initialFilters = parseFiltersFromUrl(urlSearchParams);
     setFilters(initialFilters);
     setIsInitialized(true);
-  }, []); // No dependencies - run only once on mount
+  }, []);
+
+  // Listen for URL changes (e.g., from external navigation like menu links)
+  // and sync filter state when URL params change
+  useEffect(() => {
+    if (!isInitialized) return;
+
+    // Skip if this is an internal update (we triggered the URL change)
+    if (isInternalUpdate.current) {
+      isInternalUpdate.current = false;
+      return;
+    }
+
+    const urlSearchParams = new URLSearchParams(searchParams.toString());
+    const newFilters = parseFiltersFromUrl(urlSearchParams);
+
+    // Check if filters actually changed to avoid unnecessary updates
+    const filtersChanged = JSON.stringify(newFilters) !== JSON.stringify(filters);
+
+    if (filtersChanged) {
+      setFilters(newFilters);
+      // Trigger immediate filtering when URL changes externally
+      if (onFilterChangeRef.current) {
+        onFilterChangeRef.current(newFilters);
+      }
+    }
+  }, [searchParams, isInitialized]); // Re-run when searchParams change
 
   // Update URL when filters change (but only after initialization)
   const syncFiltersToUrl = (newFilters: FilterState) => {
     if (!isInitialized || typeof window === "undefined") return;
+
+    // Mark as internal update to prevent the URL-change effect from re-triggering
+    isInternalUpdate.current = true;
 
     const current = new URLSearchParams(window.location.search);
 

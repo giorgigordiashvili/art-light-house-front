@@ -12,14 +12,16 @@ interface InputWithLabelProps {
   onChange?: (value: string) => void;
   type?: string;
   readOnly?: boolean;
+  disabled?: boolean;
   isPasswordField?: boolean;
 }
 
-const Wrapper = styled.div<{ $gap?: number }>`
+const Wrapper = styled.div<{ $gap?: number; $disabled?: boolean }>`
   display: flex;
   flex-direction: column;
   gap: ${({ $gap }) => ($gap ? `${$gap}px` : "12px")};
   width: 364px;
+  cursor: ${({ $disabled }) => ($disabled ? "not-allowed" : "auto")};
 
   @media (max-width: 1080px) {
     width: 100%;
@@ -31,7 +33,7 @@ const Label = styled.label`
   color: #fafafa;
 `;
 
-const InputWrapper = styled.div`
+const InputWrapper = styled.div<{ $disabled?: boolean }>`
   display: flex;
   align-items: center;
   height: 50px;
@@ -41,6 +43,8 @@ const InputWrapper = styled.div`
   border: 1px solid #ffffff12;
   backdrop-filter: blur(114px);
   padding: 11px 18px;
+  cursor: ${({ $disabled }) => ($disabled ? "not-allowed" : "auto")};
+  pointer-events: ${({ $disabled }) => ($disabled ? "none" : "auto")};
 `;
 
 const StyledIcon = styled(Image)`
@@ -74,6 +78,12 @@ const StyledInput = styled.input`
   &[type="date"]::-moz-calendar-picker-indicator {
     opacity: 0;
   }
+
+  &:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+    color: #dddddd;
+  }
 `;
 
 const ToggleIcon = styled(Image)`
@@ -91,6 +101,7 @@ const InputWithLabel: React.FC<InputWithLabelProps> = ({
   onChange,
   type = "text",
   readOnly = false,
+  disabled = false,
   isPasswordField = false,
 }: InputWithLabelProps) => {
   const [showPassword, setShowPassword] = useState(false);
@@ -99,7 +110,7 @@ const InputWithLabel: React.FC<InputWithLabelProps> = ({
   const isDateField = type === "date";
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (onChange && !readOnly) {
+    if (onChange && !readOnly && !disabled) {
       onChange(e.target.value);
     }
   };
@@ -126,9 +137,9 @@ const InputWithLabel: React.FC<InputWithLabelProps> = ({
   const displayIcon = isDateField ? "/assets/icons/calendar.png" : icon;
 
   return (
-    <Wrapper $gap={gap}>
+    <Wrapper $gap={gap} $disabled={disabled}>
       <Label>{label}</Label>
-      <InputWrapper>
+      <InputWrapper $disabled={disabled}>
         {displayIcon && <StyledIcon src={displayIcon} alt="icon" width={24} height={24} />}
         <StyledInput
           ref={isDateField ? dateInputRef : undefined}
@@ -137,6 +148,7 @@ const InputWithLabel: React.FC<InputWithLabelProps> = ({
           onChange={handleInputChange}
           type={effectiveType}
           readOnly={readOnly}
+          disabled={disabled}
         />
         {isPasswordField && !readOnly && (
           <ToggleIcon

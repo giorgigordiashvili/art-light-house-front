@@ -384,9 +384,16 @@ const AuthorizationModal: React.FC<AuthorizationModalProps> = ({
   //   setError("Social authentication is not available. Please use email and password.");
   // };
 
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      handleSubmit();
+    }
+  };
+
   return (
     <StyledContainer>
-      <StyledModal $isRegister={activeTab === "register"}>
+      <StyledModal $isRegister={activeTab === "register"} onKeyDown={handleKeyDown}>
         <StyledCloseIcon onClick={onClose}>
           <CloseIcon />
         </StyledCloseIcon>

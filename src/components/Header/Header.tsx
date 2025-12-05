@@ -436,6 +436,13 @@ const Header = ({ header, dictionary }: HeaderProps) => {
     router.push(newPath);
   };
 
+  const handleNavItemClick = () => {
+    closeCartModal();
+    closeEmptyCartModal();
+    closeFavoritesModal();
+    closeLanguageSwitcherModal();
+  };
+
   return (
     <>
       <StyledContainer>
@@ -447,18 +454,22 @@ const Header = ({ header, dictionary }: HeaderProps) => {
                 <NavItem
                   text={header.products}
                   href={`/${pathname?.split("/")[1] || "ge"}/products`}
+                  onClick={handleNavItemClick}
                 />
                 <NavItem
                   text={header.sale}
                   href={`/${pathname?.split("/")[1] || "ge"}/products?on_sale=true`}
+                  onClick={handleNavItemClick}
                 />
                 <NavItem
                   text={header.project}
                   href={`/${pathname?.split("/")[1] || "ge"}/projects`}
+                  onClick={handleNavItemClick}
                 />
                 <NavItem
                   text={header.contact}
                   href={`/${pathname?.split("/")[1] || "ge"}/contact`}
+                  onClick={handleNavItemClick}
                 />
               </StyledNavigation>
               <StyledUserActions>

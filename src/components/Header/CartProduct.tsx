@@ -21,6 +21,7 @@ const StyledTrashButton = styled.div`
   position: absolute;
   top: 12px;
   right: 12px;
+  cursor: pointer;
 `;
 
 type Props = {

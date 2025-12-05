@@ -105,6 +105,13 @@ const PasswordResetVerifyModal = ({
     e.stopPropagation();
   };
 
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      handleSubmit();
+    }
+  };
+
   const validateInputs = () => {
     if (!code.trim()) {
       setError("Verification code is required");
@@ -168,7 +175,7 @@ const PasswordResetVerifyModal = ({
 
   return (
     <StyledOverlayWrapper onClick={onClose}>
-      <StyledContainer onClick={handleClickInside}>
+      <StyledContainer onClick={handleClickInside} onKeyDown={handleKeyDown} tabIndex={-1}>
         <StyledCloseIcon onClick={onClose}>
           <CloseIcon />
         </StyledCloseIcon>

@@ -1,4 +1,5 @@
 "use client";
+import { Suspense } from "react";
 import ProductsMain from "@/components/ListProductCard/ProductsMain";
 import { FilterProvider } from "@/contexts/FilterContext";
 import styled from "styled-components";
@@ -43,21 +44,23 @@ const ProductsScreen = ({
   initialPage,
 }: ProductsScreenProps) => {
   return (
-    <FilterProvider>
-      <StyledComponent>
-        <ProductsMain
-          dictionary={dictionary.products}
-          initialProductsData={initialProductsData}
-          initialAttributes={initialAttributes}
-          initialPage={initialPage}
-        />
-        <NewCircle size="small" top="1000px" right="142px" media="no" />
-        <StyledCircle>
-          <Circle size="large" />
-        </StyledCircle>
-        <BigCircle variant={2} />
-      </StyledComponent>
-    </FilterProvider>
+    <Suspense fallback={null}>
+      <FilterProvider>
+        <StyledComponent>
+          <ProductsMain
+            dictionary={dictionary.products}
+            initialProductsData={initialProductsData}
+            initialAttributes={initialAttributes}
+            initialPage={initialPage}
+          />
+          <NewCircle size="small" top="1000px" right="142px" media="no" />
+          <StyledCircle>
+            <Circle size="large" />
+          </StyledCircle>
+          <BigCircle variant={2} />
+        </StyledComponent>
+      </FilterProvider>
+    </Suspense>
   );
 };
 
