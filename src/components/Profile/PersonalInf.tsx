@@ -424,9 +424,8 @@ const Personal = ({
                 label={dictionary?.inputTitle5 || "Email"}
                 placeholder={dictionary?.placeholder5 || "yourmail@gmail.com"}
                 value={formData.email}
-                onChange={handleInputChange("email")}
                 type="email"
-                readOnly
+                disabled
               />
             </>
           )}
