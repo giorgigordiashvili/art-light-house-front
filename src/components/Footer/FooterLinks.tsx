@@ -59,7 +59,7 @@ const LinkList = styled.ul`
   list-style: none;
   padding: 0;
   font-size: 16px;
-  color: white;
+  color: #b7b7b7;
   display: flex;
   flex-direction: column;
   gap: 12px;
