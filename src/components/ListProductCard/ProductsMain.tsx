@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import FilterSidebar from "@/components/FilterSidebar/FilterSidebar";
 import CardGrid from "@/components/ListProductCard/CardGrid";
 import styled from "styled-components";
@@ -8,7 +8,6 @@ import SortDropdown from "@/components/Sort/SortDropdown";
 import Container from "@/components/ui/Container";
 import MobileFilterDropdown from "../FilterDropdown/MobileFilterDropdown";
 import PaginationWithArrows from "@/components/PagesButton/PaginationWithArrows";
-import { useProducts } from "@/hooks/useProducts";
 import { useFilterContext } from "@/contexts/FilterContext";
 import { useRouter, usePathname } from "next/navigation";
 
@@ -100,110 +99,7 @@ const PaginationWrapper = styled.div`
   bottom: 183px;
 `;
 
-const SkeletonGrid = styled.div`
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 20px;
-  margin-bottom: 253px;
-  justify-items: center;
-
-  @media (max-width: 1332px) {
-    grid-template-columns: repeat(2, 1fr);
-  }
-
-  @media (max-width: 1080px) {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 10px;
-  }
-`;
-
-const SkeletonCard = styled.div`
-  width: 308px;
-  height: 417px;
-  border-radius: 17px;
-  border: 1px solid #ffffff12;
-  background: #1a1a1a96;
-  backdrop-filter: blur(114px);
-  position: relative;
-  overflow: hidden;
-
-  &::before {
-    content: "";
-    position: absolute;
-    top: 0;
-    left: -100%;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(
-      90deg,
-      transparent 0%,
-      rgba(255, 255, 255, 0.05) 50%,
-      transparent 100%
-    );
-    animation: shimmer 1.5s infinite;
-    z-index: 1;
-  }
-
-  @keyframes shimmer {
-    0% {
-      left: -100%;
-    }
-    100% {
-      left: 100%;
-    }
-  }
-
-  @media (max-width: 1080px) {
-    width: 170px;
-    height: 275px;
-  }
-`;
-
-const SkeletonImage = styled.div`
-  width: 100%;
-  height: 280px;
-  background: rgba(255, 255, 255, 0.05);
-
-  @media (max-width: 1080px) {
-    height: 180px;
-  }
-`;
-
-const SkeletonContent = styled.div`
-  padding: 16px;
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-
-  @media (max-width: 1080px) {
-    padding: 12px;
-    gap: 8px;
-  }
-`;
-
-const SkeletonTitle = styled.div`
-  width: 70%;
-  height: 16px;
-  background: rgba(255, 255, 255, 0.05);
-  border-radius: 4px;
-
-  @media (max-width: 1080px) {
-    height: 14px;
-  }
-`;
-
-const SkeletonPrice = styled.div`
-  width: 50%;
-  height: 20px;
-  background: rgba(255, 255, 255, 0.05);
-  border-radius: 4px;
-  margin-top: 8px;
-
-  @media (max-width: 1080px) {
-    height: 16px;
-    margin-top: 4px;
-  }
-`;
+// Removed client-side skeletons; server-side navigation keeps UI responsive.
 
 interface ProductsMainProps {
   dictionary: any;
@@ -219,135 +115,49 @@ function ProductsMain({
   initialPage,
 }: ProductsMainProps) {
   const [isMobileFilterDropdownVisible, setMobileFilterDropdownVisible] = useState(false);
-  const { setOnFilterChange, filters, isInitialized } = useFilterContext();
+  const { setOnFilterChange } = useFilterContext();
   const router = useRouter();
   const pathname = usePathname();
-  const hasAppliedInitialFilters = useRef(false);
 
-  // Calculate initial total pages from server data
-  const initialTotalPages = initialProductsData?.count
-    ? Math.ceil(initialProductsData.count / 12)
-    : 1;
+  const products = useMemo(() => initialProductsData?.results || [], [initialProductsData]);
+  const totalPages = useMemo(
+    () => (initialProductsData?.count ? Math.ceil(initialProductsData.count / 12) : 1),
+    [initialProductsData]
+  );
+  const currentPage = initialPage || 1;
+  const hasNextPage = currentPage < totalPages;
+  const hasPreviousPage = currentPage > 1;
 
-  // Fetch products with server-side initial data
-  const {
-    products,
-    loading,
-    error,
-    currentPage,
-    totalPages,
-    hasNextPage,
-    hasPreviousPage,
-    fetchPage,
-    applyFilters,
-  } = useProducts({
-    skipInitialFetch: true,
-    initialProducts: initialProductsData?.results || [],
-    initialPage: initialPage || 1,
-    initialTotalPages,
-  });
-
-  const isReady = !loading && !error;
   const zeroResultsText = dictionary?.results?.zero ?? "0 products found";
   const countResultsTemplate = dictionary?.results?.count ?? "{count} products found";
-  const resultsTitleMessage = isReady
-    ? products.length === 0
+  const resultsTitleMessage =
+    products.length === 0
       ? zeroResultsText
-      : countResultsTemplate.replace("{count}", products.length.toString())
-    : null;
+      : countResultsTemplate.replace("{count}", products.length.toString());
 
   // Register immediate filter callback
   useEffect(() => {
-    const handleImmediateFilter = async (filters: any) => {
-      // Reset to page 1 when filters change
-      await applyFilters({
-        categoryFilters: filters.selectedCategoryFilters,
-        minPrice: filters.minPrice,
-        maxPrice: filters.maxPrice,
-        attributes: filters.selectedAttributes,
-        ordering: filters.ordering,
-        onSale: filters.onSale,
-      });
-    };
-
-    setOnFilterChange(handleImmediateFilter);
-
-    // Cleanup on unmount
-    return () => {
-      setOnFilterChange(null);
-    };
-  }, [applyFilters, setOnFilterChange]);
+    // No client-side fetching on filter change; URL is synced by FilterProvider.
+    setOnFilterChange(null);
+    return () => setOnFilterChange(null);
+  }, [setOnFilterChange]);
 
   // Apply initial filters from URL when ready, or fetch products if no filters
-  useEffect(() => {
-    if (!isInitialized || hasAppliedInitialFilters.current) return;
-
-    const hasFilters =
-      filters.selectedCategoryFilters.length > 0 ||
-      filters.minPrice ||
-      filters.maxPrice ||
-      filters.selectedAttributes ||
-      filters.ordering ||
-      filters.onSale;
-
-    // Only fetch if:
-    // 1. There are filters from URL that differ from server data, OR
-    // 2. There's no initial server data at all
-    if (hasFilters) {
-      // Apply URL filters (this means filters changed from server state)
-      applyFilters({
-        categoryFilters: filters.selectedCategoryFilters,
-        minPrice: filters.minPrice,
-        maxPrice: filters.maxPrice,
-        attributes: filters.selectedAttributes,
-        ordering: filters.ordering,
-        onSale: filters.onSale,
-      });
-    } else if (!initialProductsData) {
-      // Only fetch if we don't have server data
-      applyFilters({});
-    }
-    // If we have initialProductsData and no filters, just use the server data (no fetch)
-
-    hasAppliedInitialFilters.current = true;
-  }, [isInitialized, filters, applyFilters, initialProductsData]);
+  // Server provides initial products; no client bootstrapping/fetching needed.
 
   const toggleMobileFilterDropdown = () => {
     setMobileFilterDropdownVisible(!isMobileFilterDropdownVisible);
   };
 
-  const handlePageChange = async (page: number) => {
-    // Update URL to reflect new page (for ISR and browser history)
+  const handlePageChange = (page: number) => {
+    // Update URL to reflect new page; server will fetch via ISR
     const current = new URLSearchParams(window.location.search);
     current.set("page", page.toString());
     const newUrl = `${pathname}?${current.toString()}`;
     router.push(newUrl, { scroll: false });
-
-    // Immediately fetch the page data client-side for instant UI update
-    await fetchPage(page);
   };
 
   // Note: we intentionally avoid returning early on loading to keep the sidebar mounted
-
-  if (error) {
-    return (
-      <StyledComponent>
-        <Container>
-          <PageTitle>{dictionary.title}</PageTitle>
-          <div
-            style={{
-              color: "#ff4444",
-              textAlign: "center",
-              padding: "40px",
-              fontSize: "16px",
-            }}
-          >
-            Error loading products: {error}
-          </div>
-        </Container>
-      </StyledComponent>
-    );
-  }
 
   return (
     <StyledComponent>
@@ -369,35 +179,20 @@ function ProductsMain({
             <FilterSidebar dictionary={dictionary.filter} initialAttributes={initialAttributes} />
           </OnDesktop>
           <div style={{ width: "100%" }}>
-            {loading ? (
-              <SkeletonGrid>
-                {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12].map((index) => (
-                  <SkeletonCard key={index}>
-                    <SkeletonImage />
-                    <SkeletonContent>
-                      <SkeletonTitle />
-                      <SkeletonPrice />
-                    </SkeletonContent>
-                  </SkeletonCard>
-                ))}
-              </SkeletonGrid>
-            ) : (
-              <>
-                <CardGrid products={products} dictionary={dictionary} />
-                {/* Pagination */}
-                {totalPages > 1 && (
-                  <PaginationWrapper>
-                    <PaginationWithArrows
-                      currentPage={currentPage}
-                      totalPages={totalPages}
-                      onPageChange={handlePageChange}
-                      hasNextPage={hasNextPage}
-                      hasPreviousPage={hasPreviousPage}
-                    />
-                  </PaginationWrapper>
-                )}
-              </>
-            )}
+            <>
+              <CardGrid products={products} dictionary={dictionary} />
+              {totalPages > 1 && (
+                <PaginationWrapper>
+                  <PaginationWithArrows
+                    currentPage={currentPage}
+                    totalPages={totalPages}
+                    onPageChange={handlePageChange}
+                    hasNextPage={hasNextPage}
+                    hasPreviousPage={hasPreviousPage}
+                  />
+                </PaginationWrapper>
+              )}
+            </>
           </div>
         </ContentWrapper>
 
