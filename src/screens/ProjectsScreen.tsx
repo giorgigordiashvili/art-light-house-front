@@ -192,6 +192,7 @@ const EmptyState = styled.div`
 
 interface ProjectsScreenProps {
   dictionary: any;
+  lang: string;
   initialProjects: ProjectItem[];
   initialCategories: string[];
   initialError?: string | null;
@@ -216,6 +217,7 @@ const stripHtml = (value?: string) => {
 
 const ProjectsScreen = ({
   dictionary,
+  lang,
   initialProjects,
   initialCategories,
   initialError,
@@ -270,7 +272,7 @@ const ProjectsScreen = ({
         ) : (
           <ProjectsGrid>
             {filteredProjects.map((project) => {
-              const projectHref = project.slug ? `/projects/${project.slug}` : "#";
+              const projectHref = project.slug ? `/${lang}/projects/${project.slug}` : "#";
               const descriptionText = stripHtml(project.description);
               return (
                 <ProjectCard key={project.id} href={projectHref} className="project-card">
