@@ -183,7 +183,8 @@
     "placeholder2": "To",
     "results": {
       "zero": "0 products found",
-      "count": "{count} products found"
+      "count": "{count} products found",
+      "emptyMessage": "No products found"
     },
     "filter": {
       "title": "Filter",

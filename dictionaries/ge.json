@@ -183,7 +183,8 @@
     "placeholder2": "მდე",
     "results": {
       "zero": "0 პროდუქტი ნაპოვნია",
-      "count": "{count} პროდუქტი ნაპოვნია"
+      "count": "{count} პროდუქტი ნაპოვნია",
+      "emptyMessage": "პროდუქტები ვერ მოიძებნა"
     },
     "filter": {
       "title": "ფილტრი",
