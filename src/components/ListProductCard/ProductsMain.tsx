@@ -155,6 +155,7 @@ function ProductsMain({
     current.set("page", page.toString());
     const newUrl = `${pathname}?${current.toString()}`;
     router.push(newUrl, { scroll: false });
+    setTimeout(() => router.refresh(), 0);
   };
 
   // Note: we intentionally avoid returning early on loading to keep the sidebar mounted

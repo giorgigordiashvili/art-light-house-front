@@ -60,6 +60,7 @@ export const FilterProvider: React.FC<FilterProviderProps> = ({ children }) => {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
+  const searchParamsString = searchParams.toString();
   const [filters, setFilters] = useState<FilterState>({
     selectedCategoryFilters: [],
   });
@@ -87,7 +88,7 @@ export const FilterProvider: React.FC<FilterProviderProps> = ({ children }) => {
       return;
     }
 
-    const urlSearchParams = new URLSearchParams(searchParams.toString());
+    const urlSearchParams = new URLSearchParams(searchParamsString);
     const newFilters = parseFiltersFromUrl(urlSearchParams);
 
     // Check if filters actually changed to avoid unnecessary updates
@@ -99,8 +100,12 @@ export const FilterProvider: React.FC<FilterProviderProps> = ({ children }) => {
       if (onFilterChangeRef.current) {
         onFilterChangeRef.current(newFilters);
       }
+
+      // Force server components (products list) to re-render with the new URL.
+      // This avoids stale results in production when only query params change.
+      setTimeout(() => router.refresh(), 0);
     }
-  }, [searchParams, isInitialized]); // Re-run when searchParams change
+  }, [searchParamsString, isInitialized, router, filters]); // Re-run when query string changes
 
   // Update URL when filters change (but only after initialization)
   const syncFiltersToUrl = (newFilters: FilterState) => {
@@ -159,6 +164,7 @@ export const FilterProvider: React.FC<FilterProviderProps> = ({ children }) => {
 
     const newUrl = `${pathname}?${current.toString()}`;
     router.replace(newUrl, { scroll: false });
+    setTimeout(() => router.refresh(), 0);
   };
 
   const updateCategoryFilter = (categoryFilters: string[]) => {
@@ -247,6 +253,7 @@ export const FilterProvider: React.FC<FilterProviderProps> = ({ children }) => {
     // e.g. /ge/products or /en/products (no query string)
     if (typeof window !== "undefined") {
       router.replace(pathname, { scroll: false });
+      setTimeout(() => router.refresh(), 0);
     }
 
     // Trigger immediate filtering when clearing
