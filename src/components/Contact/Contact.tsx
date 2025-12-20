@@ -13,11 +13,12 @@ const StyledContainer = styled.div`
   }
 `;
 
-const StyledContactCard = styled.div<{ $variant: "1" | "2" }>`
+const StyledContactCard = styled.div<{ $variant: "1" | "2"; $centered?: boolean }>`
   display: flex;
   gap: 20px;
   margin-top: ${({ $variant }) => ($variant === "1" ? "89px" : "44px")};
   padding-bottom: ${({ $variant }) => ($variant === "2" ? "202px" : "0")};
+  justify-content: ${({ $centered }) => ($centered ? "center" : "flex-start")};
 
   @media (max-width: 1080px) {
     flex-direction: column;
@@ -79,30 +80,45 @@ const Contact: React.FC<ContactProps> = ({
             <SectionTitle text={sectionTitle} image="address" />
           </StyledSectionTitle>
         )}
-        <StyledContactCard $variant={variant}>
-          {leftBranch && (
+        <StyledContactCard $variant={variant} $centered={branches.length === 1}>
+          {branches.length === 1 ? (
             <ContactCard
               side="left"
               dictionary={dictionary}
               location={{
-                lat: leftBranch.custom_data?.latitude || 41.720542,
-                lng: leftBranch.custom_data?.longitude || 44.764789,
+                lat: branches[0].custom_data?.latitude || 41.720542,
+                lng: branches[0].custom_data?.longitude || 44.764789,
               }}
-              branchData={leftBranch}
+              branchData={branches[0]}
               lang={lang}
             />
-          )}
-          {rightBranch && (
-            <ContactCard
-              side="right"
-              dictionary={dictionary}
-              location={{
-                lat: rightBranch.custom_data?.latitude || 41.703998,
-                lng: rightBranch.custom_data?.longitude || 44.791769,
-              }}
-              branchData={rightBranch}
-              lang={lang}
-            />
+          ) : (
+            <>
+              {leftBranch && (
+                <ContactCard
+                  side="left"
+                  dictionary={dictionary}
+                  location={{
+                    lat: leftBranch.custom_data?.latitude || 41.720542,
+                    lng: leftBranch.custom_data?.longitude || 44.764789,
+                  }}
+                  branchData={leftBranch}
+                  lang={lang}
+                />
+              )}
+              {rightBranch && (
+                <ContactCard
+                  side="right"
+                  dictionary={dictionary}
+                  location={{
+                    lat: rightBranch.custom_data?.latitude || 41.703998,
+                    lng: rightBranch.custom_data?.longitude || 44.791769,
+                  }}
+                  branchData={rightBranch}
+                  lang={lang}
+                />
+              )}
+            </>
           )}
         </StyledContactCard>
       </Container>
