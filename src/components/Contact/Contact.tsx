@@ -18,11 +18,11 @@ const StyledContactCard = styled.div<{ $variant: "1" | "2"; $centered?: boolean 
   gap: 20px;
   margin-top: ${({ $variant }) => ($variant === "1" ? "89px" : "44px")};
   padding-bottom: ${({ $variant }) => ($variant === "2" ? "202px" : "0")};
-  justify-content: ${({ $centered }) => ($centered ? "center" : "flex-start")};
+  /* Removed justify-content for single branch */
 
   @media (max-width: 1080px) {
     flex-direction: column;
-    justify-content: center;
+    /* Removed justify-content for single branch */
     align-items: center;
     gap: 24px;
     margin-top: ${({ $variant }) => ($variant === "1" ? "44px" : "46px")};
@@ -91,6 +91,7 @@ const Contact: React.FC<ContactProps> = ({
               }}
               branchData={branches[0]}
               lang={lang}
+              fullwidth
             />
           ) : (
             <>

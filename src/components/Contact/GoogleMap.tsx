@@ -12,24 +12,23 @@ import {
 import CustomPin from "./CustomPIn";
 import MapController from "./MapController";
 
-const StyledMap = styled.div<{ $variant: 1 | 2 }>`
-  ${({ $variant }) =>
-    $variant === 1
+const StyledMap = styled.div<{ $variant: 1 | 2; $fullheight?: boolean }>`
+  ${({ $variant, $fullheight }) =>
+    $fullheight
       ? css`
-          width: 610px;
-          height: 241px;
+          height: 400px;
           border-radius: 24px;
         `
-      : css`
-          width: 460px;
-          height: 181px;
-          border-radius: 12px;
-        `}
+      : $variant === 1
+        ? css`
+            height: 241px;
+            border-radius: 24px;
+          `
+        : css`
+            height: 181px;
+            border-radius: 12px;
+          `}
   overflow: hidden;
-
-  @media (max-width: 1346px) {
-    width: 100%;
-  }
 
   @media (max-width: 1080px) {
     border-radius: 12px;
@@ -42,6 +41,7 @@ type Props = {
   onLocationSelect?: (address: string, coordinates?: { lat: number; lng: number }) => void;
   searchedAddress?: string;
   location?: { lat: number; lng: number };
+  fullheight?: boolean;
 };
 
 export default function GoogleMap({
@@ -50,6 +50,7 @@ export default function GoogleMap({
   onLocationSelect,
   searchedAddress,
   location,
+  fullheight = false,
 }: Props) {
   const defaultPosition2 = { lat: 41.703998, lng: 44.791769 };
   const [open, setOpen] = useState(false);
@@ -83,7 +84,7 @@ export default function GoogleMap({
 
   return (
     <APIProvider apiKey={process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY ?? ""}>
-      <StyledMap $variant={variant}>
+      <StyledMap $variant={variant} $fullheight={fullheight}>
         <Map
           defaultZoom={17}
           defaultCenter={centerPosition}
