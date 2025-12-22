@@ -493,7 +493,9 @@
     "client": "Client",
     "category": "Category",
     "year": "Year",
-    "location": "Location"
+    "location": "Location",
+    "noProjectsFound": "No projects found",
+    "noProjectsDescription": "Check back soon for our latest work"
   },
   "metadata": {
     "main": {

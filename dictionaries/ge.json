@@ -492,7 +492,9 @@
     "client": "კლიენტი",
     "category": "კატეგორია",
     "year": "წელი",
-    "location": "ლოკაცია"
+    "location": "ლოკაცია",
+    "noProjectsFound": "პროექტები ვერ მოიძებნა",
+    "noProjectsDescription": "გთხოვთ, მოგვიანებით გადაამოწმეთ ჩვენი უახლესი ნამუშევრები"
   },
   "metadata": {
     "main": {

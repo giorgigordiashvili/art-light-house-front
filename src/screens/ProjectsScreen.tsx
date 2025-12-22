@@ -233,15 +233,18 @@ const ProjectsScreen = ({
     ? projects.filter((project) => project.category === categoryFilter)
     : projects;
 
+  const showHeader = filteredProjects.length > 0;
   return (
     <StyledComponent>
       <Container>
-        <Header>
-          <h1>{dictionary.projects.title}</h1>
-          <p>{dictionary.projects.description}</p>
-        </Header>
+        {showHeader && (
+          <Header>
+            <h1>{dictionary.projects.title}</h1>
+            <p>{dictionary.projects.description}</p>
+          </Header>
+        )}
 
-        {categories.length > 0 && (
+        {categories.length > 0 && showHeader && (
           <FilterBar>
             <FilterButton $active={!categoryFilter} onClick={() => setCategoryFilter(undefined)}>
               {dictionary.projects.allProjects}
@@ -266,8 +269,8 @@ const ProjectsScreen = ({
         )}
         {filteredProjects.length === 0 ? (
           <EmptyState>
-            <h3>No projects found</h3>
-            <p>Check back soon for our latest work</p>
+            <h3>{dictionary.projects.noProjectsFound}</h3>
+            <p>{dictionary.projects.noProjectsDescription}</p>
           </EmptyState>
         ) : (
           <ProjectsGrid>
