@@ -95,7 +95,7 @@ export const fetchServerFeaturedProducts = async (): Promise<PaginatedProductLis
     process.env.NEXT_PUBLIC_API_URL ||
     process.env.API_URL ||
     "https://artlighthouse.api.echodesk.ge";
-  const url = `${apiUrl}/api/ecommerce/client/products/?is_featured=true&language=ka&max_price=500&min_price=0&on_sale=true&ordering=price&page=1&page_size=12`;
+  const url = `${apiUrl}/api/ecommerce/client/products/?is_featured=true&language=ka&max_price=500&min_price=0&ordering=price&page=1&page_size=12`;
 
   const response = await fetch(url, {
     next: { revalidate: 60 }, // Revalidate every 60 seconds

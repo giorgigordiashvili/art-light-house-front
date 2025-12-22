@@ -103,6 +103,11 @@ const NewProducts = ({ dictionary, initialFeaturedProducts }: NewProductsProps) 
   const { featuredProducts, loading, error } = useFeaturedProducts({
     initialProducts: initialFeaturedProducts,
   });
+
+  const displayedProducts = (featuredProducts ?? []).filter((product) =>
+    Boolean(product?.is_featured)
+  );
+
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const [isDragging, setIsDragging] = useState(false);
   const [isPointerDown, setIsPointerDown] = useState(false);
@@ -246,7 +251,7 @@ const NewProducts = ({ dictionary, initialFeaturedProducts }: NewProductsProps) 
       <StyledContainer>
         <StyledTitleAndActions>
           <SectionTitle text={dictionary.title} image="newProduct" />
-          {featuredProducts.length > 5 && (
+          {displayedProducts.length > 5 && (
             <StyledActions>
               <div onClick={scrollLeftArrow}>
                 <ReturnIcon />
@@ -266,8 +271,8 @@ const NewProducts = ({ dictionary, initialFeaturedProducts }: NewProductsProps) 
           onTouchMove={handleTouchMove}
           onTouchEnd={handleTouchEnd}
         >
-          {featuredProducts.length > 0 ? (
-            featuredProducts.map((product) => (
+          {displayedProducts.length > 0 ? (
+            displayedProducts.map((product) => (
               <NewProductCard key={product.id} product={product} dictionary={dictionary} />
             ))
           ) : (
