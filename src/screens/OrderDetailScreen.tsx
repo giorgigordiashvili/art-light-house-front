@@ -8,6 +8,8 @@ import NewCircle from "@/components/ui/NewCircle";
 import { useEffect, useState } from "react";
 import { ecommerceClientOrdersRetrieve } from "@/api/generated/api";
 import type { Order } from "@/api/generated/interfaces";
+import { useAuth } from "@/contexts/AuthContext";
+import { useRouter } from "next/navigation";
 
 const StyledComponent = styled.div`
   background: #0b0b0b;
@@ -24,9 +26,17 @@ interface OrderDetailScreenProps {
 }
 
 const OrderDetailScreen = ({ dictionary, orderId }: OrderDetailScreenProps) => {
+  const { isAuthenticated, isLoading: authLoading } = useAuth();
+  const router = useRouter();
   const [order, setOrder] = useState<Order | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!authLoading && !isAuthenticated) {
+      router.replace("/");
+    }
+  }, [authLoading, isAuthenticated, router]);
 
   useEffect(() => {
     const fetchOrder = async () => {
@@ -41,8 +51,18 @@ const OrderDetailScreen = ({ dictionary, orderId }: OrderDetailScreenProps) => {
       }
     };
 
-    fetchOrder();
-  }, [orderId]);
+    if (isAuthenticated) {
+      fetchOrder();
+    }
+  }, [orderId, isAuthenticated]);
+
+  if (authLoading || !isAuthenticated) {
+    return (
+      <StyledComponent>
+        <BigCircle variant={2} />
+      </StyledComponent>
+    );
+  }
 
   if (loading) {
     return (
