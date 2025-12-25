@@ -4,6 +4,7 @@ import Image from "next/image";
 import SelectorTitle from "./SelectorTitle";
 
 const StyledContainer = styled.div`
+  position: relative;
   width: 460px;
   height: 59px;
   border: 1px solid #474748;
@@ -14,6 +15,18 @@ const StyledContainer = styled.div`
   @media (max-width: 1080px) {
     width: 100%;
   }
+`;
+
+const SlidingIndicator = styled.div<{ $index: number; $count: number }>`
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: calc(100% / ${({ $count }) => $count});
+  background: #ffcb401a;
+  transform: translateX(calc(100% * ${({ $index }) => $index}));
+  transition: transform 0.25s ease;
+  will-change: transform;
 `;
 
 interface StyledItemWrapperProps extends React.HTMLAttributes<HTMLDivElement> {
@@ -27,10 +40,12 @@ const StyledItemWrapper = styled.div<StyledItemWrapperProps>`
   justify-content: center;
   gap: 7px;
   cursor: pointer;
-  width: ${({ label }) => (label === "სამსახური" ? "159px" : "150px")};
+  flex: 1 1 0;
   height: 59px;
-  background: ${({ selected }) => (selected ? "#FFCB401A" : "transparent")};
+  background: transparent;
   border-right: 1px solid #404143;
+  position: relative;
+  z-index: 1;
 
   &:last-child {
     border-right: none;
@@ -54,8 +69,14 @@ const PlaceSelector = ({ selectedPlace, onSelect, dictionary }: Props) => {
     { icon: "/assets/pin.svg", label: dictionary.addressOption3 },
   ];
 
+  const selectedIndex = Math.max(
+    0,
+    items.findIndex((item) => item.label === selectedPlace)
+  );
+
   return (
     <StyledContainer>
+      <SlidingIndicator $index={selectedIndex} $count={items.length} />
       {items.map(({ icon, label }) => (
         <StyledItemWrapper
           key={label}
