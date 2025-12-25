@@ -8,7 +8,7 @@ const StylePass = styled.div`
   width: 100%;
   max-width: 100%;
   height: 544px;
-  padding: 24px;
+  padding: 24px 16px 24px 24px;
   background: #1a1a1a96;
   border-radius: 17px;
   display: flex;
@@ -29,13 +29,19 @@ const InputsWrapper = styled.div`
   flex-direction: column;
   gap: 12px;
   overflow-y: auto;
-  scrollbar-width: none;
-  -ms-overflow-style: none;
-
+  padding-right: 5px;
   &::-webkit-scrollbar {
-    display: none;
+    width: 3px;
   }
 
+  &::-webkit-scrollbar-thumb {
+    background: #4a4a4a;
+    border-radius: 3px;
+  }
+
+  &::-webkit-scrollbar-thumb:hover {
+    background: #5a5a5a;
+  }
   @media (max-width: 1080px) {
   }
 `;

@@ -77,7 +77,6 @@ const ModalLayout = styled.div`
 `;
 
 const ProductList = styled.div`
-  margin-top: 19px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -85,7 +84,21 @@ const ProductList = styled.div`
   overflow-y: overlay;
   max-height: 242px;
   box-sizing: border-box;
-  scrollbar-width: none;
+  margin: 19px 4px 0 6px;
+
+  /* Webkit scrollbar styling */
+  &::-webkit-scrollbar {
+    width: 3px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: #4a4a4a;
+    border-radius: 3px;
+  }
+
+  &::-webkit-scrollbar-thumb:hover {
+    background: #5a5a5a;
+  }
 
   @media (max-width: 1080px) {
     margin-inline: 12px;
