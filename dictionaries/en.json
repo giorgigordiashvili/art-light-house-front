@@ -232,7 +232,8 @@
     "subTitle": "Similar products",
     "similarProducts": "Similar products",
     "cardTitle": "Garden light",
-    "price": "199,99 ₾"
+    "price": "199,99 ₾",
+    "quantity": "Quantity"
   },
   "checkout": {
     "title": "Checkout",

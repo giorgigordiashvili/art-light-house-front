@@ -231,7 +231,8 @@
     "addToCart": "დაამატე კალათაში",
     "similarProducts": "მსგავსი პროდუქტები",
     "cardTitle": "ეზოს სანათი",
-    "price": "199,99 ₾"
+    "price": "199,99 ₾",
+    "quantity": "რაოდენობა"
   },
   "checkout": {
     "title": "შეკვეთის გაფორმება",
