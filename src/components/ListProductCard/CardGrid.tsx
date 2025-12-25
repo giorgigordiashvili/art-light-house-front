@@ -4,6 +4,7 @@ import PlaceholderCard from "./PlaceholderCard";
 import { ProductList } from "@/api/generated/interfaces";
 
 const GridWrapper = styled.div`
+  position: relative;
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 20px;
@@ -18,6 +19,15 @@ const GridWrapper = styled.div`
     grid-template-columns: repeat(2, 1fr);
     gap: 10px;
   }
+`;
+
+const EmptyMessage = styled.div`
+  position: absolute;
+  top: 50px;
+  color: rgba(255, 255, 255, 0.65);
+  font-size: 32px;
+  line-height: 24px;
+  pointer-events: none;
 `;
 
 const DesktopOnly = styled.div`
@@ -60,11 +70,21 @@ const CardGrid = ({ products, dictionary }: { products: ProductList[]; dictionar
   return (
     <>
       <DesktopOnly>
-        <GridWrapper>{createGridItems(CARDS_PER_PAGE_DESKTOP)}</GridWrapper>
+        <GridWrapper>
+          {products.length === 0 && (
+            <EmptyMessage>{dictionary?.results?.emptyMessage || "No products found"}</EmptyMessage>
+          )}
+          {createGridItems(CARDS_PER_PAGE_DESKTOP)}
+        </GridWrapper>
       </DesktopOnly>
 
       <MobileOnly>
-        <GridWrapper>{createGridItems(CARDS_PER_PAGE_MOBILE)}</GridWrapper>
+        <GridWrapper>
+          {products.length === 0 && (
+            <EmptyMessage>{dictionary?.results?.emptyMessage || "No products found"}</EmptyMessage>
+          )}
+          {createGridItems(CARDS_PER_PAGE_MOBILE)}
+        </GridWrapper>
       </MobileOnly>
     </>
   );

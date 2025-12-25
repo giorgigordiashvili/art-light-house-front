@@ -5,6 +5,9 @@ import NewCircle from "@/components/ui/NewCircle";
 import LeftCircle from "@/components/ui/LeftCircle";
 import Circle from "@/components/ui/Circle";
 import BigCircle from "@/components/ui/BigCircle";
+import { useEffect } from "react";
+import { useAuth } from "@/contexts/AuthContext";
+import { useRouter } from "next/navigation";
 
 const StyledComponent = styled.div`
   background: #0b0b0b;
@@ -31,6 +34,23 @@ const StyledCircle = styled.div`
 `;
 
 const ProfileScreen = ({ dictionary }: any) => {
+  const { isAuthenticated, isLoading } = useAuth();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (!isLoading && !isAuthenticated) {
+      router.replace("/");
+    }
+  }, [isLoading, isAuthenticated, router]);
+
+  if (isLoading || !isAuthenticated) {
+    return (
+      <StyledComponent>
+        <BigCircle variant={2} />
+      </StyledComponent>
+    );
+  }
+
   return (
     <StyledComponent>
       <BigCircle variant={2} />

@@ -72,6 +72,9 @@ type Props = {
   isPasswordField?: boolean;
   isDateField?: boolean;
   fullWidth?: boolean;
+  readOnly?: boolean;
+  onClick?: React.MouseEventHandler<HTMLInputElement>;
+  onIconClick?: () => void;
 };
 
 const ModalInput = ({
@@ -86,6 +89,9 @@ const ModalInput = ({
   isPasswordField = false,
   isDateField = false,
   fullWidth = false,
+  readOnly = false,
+  onClick,
+  onIconClick,
 }: Props) => {
   const [showPassword, setShowPassword] = useState(false);
   const dateInputRef = useRef<HTMLInputElement>(null);
@@ -108,6 +114,10 @@ const ModalInput = ({
   const hasIcon = Boolean(displayIcon || displayDateIcon);
 
   const handleIconClick = () => {
+    if (onIconClick) {
+      onIconClick();
+      return;
+    }
     if (isPasswordField) {
       setShowPassword(!showPassword);
     } else if (isDateField && dateInputRef.current) {
@@ -130,6 +140,8 @@ const ModalInput = ({
         onChange={onChange}
         value={value}
         name={name}
+        readOnly={readOnly}
+        onClick={onClick}
       />
       {displayIcon && (
         <StyledIconWrapper onClick={handleIconClick}>

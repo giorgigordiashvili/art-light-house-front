@@ -4,9 +4,8 @@ import GoogleMap from "./GoogleMap";
 import Data from "./Data";
 import GoogleMapButton from "./GoogleMapButton";
 
-const OuterContainer = styled.div<{ side?: "left" | "right" }>`
+const OuterContainer = styled.div<{ side?: "left" | "right"; $fullwidth?: boolean }>`
   border-radius: 32px;
-  width: 636px;
   z-index: 2;
   background: ${({ side }) =>
     side === "right"
@@ -25,9 +24,7 @@ const OuterContainer = styled.div<{ side?: "left" | "right" }>`
   padding: 1px;
   box-sizing: border-box;
 
-  @media (max-width: 1346px) {
-    width: 100%;
-  }
+  ${({ $fullwidth }) => $fullwidth && `flex: 1;`}
 
   @media (max-width: 1080px) {
     background: #262626 !important;
@@ -72,7 +69,14 @@ type Props = {
   lang?: string;
 };
 
-const ContactCard = ({ side = "left", dictionary, location, branchData, lang = "ge" }: Props) => {
+const ContactCard = ({
+  side = "left",
+  dictionary,
+  location,
+  branchData,
+  lang = "ge",
+  fullwidth,
+}: Props & { fullwidth?: boolean }) => {
   const defaultPosition = { lat: 41.720542, lng: 44.764789 };
   const mapPosition = location ?? defaultPosition;
 
@@ -89,9 +93,9 @@ const ContactCard = ({ side = "left", dictionary, location, branchData, lang = "
   const googleMapsUrl = branchData?.custom_data?.google_maps_url || "";
 
   return (
-    <OuterContainer side={side}>
+    <OuterContainer side={side} $fullwidth={fullwidth}>
       <StyledContainer>
-        <GoogleMap dictionary={dictionary} location={mapPosition} />
+        <GoogleMap dictionary={dictionary} location={mapPosition} fullheight={fullwidth} />
         <StyledAction>
           <div style={{ flex: 1, minWidth: 0 }}>
             <Data

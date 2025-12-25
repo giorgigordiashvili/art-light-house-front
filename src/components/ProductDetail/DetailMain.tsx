@@ -764,7 +764,21 @@ function DetailMain({
           <RightColumn>
             <DetailDescription dictionary={dictionary} product={product} />
             <ButtonRow>
-              <BuyButton dictionary={dictionary} />
+              <BuyButton
+                dictionary={dictionary}
+                onClick={() => {
+                  const hasToken =
+                    typeof window !== "undefined" && !!localStorage.getItem("auth_access_token");
+                  if (!hasToken) {
+                    openAuthModal();
+                  } else {
+                    // fallback: let BuyButton do its default (redirect)
+                    const pathname = window.location.pathname;
+                    const locale = pathname.split("/")[1];
+                    window.location.href = `/${locale}/checkout`;
+                  }
+                }}
+              />
               <AddToCartButton onClick={handleAddToCart} dictionary={dictionary} />
             </ButtonRow>
           </RightColumn>

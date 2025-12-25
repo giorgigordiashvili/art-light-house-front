@@ -1,5 +1,6 @@
 import styled from "styled-components";
 import { ProductDetail } from "@/api/generated/interfaces";
+import Quantity from "./Quantity";
 
 const Wrapper = styled.div`
   color: white;
@@ -63,9 +64,16 @@ function pickLocalized(value: any, fallback = ""): string {
   return fallback;
 }
 
-const DetailDescription = ({ product }: { dictionary: any; product: ProductDetail }) => {
+const DetailDescription = ({
+  dictionary,
+  product,
+}: {
+  dictionary: any;
+  product: ProductDetail;
+}) => {
   const shortDesc = pickLocalized(product.short_description);
   const fullDesc = pickLocalized(product.description);
+  const quantityLabel = dictionary?.productDetails?.quantity || "Quantity";
   return (
     <Wrapper>
       <Title>{pickLocalized((product as any).title ?? product.name)}</Title>
@@ -74,6 +82,7 @@ const DetailDescription = ({ product }: { dictionary: any; product: ProductDetai
         <Description style={{ fontWeight: 500, marginBottom: "16px" }}>{shortDesc}</Description>
       )}
       <Description>{fullDesc}</Description>
+      <Quantity text={`${quantityLabel}: ${product.quantity}`} />
     </Wrapper>
   );
 };

@@ -1,6 +1,5 @@
 "use client";
 import React, { useEffect, useMemo, useState } from "react";
-import Image from "next/image";
 import {
   ecommerceClientFavoritesList,
   ecommerceClientFavoritesCreate,
@@ -8,6 +7,8 @@ import {
 } from "@/api/generated/api";
 import { ecommerceClientProfileMeRetrieve } from "@/api/generated/api";
 import { useAuthModal } from "@/contexts/AuthModalContext";
+import HeartIcon from "@/app/icons/HeartIcon";
+import FilledHeartIcon from "@/app/icons/FilledHeartIcon";
 
 type Props = {
   productId: number;
@@ -93,34 +94,37 @@ const ProductHeartIcon = ({ productId, defaultIsFavorite, size = 30 }: Props) =>
       return;
     }
 
+    const nextFilled = !isFilled;
+    // Optimistic UI: update immediately so it feels responsive.
+    setIsFilled(nextFilled);
+    // Also update header immediately on add (hasAny becomes true).
+    if (typeof window !== "undefined" && nextFilled) {
+      window.dispatchEvent(new CustomEvent("favoritesUpdated", { detail: { hasAny: true } }));
+    }
+
     try {
       setIsSubmitting(true);
-      // Always query to find existing record id robustly
-      let favoriteId: string | null = null;
-      try {
-        const response = await ecommerceClientFavoritesList();
-        const list = response.results || [];
-        const existing = list.find((f: any) => {
-          const pid = typeof f.product === "object" ? f.product?.id : f.product;
-          return Number(pid) === Number(productId);
-        });
-        if (existing) favoriteId = String(existing.id);
-      } catch {}
-
-      if (favoriteId) {
-        // Remove from favorites
-        await ecommerceClientFavoritesDestroy(favoriteId);
-        setIsFilled(false);
-      } else {
-        // Add to favorites; include client id from profile
-        let clientId: number | undefined;
+      if (!nextFilled) {
+        // Remove from favorites (optimistic UI already set)
+        let favoriteId: string | null = null;
         try {
-          const me = await ecommerceClientProfileMeRetrieve();
-          clientId = (me as any)?.id;
+          const response = await ecommerceClientFavoritesList();
+          const list = response.results || [];
+          const existing = list.find((f: any) => {
+            const pid = typeof f.product === "object" ? f.product?.id : f.product;
+            return Number(pid) === Number(productId);
+          });
+          if (existing) favoriteId = String(existing.id);
         } catch {}
-        const payload = { client: clientId, product: productId } as any;
-        await ecommerceClientFavoritesCreate(payload);
-        setIsFilled(true);
+
+        if (favoriteId) {
+          await ecommerceClientFavoritesDestroy(favoriteId);
+        }
+      } else {
+        // Add to favorites (optimistic UI already set)
+        const me = await ecommerceClientProfileMeRetrieve();
+        const clientId = (me as any)?.id;
+        await ecommerceClientFavoritesCreate({ client: clientId, product: productId } as any);
       }
 
       // Sync header by dispatching updated count
@@ -140,13 +144,15 @@ const ProductHeartIcon = ({ productId, defaultIsFavorite, size = 30 }: Props) =>
         setIsFilled(false);
         return;
       }
+
+      // Revert optimistic update on failure
+      setIsFilled(!nextFilled);
     } finally {
       setIsSubmitting(false);
     }
   };
 
-  const src = isFilled ? "/assets/icons/filled-heart.png" : "/assets/icons/heart.png";
-  const alt = isFilled ? "favorite" : "add to favorites";
+  const IconComponent = isFilled ? FilledHeartIcon : HeartIcon;
 
   return (
     <span
@@ -161,7 +167,7 @@ const ProductHeartIcon = ({ productId, defaultIsFavorite, size = 30 }: Props) =>
         zIndex: 1,
       }}
     >
-      <Image src={src} alt={alt} width={size} height={size} />
+      <IconComponent width={size} height={size} color={"#ffffff"} />
     </span>
   );
 };

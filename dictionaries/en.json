@@ -183,7 +183,8 @@
     "placeholder2": "To",
     "results": {
       "zero": "0 products found",
-      "count": "{count} products found"
+      "count": "{count} products found",
+      "emptyMessage": "No products found"
     },
     "filter": {
       "title": "Filter",
@@ -231,7 +232,8 @@
     "subTitle": "Similar products",
     "similarProducts": "Similar products",
     "cardTitle": "Garden light",
-    "price": "199,99 ₾"
+    "price": "199,99 ₾",
+    "quantity": "Quantity"
   },
   "checkout": {
     "title": "Checkout",
@@ -492,7 +494,9 @@
     "client": "Client",
     "category": "Category",
     "year": "Year",
-    "location": "Location"
+    "location": "Location",
+    "noProjectsFound": "No projects found",
+    "noProjectsDescription": "Check back soon for our latest work"
   },
   "metadata": {
     "main": {

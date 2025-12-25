@@ -26,7 +26,7 @@ const FilledHeartIcon: React.FC<Props> = ({
     >
       <path
         d="M10.0083 5.00083C5.41667 0.833332 0.833333 6.66667 4.81833 10.8342L10.0092 16.6667L15.2008 10.8333C19.1667 6.66667 14.5833 0.832499 10.0083 5.00083Z"
-        fill="#F51919"
+        fill={color}
         stroke={color}
         strokeWidth="2"
         strokeLinecap="round"

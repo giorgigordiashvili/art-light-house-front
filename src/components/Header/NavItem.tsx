@@ -39,6 +39,12 @@ const NavItem = ({ text, href, onClick }: Props) => {
     }
     onClick?.();
     router.push(href);
+    // In production builds, navigating within the same route while only changing
+    // search params can reuse a cached RSC payload. Refresh ensures the server
+    // re-renders with the new query params (e.g. /products?on_sale=true).
+    if (href.includes("?")) {
+      setTimeout(() => router.refresh(), 0);
+    }
   };
 
   const handleMouseDown = (e: React.MouseEvent) => {

@@ -29,6 +29,7 @@ export default async function ProjectsPage({ params }: PageProps) {
   return (
     <ProjectsScreen
       dictionary={dictionary}
+      lang={resolvedLang}
       initialProjects={projects}
       initialCategories={categories}
       initialError={error}
