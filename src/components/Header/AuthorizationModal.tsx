@@ -7,6 +7,7 @@ import AuthToggleButtons from "./AuthToggleButtons";
 import ModalInput from "./ModalInput";
 import InputTitle from "./InputTitle";
 import AdditionalAction from "./AdditionalAction";
+import BirthDatePickerInput from "./BirthDatePickerInput";
 import { useAuth } from "@/contexts/AuthContext";
 import {
   ClientRegistrationRequest,
@@ -187,8 +188,8 @@ const AuthorizationModal: React.FC<AuthorizationModalProps> = ({
     setError("");
   };
 
-  const handleBirthDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setBirthDate(e.target.value);
+  const handleBirthDateSelect = (value: string) => {
+    setBirthDate(value);
     setError("");
   };
 
@@ -438,12 +439,11 @@ const AuthorizationModal: React.FC<AuthorizationModalProps> = ({
                 </StyledModalInput>
                 <StyledModalInput>
                   <InputTitle text={dictionary?.authorizationModal?.birthDate} />
-                  <ModalInput
+                  <BirthDatePickerInput
                     placeholder={dictionary?.authorizationModal?.birthDatePlaceholder}
-                    type="date"
                     value={birthDate}
-                    onChange={handleBirthDateChange}
-                    isDateField
+                    onChange={handleBirthDateSelect}
+                    disabled={isLoading}
                   />
                 </StyledModalInput>
                 <StyledModalInput>
