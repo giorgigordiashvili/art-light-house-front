@@ -5,7 +5,7 @@ import ClientRootLayout from "./client-root-layout";
 
 interface ServerRootLayoutProps {
   children: ReactNode;
-  params: Promise<{ lang: Locale }>;
+  params: Promise<{ lang: string }>;
 }
 
 // Static params for pre-rendering each locale
@@ -16,7 +16,7 @@ export async function generateStaticParams() {
 export default async function ServerRootLayout({ children, params }: ServerRootLayoutProps) {
   const { lang } = await params;
   // Make sure lang is a valid locale
-  const validLang = lang === "ge" || lang === "en" ? lang : "ge";
+  const validLang: Locale = lang === "ge" || lang === "en" ? lang : "ge";
   const dictionary: Dictionary = await getDictionary(validLang);
 
   return (
