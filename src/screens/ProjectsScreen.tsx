@@ -192,6 +192,7 @@ const EmptyState = styled.div`
 
 interface ProjectsScreenProps {
   dictionary: any;
+  lang: string;
   initialProjects: ProjectItem[];
   initialCategories: string[];
   initialError?: string | null;
@@ -216,6 +217,7 @@ const stripHtml = (value?: string) => {
 
 const ProjectsScreen = ({
   dictionary,
+  lang,
   initialProjects,
   initialCategories,
   initialError,
@@ -231,15 +233,18 @@ const ProjectsScreen = ({
     ? projects.filter((project) => project.category === categoryFilter)
     : projects;
 
+  const showHeader = filteredProjects.length > 0;
   return (
     <StyledComponent>
       <Container>
-        <Header>
-          <h1>{dictionary.projects.title}</h1>
-          <p>{dictionary.projects.description}</p>
-        </Header>
+        {showHeader && (
+          <Header>
+            <h1>{dictionary.projects.title}</h1>
+            <p>{dictionary.projects.description}</p>
+          </Header>
+        )}
 
-        {categories.length > 0 && (
+        {categories.length > 0 && showHeader && (
           <FilterBar>
             <FilterButton $active={!categoryFilter} onClick={() => setCategoryFilter(undefined)}>
               {dictionary.projects.allProjects}
@@ -264,13 +269,13 @@ const ProjectsScreen = ({
         )}
         {filteredProjects.length === 0 ? (
           <EmptyState>
-            <h3>No projects found</h3>
-            <p>Check back soon for our latest work</p>
+            <h3>{dictionary.projects.noProjectsFound}</h3>
+            <p>{dictionary.projects.noProjectsDescription}</p>
           </EmptyState>
         ) : (
           <ProjectsGrid>
             {filteredProjects.map((project) => {
-              const projectHref = project.slug ? `/projects/${project.slug}` : "#";
+              const projectHref = project.slug ? `/${lang}/projects/${project.slug}` : "#";
               const descriptionText = stripHtml(project.description);
               return (
                 <ProjectCard key={project.id} href={projectHref} className="project-card">

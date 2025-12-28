@@ -46,7 +46,7 @@ const Logo = ({ size, href }: Props) => {
 
   return (
     <Image
-      src="/assets/Logo.png"
+      src="/assets/Logo.svg"
       alt="logo"
       width={width}
       height={height}

@@ -14,6 +14,9 @@ const Card = styled.div`
   position: relative;
   height: 79px;
   cursor: pointer;
+  @media (max-width: 520px) {
+    padding: 12px 12px;
+  }
 `;
 
 const Id = styled.span`

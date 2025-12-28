@@ -111,6 +111,7 @@ const AddressModal = ({ onClose, onSave, initialData, dictionary }: Props) => {
       if (isEditing) {
         // Update existing address
         const updateData: PatchedClientAddressRequest = {
+          label: mapPlaceToAddressType(selectedPlace, dictionary) as any,
           address,
           extra_instructions: additionalInfo || undefined,
           latitude: roundedLat,
@@ -158,7 +159,7 @@ const AddressModal = ({ onClose, onSave, initialData, dictionary }: Props) => {
       <StyledSelector>
         <PlaceSelector
           selectedPlace={selectedPlace}
-          onSelect={initialData?.id ? () => {} : setSelectedPlace} // Disable selection during edit
+          onSelect={setSelectedPlace}
           dictionary={dictionary}
         />
       </StyledSelector>
@@ -195,7 +196,6 @@ const AddressModal = ({ onClose, onSave, initialData, dictionary }: Props) => {
               marginTop: "8px",
               padding: "8px",
               backgroundColor: "#2a2a2a",
-              borderRadius: "4px",
               fontSize: "12px",
               color: "#aaa",
             }}

@@ -183,7 +183,8 @@
     "placeholder2": "მდე",
     "results": {
       "zero": "0 პროდუქტი ნაპოვნია",
-      "count": "{count} პროდუქტი ნაპოვნია"
+      "count": "{count} პროდუქტი ნაპოვნია",
+      "emptyMessage": "პროდუქტები ვერ მოიძებნა"
     },
     "filter": {
       "title": "ფილტრი",
@@ -230,7 +231,8 @@
     "addToCart": "დაამატე კალათაში",
     "similarProducts": "მსგავსი პროდუქტები",
     "cardTitle": "ეზოს სანათი",
-    "price": "199,99 ₾"
+    "price": "199,99 ₾",
+    "quantity": "რაოდენობა"
   },
   "checkout": {
     "title": "შეკვეთის გაფორმება",
@@ -491,7 +493,9 @@
     "client": "კლიენტი",
     "category": "კატეგორია",
     "year": "წელი",
-    "location": "ლოკაცია"
+    "location": "ლოკაცია",
+    "noProjectsFound": "პროექტები ვერ მოიძებნა",
+    "noProjectsDescription": "გთხოვთ, მოგვიანებით გადაამოწმეთ ჩვენი უახლესი ნამუშევრები"
   },
   "metadata": {
     "main": {

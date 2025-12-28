@@ -16,24 +16,26 @@ export const useUrlParams = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
   const pathname = usePathname();
+  const searchParamsString = searchParams.toString();
 
   // Get current filter parameters from URL
   const getFilterParams = useCallback((): FilterParams => {
+    const params = new URLSearchParams(searchParamsString);
     return {
-      categories: searchParams.get("categories") || undefined,
-      minPrice: searchParams.get("minPrice") || undefined,
-      maxPrice: searchParams.get("maxPrice") || undefined,
-      attributes: searchParams.get("attributes") || undefined,
-      page: searchParams.get("page") || undefined,
-      search: searchParams.get("search") || undefined,
-      ordering: searchParams.get("ordering") || undefined,
+      categories: params.get("categories") || undefined,
+      minPrice: params.get("minPrice") || undefined,
+      maxPrice: params.get("maxPrice") || undefined,
+      attributes: params.get("attributes") || undefined,
+      page: params.get("page") || undefined,
+      search: params.get("search") || undefined,
+      ordering: params.get("ordering") || undefined,
     };
-  }, [searchParams]);
+  }, [searchParamsString]);
 
   // Update URL parameters while preserving existing ones
   const updateUrlParams = useCallback(
     (params: Partial<FilterParams>, replace: boolean = false) => {
-      const current = new URLSearchParams(searchParams.toString());
+      const current = new URLSearchParams(searchParamsString);
 
       // Update or remove parameters
       Object.entries(params).forEach(([key, value]) => {
@@ -56,8 +58,11 @@ export const useUrlParams = () => {
       } else {
         router.push(newUrl, { scroll: false });
       }
+
+      // Ensure server-rendered data updates when only query params change.
+      setTimeout(() => router.refresh(), 0);
     },
-    [router, pathname, searchParams]
+    [router, pathname, searchParamsString]
   );
 
   // Clear all filter parameters
