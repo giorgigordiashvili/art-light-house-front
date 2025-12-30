@@ -36,7 +36,13 @@ const MobileOnlyIcons = styled.div`
   }
 `;
 
-const LampaImage = ({ product }: { product: ProductList }) => {
+const LampaImage = ({
+  product,
+  priority = false,
+}: {
+  product: ProductList;
+  priority?: boolean;
+}) => {
   // Use image field from ProductList interface
   const imageUrl = product.image;
 
@@ -53,18 +59,18 @@ const LampaImage = ({ product }: { product: ProductList }) => {
           <Image
             src={imageUrl}
             alt={altText}
-            layout="fill"
-            objectFit="contain"
-            priority
+            fill
+            style={{ objectFit: "contain" }}
+            priority={priority}
             draggable="false"
           />
         ) : (
           <Image
             src={mobilelampa}
             alt="Mobile Lampa"
-            layout="fill"
-            objectFit="contain"
-            priority
+            fill
+            style={{ objectFit: "contain" }}
+            priority={priority}
             draggable="false"
           />
         )}
@@ -74,18 +80,18 @@ const LampaImage = ({ product }: { product: ProductList }) => {
           <Image
             src={imageUrl}
             alt={altText}
-            layout="fill"
-            objectFit="contain"
-            priority
+            fill
+            style={{ objectFit: "contain" }}
+            priority={priority}
             draggable="false"
           />
         ) : (
           <Image
             src={Desktoplampa}
             alt="Desktop Lampa"
-            layout="fill"
-            objectFit="contain"
-            priority
+            fill
+            style={{ objectFit: "contain" }}
+            priority={priority}
             draggable="false"
           />
         )}

@@ -2,7 +2,7 @@
 
 import React from "react";
 import Image from "next/image";
-import { useRouter } from "next/navigation";
+import Link from "next/link";
 
 type Props = {
   size?: "small" | "large";
@@ -10,25 +10,6 @@ type Props = {
 };
 
 const Logo = ({ size, href }: Props) => {
-  const router = useRouter();
-
-  const handleClick = (e: React.MouseEvent) => {
-    // Check for Ctrl+click (Windows/Linux) or Cmd+click (Mac) or middle-click
-    if (e.ctrlKey || e.metaKey || e.button === 1) {
-      window.open(href, "_blank");
-      return;
-    }
-    router.push(href);
-  };
-
-  const handleMouseDown = (e: React.MouseEvent) => {
-    // Handle middle-click (mouse wheel click)
-    if (e.button === 1) {
-      e.preventDefault(); // Prevent default middle-click behavior
-      window.open(href, "_blank");
-    }
-  };
-
   let width = 111;
   let height = 41;
 
@@ -45,15 +26,15 @@ const Logo = ({ size, href }: Props) => {
   }
 
   return (
-    <Image
-      src="/assets/Logo.svg"
-      alt="logo"
-      width={width}
-      height={height}
-      style={{ cursor: "pointer" }}
-      onClick={handleClick}
-      onMouseDown={handleMouseDown}
-    />
+    <Link href={href} prefetch={true}>
+      <Image
+        src="/assets/Logo.svg"
+        alt="logo"
+        width={width}
+        height={height}
+        style={{ cursor: "pointer" }}
+      />
+    </Link>
   );
 };
 

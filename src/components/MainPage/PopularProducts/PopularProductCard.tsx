@@ -1,5 +1,6 @@
 import React from "react";
 import styled, { css } from "styled-components";
+import Image from "next/image";
 
 type Props = {
   image: string;
@@ -51,22 +52,25 @@ const Card = styled.div<{
   }
 `;
 
-const Image = styled.img<{
+const ImageWrapper = styled.div<{
   $isRightAligned?: boolean;
   $isMiddleCard?: boolean;
 }>`
-  object-fit: contain;
   position: absolute;
   top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
   transition: transform 0.3s ease;
 
   ${({ $isRightAligned }) =>
     $isRightAligned &&
     css`
-      right: 10px;
       @media (max-width: 1080px) {
         width: 200px;
         height: 200px;
+        right: 10px;
+        left: auto;
       }
     `}
 
@@ -121,12 +125,15 @@ const PopularProductCard = ({
       $isRightAligned={isRightAligned}
       $changeHeightMobile={changeHeightMobile}
     >
-      <Image
-        src={image}
-        alt={label}
-        $isRightAligned={isRightAligned}
-        $isMiddleCard={isMiddleCard}
-      />
+      <ImageWrapper $isRightAligned={isRightAligned} $isMiddleCard={isMiddleCard}>
+        <Image
+          src={image}
+          alt={label}
+          fill
+          sizes="(max-width: 1080px) 100vw, 50vw"
+          style={{ objectFit: "contain" }}
+        />
+      </ImageWrapper>
       <LabelWrapper>
         <Label>{label}</Label>
       </LabelWrapper>

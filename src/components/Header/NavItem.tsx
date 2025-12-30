@@ -2,9 +2,9 @@
 
 import React from "react";
 import styled from "styled-components";
-import { useRouter } from "next/navigation";
+import Link from "next/link";
 
-const StyledText = styled.div`
+const StyledLink = styled(Link)`
   font-family: HelRom;
   font-weight: 400;
   font-size: 14px;
@@ -13,6 +13,7 @@ const StyledText = styled.div`
   color: #fafafa;
   cursor: pointer;
   transition: 0.2s;
+  text-decoration: none;
   &:hover {
     opacity: 80%;
   }
@@ -28,37 +29,14 @@ type Props = {
 };
 
 const NavItem = ({ text, href, onClick }: Props) => {
-  const router = useRouter();
-
-  const handleClick = (e: React.MouseEvent) => {
-    // Check for Ctrl+click (Windows/Linux) or Cmd+click (Mac) or middle-click
-    if (e.ctrlKey || e.metaKey || e.button === 1) {
-      window.open(href, "_blank");
-      onClick?.();
-      return;
-    }
+  const handleClick = () => {
     onClick?.();
-    router.push(href);
-    // In production builds, navigating within the same route while only changing
-    // search params can reuse a cached RSC payload. Refresh ensures the server
-    // re-renders with the new query params (e.g. /products?on_sale=true).
-    if (href.includes("?")) {
-      setTimeout(() => router.refresh(), 0);
-    }
-  };
-
-  const handleMouseDown = (e: React.MouseEvent) => {
-    // Handle middle-click (mouse wheel click)
-    if (e.button === 1) {
-      e.preventDefault(); // Prevent default middle-click behavior
-      window.open(href, "_blank");
-    }
   };
 
   return (
-    <StyledText onClick={handleClick} onMouseDown={handleMouseDown}>
+    <StyledLink href={href} onClick={handleClick} prefetch={true}>
       <p>{text}</p>
-    </StyledText>
+    </StyledLink>
   );
 };
 

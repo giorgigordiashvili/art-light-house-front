@@ -2,9 +2,14 @@
 import React from "react";
 import styled from "styled-components";
 import Image from "next/image";
-import { useRouter } from "next/navigation";
+import Link from "next/link";
 
-const StyledButton = styled.button`
+const StyledLink = styled(Link)`
+  text-decoration: none;
+  display: inline-block;
+`;
+
+const StyledButton = styled.div`
   padding: 18px 20px 18px 29px;
   background-color: #ffcb40;
   border-radius: 142px;
@@ -45,30 +50,13 @@ type Props = {
 };
 
 const ViewPageButton = (props: Props) => {
-  const router = useRouter();
-
-  const handleClick = (e: React.MouseEvent) => {
-    // Check for Ctrl+click (Windows/Linux) or Cmd+click (Mac) or middle-click
-    if (e.ctrlKey || e.metaKey || e.button === 1) {
-      window.open(props.href, "_blank");
-      return;
-    }
-    router.push(props.href);
-  };
-
-  const handleMouseDown = (e: React.MouseEvent) => {
-    // Handle middle-click (mouse wheel click)
-    if (e.button === 1) {
-      e.preventDefault(); // Prevent default middle-click behavior
-      window.open(props.href, "_blank");
-    }
-  };
-
   return (
-    <StyledButton onClick={handleClick} onMouseDown={handleMouseDown}>
-      <StyledButtonText>{props.text}</StyledButtonText>
-      <Image src={"/assets/RightArrow.svg"} width={24} height={24} alt="arrow" />
-    </StyledButton>
+    <StyledLink href={props.href} prefetch={true}>
+      <StyledButton>
+        <StyledButtonText>{props.text}</StyledButtonText>
+        <Image src={"/assets/RightArrow.svg"} width={24} height={24} alt="arrow" />
+      </StyledButton>
+    </StyledLink>
   );
 };
 

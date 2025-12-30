@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState, useEffect, useMemo, useTransition } from "react";
 import FilterSidebar from "@/components/FilterSidebar/FilterSidebar";
 import CardGrid from "@/components/ListProductCard/CardGrid";
 import styled from "styled-components";
@@ -9,7 +9,7 @@ import Container from "@/components/ui/Container";
 import MobileFilterDropdown from "../FilterDropdown/MobileFilterDropdown";
 import PaginationWithArrows from "@/components/PagesButton/PaginationWithArrows";
 import { useFilterContext } from "@/contexts/FilterContext";
-import { useRouter, usePathname } from "next/navigation";
+import { useRouter, usePathname, useSearchParams } from "next/navigation";
 
 const StyledComponent = styled.div`
   background: #0b0b0b;
@@ -108,6 +108,8 @@ interface ProductsMainProps {
   initialPage?: number;
 }
 
+const MIN_SKELETON_TIME = 1000; // Minimum time to show skeletons (ms)
+
 function ProductsMain({
   dictionary,
   initialProductsData,
@@ -115,9 +117,16 @@ function ProductsMain({
   initialPage,
 }: ProductsMainProps) {
   const [isMobileFilterDropdownVisible, setMobileFilterDropdownVisible] = useState(false);
+  const [isPending, startTransition] = useTransition();
+  const [isNavigating, setIsNavigating] = useState(true); // Start with loading state
   const { setOnFilterChange } = useFilterContext();
   const router = useRouter();
   const pathname = usePathname();
+  const searchParams = useSearchParams();
+  const searchParamsString = searchParams.toString();
+  const navigationStartTime = React.useRef<number>(Date.now());
+  const prevSearchParams = React.useRef<string>(searchParamsString);
+  const isFirstRender = React.useRef(true);
 
   const products = useMemo(() => initialProductsData?.results || [], [initialProductsData]);
   const totalPages = useMemo(
@@ -135,28 +144,70 @@ function ProductsMain({
       ? zeroResultsText
       : countResultsTemplate.replace("{count}", products.length.toString());
 
-  // Register immediate filter callback
+  // Detect URL changes (e.g., clicking Sale link in header) and show skeletons
   useEffect(() => {
-    // No client-side fetching on filter change; URL is synced by FilterProvider.
-    setOnFilterChange(null);
+    if (isFirstRender.current) {
+      isFirstRender.current = false;
+      return;
+    }
+
+    // URL params changed - show loading
+    if (prevSearchParams.current !== searchParamsString) {
+      navigationStartTime.current = Date.now();
+      setIsNavigating(true);
+      prevSearchParams.current = searchParamsString;
+    }
+  }, [searchParamsString]);
+
+  // Initial mount: show skeletons for minimum time
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setIsNavigating(false);
+    }, MIN_SKELETON_TIME);
+
+    return () => clearTimeout(timer);
+  }, []);
+
+  // Reset navigating state when new product data arrives from server
+  // But respect minimum skeleton display time
+  useEffect(() => {
+    const elapsed = Date.now() - navigationStartTime.current;
+    const remainingTime = Math.max(0, MIN_SKELETON_TIME - elapsed);
+
+    const timer = setTimeout(() => {
+      setIsNavigating(false);
+    }, remainingTime);
+
+    return () => clearTimeout(timer);
+  }, [initialProductsData]);
+
+  // Register filter callback to show loading state when filters change
+  useEffect(() => {
+    setOnFilterChange(() => {
+      navigationStartTime.current = Date.now();
+      setIsNavigating(true);
+    });
     return () => setOnFilterChange(null);
   }, [setOnFilterChange]);
-
-  // Apply initial filters from URL when ready, or fetch products if no filters
-  // Server provides initial products; no client bootstrapping/fetching needed.
 
   const toggleMobileFilterDropdown = () => {
     setMobileFilterDropdownVisible(!isMobileFilterDropdownVisible);
   };
 
   const handlePageChange = (page: number) => {
+    navigationStartTime.current = Date.now();
+    setIsNavigating(true);
     // Update URL to reflect new page; server will fetch via ISR
     const current = new URLSearchParams(window.location.search);
     current.set("page", page.toString());
     const newUrl = `${pathname}?${current.toString()}`;
-    router.push(newUrl, { scroll: false });
-    setTimeout(() => router.refresh(), 0);
+    startTransition(() => {
+      router.push(newUrl, { scroll: false });
+    });
   };
+
+  // Show loading state during navigation
+  const isLoading = isPending || isNavigating;
 
   // Note: we intentionally avoid returning early on loading to keep the sidebar mounted
 
@@ -181,7 +232,7 @@ function ProductsMain({
           </OnDesktop>
           <div style={{ width: "100%" }}>
             <>
-              <CardGrid products={products} dictionary={dictionary} />
+              <CardGrid products={products} dictionary={dictionary} loading={isLoading} />
               {totalPages > 1 && (
                 <PaginationWrapper>
                   <PaginationWithArrows

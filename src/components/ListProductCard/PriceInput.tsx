@@ -39,6 +39,15 @@ const PriceInput: React.FC<Props> = ({ text, type }) => {
     setLocalValue(currentValue !== undefined ? currentValue.toString() : "");
   }, [filters.minPrice, filters.maxPrice, type]);
 
+  // Cleanup debounce timeout on unmount
+  React.useEffect(() => {
+    return () => {
+      if (debounceRef.current) {
+        window.clearTimeout(debounceRef.current);
+      }
+    };
+  }, []);
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     // Only allow numbers

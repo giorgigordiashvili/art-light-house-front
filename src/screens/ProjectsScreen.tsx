@@ -2,6 +2,7 @@
 import { useState } from "react";
 import styled from "styled-components";
 import Link from "next/link";
+import Image from "next/image";
 // Client component receives fully prepared project data from server (ISR) and only handles filtering.
 import BigCircle from "@/components/ui/BigCircle";
 
@@ -114,13 +115,10 @@ const ProjectImageWrapper = styled.div`
   overflow: hidden;
   background: rgba(255, 255, 255, 0.05);
   position: relative;
-`;
 
-const ProjectImage = styled.img`
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  transition: transform 0.3s ease;
+  img {
+    transition: transform 0.3s ease;
+  }
 `;
 
 const FeaturedBadge = styled.div`
@@ -280,9 +278,12 @@ const ProjectsScreen = ({
               return (
                 <ProjectCard key={project.id} href={projectHref} className="project-card">
                   <ProjectImageWrapper>
-                    <ProjectImage
+                    <Image
                       src={project.imageUrl || "/assets/placeholder.png"}
                       alt={project.title}
+                      fill
+                      sizes="(max-width: 768px) 100vw, 350px"
+                      style={{ objectFit: "cover" }}
                       className="image"
                     />
                     {project.isFeatured && <FeaturedBadge>Featured</FeaturedBadge>}

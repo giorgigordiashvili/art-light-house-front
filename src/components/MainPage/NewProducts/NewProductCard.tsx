@@ -81,10 +81,11 @@
 import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import Image from "next/image";
+import Link from "next/link";
 import PlusButton from "./PlusButton";
 import CardText from "./CardText";
 import { ProductList } from "@/api/generated/interfaces";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 import ProductHeartIcon from "@/components/ListProductCard/ProductHeartIcon";
 import { getLocaleFromPath } from "@/utils/getLocaleFromPath";
 
@@ -174,9 +175,13 @@ const StyledActions = styled.div`
   }
 `;
 
+const StyledLink = styled(Link)`
+  text-decoration: none;
+  display: block;
+`;
+
 const NewProductCard = ({ product }: { product: ProductList; dictionary: any }) => {
   const isMobile = useIsMobile();
-  const router = useRouter();
   const pathname = usePathname();
   const language = getLocaleFromPath(pathname);
   const locale = (pathname?.split("/")[1] || "ge").toLowerCase();
@@ -202,59 +207,45 @@ const NewProductCard = ({ product }: { product: ProductList; dictionary: any }) 
 
   const productName = getProductName();
 
-  const handleCardClick = (e: React.MouseEvent) => {
-    const target = e.target as HTMLElement;
-    if (target.closest("[data-plus-button]")) {
-      return;
-    }
-
-    // Check for Ctrl+click (Windows/Linux) or Cmd+click (Mac) or middle-click
-    if (e.ctrlKey || e.metaKey || e.button === 1) {
-      window.open(`/${locale}/products/${product.id}`, "_blank");
-      return;
-    }
-
-    router.push(`/${locale}/products/${product.id}`);
-  };
-
-  const handleMouseDown = (e: React.MouseEvent) => {
-    // Handle middle-click (mouse wheel click)
-    if (e.button === 1) {
-      const target = e.target as HTMLElement;
-      if (!target.closest("[data-plus-button]")) {
-        e.preventDefault(); // Prevent default middle-click behavior
-        window.open(`/${locale}/products/${product.id}`, "_blank");
-      }
-    }
+  const handleInteractiveClick = (e: React.MouseEvent) => {
+    // Stop propagation for interactive elements to prevent navigation
+    e.preventDefault();
+    e.stopPropagation();
   };
 
   return (
-    <StyledContainer onClick={handleCardClick} onMouseDown={handleMouseDown}>
-      <StyledImageWrapper>
-        {hasValidImage ? (
-          <ZoomedImage
-            src={imageUrl}
-            alt={productName || "Product"}
-            width={isMobile ? 175 : 239}
-            height={isMobile ? 188 : 257}
-            draggable="false"
-          />
-        ) : (
-          <ZoomedImage
-            src="/assets/desktopLampa.svg"
-            alt="Default light"
-            width={isMobile ? 175 : 239}
-            height={isMobile ? 188 : 257}
-            draggable="false"
-          />
-        )}
-      </StyledImageWrapper>
-      <StyledActions>
-        <ProductHeartIcon productId={product.id} />
-        <CardText name={productName} price={`${product.price} ₾`} />
-        <PlusButton product={product} />
-      </StyledActions>
-    </StyledContainer>
+    <StyledLink href={`/${locale}/products/${product.id}`} prefetch={true}>
+      <StyledContainer>
+        <StyledImageWrapper>
+          {hasValidImage ? (
+            <ZoomedImage
+              src={imageUrl}
+              alt={productName || "Product"}
+              width={isMobile ? 175 : 239}
+              height={isMobile ? 188 : 257}
+              draggable="false"
+            />
+          ) : (
+            <ZoomedImage
+              src="/assets/desktopLampa.svg"
+              alt="Default light"
+              width={isMobile ? 175 : 239}
+              height={isMobile ? 188 : 257}
+              draggable="false"
+            />
+          )}
+        </StyledImageWrapper>
+        <StyledActions>
+          <div onClick={handleInteractiveClick}>
+            <ProductHeartIcon productId={product.id} />
+          </div>
+          <CardText name={productName} price={`${product.price} ₾`} />
+          <div data-plus-button onClick={handleInteractiveClick}>
+            <PlusButton product={product} />
+          </div>
+        </StyledActions>
+      </StyledContainer>
+    </StyledLink>
   );
 };
 

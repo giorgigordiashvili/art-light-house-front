@@ -5,7 +5,7 @@ import LampaImage from "./Image";
 import ProductText from "./Text";
 import ProductHeartIcon from "./ProductHeartIcon";
 import { ProductList } from "@/api/generated/interfaces";
-import { useRouter } from "next/navigation";
+import Link from "next/link";
 
 const StyledRectangle = styled.div`
   width: 308px;
@@ -76,46 +76,41 @@ const ClickableArea = styled.div`
   flex-direction: column;
 `;
 
-function Card({ product, dictionary }: { product: ProductList; dictionary: any }) {
-  const router = useRouter();
+const StyledLink = styled(Link)`
+  text-decoration: none;
+  display: block;
+`;
 
-  const handleCardClick = (e: React.MouseEvent) => {
-    // Don't navigate if the click is on the add button or heart icon
-    const target = e.target as HTMLElement;
-    if (target.closest("[data-add-button]") || target.closest("[data-heart-button]")) {
-      return;
-    }
-
-    // Check for Ctrl+click (Windows/Linux) or Cmd+click (Mac) or middle-click
-    if (e.ctrlKey || e.metaKey || e.button === 1) {
-      window.open(`/products/${product.id}`, "_blank");
-      return;
-    }
-
-    // Navigate to product detail page
-    router.push(`/products/${product.id}`);
-  };
-
-  const handleMouseDown = (e: React.MouseEvent) => {
-    // Handle middle-click (mouse wheel click)
-    if (e.button === 1) {
-      const target = e.target as HTMLElement;
-      if (!target.closest("[data-add-button]") && !target.closest("[data-heart-button]")) {
-        e.preventDefault(); // Prevent default middle-click behavior
-        window.open(`/products/${product.id}`, "_blank");
-      }
-    }
+function Card({
+  product,
+  dictionary,
+  priority = false,
+}: {
+  product: ProductList;
+  dictionary: any;
+  priority?: boolean;
+}) {
+  const handleInteractiveClick = (e: React.MouseEvent) => {
+    // Stop propagation for interactive elements to prevent navigation
+    e.preventDefault();
+    e.stopPropagation();
   };
 
   return (
-    <StyledRectangle onClick={handleCardClick} onMouseDown={handleMouseDown}>
-      <ClickableArea>
-        <ProductHeartIcon productId={product.id} />
-        <LampaImage product={product} />
-        <ProductText product={product} />
-        <AddButton product={product} dictionary={dictionary} />
-      </ClickableArea>
-    </StyledRectangle>
+    <StyledLink href={`/products/${product.id}`} prefetch={true}>
+      <StyledRectangle>
+        <ClickableArea>
+          <div data-heart-button onClick={handleInteractiveClick}>
+            <ProductHeartIcon productId={product.id} />
+          </div>
+          <LampaImage product={product} priority={priority} />
+          <ProductText product={product} />
+          <div data-add-button onClick={handleInteractiveClick}>
+            <AddButton product={product} dictionary={dictionary} />
+          </div>
+        </ClickableArea>
+      </StyledRectangle>
+    </StyledLink>
   );
 }
 

@@ -5,6 +5,7 @@ import Header from "@/components/Header/Header";
 import StyledComponentsRegistry from "../../../lib/registry";
 import "../globals.css";
 import { usePathname } from "next/navigation";
+import NextTopLoader from "nextjs-toploader";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { AuthModalProvider } from "@/contexts/AuthModalContext";
 import { ReactNode, useEffect } from "react";
@@ -38,6 +39,7 @@ export default function ClientRootLayout({ children, dictionary }: ClientRootLay
 
   return (
     <QueryProvider>
+      <NextTopLoader color="#FFD700" height={3} showSpinner={false} />
       <AuthProvider>
         <AuthModalProvider>
           <StyledComponentsRegistry>

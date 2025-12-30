@@ -1,6 +1,7 @@
 import styled from "styled-components";
 import Card from "./Card";
 import PlaceholderCard from "./PlaceholderCard";
+import SkeletonCard from "./SkeletonCard";
 import { ProductList } from "@/api/generated/interfaces";
 
 const GridWrapper = styled.div`
@@ -46,17 +47,31 @@ const MobileOnly = styled.div`
   }
 `;
 
-const CardGrid = ({ products, dictionary }: { products: ProductList[]; dictionary: any }) => {
+interface CardGridProps {
+  products: ProductList[];
+  dictionary: any;
+  loading?: boolean;
+}
+
+const CardGrid = ({ products, dictionary, loading = false }: CardGridProps) => {
   const CARDS_PER_PAGE_DESKTOP = 12;
-  const CARDS_PER_PAGE_MOBILE = 12; // Keep consistent across mobile and desktop
+  const CARDS_PER_PAGE_MOBILE = 12;
+
+  // Create skeleton items for loading state
+  const createSkeletonItems = (count: number) => {
+    return Array.from({ length: count }, (_, i) => <SkeletonCard key={`skeleton-${i}`} />);
+  };
 
   // Create an array of exactly 12 items: real products + placeholders
+  // Only first 4 images get priority (above the fold)
   const createGridItems = (cardsPerPage: number = CARDS_PER_PAGE_DESKTOP) => {
     const items = [];
 
-    // Add real products
+    // Add real products - only first 4 get priority for faster LCP
     for (let i = 0; i < Math.min(products.length, cardsPerPage); i++) {
-      items.push(<Card key={products[i].id} product={products[i]} dictionary={dictionary} />);
+      items.push(
+        <Card key={products[i].id} product={products[i]} dictionary={dictionary} priority={i < 4} />
+      );
     }
 
     // Fill remaining slots with placeholders
@@ -66,6 +81,19 @@ const CardGrid = ({ products, dictionary }: { products: ProductList[]; dictionar
 
     return items;
   };
+
+  if (loading) {
+    return (
+      <>
+        <DesktopOnly>
+          <GridWrapper>{createSkeletonItems(CARDS_PER_PAGE_DESKTOP)}</GridWrapper>
+        </DesktopOnly>
+        <MobileOnly>
+          <GridWrapper>{createSkeletonItems(CARDS_PER_PAGE_MOBILE)}</GridWrapper>
+        </MobileOnly>
+      </>
+    );
+  }
 
   return (
     <>
