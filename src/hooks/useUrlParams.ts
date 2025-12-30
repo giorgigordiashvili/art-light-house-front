@@ -1,6 +1,6 @@
 "use client";
 import { useRouter, useSearchParams, usePathname } from "next/navigation";
-import { useCallback } from "react";
+import { useCallback, useEffect, useRef } from "react";
 
 export interface FilterParams {
   categories?: string; // comma-separated category IDs
@@ -17,6 +17,16 @@ export const useUrlParams = () => {
   const searchParams = useSearchParams();
   const pathname = usePathname();
   const searchParamsString = searchParams.toString();
+  const refreshTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+  // Cleanup timeout on unmount
+  useEffect(() => {
+    return () => {
+      if (refreshTimeoutRef.current) {
+        clearTimeout(refreshTimeoutRef.current);
+      }
+    };
+  }, []);
 
   // Get current filter parameters from URL
   const getFilterParams = useCallback((): FilterParams => {
@@ -59,8 +69,13 @@ export const useUrlParams = () => {
         router.push(newUrl, { scroll: false });
       }
 
+      // Clear any existing timeout before setting a new one
+      if (refreshTimeoutRef.current) {
+        clearTimeout(refreshTimeoutRef.current);
+      }
+
       // Ensure server-rendered data updates when only query params change.
-      setTimeout(() => router.refresh(), 0);
+      refreshTimeoutRef.current = setTimeout(() => router.refresh(), 0);
     },
     [router, pathname, searchParamsString]
   );
