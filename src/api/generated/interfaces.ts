@@ -11,7 +11,6 @@ export interface AttributeDefinition {
   options?: any;
   unit?: string;
   is_required?: boolean;
-  is_variant_attribute?: boolean;
   is_filterable?: boolean;
   sort_order?: number;
   is_active?: boolean;
@@ -26,7 +25,6 @@ export interface AttributeDefinitionRequest {
   options?: any;
   unit?: string;
   is_required?: boolean;
-  is_variant_attribute?: boolean;
   is_filterable?: boolean;
   sort_order?: number;
   is_active?: boolean;
@@ -92,6 +90,15 @@ export interface CartStatusEnum {
   [key: string]: any;
 }
 
+export interface ChangePasswordRequestRequest {
+  current_password: string;
+  new_password: string;
+}
+
+export interface ChangePasswordResponse {
+  message: string;
+}
+
 export interface ClientAddress {
   id: number;
   client: number;
@@ -101,6 +108,8 @@ export interface ClientAddress {
   extra_instructions?: string;
   latitude?: string;
   longitude?: string;
+  postal_code?: string;
+  country?: string;
   is_default?: boolean;
   created_at: string;
   updated_at: string;
@@ -113,6 +122,8 @@ export interface ClientAddressRequest {
   extra_instructions?: string;
   latitude?: string;
   longitude?: string;
+  postal_code?: string;
+  country?: string;
   is_default?: boolean;
 }
 
@@ -193,6 +204,31 @@ export interface FavoriteProductRequest {
   client: number;
 }
 
+export interface GuestAddressRequest {
+  address: string;
+  city: string;
+  label?: string;
+}
+
+export interface GuestCheckoutItemRequest {
+  product_id: number;
+  quantity: number;
+  variant_id?: number;
+}
+
+export interface GuestCheckoutRequestRequest {
+  email: string;
+  first_name: string;
+  last_name: string;
+  phone: string;
+  address: GuestAddressRequest;
+  items: GuestCheckoutItemRequest[];
+  payment_method?: string;
+  shipping_method_id?: number;
+  promo_code?: string;
+  notes?: string;
+}
+
 export interface HomepageSectionPublic {
   id: number;
   title: any;
@@ -266,6 +302,16 @@ export interface Order {
   admin_notes?: string;
   items: OrderItem[];
   total_items: number;
+  tracking_number?: string;
+  courier_provider?: string;
+  shipping_cost?: string;
+  estimated_delivery_date?: string;
+  shipping_method?: number;
+  shipping_method_details: ShippingMethod;
+  tax_amount?: string;
+  subtotal?: string;
+  discount_amount?: string;
+  promo_code?: number;
   payment_status?: PaymentStatusEnum;
   payment_method?: string;
   bog_order_id: string;
@@ -275,8 +321,10 @@ export interface Order {
   updated_at: string;
   paid_at: string;
   confirmed_at?: string;
+  processing_at?: string;
   shipped_at?: string;
   delivered_at?: string;
+  cancelled_at?: string;
 }
 
 export interface OrderCreate {
@@ -284,6 +332,8 @@ export interface OrderCreate {
   delivery_address_id: number;
   card_id?: number;
   notes?: string;
+  promo_code?: string;
+  shipping_method_id?: number;
 }
 
 export interface OrderCreateRequest {
@@ -291,6 +341,8 @@ export interface OrderCreateRequest {
   delivery_address_id: number;
   card_id?: number;
   notes?: string;
+  promo_code?: string;
+  shipping_method_id?: number;
 }
 
 export interface OrderItem {
@@ -299,6 +351,7 @@ export interface OrderItem {
   product: number;
   variant?: number;
   product_name: any;
+  product_image: string;
   quantity: number;
   price: string;
   subtotal: string;
@@ -320,11 +373,22 @@ export interface OrderRequest {
   total_amount: string;
   notes?: string;
   admin_notes?: string;
+  tracking_number?: string;
+  courier_provider?: string;
+  shipping_cost?: string;
+  estimated_delivery_date?: string;
+  shipping_method?: number;
+  tax_amount?: string;
+  subtotal?: string;
+  discount_amount?: string;
+  promo_code?: number;
   payment_status?: PaymentStatusEnum;
   payment_method?: string;
   confirmed_at?: string;
+  processing_at?: string;
   shipped_at?: string;
   delivered_at?: string;
+  cancelled_at?: string;
 }
 
 export interface OrderStatusEnum {
@@ -394,6 +458,20 @@ export interface PaginatedProductListList {
   results: ProductList[];
 }
 
+export interface PaginatedProductReviewList {
+  count: number;
+  next?: string;
+  previous?: string;
+  results: ProductReview[];
+}
+
+export interface PaginatedShippingMethodList {
+  count: number;
+  next?: string;
+  previous?: string;
+  results: ShippingMethod[];
+}
+
 export interface PasswordResetConfirmRequest {
   email: string;
   code: string;
@@ -425,6 +503,8 @@ export interface PatchedClientAddressRequest {
   extra_instructions?: string;
   latitude?: string;
   longitude?: string;
+  postal_code?: string;
+  country?: string;
   is_default?: boolean;
 }
 
@@ -447,11 +527,32 @@ export interface PatchedOrderRequest {
   total_amount?: string;
   notes?: string;
   admin_notes?: string;
+  tracking_number?: string;
+  courier_provider?: string;
+  shipping_cost?: string;
+  estimated_delivery_date?: string;
+  shipping_method?: number;
+  tax_amount?: string;
+  subtotal?: string;
+  discount_amount?: string;
+  promo_code?: number;
   payment_status?: PaymentStatusEnum;
   payment_method?: string;
   confirmed_at?: string;
+  processing_at?: string;
   shipped_at?: string;
   delivered_at?: string;
+  cancelled_at?: string;
+}
+
+export interface PaymentConfigResponse {
+  active_providers: string[];
+  enable_cash_on_delivery: boolean;
+  enable_card_payment: boolean;
+  currency: string;
+  tax_rate?: string;
+  tax_label?: string;
+  tax_inclusive?: boolean;
 }
 
 export interface PaymentStatusEnum {
@@ -506,6 +607,8 @@ export interface ProductDetail {
   meta_description?: any;
   attribute_values: ProductAttributeValue[];
   variants: ProductVariant[];
+  average_rating: string;
+  review_count: string;
   created_at: string;
   updated_at: string;
   created_by: number;
@@ -538,6 +641,8 @@ export interface ProductList {
   is_low_stock: boolean;
   is_in_stock: boolean;
   attribute_values: ProductAttributeValue[];
+  average_rating: string;
+  review_count: string;
   created_at: string;
   updated_at: string;
 }
@@ -553,6 +658,33 @@ export interface ProductListRequest {
   quantity?: number;
   status?: StatusF43enum;
   is_featured?: boolean;
+}
+
+export interface ProductReview {
+  id: number;
+  product: number;
+  client: number;
+  client_name: string;
+  rating: number;
+  title?: string;
+  content?: string;
+  is_verified_purchase: boolean;
+  is_approved: boolean;
+  created_at: string;
+}
+
+export interface ProductReviewCreate {
+  id: number;
+  rating: number;
+  title?: string;
+  content?: string;
+  created_at: string;
+}
+
+export interface ProductReviewCreateRequest {
+  rating: number;
+  title?: string;
+  content?: string;
 }
 
 export interface ProductVariant {
@@ -591,6 +723,19 @@ export interface ProductVariantRequest {
   sort_order?: number;
 }
 
+export interface PromoValidateRequestRequest {
+  code: string;
+  subtotal: string;
+}
+
+export interface PromoValidateResponse {
+  valid: boolean;
+  discount_amount?: string;
+  discount_type?: string;
+  discount_value?: string;
+  message: string;
+}
+
 export interface ResendVerificationCodeRequestRequest {
   email: string;
 }
@@ -604,6 +749,36 @@ export interface SectionTypeEnum {
   [key: string]: any;
 }
 
+export interface ShippingMethod {
+  id: number;
+  name?: any;
+  description?: any;
+  price?: string;
+  free_shipping_threshold?: string;
+  is_active?: boolean;
+  estimated_days?: number;
+  position?: number;
+  created_at: string;
+}
+
+export interface ShippingMethodRequest {
+  name?: any;
+  description?: any;
+  price?: string;
+  free_shipping_threshold?: string;
+  is_active?: boolean;
+  estimated_days?: number;
+  position?: number;
+}
+
 export interface StatusF43enum {
   [key: string]: any;
+}
+
+export interface StoreThemeResponse {
+  preset: string;
+  colors: Record<string, any>;
+  radius: string;
+  store_name: string;
+  payment: PaymentConfigResponse;
 }

@@ -5,6 +5,7 @@ const nextConfig: NextConfig = {
     styledComponents: true,
   },
   images: {
+    formats: ["image/avif", "image/webp"],
     remotePatterns: [
       {
         protocol: "https",
@@ -21,6 +22,17 @@ const nextConfig: NextConfig = {
         hostname: "echodesk-spaces.fra1.digitaloceanspaces.com",
         pathname: "**",
       },
+    ],
+  },
+  experimental: {
+    optimizePackageImports: [
+      "@mui/material",
+      "@mui/x-date-pickers",
+      "framer-motion",
+      "swiper",
+      "dayjs",
+      "@vis.gl/react-google-maps",
+      "@react-google-maps/api",
     ],
   },
 };

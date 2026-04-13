@@ -52,7 +52,8 @@ export const useSimilarProducts = (
 
         // Fetch all products (can add pagination or filters as needed)
         const response = await ecommerceClientProductsList(
-          undefined, // attrCategory
+          undefined, // attr_Furniture
+          undefined, // attrColor
           undefined, // attrMaterial
           undefined, // attrNumberOfLamps
           undefined, // attrSubcategory

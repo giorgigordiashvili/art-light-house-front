@@ -4,6 +4,7 @@ import type { Locale } from "@/config/i18n";
 import { PageProps } from "@/models/lang.model";
 import type { Metadata } from "next";
 import { fetchServerProjectDetail } from "@/api/server-project-detail";
+import { buildSeoMetadata } from "@/lib/seo";
 
 function isLocale(lang: string): lang is Locale {
   return ["ge", "en"].includes(lang);
@@ -24,16 +25,23 @@ export async function generateMetadata({ params }: ProjectPageProps): Promise<Me
       const desc =
         project.short_description ||
         (project.description || "").replace(/<[^>]*>/g, "").slice(0, 160);
-      return {
+
+      return buildSeoMetadata({
         title: `${project.title} | Art Lighthouse`,
         description: desc || "View project details",
-      };
+        locale: resolvedLang,
+        pathname: `/projects/${slug}`,
+        ogImage: project.primary_image_url || undefined,
+        ogType: "article",
+      });
     }
   } catch {}
-  return {
+  return buildSeoMetadata({
     title: "Project | Art Lighthouse",
     description: "View project details",
-  };
+    locale: resolvedLang,
+    pathname: `/projects/${slug}`,
+  });
 }
 
 export default async function ProjectDetailPage({ params }: ProjectPageProps) {

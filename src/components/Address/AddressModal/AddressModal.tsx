@@ -6,7 +6,9 @@ import SaveButton from "@/ProfileButton/Save";
 import CancelButton from "@/ProfileButton/Cancel";
 import PlaceSelector from "./PlaceSelector";
 import ModalTitle from "./ModalTitle";
-import GoogleMap from "@/components/Contact/GoogleMap";
+import dynamic from "next/dynamic";
+
+const GoogleMap = dynamic(() => import("@/components/Contact/GoogleMap"), { ssr: false });
 import ToggleDefaultButton from "@/components/Buttons/ToggleDefaultButton";
 import { AddressData } from "@/types";
 import {

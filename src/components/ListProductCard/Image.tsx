@@ -61,6 +61,7 @@ const LampaImage = ({
             alt={altText}
             fill
             style={{ objectFit: "contain" }}
+            sizes="130px"
             priority={priority}
             draggable="false"
           />
@@ -70,6 +71,7 @@ const LampaImage = ({
             alt="Mobile Lampa"
             fill
             style={{ objectFit: "contain" }}
+            sizes="130px"
             priority={priority}
             draggable="false"
           />
@@ -82,6 +84,7 @@ const LampaImage = ({
             alt={altText}
             fill
             style={{ objectFit: "contain" }}
+            sizes="309px"
             priority={priority}
             draggable="false"
           />
@@ -91,6 +94,7 @@ const LampaImage = ({
             alt="Desktop Lampa"
             fill
             style={{ objectFit: "contain" }}
+            sizes="309px"
             priority={priority}
             draggable="false"
           />

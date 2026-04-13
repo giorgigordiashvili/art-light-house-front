@@ -5,6 +5,7 @@ import { PageProps } from "@/models/lang.model";
 import type { Metadata } from "next";
 import { ecommerceClientHomepageList } from "@/api/generated/api";
 import type { HomepageSection } from "@/types/homepage";
+import { buildSeoMetadata } from "@/lib/seo";
 
 function isLocale(lang: string): lang is Locale {
   return ["ge", "en"].includes(lang);
@@ -14,10 +15,13 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const { lang } = await params;
   const dictionary = await getDictionary(isLocale(lang) ? lang : "ge");
 
-  return {
+  const locale = isLocale(lang) ? lang : "ge";
+  return buildSeoMetadata({
     title: dictionary.metadata.contact.title,
     description: dictionary.metadata.contact.subTitle,
-  };
+    locale,
+    pathname: "/contact",
+  });
 }
 
 export default async function ContactPage({ params }: PageProps) {

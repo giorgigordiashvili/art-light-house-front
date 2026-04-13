@@ -34,7 +34,8 @@ export const useFeaturedProducts = (
 
         // Fetch products with is_featured = true
         const response = await ecommerceClientProductsList(
-          undefined, // attrCategory
+          undefined, // attr_Furniture
+          undefined, // attrColor
           undefined, // attrMaterial
           undefined, // attrNumberOfLamps
           undefined, // attrSubcategory

@@ -1,8 +1,10 @@
 import React from "react";
 import styled from "styled-components";
-import GoogleMap from "./GoogleMap";
+import dynamic from "next/dynamic";
 import Data from "./Data";
 import GoogleMapButton from "./GoogleMapButton";
+
+const GoogleMap = dynamic(() => import("./GoogleMap"), { ssr: false });
 
 const OuterContainer = styled.div<{ side?: "left" | "right"; $fullwidth?: boolean }>`
   border-radius: 32px;

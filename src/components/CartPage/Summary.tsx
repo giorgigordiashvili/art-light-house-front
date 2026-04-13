@@ -16,7 +16,7 @@ const StyledContainer = styled.div`
   backdrop-filter: blur(114px);
   border-radius: 17px;
   width: 472px;
-  height: 353px;
+  height: auto;
   @media (max-width: 1080px) {
     width: 100%;
   }
@@ -51,19 +51,18 @@ interface SummaryProps {
   cart?: Cart | null;
   onPayment?: () => void;
   submitting?: boolean;
+  shippingCost?: number;
 }
 
-const Summary = ({ dictionary, cart, onPayment, submitting }: SummaryProps) => {
+const Summary = ({ dictionary, cart, onPayment, submitting, shippingCost = 0 }: SummaryProps) => {
   const router = useRouter();
   const pathname = usePathname();
   const locale = pathname.split("/")[1];
   const isCheckoutPage = pathname.includes("/checkout");
 
-  // Calculate totals dynamically from cart like in CartModal
+  // Calculate totals dynamically from cart
   const subtotal = cart?.total_amount ? parseFloat(String(cart.total_amount)) : 0;
-  const deliveryFee = 0.0; // Fixed delivery fee
-  const serviceFee = 0.0; // No service fee
-  const total = subtotal + deliveryFee + serviceFee;
+  const total = subtotal + shippingCost;
 
   const handleCheckout = (e?: React.MouseEvent) => {
     if (isCheckoutPage && onPayment) {
@@ -106,17 +105,15 @@ const Summary = ({ dictionary, cart, onPayment, submitting }: SummaryProps) => {
         </StyledPrice>
         <StyledPrice>
           <ProductTitle text={dictionary?.deliveryService || "მიტანის სერვისი"} size="large" />
-          <ProductPrice text={`${deliveryFee.toFixed(2)} ₾`} size="normal" />
+          <ProductPrice
+            text={
+              shippingCost === 0
+                ? dictionary?.freeShipping || "უფასო"
+                : `${shippingCost.toFixed(2)} ₾`
+            }
+            size="normal"
+          />
         </StyledPrice>
-        {serviceFee > 0 && (
-          <StyledPrice>
-            <ProductTitle
-              text={dictionary?.serviceCommision || "სერვისის საკომისიო"}
-              size="large"
-            />
-            <ProductPrice text={`${serviceFee.toFixed(2)} ₾`} size="normal" />
-          </StyledPrice>
-        )}
       </StyledPrices>
       <DividerLine variant="dark" />
       <StyledButton onClick={handleCheckout} onMouseDown={handleCheckoutMouseDown}>

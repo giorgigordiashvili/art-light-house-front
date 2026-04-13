@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { useMemo } from "react";
 import styled from "styled-components";
 import Image from "next/image";
 import { Swiper, SwiperSlide } from "swiper/react";
@@ -126,33 +126,36 @@ const HeroAndCategory = ({ dictionary, homepageSections, lang }: HeroAndCategory
   const apiLang = lang === "ge" ? "ka" : lang;
 
   // Extract hero banner section from API
-  const heroSection = homepageSections?.find(
-    (section: HomepageSection) => section.section_type === "hero_banner"
+  const heroSection = useMemo(
+    () =>
+      homepageSections?.find((section: HomepageSection) => section.section_type === "hero_banner"),
+    [homepageSections]
   );
 
   // Map API data to hero slides format
-  const heroSlides =
-    heroSection?.data
-      ?.filter((item: any) => item.is_active)
-      ?.sort((a: any, b: any) => a.position - b.position)
-      ?.slice(0, 3)
-      ?.map((item: any) => {
-        const titleKey = lang === "en" ? "title_en" : "title_ka";
-        const descriptionKey = lang === "en" ? "description_en" : "description_ka";
-        const buttonTextKey = lang === "en" ? "button_text_en" : "button_text_ka";
+  const slides = useMemo(() => {
+    return (
+      heroSection?.data
+        ?.filter((item: any) => item.is_active)
+        ?.sort((a: any, b: any) => a.position - b.position)
+        ?.slice(0, 3)
+        ?.map((item: any) => {
+          const titleKey = lang === "en" ? "title_en" : "title_ka";
+          const descriptionKey = lang === "en" ? "description_en" : "description_ka";
+          const buttonTextKey = lang === "en" ? "button_text_en" : "button_text_ka";
 
-        const title = item.custom_data?.[titleKey] || "";
-        const titleWords = title.split(" ");
-        return {
-          lightText: titleWords[0] || "",
-          text: titleWords.slice(1).join(" ") || "",
-          description: item.custom_data?.[descriptionKey] || "",
-          buttonText: item.custom_data?.[buttonTextKey] || "",
-          href: item.custom_data?.button_link || "/products",
-        };
-      }) || [];
-
-  const slides = heroSlides;
+          const title = item.custom_data?.[titleKey] || "";
+          const titleWords = title.split(" ");
+          return {
+            lightText: titleWords[0] || "",
+            text: titleWords.slice(1).join(" ") || "",
+            description: item.custom_data?.[descriptionKey] || "",
+            buttonText: item.custom_data?.[buttonTextKey] || "",
+            href: item.custom_data?.button_link || "/products",
+          };
+        }) || []
+    );
+  }, [heroSection, lang]);
 
   // Get background image and color from API or use defaults
   const backgroundImage = heroSection?.background_image_url || "/assets/BackgroundImage.png";

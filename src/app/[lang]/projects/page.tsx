@@ -4,6 +4,7 @@ import type { Locale } from "@/config/i18n";
 import { PageProps } from "@/models/lang.model";
 import type { Metadata } from "next";
 import { fetchServerProjects } from "@/api/server-projects";
+import { buildSeoMetadata } from "@/lib/seo";
 
 function isLocale(lang: string): lang is Locale {
   return ["ge", "en"].includes(lang);
@@ -15,10 +16,13 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const { lang } = await params;
   const dictionary = await getDictionary(isLocale(lang) ? lang : "ge");
 
-  return {
+  const locale = isLocale(lang) ? lang : "ge";
+  return buildSeoMetadata({
     title: `${dictionary.metadata.projects.title} | Art Lighthouse`,
     description: dictionary.metadata.projects.subTitle,
-  };
+    locale,
+    pathname: "/projects",
+  });
 }
 
 export default async function ProjectsPage({ params }: PageProps) {

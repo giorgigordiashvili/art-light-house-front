@@ -5,6 +5,7 @@ import { PageProps } from "@/models/lang.model";
 import type { Metadata } from "next";
 import { fetchServerProducts, fetchServerAttributes, ProductQueryParams } from "@/api/products";
 import type { AttributeDefinition } from "@/api/generated/interfaces";
+import { buildSeoMetadata } from "@/lib/seo";
 
 // Revalidate this page every 60 seconds
 export const revalidate = 60;
@@ -17,10 +18,12 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const { lang } = await params;
   const dictionary = await getDictionary(isLocale(lang) ? lang : "ge");
 
-  return {
+  return buildSeoMetadata({
     title: dictionary.metadata.products.title,
     description: dictionary.metadata.products.subTitle,
-  };
+    locale: isLocale(lang) ? lang : "ge",
+    pathname: "/products",
+  });
 }
 
 export default async function ProductsPage({

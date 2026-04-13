@@ -2,6 +2,7 @@
 import { useState } from "react";
 import styled from "styled-components";
 import Link from "next/link";
+import Image from "next/image";
 import NewCircle from "@/components/ui/NewCircle";
 import BigCircle from "@/components/ui/BigCircle";
 
@@ -126,6 +127,7 @@ const ImageGallery = styled.div`
 `;
 
 const MainImage = styled.div`
+  position: relative;
   width: 100%;
   height: 600px;
   border-radius: 16px;
@@ -135,12 +137,6 @@ const MainImage = styled.div`
 
   @media (max-width: 768px) {
     height: 400px;
-  }
-
-  img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
   }
 `;
 
@@ -155,6 +151,7 @@ const ThumbnailGrid = styled.div`
 `;
 
 const Thumbnail = styled.div<{ $active?: boolean }>`
+  position: relative;
   width: 100%;
   height: 120px;
   border-radius: 8px;
@@ -167,12 +164,6 @@ const Thumbnail = styled.div<{ $active?: boolean }>`
   &:hover {
     border-color: #d4af37;
     transform: scale(1.05);
-  }
-
-  img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
   }
 `;
 
@@ -314,8 +305,14 @@ const ProjectDetailScreen = ({
         {hasImages && (
           <ImageGallery>
             <MainImage>
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={currentImage.image_url} alt={currentImage.alt_text || project.title} />
+              <Image
+                src={currentImage.image_url}
+                alt={currentImage.alt_text || project.title}
+                fill
+                sizes="(max-width: 768px) 100vw, 1200px"
+                style={{ objectFit: "cover" }}
+                priority
+              />
             </MainImage>
 
             {images.length > 1 && (
@@ -326,8 +323,13 @@ const ProjectDetailScreen = ({
                     $active={index === selectedImageIndex}
                     onClick={() => setSelectedImageIndex(index)}
                   >
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img src={image.image_url} alt={image.alt_text || `Image ${index + 1}`} />
+                    <Image
+                      src={image.image_url}
+                      alt={image.alt_text || `Image ${index + 1}`}
+                      fill
+                      sizes="150px"
+                      style={{ objectFit: "cover" }}
+                    />
                   </Thumbnail>
                 ))}
               </ThumbnailGrid>

@@ -26,6 +26,7 @@ import type {
   FavoriteProduct,
   FavoriteProductRequest,
   PatchedFavoriteProductRequest,
+  GuestCheckoutRequestRequest,
   HomepageSectionPublic,
   PaginatedItemListMinimalList,
   ItemListDetail,
@@ -40,8 +41,18 @@ import type {
   PatchedOrderRequest,
   PaginatedProductListList,
   ProductDetail,
+  PaginatedProductReviewList,
+  ProductReviewCreateRequest,
+  ProductReviewCreate,
   EcommerceClient,
   PatchedEcommerceClientRequest,
+  PromoValidateRequestRequest,
+  PromoValidateResponse,
+  PaginatedShippingMethodList,
+  ShippingMethod,
+  StoreThemeResponse,
+  ChangePasswordRequestRequest,
+  ChangePasswordResponse,
   ClientLoginRequest,
   PasswordResetConfirmRequest,
   PasswordResetRequestRequest,
@@ -55,13 +66,15 @@ import type {
 
 export async function ecommerceClientAddressesList(
   ordering?: string,
-  page?: number
+  page?: number,
+  pageSize?: number
 ): Promise<PaginatedClientAddressList> {
   const response = await axios.get(
     `/api/ecommerce/client/addresses/${(() => {
       const parts = [
         ordering ? "ordering=" + encodeURIComponent(ordering) : null,
         page ? "page=" + encodeURIComponent(page) : null,
+        pageSize ? "page_size=" + encodeURIComponent(pageSize) : null,
       ].filter(Boolean);
       return parts.length > 0 ? "?" + parts.join("&") : "";
     })()}`
@@ -111,20 +124,18 @@ export async function ecommerceClientAddressesSetDefaultCreate(
 }
 
 export async function ecommerceClientAttributesList(
-  attributeType?: "boolean" | "color" | "date" | "multiselect" | "number" | "select" | "text",
-  isVariantAttribute?: boolean,
+  attributeType?: "multiselect" | "number",
   ordering?: string,
-  page?: number
+  page?: number,
+  pageSize?: number
 ): Promise<PaginatedAttributeDefinitionList> {
   const response = await axios.get(
     `/api/ecommerce/client/attributes/${(() => {
       const parts = [
         attributeType ? "attribute_type=" + encodeURIComponent(attributeType) : null,
-        isVariantAttribute
-          ? "is_variant_attribute=" + encodeURIComponent(isVariantAttribute)
-          : null,
         ordering ? "ordering=" + encodeURIComponent(ordering) : null,
         page ? "page=" + encodeURIComponent(page) : null,
+        pageSize ? "page_size=" + encodeURIComponent(pageSize) : null,
       ].filter(Boolean);
       return parts.length > 0 ? "?" + parts.join("&") : "";
     })()}`
@@ -164,13 +175,15 @@ export async function ecommerceClientCardsAddCreate(): Promise<any> {
 
 export async function ecommerceClientCartList(
   ordering?: string,
-  page?: number
+  page?: number,
+  pageSize?: number
 ): Promise<PaginatedCartList> {
   const response = await axios.get(
     `/api/ecommerce/client/cart/${(() => {
       const parts = [
         ordering ? "ordering=" + encodeURIComponent(ordering) : null,
         page ? "page=" + encodeURIComponent(page) : null,
+        pageSize ? "page_size=" + encodeURIComponent(pageSize) : null,
       ].filter(Boolean);
       return parts.length > 0 ? "?" + parts.join("&") : "";
     })()}`
@@ -183,9 +196,18 @@ export async function ecommerceClientCartCreate(data: CartRequest): Promise<Cart
   return response.data;
 }
 
-export async function ecommerceClientCartItemsList(page?: number): Promise<PaginatedCartItemList> {
+export async function ecommerceClientCartItemsList(
+  page?: number,
+  pageSize?: number
+): Promise<PaginatedCartItemList> {
   const response = await axios.get(
-    `/api/ecommerce/client/cart-items/${page ? "?page=" + encodeURIComponent(page) : ""}`
+    `/api/ecommerce/client/cart-items/${(() => {
+      const parts = [
+        page ? "page=" + encodeURIComponent(page) : null,
+        pageSize ? "page_size=" + encodeURIComponent(pageSize) : null,
+      ].filter(Boolean);
+      return parts.length > 0 ? "?" + parts.join("&") : "";
+    })()}`
   );
   return response.data;
 }
@@ -253,13 +275,15 @@ export async function ecommerceClientCartGetOrCreateRetrieve(): Promise<Cart> {
 
 export async function ecommerceClientFavoritesList(
   ordering?: string,
-  page?: number
+  page?: number,
+  pageSize?: number
 ): Promise<PaginatedFavoriteProductList> {
   const response = await axios.get(
     `/api/ecommerce/client/favorites/${(() => {
       const parts = [
         ordering ? "ordering=" + encodeURIComponent(ordering) : null,
         page ? "page=" + encodeURIComponent(page) : null,
+        pageSize ? "page_size=" + encodeURIComponent(pageSize) : null,
       ].filter(Boolean);
       return parts.length > 0 ? "?" + parts.join("&") : "";
     })()}`
@@ -300,6 +324,13 @@ export async function ecommerceClientFavoritesDestroy(id: string): Promise<any> 
   return response.data;
 }
 
+export async function ecommerceClientGuestCheckoutCreate(
+  data: GuestCheckoutRequestRequest
+): Promise<any> {
+  const response = await axios.post(`/api/ecommerce/client/guest-checkout/`, data);
+  return response.data;
+}
+
 export async function ecommerceClientHomepageList(): Promise<HomepageSectionPublic[]> {
   const response = await axios.get(`/api/ecommerce/client/homepage/`);
   return response.data;
@@ -308,6 +339,7 @@ export async function ecommerceClientHomepageList(): Promise<HomepageSectionPubl
 export async function ecommerceClientItemListsList(
   ordering?: string,
   page?: number,
+  pageSize?: number,
   search?: string
 ): Promise<PaginatedItemListMinimalList> {
   const response = await axios.get(
@@ -315,6 +347,7 @@ export async function ecommerceClientItemListsList(
       const parts = [
         ordering ? "ordering=" + encodeURIComponent(ordering) : null,
         page ? "page=" + encodeURIComponent(page) : null,
+        pageSize ? "page_size=" + encodeURIComponent(pageSize) : null,
         search ? "search=" + encodeURIComponent(search) : null,
       ].filter(Boolean);
       return parts.length > 0 ? "?" + parts.join("&") : "";
@@ -338,13 +371,15 @@ export async function ecommerceClientItemListsItemsRetrieve(
 
 export async function ecommerceClientLanguagesList(
   ordering?: string,
-  page?: number
+  page?: number,
+  pageSize?: number
 ): Promise<PaginatedLanguageList> {
   const response = await axios.get(
     `/api/ecommerce/client/languages/${(() => {
       const parts = [
         ordering ? "ordering=" + encodeURIComponent(ordering) : null,
         page ? "page=" + encodeURIComponent(page) : null,
+        pageSize ? "page_size=" + encodeURIComponent(pageSize) : null,
       ].filter(Boolean);
       return parts.length > 0 ? "?" + parts.join("&") : "";
     })()}`
@@ -359,13 +394,15 @@ export async function ecommerceClientLanguagesRetrieve(id: number): Promise<Lang
 
 export async function ecommerceClientOrdersList(
   ordering?: string,
-  page?: number
+  page?: number,
+  pageSize?: number
 ): Promise<PaginatedOrderList> {
   const response = await axios.get(
     `/api/ecommerce/client/orders/${(() => {
       const parts = [
         ordering ? "ordering=" + encodeURIComponent(ordering) : null,
         page ? "page=" + encodeURIComponent(page) : null,
+        pageSize ? "page_size=" + encodeURIComponent(pageSize) : null,
       ].filter(Boolean);
       return parts.length > 0 ? "?" + parts.join("&") : "";
     })()}`
@@ -401,8 +438,17 @@ export async function ecommerceClientOrdersDestroy(id: string): Promise<any> {
   return response.data;
 }
 
+export async function ecommerceClientOrdersCancelCreate(
+  id: string,
+  data: OrderRequest
+): Promise<Order> {
+  const response = await axios.post(`/api/ecommerce/client/orders/${id}/cancel/`, data);
+  return response.data;
+}
+
 export async function ecommerceClientProductsList(
-  attrCategory?: string,
+  attr_Furniture?: string,
+  attrColor?: string,
   attrMaterial?: string,
   attrNumberOfLamps?: string,
   attrSubcategory?: string,
@@ -413,12 +459,14 @@ export async function ecommerceClientProductsList(
   onSale?: boolean,
   ordering?: string,
   page?: number,
+  pageSize?: number,
   search?: string
 ): Promise<PaginatedProductListList> {
   const response = await axios.get(
     `/api/ecommerce/client/products/${(() => {
       const parts = [
-        attrCategory ? "attr_category=" + encodeURIComponent(attrCategory) : null,
+        attr_Furniture ? "attr_Furniture=" + encodeURIComponent(attr_Furniture) : null,
+        attrColor ? "attr_color=" + encodeURIComponent(attrColor) : null,
         attrMaterial ? "attr_material=" + encodeURIComponent(attrMaterial) : null,
         attrNumberOfLamps ? "attr_number_of_lamps=" + encodeURIComponent(attrNumberOfLamps) : null,
         attrSubcategory ? "attr_subcategory=" + encodeURIComponent(attrSubcategory) : null,
@@ -429,6 +477,7 @@ export async function ecommerceClientProductsList(
         onSale ? "on_sale=" + encodeURIComponent(onSale) : null,
         ordering ? "ordering=" + encodeURIComponent(ordering) : null,
         page ? "page=" + encodeURIComponent(page) : null,
+        pageSize ? "page_size=" + encodeURIComponent(pageSize) : null,
         search ? "search=" + encodeURIComponent(search) : null,
       ].filter(Boolean);
       return parts.length > 0 ? "?" + parts.join("&") : "";
@@ -442,6 +491,33 @@ export async function ecommerceClientProductsRetrieve(id: number): Promise<Produ
   return response.data;
 }
 
+export async function ecommerceClientProductsReviewsList(
+  productId: number,
+  ordering?: string,
+  page?: number,
+  pageSize?: number
+): Promise<PaginatedProductReviewList> {
+  const response = await axios.get(
+    `/api/ecommerce/client/products/${productId}/reviews/${(() => {
+      const parts = [
+        ordering ? "ordering=" + encodeURIComponent(ordering) : null,
+        page ? "page=" + encodeURIComponent(page) : null,
+        pageSize ? "page_size=" + encodeURIComponent(pageSize) : null,
+      ].filter(Boolean);
+      return parts.length > 0 ? "?" + parts.join("&") : "";
+    })()}`
+  );
+  return response.data;
+}
+
+export async function ecommerceClientProductsReviewsCreate(
+  productId: number,
+  data: ProductReviewCreateRequest
+): Promise<ProductReviewCreate> {
+  const response = await axios.post(`/api/ecommerce/client/products/${productId}/reviews/`, data);
+  return response.data;
+}
+
 export async function ecommerceClientProfileMeRetrieve(): Promise<EcommerceClient> {
   const response = await axios.get(`/api/ecommerce/client/profile/me/`);
   return response.data;
@@ -451,6 +527,48 @@ export async function ecommerceClientProfileUpdateProfilePartialUpdate(
   data: PatchedEcommerceClientRequest
 ): Promise<EcommerceClient> {
   const response = await axios.patch(`/api/ecommerce/client/profile/update_profile/`, data);
+  return response.data;
+}
+
+export async function ecommerceClientPromoValidateCreate(
+  data: PromoValidateRequestRequest
+): Promise<PromoValidateResponse> {
+  const response = await axios.post(`/api/ecommerce/client/promo/validate/`, data);
+  return response.data;
+}
+
+export async function ecommerceClientShippingMethodsList(
+  ordering?: string,
+  page?: number,
+  pageSize?: number
+): Promise<PaginatedShippingMethodList> {
+  const response = await axios.get(
+    `/api/ecommerce/client/shipping-methods/${(() => {
+      const parts = [
+        ordering ? "ordering=" + encodeURIComponent(ordering) : null,
+        page ? "page=" + encodeURIComponent(page) : null,
+        pageSize ? "page_size=" + encodeURIComponent(pageSize) : null,
+      ].filter(Boolean);
+      return parts.length > 0 ? "?" + parts.join("&") : "";
+    })()}`
+  );
+  return response.data;
+}
+
+export async function ecommerceClientShippingMethodsRetrieve(id: number): Promise<ShippingMethod> {
+  const response = await axios.get(`/api/ecommerce/client/shipping-methods/${id}/`);
+  return response.data;
+}
+
+export async function getStoreTheme(): Promise<StoreThemeResponse> {
+  const response = await axios.get(`/api/ecommerce/client/theme/`);
+  return response.data;
+}
+
+export async function ecommerceClientsChangePasswordCreate(
+  data: ChangePasswordRequestRequest
+): Promise<ChangePasswordResponse> {
+  const response = await axios.post(`/api/ecommerce/clients/change-password/`, data);
   return response.data;
 }
 

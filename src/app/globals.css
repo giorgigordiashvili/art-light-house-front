@@ -3,6 +3,7 @@
   src: url("/fonts/helgeo45.ttf") format("truetype");
   font-weight: normal;
   font-style: normal;
+  font-display: swap;
 }
 
 @font-face {
@@ -10,6 +11,7 @@
   src: url("/fonts/helgeo75.ttf") format("truetype");
   font-weight: 700;
   font-style: normal;
+  font-display: swap;
 }
 
 body {
@@ -98,6 +100,7 @@ h6 {
   src: url("/fonts/helgeo45.ttf") format("truetype");
   font-weight: normal;
   font-style: normal;
+  font-display: swap;
 }
 
 @font-face {
@@ -105,6 +108,7 @@ h6 {
   src: url("/fonts/helgeo75.ttf") format("truetype");
   font-weight: bold;
   font-style: normal;
+  font-display: swap;
 }
 
 @font-face {
@@ -112,6 +116,7 @@ h6 {
   src: url("/fonts/helrom.ttf") format("truetype");
   font-weight: normal;
   font-style: normal;
+  font-display: swap;
 }
 
 @font-face {
@@ -119,4 +124,5 @@ h6 {
   src: url("/fonts/helvetica-neue-lt-geo-55-ro.ttf") format("truetype");
   font-weight: normal;
   font-style: normal;
+  font-display: swap;
 }

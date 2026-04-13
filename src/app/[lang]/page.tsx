@@ -6,6 +6,7 @@ import { ecommerceClientHomepageList } from "@/api/generated/api";
 import type { HomepageSection } from "@/types/homepage";
 import { fetchServerFeaturedProducts } from "@/api/products";
 import type { ProductList } from "@/api/generated/interfaces";
+import { buildSeoMetadata } from "@/lib/seo";
 
 // Revalidate the homepage every 60 seconds
 export const revalidate = 60;
@@ -19,14 +20,14 @@ export async function generateMetadata(props: {
 }): Promise<Metadata> {
   const { lang } = await props.params;
   const locale = isLocale(lang) ? lang : "ge";
-
-  // Get metadata translations from dictionary
   const dictionary = await getDictionary(locale);
 
-  return {
+  return buildSeoMetadata({
     title: dictionary.metadata.main.title,
     description: dictionary.metadata.main.subTitle,
-  };
+    locale,
+    pathname: "",
+  });
 }
 
 export default async function HomePage(props: { params: Promise<{ lang: string }> }) {

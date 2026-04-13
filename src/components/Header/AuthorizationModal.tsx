@@ -7,7 +7,9 @@ import AuthToggleButtons from "./AuthToggleButtons";
 import ModalInput from "./ModalInput";
 import InputTitle from "./InputTitle";
 import AdditionalAction from "./AdditionalAction";
-import BirthDatePickerInput from "./BirthDatePickerInput";
+import dynamic from "next/dynamic";
+
+const BirthDatePickerInput = dynamic(() => import("./BirthDatePickerInput"), { ssr: false });
 import { useAuth } from "@/contexts/AuthContext";
 import {
   ClientRegistrationRequest,

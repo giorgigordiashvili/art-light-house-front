@@ -208,12 +208,7 @@ const fetchAttributeDefinitions = async (force = false): Promise<AttributeDefini
       let hasNext = false;
 
       do {
-        const response = await ecommerceClientAttributesList(
-          undefined,
-          undefined,
-          "sort_order",
-          page
-        );
+        const response = await ecommerceClientAttributesList(undefined, "sort_order", page);
         results.push(...(response.results ?? []));
         hasNext = Boolean(response.next);
         page += 1;
