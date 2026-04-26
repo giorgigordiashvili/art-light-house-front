@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import Script from "next/script";
 import { SITE_URL, SITE_NAME, DEFAULT_OG_IMAGE } from "@/lib/seo";
 
 export const metadata: Metadata = {
@@ -70,13 +69,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
         />
       </head>
 
-      <body>
-        {children}
-        <Script
-          src="https://echodesk.ge/widget.js?t=wgt_live_GpePAyplzVBoNV6yT23FlHGlutXDN_Jh"
-          strategy="afterInteractive"
-        />
-      </body>
+      <body>{children}</body>
     </html>
   );
 }
