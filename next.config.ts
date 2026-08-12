@@ -22,6 +22,13 @@ const nextConfig: NextConfig = {
         hostname: "echodesk-spaces.fra1.digitaloceanspaces.com",
         pathname: "**",
       },
+      {
+        // Hetzner object storage — EchoDesk media host since the June 2026
+        // migration off DigitalOcean (gallery images live here now).
+        protocol: "https",
+        hostname: "echodesk-media.fsn1.your-objectstorage.com",
+        pathname: "**",
+      },
     ],
   },
   experimental: {

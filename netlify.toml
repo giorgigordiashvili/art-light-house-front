@@ -15,6 +15,18 @@
 [[plugins]]
   package = "@netlify/plugin-nextjs"
 
+# Netlify Image CDN allowlist — /_next/image is redirected to
+# /.netlify/images below, and the Image CDN rejects any remote host not
+# matching these regexes ("url ... is not an allowed pattern").
+# Keep in sync with images.remotePatterns in next.config.ts.
+[images]
+  remote_images = [
+    "https://testapi\\.artlighthouse\\.ge/.*",
+    "https://art-light-house-images\\.fra1\\.cdn\\.digitaloceanspaces\\.com/.*",
+    "https://echodesk-spaces\\.fra1\\.digitaloceanspaces\\.com/.*",
+    "https://echodesk-media\\.fsn1\\.your-objectstorage\\.com/.*",
+  ]
+
 # Headers for proper caching
 [[headers]]
   for = "/_next/static/*"
