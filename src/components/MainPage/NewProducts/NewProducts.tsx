@@ -84,16 +84,6 @@ const LoadingContainer = styled.div`
   font-size: 16px;
 `;
 
-const ErrorContainer = styled.div`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 356px;
-  color: #ff4444;
-  font-size: 16px;
-  text-align: center;
-`;
-
 interface NewProductsProps {
   dictionary: any;
   initialFeaturedProducts?: ProductList[];
@@ -233,17 +223,9 @@ const NewProducts = ({ dictionary, initialFeaturedProducts }: NewProductsProps) 
     );
   }
 
-  if (error) {
-    return (
-      <Container>
-        <StyledContainer>
-          <StyledTitleAndActions>
-            <SectionTitle text={dictionary.title} image="newProduct" />
-          </StyledTitleAndActions>
-          <ErrorContainer>Error loading featured products: {error}</ErrorContainer>
-        </StyledContainer>
-      </Container>
-    );
+  // Hide the whole section when there are no featured products to show
+  if (error || displayedProducts.length === 0) {
+    return null;
   }
 
   return (
@@ -271,13 +253,9 @@ const NewProducts = ({ dictionary, initialFeaturedProducts }: NewProductsProps) 
           onTouchMove={handleTouchMove}
           onTouchEnd={handleTouchEnd}
         >
-          {displayedProducts.length > 0 ? (
-            displayedProducts.map((product) => (
-              <NewProductCard key={product.id} product={product} dictionary={dictionary} />
-            ))
-          ) : (
-            <LoadingContainer>No featured products available</LoadingContainer>
-          )}
+          {displayedProducts.map((product) => (
+            <NewProductCard key={product.id} product={product} dictionary={dictionary} />
+          ))}
         </StyledCards>
       </StyledContainer>
     </Container>
