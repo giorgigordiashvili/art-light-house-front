@@ -8,6 +8,7 @@ import {
   ecommerceClientCartItemsPartialUpdate,
 } from "@/api/generated/api";
 import { useAuthModal } from "@/contexts/AuthModalContext";
+import { canAddMore } from "@/utils/stock";
 
 const StyledAddButton = styled.div<{ $disabled?: boolean }>`
   position: absolute;
@@ -95,6 +96,8 @@ const AddButton = ({
         : undefined;
 
       if (existing) {
+        // Never exceed the available stock
+        if (!canAddMore(product, existing.quantity || 0)) return;
         await ecommerceClientCartItemsPartialUpdate(String(existing.id), {
           quantity: (existing.quantity || 0) + 1,
         } as any);

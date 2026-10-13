@@ -33,6 +33,7 @@ type Props = {
   onIncrease: () => void;
   onDecrease: () => void;
   onRemove: () => void;
+  canIncrease?: boolean;
 };
 
 const CartProduct = ({
@@ -44,6 +45,7 @@ const CartProduct = ({
   onIncrease,
   onDecrease,
   onRemove,
+  canIncrease = true,
 }: Props) => {
   return (
     <StyledContainer>
@@ -51,7 +53,12 @@ const CartProduct = ({
         <TrashIcon />
       </StyledTrashButton>
       <ProductContent dictionary={dictionary} title={title} price={price} imageSrc={imageSrc} />
-      <QuantitySelector quantity={quantity} onIncrease={onIncrease} onDecrease={onDecrease} />
+      <QuantitySelector
+        quantity={quantity}
+        onIncrease={onIncrease}
+        onDecrease={onDecrease}
+        canIncrease={canIncrease}
+      />
     </StyledContainer>
   );
 };

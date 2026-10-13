@@ -19,6 +19,7 @@ type Props = {
   onDecrease?: () => void;
   onRemove?: () => void;
   onDetails?: () => void;
+  canIncrease?: boolean;
 };
 
 const StyledContainer = styled.div.withConfig({
@@ -145,6 +146,7 @@ const FavoriteCard = ({
   quantity = 1,
   onIncrease,
   onDecrease,
+  canIncrease = true,
   onRemove,
   onDetails,
 }: Props) => {
@@ -228,6 +230,7 @@ const FavoriteCard = ({
               quantity={quantity}
               onIncrease={onIncrease}
               onDecrease={onDecrease}
+              canIncrease={canIncrease}
             />
             <div onClick={onRemove} style={{ cursor: "pointer" }}>
               <Image
