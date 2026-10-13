@@ -161,6 +161,21 @@ const SkeletonText = styled.div`
   }
 `;
 
+const PAID_STATUSES = new Set(["paid", "completed", "success", "succeeded", "captured"]);
+
+// Orders paid by card that were never actually paid (user opened the payment page
+// but didn't finish, payment failed, etc.) should not be listed.
+// Cash-on-delivery orders are paid on receipt, so they are always shown.
+const isVisibleOrder = (order: OrderType): boolean => {
+  const method = String(order.payment_method ?? "").toLowerCase();
+  if (method.includes("cash")) return true;
+
+  if (order.paid_at) return true;
+
+  const status = String(order.payment_status ?? "").toLowerCase();
+  return PAID_STATUSES.has(status);
+};
+
 const Order = ({ dictionary }: any) => {
   const [orders, setOrders] = useState<OrderType[]>([]);
   const [loading, setLoading] = useState(true);
@@ -171,7 +186,7 @@ const Order = ({ dictionary }: any) => {
       try {
         setLoading(true);
         const response = await ecommerceClientOrdersList();
-        setOrders(response.results);
+        setOrders((response.results ?? []).filter(isVisibleOrder));
       } catch {
         setError("Failed to fetch orders");
       } finally {
