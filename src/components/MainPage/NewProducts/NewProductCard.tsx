@@ -241,7 +241,7 @@ const NewProductCard = ({ product }: { product: ProductList; dictionary: any }) 
           </div>
           <CardText name={productName} price={`${product.price} ₾`} />
           <div data-plus-button onClick={handleInteractiveClick}>
-            <PlusButton product={product} />
+            <PlusButton product={product} disabled={product.is_in_stock === false} />
           </div>
         </StyledActions>
       </StyledContainer>

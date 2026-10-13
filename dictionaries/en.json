@@ -174,6 +174,7 @@
   "products": {
     "title": "Products",
     "addToCartAlt": "Add to cart",
+    "outOfStock": "Out of stock",
     "sort": "Sort",
     "sortOption1": "Price: Descending",
     "sortOption2": "Price: Ascending",
@@ -229,6 +230,7 @@
     "description": "This chandelier is designed with a modern aesthetic and perfectly suits any interior style. Its unique shape and blue elements create a special atmosphere in your home. The chandelier is equipped with energy-efficient LED bulbs, ensuring long service life and low energy consumption. Buy now on our website and enrich your space!",
     "buy": "Buy",
     "addToCart": "Add to cart",
+    "outOfStock": "Out of stock",
     "subTitle": "Similar products",
     "similarProducts": "Similar products",
     "cardTitle": "Garden light",

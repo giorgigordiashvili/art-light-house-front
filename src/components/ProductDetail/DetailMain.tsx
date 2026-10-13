@@ -609,8 +609,10 @@ function DetailMain({
     }
   };
 
+  const isOutOfStock = product?.is_in_stock === false;
+
   const handleAddToCart = async () => {
-    if (!product) return;
+    if (!product || isOutOfStock) return;
 
     // Check if user is authenticated
     const hasToken = typeof window !== "undefined" && !!localStorage.getItem("auth_access_token");
@@ -766,6 +768,7 @@ function DetailMain({
             <ButtonRow>
               <BuyButton
                 dictionary={dictionary}
+                disabled={isOutOfStock}
                 onClick={() => {
                   const hasToken =
                     typeof window !== "undefined" && !!localStorage.getItem("auth_access_token");
@@ -779,7 +782,11 @@ function DetailMain({
                   }
                 }}
               />
-              <AddToCartButton onClick={handleAddToCart} dictionary={dictionary} />
+              <AddToCartButton
+                onClick={handleAddToCart}
+                disabled={isOutOfStock}
+                dictionary={dictionary}
+              />
             </ButtonRow>
           </RightColumn>
         </FlexRow>

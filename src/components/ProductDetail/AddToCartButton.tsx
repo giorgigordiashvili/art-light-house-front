@@ -1,7 +1,7 @@
 import styled from "styled-components";
 import Image from "next/image";
 
-const StyleAddButton = styled.div`
+const StyleAddButton = styled.div<{ $disabled?: boolean }>`
   /* position: absolute; */
   width: 232px;
   height: 56px;
@@ -24,6 +24,16 @@ const StyleAddButton = styled.div`
   &:hover {
     background: #624e16;
   }
+
+  ${({ $disabled }) =>
+    $disabled &&
+    `
+    opacity: 0.45;
+    cursor: not-allowed;
+    &:hover {
+      background: linear-gradient(180deg, #0b0b0b 0%, #0b0b0b 44.74%, #0b0b0b 55.23%, #0b0b0b 63.52%);
+    }
+  `}
 `;
 const ButtonText = styled.p`
   font-family: "Helvetica";
@@ -36,13 +46,23 @@ const ButtonText = styled.p`
 `;
 type Props = {
   onClick?: () => void;
+  /** Product is out of stock - button is shown but inactive */
+  disabled?: boolean;
 };
 
-const AddToCartButton = ({ onClick, dictionary }: Props & { dictionary: any }) => {
+const AddToCartButton = ({
+  onClick,
+  disabled = false,
+  dictionary,
+}: Props & { dictionary: any }) => {
+  const label = disabled
+    ? dictionary?.productDetails?.outOfStock || "Out of stock"
+    : dictionary?.productDetails?.addToCart || "Add to cart";
+
   return (
-    <StyleAddButton onClick={onClick}>
+    <StyleAddButton onClick={disabled ? undefined : onClick} $disabled={disabled}>
       <Image src="/assets/icons/addToCart.svg" alt="cart" width={24} height={24} />
-      <ButtonText>{dictionary?.productDetails?.addToCart || "Add to cart"}</ButtonText>
+      <ButtonText>{label}</ButtonText>
     </StyleAddButton>
   );
 };
