@@ -6,7 +6,8 @@ import Pass from "./Pass";
 import MobileDetailDropdown from "@/components/DetailBar/MobileDetailDropdown";
 
 const StyledComponent = styled.div`
-  background: #0b0b0b;
+  /* Transparent so the screen's BigCircle background shows through */
+  background: transparent;
   margin-top: 80px;
   margin-bottom: 219px;
   width: 100%;
