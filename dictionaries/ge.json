@@ -397,7 +397,9 @@
     "orderBarTitle": "შეკვეთები",
     "orderId": "#22435",
     "orderDate": "22 დეკემბერი",
-    "details": "დეტალურად"
+    "details": "დეტალურად",
+    "noOrders": "შეკვეთები არ მოიძებნა",
+    "loadError": "შეკვეთების ჩატვირთვა ვერ მოხერხდა"
   },
   "cart": {
     "emptyCartModal": {

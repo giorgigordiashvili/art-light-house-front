@@ -179,7 +179,7 @@ const isVisibleOrder = (order: OrderType): boolean => {
 const Order = ({ dictionary }: any) => {
   const [orders, setOrders] = useState<OrderType[]>([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const [hasError, setHasError] = useState(false);
 
   useEffect(() => {
     const fetchOrders = async () => {
@@ -188,7 +188,7 @@ const Order = ({ dictionary }: any) => {
         const response = await ecommerceClientOrdersList();
         setOrders((response.results ?? []).filter(isVisibleOrder));
       } catch {
-        setError("Failed to fetch orders");
+        setHasError(true);
       } finally {
         setLoading(false);
       }
@@ -216,10 +216,10 @@ const Order = ({ dictionary }: any) => {
               </SkeletonOrderCard>
             ))}
           </>
-        ) : error ? (
-          <EmptyText>{error}</EmptyText>
+        ) : hasError ? (
+          <EmptyText>{dictionary?.loadError || "Failed to load orders"}</EmptyText>
         ) : orders.length === 0 ? (
-          <EmptyText>No orders found</EmptyText>
+          <EmptyText>{dictionary?.noOrders || "No orders found"}</EmptyText>
         ) : (
           orders.map((order) => <OrderCard key={order.id} dictionary={dictionary} order={order} />)
         )}

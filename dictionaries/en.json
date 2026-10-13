@@ -398,7 +398,9 @@
     "orderBarTitle": "Orders",
     "orderId": "#22435",
     "orderDate": "December 22",
-    "details": "Details"
+    "details": "Details",
+    "noOrders": "No orders found",
+    "loadError": "Failed to load orders"
   },
   "cart": {
     "emptyCartModal": {
