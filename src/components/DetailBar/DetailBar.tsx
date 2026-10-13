@@ -1,5 +1,5 @@
 "use client";
-import styled from "styled-components";
+import styled, { css } from "styled-components";
 import Image from "next/image";
 import { useRouter, usePathname } from "next/navigation";
 import { useAuth } from "@/contexts/AuthContext";
@@ -22,10 +22,20 @@ const Container = styled.div`
   }
 `;
 
+// Gold highlight shared by hover and the active (current page) item
+const goldHighlight = css`
+  background: linear-gradient(90deg, #f7cb57 0%, #ffd700 100%);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  filter: brightness(0) saturate(100%) invert(67%) sepia(81%) saturate(360%) hue-rotate(5deg)
+    brightness(104%) contrast(102%);
+`;
+
 // არ გადაეცემა logout როგორც DOM prop
 const Item = styled.div.withConfig({
   shouldForwardProp: (prop) => prop !== "logout",
-})<{ logout?: boolean }>`
+})<{ logout?: boolean; $active?: boolean }>`
   display: flex;
   align-items: center;
   gap: 18px;
@@ -36,13 +46,9 @@ const Item = styled.div.withConfig({
   height: 24px;
   color: ${({ logout }) => (logout ? "#FF4D4F" : "#edededcc")};
   &:hover {
-    background: linear-gradient(90deg, #f7cb57 0%, #ffd700 100%);
-    background-clip: text;
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    filter: brightness(0) saturate(100%) invert(67%) sepia(81%) saturate(360%) hue-rotate(5deg)
-      brightness(104%) contrast(102%);
+    ${goldHighlight}
   }
+  ${({ $active }) => $active && goldHighlight}
   margin-top: 24px;
   margin-bottom: 24px;
 `;
@@ -72,6 +78,8 @@ const DetailBar = ({ dictionary }: any) => {
   const currentLocale = parts[1];
   const supportedLocales = ["ge", "en"];
   const localePrefix = supportedLocales.includes(currentLocale) ? `/${currentLocale}` : "";
+  // Path without the locale prefix, used to detect the active menu item
+  const currentPath = (pathname || "/").replace(/^\/(ge|en)(?=\/|$)/, "") || "/";
 
   const menuItems = [
     {
@@ -135,7 +143,11 @@ const DetailBar = ({ dictionary }: any) => {
       {menuItems.map(({ label, icon, route }, index) => (
         <div key={label}>
           {index !== 0 && <Divider />}
-          <Item onClick={handleMenuItemClick(route)} onMouseDown={handleMenuItemMouseDown(route)}>
+          <Item
+            $active={currentPath === route || currentPath.startsWith(`${route}/`)}
+            onClick={handleMenuItemClick(route)}
+            onMouseDown={handleMenuItemMouseDown(route)}
+          >
             <IconWrapper>
               <Image src={icon} alt={label} width={24} height={24} />
             </IconWrapper>
