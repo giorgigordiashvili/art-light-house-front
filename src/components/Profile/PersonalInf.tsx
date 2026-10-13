@@ -34,6 +34,7 @@ const StylePersonal = styled.div`
     width: 100%;
     padding: 16px;
     min-height: auto;
+    max-width: none;
   }
 `;
 
