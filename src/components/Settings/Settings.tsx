@@ -26,7 +26,9 @@ const Container = styled.div`
 `;
 
 const DesktopWrapper = styled.div`
-  padding: 20px;
+  @media (max-width: 1320px) {
+    padding-inline: 20px;
+  }
 
   @media (max-width: 1080px) {
     display: none;
