@@ -87,6 +87,9 @@ const OnMobile = styled.div`
 `;
 
 const OnDesktop = styled.div`
+  align-self: flex-start;
+  margin-bottom: 130px;
+
   @media (max-width: 1080px) {
     display: none;
   }
