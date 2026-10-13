@@ -502,6 +502,9 @@
     "noProjectsFound": "No projects found",
     "noProjectsDescription": "Check back soon for our latest work"
   },
+  "stock": {
+    "limitReached": "Only {count} in stock, you can't add more"
+  },
   "metadata": {
     "main": {
       "title": "Main - Art Lighthouse",

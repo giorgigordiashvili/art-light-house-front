@@ -8,7 +8,8 @@ import {
   ecommerceClientCartItemsPartialUpdate,
 } from "@/api/generated/api";
 import { useAuthModal } from "@/contexts/AuthModalContext";
-import { canAddMore } from "@/utils/stock";
+import { canAddMore, getStockLimit } from "@/utils/stock";
+import { showStockLimitToast } from "@/utils/toast";
 
 const StyledButton = styled.button`
   width: 55px;
@@ -76,8 +77,11 @@ const PlusButton = ({
         : undefined;
 
       if (existing) {
-        // Never exceed the available stock
-        if (!canAddMore(product, existing.quantity || 0)) return;
+        // Never exceed the available stock - tell the user why nothing happened
+        if (!canAddMore(product, existing.quantity || 0)) {
+          showStockLimitToast(getStockLimit(product));
+          return;
+        }
         await ecommerceClientCartItemsPartialUpdate(String(existing.id), {
           quantity: (existing.quantity || 0) + 1,
         } as any);

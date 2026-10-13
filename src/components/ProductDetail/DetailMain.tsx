@@ -15,7 +15,8 @@ import Circle from "../ui/Circle";
 import RightSlide from "../MainPage/NewProducts/RightSlide";
 import ReturnIcon from "../Header/ReturnIcon";
 import { useSimilarProducts } from "@/hooks/useSimilarProducts";
-import { canAddMore } from "@/utils/stock";
+import { canAddMore, getStockLimit } from "@/utils/stock";
+import { showStockLimitToast } from "@/utils/toast";
 import { useAuthModal } from "@/contexts/AuthModalContext";
 import {
   ecommerceClientCartItemsCreate,
@@ -639,8 +640,11 @@ function DetailMain({
         : undefined;
 
       if (existing) {
-        // Never exceed the available stock
-        if (!canAddMore(product, existing.quantity || 0)) return;
+        // Never exceed the available stock - tell the user why nothing happened
+        if (!canAddMore(product, existing.quantity || 0)) {
+          showStockLimitToast(getStockLimit(product));
+          return;
+        }
         await ecommerceClientCartItemsPartialUpdate(String(existing.id), {
           quantity: (existing.quantity || 0) + 1,
         } as any);
