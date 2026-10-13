@@ -21,12 +21,13 @@ const Container = styled.div`
 
   @media (max-width: 1080px) {
     max-width: 100%;
-    padding: 0 16px;
+    padding: 0 20px;
   }
 `;
 
 const DesktopWrapper = styled.div`
-  @media (max-width: 1320px) {
+  /* Keep 20px from the viewport edge once the 1292px content no longer fits */
+  @media (max-width: 1332px) {
     padding-inline: 20px;
   }
 
