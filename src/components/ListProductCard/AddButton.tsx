@@ -50,6 +50,8 @@ const AddButton = ({
   const { openAuthModal } = useAuthModal();
 
   const handleClick = async (e: React.MouseEvent) => {
+    // Prevent the surrounding product link from navigating
+    e.preventDefault();
     e.stopPropagation();
 
     // Check if user is authenticated

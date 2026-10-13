@@ -84,6 +84,8 @@ const ProductHeartIcon = ({ productId, defaultIsFavorite, size = 30 }: Props) =>
   }, [productId]);
 
   const handleClick = async (e: React.MouseEvent) => {
+    // Prevent the surrounding product link from navigating
+    e.preventDefault();
     e.stopPropagation();
     if (isSubmitting) return;
 
