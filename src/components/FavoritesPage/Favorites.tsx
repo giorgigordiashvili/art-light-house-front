@@ -150,7 +150,7 @@ const Favorites = ({ dictionary }: { dictionary: any }) => {
                   }).length;
                   window.dispatchEvent(
                     new CustomEvent("favoritesUpdated", {
-                      detail: { count: remaining, hasAny: remaining > 0 },
+                      detail: { count: remaining, hasAny: remaining > 0, productId, removed: true },
                     })
                   );
                 }

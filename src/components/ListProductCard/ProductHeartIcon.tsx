@@ -34,9 +34,7 @@ const ProductHeartIcon = ({ productId, defaultIsFavorite, size = 30 }: Props) =>
   useEffect(() => {
     let isMounted = true;
     const hasToken = typeof window !== "undefined" && !!localStorage.getItem("auth_access_token");
-
-    // If we already know it's a favorite, no need to fetch
-    if (!hasToken || isFilled) return;
+    if (!hasToken) return;
 
     const checkFavorited = async () => {
       try {
@@ -65,20 +63,27 @@ const ProductHeartIcon = ({ productId, defaultIsFavorite, size = 30 }: Props) =>
       }
     };
 
-    checkFavorited();
+    if (!initialFilled) checkFavorited();
 
-    // Also update reactively if some other component toggles favorites
-    const onFavUpdate = () => {
+    // Stay in sync when favorites change elsewhere (favorites modal, favorites page, another card)
+    const onFavUpdate = (e: Event) => {
+      const detail = (e as CustomEvent).detail || {};
+      if (detail.productId !== undefined && Number(detail.productId) === Number(productId)) {
+        if (detail.removed) setIsFilled(false);
+        else if (detail.added) setIsFilled(true);
+        return;
+      }
+      // Clearing all favorites
+      if (detail.count === 0 || detail.hasAny === false) {
+        setIsFilled(false);
+        return;
+      }
       checkFavorited();
     };
-    if (typeof window !== "undefined") {
-      window.addEventListener("favoritesUpdated", onFavUpdate as EventListener);
-    }
+    window.addEventListener("favoritesUpdated", onFavUpdate as EventListener);
     return () => {
       isMounted = false;
-      if (typeof window !== "undefined") {
-        window.removeEventListener("favoritesUpdated", onFavUpdate as EventListener);
-      }
+      window.removeEventListener("favoritesUpdated", onFavUpdate as EventListener);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [productId]);
@@ -136,7 +141,15 @@ const ProductHeartIcon = ({ productId, defaultIsFavorite, size = 30 }: Props) =>
         const count = list.length;
         if (typeof window !== "undefined") {
           window.dispatchEvent(
-            new CustomEvent("favoritesUpdated", { detail: { count, hasAny: count > 0 } })
+            new CustomEvent("favoritesUpdated", {
+              detail: {
+                count,
+                hasAny: count > 0,
+                productId,
+                added: nextFilled,
+                removed: !nextFilled,
+              },
+            })
           );
         }
       } catch {}
