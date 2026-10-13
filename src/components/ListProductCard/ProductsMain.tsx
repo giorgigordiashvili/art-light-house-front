@@ -102,16 +102,12 @@ const PaginationWrapper = styled.div`
   bottom: 183px;
 `;
 
-// Removed client-side skeletons; server-side navigation keeps UI responsive.
-
 interface ProductsMainProps {
   dictionary: any;
   initialProductsData?: any;
   initialAttributes?: any[] | null;
   initialPage?: number;
 }
-
-const MIN_SKELETON_TIME = 1000; // Minimum time to show skeletons (ms)
 
 function ProductsMain({
   dictionary,
@@ -121,13 +117,15 @@ function ProductsMain({
 }: ProductsMainProps) {
   const [isMobileFilterDropdownVisible, setMobileFilterDropdownVisible] = useState(false);
   const [isPending, startTransition] = useTransition();
-  const [isNavigating, setIsNavigating] = useState(true); // Start with loading state
+  // True from the moment a filter/page changes until the server sends new products.
+  // Skeletons are shown only for that real wait - no artificial minimum time.
+  // Products are server-rendered, so the first paint needs no skeleton.
+  const [isNavigating, setIsNavigating] = useState(false);
   const { setOnFilterChange } = useFilterContext();
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const searchParamsString = searchParams.toString();
-  const navigationStartTime = React.useRef<number>(Date.now());
   const prevSearchParams = React.useRef<string>(searchParamsString);
   const isFirstRender = React.useRef(true);
 
@@ -153,41 +151,20 @@ function ProductsMain({
       isFirstRender.current = false;
       return;
     }
-
-    // URL params changed - show loading
     if (prevSearchParams.current !== searchParamsString) {
-      navigationStartTime.current = Date.now();
       setIsNavigating(true);
       prevSearchParams.current = searchParamsString;
     }
   }, [searchParamsString]);
 
-  // Initial mount: show skeletons for minimum time
+  // New product data arrived from the server: hide skeletons immediately
   useEffect(() => {
-    const timer = setTimeout(() => {
-      setIsNavigating(false);
-    }, MIN_SKELETON_TIME);
-
-    return () => clearTimeout(timer);
-  }, []);
-
-  // Reset navigating state when new product data arrives from server
-  // But respect minimum skeleton display time
-  useEffect(() => {
-    const elapsed = Date.now() - navigationStartTime.current;
-    const remainingTime = Math.max(0, MIN_SKELETON_TIME - elapsed);
-
-    const timer = setTimeout(() => {
-      setIsNavigating(false);
-    }, remainingTime);
-
-    return () => clearTimeout(timer);
+    setIsNavigating(false);
   }, [initialProductsData]);
 
   // Register filter callback to show loading state when filters change
   useEffect(() => {
     setOnFilterChange(() => {
-      navigationStartTime.current = Date.now();
       setIsNavigating(true);
     });
     return () => setOnFilterChange(null);
@@ -198,7 +175,6 @@ function ProductsMain({
   };
 
   const handlePageChange = (page: number) => {
-    navigationStartTime.current = Date.now();
     setIsNavigating(true);
     // Update URL to reflect new page; server will fetch via ISR
     const current = new URLSearchParams(window.location.search);
