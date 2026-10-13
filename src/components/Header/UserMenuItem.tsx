@@ -8,19 +8,30 @@ interface StyledContainerProps {
   $active?: boolean;
 }
 
-// Gold highlight shared by hover and the active (current page) item
+const Label = styled.p`
+  margin: 0;
+  min-width: 0;
+  overflow-wrap: anywhere;
+`;
+
+// Gold highlight shared by hover and the active (current page) item.
+// The gradient is painted on the label (not the whole item) so that a label
+// wrapping onto two lines keeps every line visible.
 const goldHighlight = css`
-  background: linear-gradient(90deg, #f7cb57 0%, #ffd700 100%);
-  background-clip: text;
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
   filter: brightness(0) saturate(100%) invert(67%) sepia(81%) saturate(360%) hue-rotate(5deg)
     brightness(104%) contrast(102%);
+
+  ${Label} {
+    background: linear-gradient(90deg, #f7cb57 0%, #ffd700 100%);
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
 `;
 
 const StyledContainer = styled.div<StyledContainerProps>`
-  height: 66px;
-  padding: 24px 0 18px 24px;
+  min-height: 66px;
+  padding: 24px 24px 18px 24px;
   font-family: HelRom;
   font-weight: 400;
   font-size: 16px;
@@ -82,7 +93,7 @@ const UserMenuItem = ({ text, icon, color, route, onClick }: Props) => {
       onMouseDown={handleMouseDown}
     >
       <Image src={icon} alt="menu icon" width={24} height={24} />
-      <p>{text}</p>
+      <Label>{text}</Label>
     </StyledContainer>
   );
 };
