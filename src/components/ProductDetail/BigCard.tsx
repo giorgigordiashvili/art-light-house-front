@@ -5,6 +5,7 @@ import { ProductDetail } from "@/api/generated/interfaces";
 import ReturnIcon from "../Header/ReturnIcon";
 import RightSlide from "../MainPage/NewProducts/RightSlide";
 import { useRef, useState, useEffect } from "react";
+import ImageShimmer from "../ui/ImageShimmer";
 
 const StyleBigCard = styled.div`
   /* max-width: 100%; */
@@ -43,6 +44,16 @@ const MainImageWrapper = styled.div`
     object-fit: contain;
     border-radius: 12px;
   }
+`;
+
+// Every gallery image is stacked here and only the selected one is shown, so switching
+// images is instant once they have loaded instead of flashing an empty frame
+const GalleryImage = styled.div<{ $visible: boolean; $loaded: boolean }>`
+  position: absolute;
+  inset: 0;
+  opacity: ${({ $visible, $loaded }) => ($visible && $loaded ? 1 : 0)};
+  transition: opacity 0.25s ease;
+  pointer-events: none;
 `;
 
 const InnerWrapper = styled.div`
@@ -96,6 +107,10 @@ const BigCard = ({
   const [startX, setStartX] = useState(0);
   const [scrollLeft, setScrollLeft] = useState(0);
   const [dragDistance, setDragDistance] = useState(0);
+  const [loadedSrcs, setLoadedSrcs] = useState<Set<string>>(() => new Set());
+
+  const markLoaded = (src: string) =>
+    setLoadedSrcs((prev) => (prev.has(src) ? prev : new Set(prev).add(src)));
 
   // Use selectedImage if available, otherwise fallback to primary image
   const displayImage =
@@ -122,6 +137,20 @@ const BigCard = ({
     if (b.is_primary) return 1;
     return 0;
   });
+
+  const imageSrc = (img: any): string | null => {
+    const src = img?.image || img?.image_url;
+    return typeof src === "string" && src.trim() !== "" ? src : null;
+  };
+  const displaySrc = hasValidImage ? (imageSrc(displayImage) as string) : "";
+  // Image shown before any selection; it is the LCP element so it gets priority
+  const initialSrc =
+    imageSrc(sortedImages[0]) || (product.image ? imageSrc({ image: product.image }) : null);
+  const gallerySrcs = Array.from(
+    new Set(
+      [displaySrc, ...sortedImages.map(imageSrc)].filter((src): src is string => Boolean(src))
+    )
+  );
 
   const currentImageIndex = displayImage
     ? sortedImages.findIndex((img: any) => img.id === displayImage.id)
@@ -248,16 +277,26 @@ const BigCard = ({
 
       {hasValidImage ? (
         <MainImageWrapper>
-          <Image
-            src={displayImage.image || displayImage.image_url}
-            alt={
-              displayImage.alt_text || (typeof product.name === "string" ? product.name : "Product")
-            }
-            fill
-            sizes="(max-width: 1080px) 100vw, 572px"
-            priority
-            style={{ objectFit: "contain" }}
-          />
+          {!loadedSrcs.has(displaySrc) && <ImageShimmer />}
+          {gallerySrcs.map((src) => (
+            <GalleryImage key={src} $visible={src === displaySrc} $loaded={loadedSrcs.has(src)}>
+              <Image
+                src={src}
+                alt={
+                  (src === displaySrc && displayImage.alt_text) ||
+                  (typeof product.name === "string" ? product.name : "Product")
+                }
+                fill
+                sizes="(max-width: 1080px) 100vw, 572px"
+                priority={src === initialSrc}
+                loading={src === initialSrc ? undefined : "eager"}
+                fetchPriority={src === initialSrc ? "high" : "low"}
+                style={{ objectFit: "contain" }}
+                onLoad={() => markLoaded(src)}
+                onError={() => markLoaded(src)}
+              />
+            </GalleryImage>
+          ))}
         </MainImageWrapper>
       ) : (
         <MainImageWrapper>

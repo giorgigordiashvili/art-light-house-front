@@ -1,5 +1,7 @@
 import styled from "styled-components";
+import { useState } from "react";
 import Image from "next/image";
+import ImageShimmer from "../ui/ImageShimmer";
 import { ProductImage } from "@/api/generated/interfaces";
 
 const StyleSmallCard = styled.div<{ $isSelected?: boolean }>`
@@ -44,6 +46,8 @@ const SmallCard = ({
   isSelected?: boolean;
   noImageText?: string;
 }) => {
+  const [loaded, setLoaded] = useState(false);
+
   // Check if we have a valid image URL
   const rawImage = image.image || (image as any).image_url;
   const hasValidImage = rawImage && typeof rawImage === "string" && rawImage.trim() !== "";
@@ -70,6 +74,7 @@ const SmallCard = ({
 
   return (
     <StyleSmallCard onClick={onClick} $isSelected={isSelected} draggable="false">
+      {!loaded && <ImageShimmer $radius={17} />}
       <Image
         src={rawImage}
         alt={image.alt_text || "Product image"}
@@ -77,6 +82,8 @@ const SmallCard = ({
         sizes="(max-width: 1080px) 64px, 120px"
         style={{ objectFit: "cover" }}
         draggable={false}
+        onLoad={() => setLoaded(true)}
+        onError={() => setLoaded(true)}
       />
     </StyleSmallCard>
   );

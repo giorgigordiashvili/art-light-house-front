@@ -1,4 +1,6 @@
-import React from "react";
+"use client";
+import React, { useState } from "react";
+import ImageShimmer from "../ui/ImageShimmer";
 import styled from "styled-components";
 import Image from "next/image";
 import Desktoplampa from "../../../public/assets/desktopLampa.webp";
@@ -48,6 +50,8 @@ const LampaImage = ({
   priority?: boolean;
   dimmed?: boolean;
 }) => {
+  const [loaded, setLoaded] = useState(false);
+
   // Use image field from ProductList interface
   const imageUrl = product.image;
 
@@ -62,6 +66,7 @@ const LampaImage = ({
   if (hasValidImage) {
     return (
       <StyledLampaImage $dimmed={dimmed}>
+        {!loaded && <ImageShimmer />}
         <Image
           src={imageUrl}
           alt={altText}
@@ -70,6 +75,8 @@ const LampaImage = ({
           sizes="(max-width: 1080px) 130px, 309px"
           priority={priority}
           draggable="false"
+          onLoad={() => setLoaded(true)}
+          onError={() => setLoaded(true)}
         />
       </StyledLampaImage>
     );
