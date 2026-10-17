@@ -3,6 +3,8 @@ import type { ProductDetail, ProductImage } from "./generated/interfaces";
 interface ServerProductDetailResult {
   product: ProductDetail | null;
   error: string | null;
+  /** HTTP status of the backend response when it was not OK (e.g. 404) */
+  status?: number;
 }
 
 // Fetch a single product detail server-side with ISR
@@ -28,7 +30,11 @@ export async function fetchServerProductDetail(
     });
 
     if (!res.ok) {
-      return { product: null, error: `Failed to fetch product: ${res.status} ${res.statusText}` };
+      return {
+        product: null,
+        error: `Failed to fetch product: ${res.status} ${res.statusText}`,
+        status: res.status,
+      };
     }
 
     const data: ProductDetail = await res.json();

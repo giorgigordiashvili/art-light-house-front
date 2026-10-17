@@ -33,6 +33,9 @@ const PriceInput: React.FC<Props> = ({ text, type }) => {
   const { filters, updatePriceFilter } = useFilterContext();
   const [localValue, setLocalValue] = React.useState<string>("");
   const debounceRef = React.useRef<number | null>(null);
+  // Latest filters, so the debounced commit never uses values from an old render
+  const filtersRef = React.useRef(filters);
+  filtersRef.current = filters;
 
   React.useEffect(() => {
     const currentValue = type === "min" ? filters.minPrice : filters.maxPrice;
@@ -48,6 +51,29 @@ const PriceInput: React.FC<Props> = ({ text, type }) => {
     };
   }, []);
 
+  const clearPendingDebounce = () => {
+    if (debounceRef.current) {
+      window.clearTimeout(debounceRef.current);
+      debounceRef.current = null;
+    }
+  };
+
+  // Apply the value to the filters once; skips no-op updates
+  const commit = (value: string) => {
+    clearPendingDebounce();
+    const next = value === "" ? undefined : parseInt(value, 10);
+    if (next !== undefined && isNaN(next)) return;
+
+    const latest = filtersRef.current;
+    const current = type === "min" ? latest.minPrice : latest.maxPrice;
+    if (next === current) return;
+
+    updatePriceFilter(
+      type === "min" ? next : latest.minPrice,
+      type === "max" ? next : latest.maxPrice
+    );
+  };
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     // Only allow numbers
@@ -55,43 +81,21 @@ const PriceInput: React.FC<Props> = ({ text, type }) => {
       setLocalValue(value);
 
       // Debounce immediate filter updates to avoid excessive requests
-      if (debounceRef.current) {
-        window.clearTimeout(debounceRef.current);
-      }
-
+      clearPendingDebounce();
       debounceRef.current = window.setTimeout(() => {
-        const numValue = value === "" ? undefined : parseInt(value, 10);
-        if (type === "min") {
-          updatePriceFilter(numValue, filters.maxPrice);
-        } else {
-          updatePriceFilter(filters.minPrice, numValue);
-        }
+        debounceRef.current = null;
+        commit(value);
       }, 300);
     }
   };
 
   const handleBlur = () => {
-    if (localValue === "") {
-      updatePriceFilter(
-        type === "min" ? undefined : filters.minPrice,
-        type === "max" ? undefined : filters.maxPrice
-      );
-      return;
-    }
-
-    const numValue = parseInt(localValue, 10);
-    if (!isNaN(numValue)) {
-      if (type === "min") {
-        updatePriceFilter(numValue, filters.maxPrice);
-      } else {
-        updatePriceFilter(filters.minPrice, numValue);
-      }
-    }
+    commit(localValue);
   };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter") {
-      handleBlur();
+      commit(localValue);
     }
   };
 

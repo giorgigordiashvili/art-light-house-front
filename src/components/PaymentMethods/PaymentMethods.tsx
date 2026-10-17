@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import styled from "styled-components";
 import DetailBar from "../DetailBar/DetailBar";
 import PaymentMethodsBar from "./PaymentMethodsBar";
@@ -56,6 +56,7 @@ const StyledMobileDetail = styled.div`
 const PaymentMethods = ({ dictionary }: any) => {
   const [paymentMethods, setPaymentMethods] = useState<PaymentMethodData[]>([]);
   const [loading, setLoading] = useState(true);
+  const addingCardRef = useRef(false);
 
   // Fetch saved cards from API
   const fetchSavedCards = async () => {
@@ -101,8 +102,21 @@ const PaymentMethods = ({ dictionary }: any) => {
     fetchSavedCards();
   }, []);
 
+  // Re-enable add-card when the page is restored from the back/forward cache
+  useEffect(() => {
+    const onShow = (e: PageTransitionEvent) => {
+      if (e.persisted) addingCardRef.current = false;
+    };
+    window.addEventListener("pageshow", onShow);
+    return () => window.removeEventListener("pageshow", onShow);
+  }, []);
+
   // Handle adding a new card - redirects to BOG payment gateway
   const handleAddCard = async () => {
+    // Prevent starting several card-registration sessions on repeated clicks
+    if (addingCardRef.current) return;
+    addingCardRef.current = true;
+
     try {
       const response: any = await ecommerceClientCardsAddCreate();
 
@@ -111,10 +125,12 @@ const PaymentMethods = ({ dictionary }: any) => {
         window.location.href = response.payment_url;
       } else {
         console.error("No payment URL received from backend");
+        addingCardRef.current = false;
         alert(dictionary.addCardError || "Failed to initialize card addition. Please try again.");
       }
     } catch (error) {
       console.error("Failed to initiate card addition:", error);
+      addingCardRef.current = false;
       alert(dictionary.addCardError || "Failed to add card. Please try again.");
     }
   };

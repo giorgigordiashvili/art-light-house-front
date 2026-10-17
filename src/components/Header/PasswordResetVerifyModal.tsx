@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import styled from "styled-components";
 import InputTitle from "./InputTitle";
 import ModalInput from "./ModalInput";
@@ -100,6 +100,15 @@ const PasswordResetVerifyModal = ({
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
+  const submittingRef = useRef(false);
+  const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  useEffect(
+    () => () => {
+      if (timerRef.current) clearTimeout(timerRef.current);
+    },
+    []
+  );
 
   const handleClickInside = (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -114,27 +123,41 @@ const PasswordResetVerifyModal = ({
 
   const validateInputs = () => {
     if (!code.trim()) {
-      setError("Verification code is required");
+      setError(
+        dictionary?.header?.passwordResetVerifyModal?.codeRequired ||
+          "Verification code is required"
+      );
       return false;
     }
 
     if (code.trim().length !== 6 || !/^\d{6}$/.test(code.trim())) {
-      setError("Please enter a valid 6-digit code");
+      setError(
+        dictionary?.header?.passwordResetVerifyModal?.invalidCode ||
+          "Please enter a valid 6-digit code"
+      );
       return false;
     }
 
     if (!newPassword.trim()) {
-      setError("New password is required");
+      setError(
+        dictionary?.header?.passwordResetVerifyModal?.newPasswordRequired ||
+          "New password is required"
+      );
       return false;
     }
 
     if (newPassword.length < 8) {
-      setError("Password must be at least 8 characters long");
+      setError(
+        dictionary?.header?.passwordResetVerifyModal?.passwordTooShort ||
+          "Password must be at least 8 characters long"
+      );
       return false;
     }
 
     if (newPassword !== confirmPassword) {
-      setError("Passwords do not match");
+      setError(
+        dictionary?.header?.passwordResetVerifyModal?.passwordMismatch || "Passwords do not match"
+      );
       return false;
     }
 
@@ -142,6 +165,7 @@ const PasswordResetVerifyModal = ({
   };
 
   const handleSubmit = async () => {
+    if (submittingRef.current || loading || success) return;
     setError("");
     setSuccess("");
 
@@ -149,6 +173,7 @@ const PasswordResetVerifyModal = ({
       return;
     }
 
+    submittingRef.current = true;
     try {
       setLoading(true);
 
@@ -160,15 +185,22 @@ const PasswordResetVerifyModal = ({
       };
 
       await passwordResetConfirm(requestData);
-      setSuccess("Password reset successfully!");
+      setSuccess(
+        dictionary?.header?.passwordResetVerifyModal?.resetSuccess || "Password reset successfully!"
+      );
 
       // Wait a moment to show success message then close
-      setTimeout(() => {
+      timerRef.current = setTimeout(() => {
         onPasswordResetSuccess();
       }, 1500);
     } catch (err: any) {
-      setError(err?.response?.data?.message || "Password reset failed. Please try again.");
+      setError(
+        err?.response?.data?.message ||
+          dictionary?.header?.passwordResetVerifyModal?.resetFailed ||
+          "Password reset failed. Please try again."
+      );
     } finally {
+      submittingRef.current = false;
       setLoading(false);
     }
   };
@@ -245,13 +277,13 @@ const PasswordResetVerifyModal = ({
           <PrimaryButton
             text={
               loading
-                ? "Resetting..."
+                ? dictionary?.header?.passwordResetVerifyModal?.resetting || "Resetting..."
                 : dictionary?.header?.passwordResetVerifyModal?.button1 || "Reset Password"
             }
             width="460px"
             height="50px"
             onClick={handleSubmit}
-            disabled={loading}
+            disabled={loading || !!success}
           />
         </StyledPrimaryButton>
       </StyledContainer>

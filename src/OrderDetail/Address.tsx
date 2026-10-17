@@ -1,6 +1,7 @@
 import styled from "styled-components";
 import Image from "next/image";
 import type { ClientAddress as AddressType } from "@/api/generated/interfaces";
+import { mapAddressTypeToPlace } from "@/utils/addressHelpers";
 
 const AddressCard = styled.div`
   display: flex;
@@ -55,14 +56,22 @@ interface AddressProps {
     succsessOrder?: {
       cardTitle1?: string;
       cardDescription1?: string;
+      address?: string;
     };
     address?: {
+      cardTitle2?: string;
       cardTitle3?: string;
+      cardTitle4?: string;
+      addressOption1?: string;
+      addressOption2?: string;
+      addressOption3?: string;
       cardDescription1?: string;
     };
   };
   address?: AddressType;
 }
+
+const CANONICAL_LABELS = ["home", "work", "other"];
 
 const Address = ({ dictionary, address }: AddressProps) => {
   // If no address provided, show placeholder
@@ -86,13 +95,18 @@ const Address = ({ dictionary, address }: AddressProps) => {
     );
   }
 
+  const rawLabel = typeof address.label === "string" ? address.label : String(address.label ?? "");
+  const title = CANONICAL_LABELS.includes(rawLabel.trim().toLowerCase())
+    ? mapAddressTypeToPlace(rawLabel, dictionary?.address || {})
+    : rawLabel.trim() || dictionary?.succsessOrder?.address || "Address";
+
   return (
     <AddressCard>
       <IconWrapper>
         <Image src={"/assets/addressIcon.svg"} alt="icon" width={24} height={24} />
       </IconWrapper>
       <InfoWrapper>
-        <Title>{address.label || "Address"}</Title>
+        <Title>{title}</Title>
         <Add>{address.address || address.city}</Add>
       </InfoWrapper>
     </AddressCard>

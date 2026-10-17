@@ -78,7 +78,7 @@
 
 // export default NewProductCard;
 
-import React, { useEffect, useState } from "react";
+import React from "react";
 import styled from "styled-components";
 import Image from "next/image";
 import Link from "next/link";
@@ -88,21 +88,6 @@ import { ProductList } from "@/api/generated/interfaces";
 import { usePathname } from "next/navigation";
 import ProductHeartIcon from "@/components/ListProductCard/ProductHeartIcon";
 import { getLocaleFromPath } from "@/utils/getLocaleFromPath";
-
-const useIsMobile = (breakpoint = 1080) => {
-  const [isMobile, setIsMobile] = useState(false);
-
-  useEffect(() => {
-    const handleResize = () => {
-      setIsMobile(window.innerWidth < breakpoint);
-    };
-    handleResize();
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
-  }, [breakpoint]);
-
-  return isMobile;
-};
 
 const StyledContainer = styled.div`
   background-color: #141414;
@@ -181,7 +166,6 @@ const StyledLink = styled(Link)`
 `;
 
 const NewProductCard = ({ product }: { product: ProductList; dictionary: any }) => {
-  const isMobile = useIsMobile();
   const pathname = usePathname();
   const language = getLocaleFromPath(pathname);
   const locale = (pathname?.split("/")[1] || "ge").toLowerCase();
@@ -221,16 +205,18 @@ const NewProductCard = ({ product }: { product: ProductList; dictionary: any }) 
             <ZoomedImage
               src={imageUrl}
               alt={productName || "Product"}
-              width={isMobile ? 175 : 239}
-              height={isMobile ? 188 : 257}
+              width={239}
+              height={257}
+              sizes="(max-width: 768px) 177px, 242px"
               draggable="false"
             />
           ) : (
             <ZoomedImage
-              src="/assets/desktopLampa.svg"
+              src="/assets/desktopLampa.webp"
               alt="Default light"
-              width={isMobile ? 175 : 239}
-              height={isMobile ? 188 : 257}
+              width={239}
+              height={257}
+              sizes="(max-width: 768px) 177px, 242px"
               draggable="false"
             />
           )}

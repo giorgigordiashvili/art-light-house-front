@@ -1,4 +1,5 @@
 "use client";
+import type { Dictionary } from "@/config/get-dictionary";
 import styled from "styled-components";
 import OrderMain from "@/MyOrders/OrderMain";
 import Circle from "@/components/ui/Circle";
@@ -36,7 +37,7 @@ const StyledCircle = styled.div`
   }
 `;
 
-const OrdersScreen = ({ dictionary }: any) => {
+const OrdersScreen = ({ dictionary }: { dictionary: Pick<Dictionary, "orders"> }) => {
   const { isAuthenticated, isLoading } = useAuth();
   const router = useRouter();
 

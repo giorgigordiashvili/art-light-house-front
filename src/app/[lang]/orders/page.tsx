@@ -26,5 +26,5 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 export default async function OrdersPage({ params }: PageProps) {
   const { lang } = await params;
   const dictionary = await getDictionary(isLocale(lang) ? lang : "ge");
-  return <OrdersScreen dictionary={dictionary} />;
+  return <OrdersScreen dictionary={{ orders: dictionary.orders }} />;
 }

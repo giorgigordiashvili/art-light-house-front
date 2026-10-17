@@ -1,10 +1,25 @@
-import React from "react";
+"use client";
+
+import React, { useEffect, useRef, useState } from "react";
 import styled from "styled-components";
 import dynamic from "next/dynamic";
 import Data from "./Data";
 import GoogleMapButton from "./GoogleMapButton";
 
 const GoogleMap = dynamic(() => import("./GoogleMap"), { ssr: false });
+
+// Reserves the map's box (matches StyledMap in GoogleMap.tsx) so nothing shifts
+// while the map is deferred or its chunk is still loading.
+const MapSlot = styled.div<{ $fullheight?: boolean }>`
+  min-height: ${({ $fullheight }) => ($fullheight ? 400 : 241)}px;
+  border-radius: 24px;
+  background: #1a1a1a;
+  overflow: hidden;
+
+  @media (max-width: 1080px) {
+    border-radius: 12px;
+  }
+`;
 
 const OuterContainer = styled.div<{ side?: "left" | "right"; $fullwidth?: boolean }>`
   border-radius: 32px;
@@ -94,10 +109,38 @@ const ContactCard = ({
   const workingHours = branchData?.custom_data?.working_hours || dictionary.hours;
   const googleMapsUrl = branchData?.custom_data?.google_maps_url || "";
 
+  // Defer loading Google Maps until the card is near the viewport
+  const mapRef = useRef<HTMLDivElement>(null);
+  const [showMap, setShowMap] = useState(false);
+
+  useEffect(() => {
+    if (showMap) return;
+    const el = mapRef.current;
+    if (!el || typeof IntersectionObserver === "undefined") {
+      setShowMap(true);
+      return;
+    }
+    const obs = new IntersectionObserver(
+      ([entry]) => {
+        if (entry?.isIntersecting) {
+          setShowMap(true);
+          obs.disconnect();
+        }
+      },
+      { rootMargin: "300px 0px" }
+    );
+    obs.observe(el);
+    return () => obs.disconnect();
+  }, [showMap]);
+
   return (
     <OuterContainer side={side} $fullwidth={fullwidth}>
       <StyledContainer>
-        <GoogleMap dictionary={dictionary} location={mapPosition} fullheight={fullwidth} />
+        <MapSlot ref={mapRef} $fullheight={fullwidth}>
+          {showMap && (
+            <GoogleMap dictionary={dictionary} location={mapPosition} fullheight={fullwidth} />
+          )}
+        </MapSlot>
         <StyledAction>
           <div style={{ flex: 1, minWidth: 0 }}>
             <Data

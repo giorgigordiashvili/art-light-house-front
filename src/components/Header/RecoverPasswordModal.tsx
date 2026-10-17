@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import styled from "styled-components";
 import InputTitle from "./InputTitle";
 import ModalInput from "./ModalInput";
@@ -87,6 +87,15 @@ const RecoverPasswordModal = ({
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
+  const submittingRef = useRef(false);
+  const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  useEffect(
+    () => () => {
+      if (timerRef.current) clearTimeout(timerRef.current);
+    },
+    []
+  );
 
   const handleClickInside = (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -100,16 +109,21 @@ const RecoverPasswordModal = ({
   };
 
   const handleSubmit = async () => {
+    if (submittingRef.current || loading || success) return;
     if (!email.trim()) {
-      setError("Email is required");
+      setError(dictionary?.header?.passwordRecoveryModal?.emailRequired || "Email is required");
       return;
     }
 
     if (!email.includes("@")) {
-      setError("Please enter a valid email address");
+      setError(
+        dictionary?.header?.passwordRecoveryModal?.invalidEmail ||
+          "Please enter a valid email address"
+      );
       return;
     }
 
+    submittingRef.current = true;
     try {
       setLoading(true);
       setError("");
@@ -120,15 +134,22 @@ const RecoverPasswordModal = ({
       };
 
       await passwordResetRequest(requestData);
-      setSuccess("Reset code sent to your email");
+      setSuccess(
+        dictionary?.header?.passwordRecoveryModal?.codeSent || "Reset code sent to your email"
+      );
 
       // Wait a moment to show success message then proceed to verification
-      setTimeout(() => {
+      timerRef.current = setTimeout(() => {
         onPasswordResetRequested(email.trim());
       }, 1500);
     } catch (err: any) {
-      setError(err?.response?.data?.message || "Failed to send reset code. Please try again.");
+      setError(
+        err?.response?.data?.message ||
+          dictionary?.header?.passwordRecoveryModal?.sendFailed ||
+          "Failed to send reset code. Please try again."
+      );
     } finally {
+      submittingRef.current = false;
       setLoading(false);
     }
   };
@@ -169,12 +190,14 @@ const RecoverPasswordModal = ({
         <StyledPrimaryButton>
           <PrimaryButton
             text={
-              loading ? "Sending..." : dictionary?.header?.passwordRecoveryModal?.button1 || "Send"
+              loading
+                ? dictionary?.header?.passwordRecoveryModal?.sending || "Sending..."
+                : dictionary?.header?.passwordRecoveryModal?.button1 || "Send"
             }
             width="460px"
             height="50px"
             onClick={handleSubmit}
-            disabled={loading}
+            disabled={loading || !!success}
           />
         </StyledPrimaryButton>
       </StyledContainer>

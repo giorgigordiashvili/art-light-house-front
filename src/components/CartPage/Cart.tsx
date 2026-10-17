@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import styled, { css } from "styled-components";
 import FavoriteCard from "../FavoritesPage/FavoriteCard";
 import ContactTitle from "../Contact/ContactTitle";
@@ -88,8 +88,12 @@ function pickLocalized(value: any, fallback = ""): string {
 const Cart = ({ dictionary }: any) => {
   const [isMobile, setIsMobile] = useState(false);
   const [cart, setCart] = useState<Cart | null>(null);
-  const [loading, setLoading] = useState(false);
-  const { isAuthenticated } = useAuth();
+  const [loading, setLoading] = useState(true);
+  const { isAuthenticated, isLoading: authLoading } = useAuth();
+  // Per-item in-flight guard so rapid clicks don't send stale quantities
+  const pendingRef = useRef<Set<number>>(new Set());
+  // Request sequence counter so out-of-order cart responses are ignored
+  const seqRef = useRef(0);
 
   useEffect(() => {
     const handleResize = () => {
@@ -104,7 +108,9 @@ const Cart = ({ dictionary }: any) => {
   const fetchCart = async () => {
     try {
       setLoading(true);
+      const mySeq = ++seqRef.current;
       const data = await ecommerceClientCartGetOrCreateRetrieve();
+      if (mySeq !== seqRef.current) return;
       const normalized = (data as any)?.cart ? (data as any).cart : (data as any);
       setCart(normalized as Cart);
     } catch {
@@ -126,7 +132,10 @@ const Cart = ({ dictionary }: any) => {
   };
 
   useEffect(() => {
+    // Wait for auth to resolve so logged-in users don't see a flash of the empty cart
+    if (authLoading) return;
     if (!isAuthenticated) {
+      setLoading(false);
       setCart({
         id: 0,
         client: 0,
@@ -142,7 +151,7 @@ const Cart = ({ dictionary }: any) => {
       return;
     }
     fetchCart();
-  }, [isAuthenticated]);
+  }, [isAuthenticated, authLoading]);
 
   // Keep cart page in sync with external cart changes (e.g., updates from modal)
   useEffect(() => {
@@ -174,70 +183,85 @@ const Cart = ({ dictionary }: any) => {
     };
   }, []);
 
+  const refreshCart = async () => {
+    const mySeq = ++seqRef.current;
+    const updated = await ecommerceClientCartGetOrCreateRetrieve();
+    if (mySeq !== seqRef.current) return;
+    const normalized = (updated as any)?.cart ? (updated as any).cart : (updated as any);
+    setCart(normalized as Cart);
+    try {
+      const count =
+        normalized.items?.reduce((acc: number, it: any) => acc + (it.quantity || 0), 0) || 0;
+      if (typeof window !== "undefined") {
+        window.dispatchEvent(
+          new CustomEvent("cartUpdated", { detail: { count, cart: normalized } })
+        );
+      }
+    } catch {}
+  };
+
+  // After a failed mutation, make the UI match the server again
+  const resyncCart = async () => {
+    try {
+      await refreshCart();
+    } catch {}
+  };
+
+  const runItemAction = async (itemId: number, fn: () => Promise<void>) => {
+    if (pendingRef.current.has(itemId)) return;
+    pendingRef.current.add(itemId);
+    try {
+      await fn();
+    } finally {
+      pendingRef.current.delete(itemId);
+    }
+  };
+
+  const removeItem = async (itemId: number) => {
+    try {
+      await ecommerceClientCartItemsDestroy(String(itemId));
+      await refreshCart();
+    } catch {
+      await resyncCart();
+    }
+  };
+
   const handleIncrease = async (itemId: number, current: number) => {
     if (!isAuthenticated) return;
-    const item = cart?.items?.find((it) => it.id === itemId);
-    if (item && !canAddMore(item.product, current)) {
-      showStockLimitToast(getStockLimit(item.product));
-      return;
-    }
-    try {
-      await ecommerceClientCartItemsPartialUpdate(String(itemId), { quantity: current + 1 });
-      const updated = await ecommerceClientCartGetOrCreateRetrieve();
-      const normalized = (updated as any)?.cart ? (updated as any).cart : (updated as any);
-      setCart(normalized as Cart);
+    await runItemAction(itemId, async () => {
+      const item = cart?.items?.find((it) => it.id === itemId);
+      if (item && !canAddMore(item.product, current)) {
+        showStockLimitToast(getStockLimit(item.product));
+        return;
+      }
       try {
-        const count =
-          normalized.items?.reduce((acc: number, it: any) => acc + (it.quantity || 0), 0) || 0;
-        if (typeof window !== "undefined") {
-          window.dispatchEvent(
-            new CustomEvent("cartUpdated", { detail: { count, cart: normalized } })
-          );
-        }
-      } catch {}
-    } catch {}
+        await ecommerceClientCartItemsPartialUpdate(String(itemId), { quantity: current + 1 });
+        await refreshCart();
+      } catch {
+        await resyncCart();
+      }
+    });
   };
 
   const handleDecrease = async (itemId: number, current: number) => {
     if (!isAuthenticated) return;
-    if (current <= 1) {
-      await handleRemove(itemId);
-      return;
-    }
-    try {
-      await ecommerceClientCartItemsPartialUpdate(String(itemId), { quantity: current - 1 });
-      const updated = await ecommerceClientCartGetOrCreateRetrieve();
-      const normalized = (updated as any)?.cart ? (updated as any).cart : (updated as any);
-      setCart(normalized as Cart);
+    await runItemAction(itemId, async () => {
+      if (current <= 1) {
+        await removeItem(itemId);
+        return;
+      }
       try {
-        const count =
-          normalized.items?.reduce((acc: number, it: any) => acc + (it.quantity || 0), 0) || 0;
-        if (typeof window !== "undefined") {
-          window.dispatchEvent(
-            new CustomEvent("cartUpdated", { detail: { count, cart: normalized } })
-          );
-        }
-      } catch {}
-    } catch {}
+        await ecommerceClientCartItemsPartialUpdate(String(itemId), { quantity: current - 1 });
+        await refreshCart();
+      } catch {
+        await resyncCart();
+      }
+    });
   };
 
   const handleRemove = async (itemId: number) => {
     if (!isAuthenticated) return;
-    try {
-      await ecommerceClientCartItemsDestroy(String(itemId));
-      const updated = await ecommerceClientCartGetOrCreateRetrieve();
-      const normalized = (updated as any)?.cart ? (updated as any).cart : (updated as any);
-      setCart(normalized as Cart);
-      try {
-        const count =
-          normalized.items?.reduce((acc: number, it: any) => acc + (it.quantity || 0), 0) || 0;
-        if (typeof window !== "undefined") {
-          window.dispatchEvent(
-            new CustomEvent("cartUpdated", { detail: { count, cart: normalized } })
-          );
-        }
-      } catch {}
-    } catch {}
+    await runItemAction(itemId, () => removeItem(itemId));
   };
 
   return (

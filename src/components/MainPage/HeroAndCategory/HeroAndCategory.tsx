@@ -14,6 +14,17 @@ import SectionTitle from "../SectionTitle";
 import Container from "../../ui/Container";
 import CategorySection from "./CategorySection";
 import type { HomepageSection } from "@/types/homepage";
+import { i18n } from "@/config/i18n";
+
+const LOCALE_PREFIX_RE = new RegExp(`^/(${i18n.locales.join("|")})(?=[/?#]|$)`);
+
+// Prefix internal CMS links with the current locale so they skip the middleware redirect
+const localizeHref = (raw: string, lang: string) => {
+  if (!raw.startsWith("/") || raw.startsWith("//")) return raw; // absolute, protocol-relative, mailto, #anchor
+  if (LOCALE_PREFIX_RE.test(raw)) return raw; // already has a locale
+  if (/^\/(admin|api|assets)(?=[/?#]|$)/.test(raw)) return raw; // middleware-exempt paths
+  return `/${lang}${raw === "/" ? "" : raw}`;
+};
 
 const StyledContainer = styled.div`
   position: relative;
@@ -151,14 +162,14 @@ const HeroAndCategory = ({ dictionary, homepageSections, lang }: HeroAndCategory
             text: titleWords.slice(1).join(" ") || "",
             description: item.custom_data?.[descriptionKey] || "",
             buttonText: item.custom_data?.[buttonTextKey] || "",
-            href: item.custom_data?.button_link || "/products",
+            href: localizeHref(item.custom_data?.button_link || "/products", lang),
           };
         }) || []
     );
   }, [heroSection, lang]);
 
   // Get background image and color from API or use defaults
-  const backgroundImage = heroSection?.background_image_url || "/assets/BackgroundImage.png";
+  const backgroundImage = heroSection?.background_image_url || "/assets/BackgroundImage.webp";
   const backgroundColor = heroSection?.background_color;
 
   return (
@@ -170,7 +181,7 @@ const HeroAndCategory = ({ dictionary, homepageSections, lang }: HeroAndCategory
           alt="Hero background"
           fill
           priority
-          quality={90}
+          sizes="100vw"
           style={{
             objectFit: "cover",
             objectPosition: "center",

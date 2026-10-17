@@ -133,7 +133,7 @@ const PopularProductCard = ({
           src={image}
           alt={label}
           fill
-          sizes="(max-width: 1080px) 100vw, 50vw"
+          sizes={`(max-width: 1080px) 100vw, ${Number(width) || 511}px`}
           style={{ objectFit: "contain" }}
         />
       </ImageWrapper>

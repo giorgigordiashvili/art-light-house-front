@@ -3,7 +3,8 @@ import { getDictionary } from "@/config/get-dictionary";
 import type { Locale } from "@/config/i18n";
 import type { Metadata } from "next";
 import { fetchServerProductDetail } from "@/api/server-product-detail";
-import { buildSeoMetadata, SITE_URL, SITE_NAME } from "@/lib/seo";
+import { notFound } from "next/navigation";
+import { buildSeoMetadata, safeJsonLd, SITE_URL, SITE_NAME } from "@/lib/seo";
 
 interface ProductDetailsPageProps {
   params: Promise<{ lang: string; id: string }>;
@@ -15,8 +16,14 @@ function isLocale(lang: string): lang is Locale {
   return ["ge", "en"].includes(lang);
 }
 
+// Strict id check: parseInt("12abc") would be 12 and render a duplicate URL
+function isValidProductId(id: string): boolean {
+  return /^\d+$/.test(id);
+}
+
 export async function generateMetadata({ params }: ProductDetailsPageProps): Promise<Metadata> {
   const { lang, id } = await params;
+  if (!isValidProductId(id)) notFound();
   const productId = parseInt(id, 10);
   const resolvedLang = isLocale(lang) ? lang : "ge";
 
@@ -93,9 +100,12 @@ export async function generateMetadata({ params }: ProductDetailsPageProps): Pro
 export default async function ProductDetailsPage({ params }: ProductDetailsPageProps) {
   const { lang, id } = await params;
   const resolvedLang = isLocale(lang) ? lang : "ge";
+  if (!isValidProductId(id)) notFound();
   const dictionary = await getDictionary(resolvedLang);
   const productId = parseInt(id, 10);
-  const { product, error } = await fetchServerProductDetail(resolvedLang, productId);
+  const { product, error, status } = await fetchServerProductDetail(resolvedLang, productId);
+  // Real 404 for deleted/missing products; 5xx and network errors keep the error UI
+  if (!product && status === 404) notFound();
 
   // Build Product JSON-LD structured data
   let productJsonLd: object | null = null;
@@ -168,7 +178,7 @@ export default async function ProductDetailsPage({ params }: ProductDetailsPageP
       {productJsonLd && (
         <script
           type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(productJsonLd) }}
+          dangerouslySetInnerHTML={{ __html: safeJsonLd(productJsonLd) }}
         />
       )}
       <ProductDetailScreen dictionary={dictionary} initialProduct={product} initialError={error} />

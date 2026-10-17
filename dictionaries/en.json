@@ -212,7 +212,10 @@
       "filterOption17": "Compact fluorescent",
       "filterOption18": "RGB lighting",
       "iconAlt": "Filter icon",
+      "placeholder1": "From",
+      "placeholder2": "To",
       "clear": "clear",
+      "close": "close",
       "filterButton": "delete all filters",
       "onSaleTitle": "Sale",
       "onSaleLabel": "On Sale Products"
@@ -322,7 +325,9 @@
     "placeholder2": "E.g. Entrance 2, Floor 4, Apartment 17",
     "button1": "Cancel",
     "button2": "Save",
-    "button3": "default location"
+    "button3": "default location",
+    "deleting": "Deleting...",
+    "deleteError": "Could not delete the address"
   },
   "profile": {
     "title": "My Profile",
@@ -500,7 +505,9 @@
     "year": "Year",
     "location": "Location",
     "noProjectsFound": "No projects found",
-    "noProjectsDescription": "Check back soon for our latest work"
+    "noProjectsDescription": "Check back soon for our latest work",
+    "errorTitle": "Unable to load projects",
+    "notFoundTitle": "Project Not Found"
   },
   "stock": {
     "limitReached": "Only {count} in stock, you can't add more"

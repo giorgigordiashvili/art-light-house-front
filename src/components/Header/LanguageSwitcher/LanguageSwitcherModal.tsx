@@ -68,7 +68,9 @@ const LanguageSwitcherModal = ({ id, onLanguageChange, currentLanguage }: Props)
     if (!pathname) return "/";
     const segments = pathname.split("/");
     segments[1] = locale;
-    return segments.join("/");
+    // Preserve query string (filters, on_sale, search); modal is client-only
+    const search = typeof window !== "undefined" ? window.location.search : "";
+    return segments.join("/") + search;
   };
 
   return (

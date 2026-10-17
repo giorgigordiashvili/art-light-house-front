@@ -80,11 +80,13 @@
 // export default MyDetails;
 "use client";
 import styled from "styled-components";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { useParams } from "next/navigation";
 import DetailBar from "@/components/DetailBar/DetailBar";
 import Personal from "@/components/Profile/PersonalInf";
 import MobileDetailDropdown from "@/components/DetailBar/MobileDetailDropdown";
-import { useProfileData } from "@/hooks/useProfileData";
+import { getCurrentClient } from "@/api/generated/api";
+import { useAuth } from "@/contexts/AuthContext";
 
 const StyledComponent = styled.div`
   margin-top: 80px;
@@ -108,15 +110,9 @@ const Container = styled.div`
   }
 `;
 
-const DesktopWrapper = styled.div`
-  @media (max-width: 1080px) {
-    display: none;
-  }
-`;
-
-const MobileWrapper = styled.div`
-  display: none;
-
+// Single tree for desktop and mobile so the form (and its state) is mounted once.
+// DetailBar hides itself at <=1080px and MobileDetailDropdown hides itself on desktop.
+const PageBody = styled.div`
   @media (max-width: 1080px) {
     display: flex;
     flex-direction: column;
@@ -130,6 +126,11 @@ const ContentWrapper = styled.div`
   width: 100%;
   gap: 20px;
   margin-bottom: 219px;
+
+  @media (max-width: 1080px) {
+    flex-direction: column;
+    margin-bottom: 0;
+  }
 `;
 
 const RightSection = styled.div`
@@ -160,12 +161,52 @@ const PageTitle = styled.h1`
   }
 `;
 
-const DetailBarWrapper = styled.div<{ $isOpen: boolean }>`
-  display: ${({ $isOpen }) => ($isOpen ? "block" : "none")};
-  margin-bottom: 20px;
+const ErrorCard = styled.div`
+  width: 100%;
+  border-radius: 17px;
+  border: 1px solid #ffffff12;
+  background: #1a1a1a96;
+  backdrop-filter: blur(114px);
+  padding: 32px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
 
-  @media (min-width: 1081px) {
-    display: none;
+  p {
+    color: #999;
+    font-size: 18px;
+    text-align: center;
+    margin: 0;
+  }
+
+  @media (max-width: 1080px) {
+    padding: 24px;
+  }
+`;
+
+const RetryButton = styled.button`
+  min-width: 143px;
+  height: 48px;
+  padding: 0 20px;
+  border: none;
+  border-radius: 10px;
+  background: #ffcb40;
+  color: #000000;
+  font-family: "Helvetica";
+  font-weight: 700;
+  font-size: 14px;
+  line-height: 28px;
+  cursor: pointer;
+  transition: color 0.2s ease-in-out;
+
+  &:hover {
+    color: #fafafa;
+  }
+
+  &:disabled {
+    cursor: not-allowed;
+    opacity: 0.7;
   }
 `;
 
@@ -257,51 +298,104 @@ const SkeletonButton = styled.div`
 `;
 
 const MyDetails = ({ dictionary }: any) => {
-  const [isDropdownOpen] = useState(false);
-  const { profileData, isLoading, error } = useProfileData();
+  const params = useParams();
+  const isGeorgian = params?.lang !== "en";
+  const { user, isAuthenticated, isLoading: authLoading, updateUser } = useAuth();
+  const [isRefreshing, setIsRefreshing] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-  // Show error state if there's an error
-  if (error) {
-  }
+  // Keep the latest values in refs so the refresh does not depend on unstable identities
+  const userRef = useRef(user);
+  userRef.current = user;
+  const updateUserRef = useRef(updateUser);
+  updateUserRef.current = updateUser;
+
+  // AuthContext already holds the current client, so the form renders from it right away.
+  // The request below only refreshes it in the background (cookie auth does not re-verify
+  // the stored user) and keeps AuthContext/localStorage in sync.
+  const refreshProfile = async () => {
+    if (!isAuthenticated) {
+      setError("User not authenticated");
+      return;
+    }
+
+    try {
+      setIsRefreshing(true);
+      setError(null);
+      const data = await getCurrentClient();
+      if (JSON.stringify(data) !== JSON.stringify(userRef.current)) {
+        updateUserRef.current(data);
+      }
+    } catch (err: any) {
+      setError(err?.message || "Failed to fetch profile data");
+    } finally {
+      setIsRefreshing(false);
+    }
+  };
+
+  useEffect(() => {
+    if (authLoading) return;
+    refreshProfile();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [authLoading, isAuthenticated]);
+
+  const profileData = user;
+  const isLoading = authLoading || (!profileData && isRefreshing);
+  const showError = !isLoading && !!error && !profileData;
+
+  const skeleton = (
+    <SkeletonProfileCard>
+      <SkeletonRow>
+        <SkeletonField>
+          <SkeletonLabel />
+          <SkeletonInput />
+        </SkeletonField>
+        <SkeletonField>
+          <SkeletonLabel />
+          <SkeletonInput />
+        </SkeletonField>
+      </SkeletonRow>
+      <SkeletonRow>
+        <SkeletonField>
+          <SkeletonLabel />
+          <SkeletonInput />
+        </SkeletonField>
+        <SkeletonField>
+          <SkeletonLabel />
+          <SkeletonInput />
+        </SkeletonField>
+      </SkeletonRow>
+      <SkeletonRow>
+        <SkeletonField>
+          <SkeletonLabel />
+          <SkeletonInput />
+        </SkeletonField>
+      </SkeletonRow>
+      <SkeletonButton />
+    </SkeletonProfileCard>
+  );
 
   return (
     <StyledComponent>
       <Container>
-        <DesktopWrapper>
+        <PageBody>
           <PageTitle>{dictionary?.profile?.title || "ჩემი პროფილი"}</PageTitle>
+          <MobileDetailDropdown dictionary={dictionary?.profile} />
           <ContentWrapper>
             <DetailBar dictionary={dictionary?.profile} />
             <RightSection>
               {isLoading ? (
-                <SkeletonProfileCard>
-                  <SkeletonRow>
-                    <SkeletonField>
-                      <SkeletonLabel />
-                      <SkeletonInput />
-                    </SkeletonField>
-                    <SkeletonField>
-                      <SkeletonLabel />
-                      <SkeletonInput />
-                    </SkeletonField>
-                  </SkeletonRow>
-                  <SkeletonRow>
-                    <SkeletonField>
-                      <SkeletonLabel />
-                      <SkeletonInput />
-                    </SkeletonField>
-                    <SkeletonField>
-                      <SkeletonLabel />
-                      <SkeletonInput />
-                    </SkeletonField>
-                  </SkeletonRow>
-                  <SkeletonRow>
-                    <SkeletonField>
-                      <SkeletonLabel />
-                      <SkeletonInput />
-                    </SkeletonField>
-                  </SkeletonRow>
-                  <SkeletonButton />
-                </SkeletonProfileCard>
+                skeleton
+              ) : showError ? (
+                <ErrorCard>
+                  <p>
+                    {dictionary?.profile?.loadError ||
+                      (isGeorgian ? "პროფილის ჩატვირთვა ვერ მოხერხდა" : "Failed to load profile")}
+                  </p>
+                  <RetryButton type="button" onClick={refreshProfile} disabled={isRefreshing}>
+                    {dictionary?.profile?.retry || (isGeorgian ? "ხელახლა ცდა" : "Try again")}
+                  </RetryButton>
+                </ErrorCard>
               ) : (
                 <Personal
                   dictionary={dictionary?.profile}
@@ -312,55 +406,7 @@ const MyDetails = ({ dictionary }: any) => {
               )}
             </RightSection>
           </ContentWrapper>
-        </DesktopWrapper>
-
-        <MobileWrapper>
-          <PageTitle>{dictionary?.profile?.title || "ჩემი პროფილი"}</PageTitle>
-          <MobileDetailDropdown dictionary={dictionary?.profile} />
-          <DetailBarWrapper $isOpen={isDropdownOpen}>
-            <DetailBar dictionary={dictionary?.profile} />
-          </DetailBarWrapper>
-          <RightSection>
-            {isLoading ? (
-              <SkeletonProfileCard>
-                <SkeletonRow>
-                  <SkeletonField>
-                    <SkeletonLabel />
-                    <SkeletonInput />
-                  </SkeletonField>
-                  <SkeletonField>
-                    <SkeletonLabel />
-                    <SkeletonInput />
-                  </SkeletonField>
-                </SkeletonRow>
-                <SkeletonRow>
-                  <SkeletonField>
-                    <SkeletonLabel />
-                    <SkeletonInput />
-                  </SkeletonField>
-                  <SkeletonField>
-                    <SkeletonLabel />
-                    <SkeletonInput />
-                  </SkeletonField>
-                </SkeletonRow>
-                <SkeletonRow>
-                  <SkeletonField>
-                    <SkeletonLabel />
-                    <SkeletonInput />
-                  </SkeletonField>
-                </SkeletonRow>
-                <SkeletonButton />
-              </SkeletonProfileCard>
-            ) : (
-              <Personal
-                dictionary={dictionary?.profile}
-                profileData={profileData}
-                isLoading={isLoading}
-                variant="data"
-              />
-            )}
-          </RightSection>
-        </MobileWrapper>
+        </PageBody>
       </Container>
     </StyledComponent>
   );

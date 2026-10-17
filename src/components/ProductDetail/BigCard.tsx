@@ -84,10 +84,12 @@ const BigCard = ({
   product,
   selectedImage,
   setSelectedImage,
+  dictionary,
 }: {
   product: ProductDetail;
   selectedImage: any;
   setSelectedImage: (image: any) => void;
+  dictionary?: any;
 }) => {
   const thumbnailScrollRef = useRef<HTMLDivElement>(null);
   const [isDragging, setIsDragging] = useState(false);
@@ -252,6 +254,8 @@ const BigCard = ({
               displayImage.alt_text || (typeof product.name === "string" ? product.name : "Product")
             }
             fill
+            sizes="(max-width: 1080px) 100vw, 572px"
+            priority
             style={{ objectFit: "contain" }}
           />
         </MainImageWrapper>
@@ -264,7 +268,7 @@ const BigCard = ({
               textAlign: "center",
             }}
           >
-            No image available
+            {dictionary?.productDetails?.noImageAvailable || "No image available"}
           </div>
         </MainImageWrapper>
       )}
@@ -283,6 +287,7 @@ const BigCard = ({
             image={image}
             onClick={() => handleThumbnailClick(image)}
             isSelected={displayImage?.id === image.id}
+            noImageText={dictionary?.productDetails?.noImage}
           />
         ))}
       </InnerWrapper>

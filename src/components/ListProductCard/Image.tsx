@@ -1,8 +1,8 @@
 import React from "react";
 import styled from "styled-components";
 import Image from "next/image";
-import Desktoplampa from "../../../public/assets/desktopLampa.svg";
-import mobilelampa from "../../../public/assets/mobileLampa.svg";
+import Desktoplampa from "../../../public/assets/desktopLampa.webp";
+import mobilelampa from "../../../public/assets/mobileLampa.webp";
 import { ProductList } from "@/api/generated/interfaces";
 
 const StyledLampaImage = styled.div<{ $dimmed?: boolean }>`
@@ -57,53 +57,46 @@ const LampaImage = ({
   // Get product name for alt text (name is translatable, could be string or object)
   const altText = typeof product.name === "string" ? product.name : "Product";
 
+  // Single image for real products (one download, responsive sizes) instead of a
+  // CSS-hidden mobile/desktop pair that doubled requests and priority preloads
+  if (hasValidImage) {
+    return (
+      <StyledLampaImage $dimmed={dimmed}>
+        <Image
+          src={imageUrl}
+          alt={altText}
+          fill
+          style={{ objectFit: "contain" }}
+          sizes="(max-width: 1080px) 130px, 309px"
+          priority={priority}
+          draggable="false"
+        />
+      </StyledLampaImage>
+    );
+  }
+
+  // Fallback placeholders use different crops per breakpoint; not preloaded
   return (
     <StyledLampaImage $dimmed={dimmed}>
       <MobileOnlyIcons>
-        {hasValidImage ? (
-          <Image
-            src={imageUrl}
-            alt={altText}
-            fill
-            style={{ objectFit: "contain" }}
-            sizes="130px"
-            priority={priority}
-            draggable="false"
-          />
-        ) : (
-          <Image
-            src={mobilelampa}
-            alt="Mobile Lampa"
-            fill
-            style={{ objectFit: "contain" }}
-            sizes="130px"
-            priority={priority}
-            draggable="false"
-          />
-        )}
+        <Image
+          src={mobilelampa}
+          alt="Mobile Lampa"
+          fill
+          style={{ objectFit: "contain" }}
+          sizes="130px"
+          draggable="false"
+        />
       </MobileOnlyIcons>
       <DesktopOnlyIcons>
-        {hasValidImage ? (
-          <Image
-            src={imageUrl}
-            alt={altText}
-            fill
-            style={{ objectFit: "contain" }}
-            sizes="309px"
-            priority={priority}
-            draggable="false"
-          />
-        ) : (
-          <Image
-            src={Desktoplampa}
-            alt="Desktop Lampa"
-            fill
-            style={{ objectFit: "contain" }}
-            sizes="309px"
-            priority={priority}
-            draggable="false"
-          />
-        )}
+        <Image
+          src={Desktoplampa}
+          alt="Desktop Lampa"
+          fill
+          style={{ objectFit: "contain" }}
+          sizes="309px"
+          draggable="false"
+        />
       </DesktopOnlyIcons>
     </StyledLampaImage>
   );

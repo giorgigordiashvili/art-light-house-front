@@ -39,7 +39,6 @@ const nextConfig: NextConfig = {
       "swiper",
       "dayjs",
       "@vis.gl/react-google-maps",
-      "@react-google-maps/api",
     ],
   },
 };

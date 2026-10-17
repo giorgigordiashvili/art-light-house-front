@@ -18,6 +18,7 @@ import { useSimilarProducts } from "@/hooks/useSimilarProducts";
 import { canAddMore, getStockLimit } from "@/utils/stock";
 import { showStockLimitToast } from "@/utils/toast";
 import { useAuthModal } from "@/contexts/AuthModalContext";
+import { usePathname, useRouter } from "next/navigation";
 import {
   ecommerceClientCartItemsCreate,
   ecommerceClientCartGetOrCreateRetrieve,
@@ -518,7 +519,11 @@ function DetailMain({
 }) {
   const loading = false; // Server-side data provided; no loading state required
   const { openAuthModal } = useAuthModal();
+  const router = useRouter();
+  const pathname = usePathname();
   const [selectedImage, setSelectedImage] = useState<any>(null);
+  // In-flight guard so rapid clicks can't create duplicate lines or bypass the stock check
+  const busyRef = useRef(false);
 
   // Fetch similar products based on shared attribute values
   const {
@@ -613,23 +618,18 @@ function DetailMain({
 
   const isOutOfStock = product?.is_in_stock === false;
 
-  const handleAddToCart = async () => {
-    if (!product || isOutOfStock) return;
-
-    // Check if user is authenticated
-    const hasToken = typeof window !== "undefined" && !!localStorage.getItem("auth_access_token");
-    if (!hasToken) {
-      // User is not authenticated - open auth modal instead
-      openAuthModal();
-      return;
-    }
-
+  // Shared cart logic for "Add to cart" and "Buy". Returns true when the product is in the cart.
+  const addProductToCart = async ({
+    incrementIfExists,
+  }: {
+    incrementIfExists: boolean;
+  }): Promise<boolean> => {
     try {
       // Ensure we have a cart id first
       const data = await ecommerceClientCartGetOrCreateRetrieve();
       const normalized = (data as any)?.cart ? (data as any).cart : (data as any);
       const cartId = normalized?.id;
-      if (!cartId) return;
+      if (!cartId) return false;
 
       // If product already exists in cart, just increase its quantity
       const existing = Array.isArray(normalized?.items)
@@ -640,10 +640,11 @@ function DetailMain({
         : undefined;
 
       if (existing) {
+        if (!incrementIfExists) return true;
         // Never exceed the available stock - tell the user why nothing happened
         if (!canAddMore(product, existing.quantity || 0)) {
           showStockLimitToast(getStockLimit(product));
-          return;
+          return false;
         }
         await ecommerceClientCartItemsPartialUpdate(String(existing.id), {
           quantity: (existing.quantity || 0) + 1,
@@ -662,7 +663,52 @@ function DetailMain({
           window.dispatchEvent(new CustomEvent("cartUpdated", { detail: { count, cart: n } }));
         }
       } catch {}
-    } catch {}
+      return true;
+    } catch (err) {
+      console.error("Failed to add product to cart", err);
+      return false;
+    }
+  };
+
+  const handleAddToCart = async () => {
+    if (!product || isOutOfStock) return;
+
+    // Check if user is authenticated
+    const hasToken = typeof window !== "undefined" && !!localStorage.getItem("auth_access_token");
+    if (!hasToken) {
+      // User is not authenticated - open auth modal instead
+      openAuthModal();
+      return;
+    }
+
+    if (busyRef.current) return;
+    busyRef.current = true;
+    try {
+      await addProductToCart({ incrementIfExists: true });
+    } finally {
+      busyRef.current = false;
+    }
+  };
+
+  const handleBuy = async () => {
+    if (!product || isOutOfStock) return;
+
+    const hasToken = typeof window !== "undefined" && !!localStorage.getItem("auth_access_token");
+    if (!hasToken) {
+      openAuthModal();
+      return;
+    }
+
+    if (busyRef.current) return;
+    busyRef.current = true;
+    try {
+      const ok = await addProductToCart({ incrementIfExists: false });
+      if (ok) {
+        router.push(`/${pathname.split("/")[1]}/checkout`);
+      }
+    } finally {
+      busyRef.current = false;
+    }
   };
 
   // Set the selected image to primary image when product loads
@@ -746,7 +792,7 @@ function DetailMain({
               justifyContent: "center",
             }}
           >
-            {error || "Product not found"}
+            {dictionary?.productDetails?.notFound || "Product not found"}
           </div>
         </Container>
       </StyledComponent>
@@ -769,26 +815,12 @@ function DetailMain({
             product={product}
             selectedImage={selectedImage}
             setSelectedImage={setSelectedImage}
+            dictionary={dictionary}
           />
           <RightColumn>
             <DetailDescription dictionary={dictionary} product={product} />
             <ButtonRow>
-              <BuyButton
-                dictionary={dictionary}
-                disabled={isOutOfStock}
-                onClick={() => {
-                  const hasToken =
-                    typeof window !== "undefined" && !!localStorage.getItem("auth_access_token");
-                  if (!hasToken) {
-                    openAuthModal();
-                  } else {
-                    // fallback: let BuyButton do its default (redirect)
-                    const pathname = window.location.pathname;
-                    const locale = pathname.split("/")[1];
-                    window.location.href = `/${locale}/checkout`;
-                  }
-                }}
-              />
+              <BuyButton dictionary={dictionary} disabled={isOutOfStock} onClick={handleBuy} />
               <AddToCartButton
                 onClick={handleAddToCart}
                 disabled={isOutOfStock}
@@ -841,7 +873,7 @@ function DetailMain({
               fontSize: "16px",
             }}
           >
-            Error loading similar products: {similarError}
+            {dictionary?.productDetails?.similarProductsError || "Failed to load similar products"}
           </div>
         ) : similarProducts.length === 0 ? (
           <div
@@ -856,7 +888,7 @@ function DetailMain({
               fontSize: "26px",
             }}
           >
-            No similar products found
+            {dictionary?.productDetails?.noSimilarProducts || "No similar products found"}
           </div>
         ) : similarProducts.length > 4 ? (
           <HorizontalScroll

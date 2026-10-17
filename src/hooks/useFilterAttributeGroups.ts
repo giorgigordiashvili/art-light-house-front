@@ -272,7 +272,7 @@ export const useFilterAttributeGroups = (
   language: Locale = "ge",
   initialAttributes?: AttributeDefinition[] | null
 ): UseFilterAttributeGroupsResult => {
-  const [groups, setGroups] = useState<FilterGroup[]>(
+  const [groups, setGroups] = useState<FilterGroup[]>(() =>
     initialAttributes ? buildFilterGroups(initialAttributes, language) : []
   );
   const [loading, setLoading] = useState(!initialAttributes);

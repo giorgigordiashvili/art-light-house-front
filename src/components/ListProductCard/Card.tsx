@@ -1,3 +1,4 @@
+"use client";
 import React from "react";
 import styled from "styled-components";
 import AddButton from "./AddButton";
@@ -6,6 +7,8 @@ import ProductText from "./Text";
 import ProductHeartIcon from "./ProductHeartIcon";
 import { ProductList } from "@/api/generated/interfaces";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { getLocaleFromPath } from "@/utils/getLocaleFromPath";
 
 const StyledRectangle = styled.div`
   width: 308px;
@@ -118,6 +121,7 @@ function Card({
   dictionary: any;
   priority?: boolean;
 }) {
+  const locale = getLocaleFromPath(usePathname());
   const isOutOfStock = product.is_in_stock === false;
 
   const handleInteractiveClick = (e: React.MouseEvent) => {
@@ -127,7 +131,7 @@ function Card({
   };
 
   return (
-    <StyledLink href={`/products/${product.id}`} prefetch={true}>
+    <StyledLink href={`/${locale}/products/${product.id}`} prefetch={true}>
       <StyledRectangle>
         <ClickableArea>
           <div data-heart-button onClick={handleInteractiveClick}>

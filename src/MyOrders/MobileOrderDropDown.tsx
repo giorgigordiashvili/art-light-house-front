@@ -1,15 +1,13 @@
 "use client";
 import styled from "styled-components";
-import { useState } from "react";
 import Image from "next/image";
-import Order from "@/MyOrders/Order";
 
 const Wrapper = styled.div`
   width: 100%;
   max-width: 100%;
   background-color: transparent;
 
-  @media (min-width: 1080px) {
+  @media (min-width: 1081px) {
     display: none;
   }
 `;
@@ -51,16 +49,18 @@ const HeaderRight = styled.div<{ open: boolean }>`
   transform: ${({ open }) => (open ? "rotate(180deg)" : "rotate(0deg)")};
 `;
 
-const DropdownContent = styled.div`
-  margin-top: 8px;
-`;
+type Props = {
+  dictionary: any;
+  open: boolean;
+  onToggle: () => void;
+};
 
-const MobileOrderDropdown = ({ dictionary }: any) => {
-  const [open, setOpen] = useState(false);
-
+// Header only: the single <Order> instance lives in OrderMain and is shown/hidden with CSS,
+// so toggling the dropdown does not remount it and refetch the orders.
+const MobileOrderDropdown = ({ dictionary, open, onToggle }: Props) => {
   return (
     <Wrapper>
-      <DropdownHeader onClick={() => setOpen(!open)}>
+      <DropdownHeader onClick={onToggle}>
         <HeaderLeft>
           <Image src="/assets/icons/Shekvetebi.svg" alt={dictionary.title} width={24} height={24} />
           <span>{dictionary.title}</span>
@@ -74,12 +74,6 @@ const MobileOrderDropdown = ({ dictionary }: any) => {
           />
         </HeaderRight>
       </DropdownHeader>
-
-      {open && (
-        <DropdownContent>
-          <Order dictionary={dictionary} />
-        </DropdownContent>
-      )}
     </Wrapper>
   );
 };

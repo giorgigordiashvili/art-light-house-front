@@ -1,4 +1,5 @@
 "use client";
+import type { Dictionary } from "@/config/get-dictionary";
 import styled from "styled-components";
 import Contact from "@/components/Contact/Contact";
 import NewCircle from "@/components/ui/NewCircle";
@@ -29,7 +30,7 @@ const StyledCircle = styled.div`
 `;
 
 interface ContactScreenProps {
-  dictionary: any;
+  dictionary: Pick<Dictionary, "contact">;
   homepageSections?: any[];
   lang?: string;
 }

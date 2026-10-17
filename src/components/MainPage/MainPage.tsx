@@ -1,5 +1,5 @@
 import React from "react";
-import { motion } from "framer-motion";
+import { LazyMotion, domAnimation, m } from "framer-motion";
 import HeroAndCategory from "@/components/MainPage/HeroAndCategory/HeroAndCategory";
 import NewProducts from "./NewProducts/NewProducts";
 import PopularProducts from "./PopularProducts/PopularProducts";
@@ -7,17 +7,6 @@ import Accomplishments from "./Accomplishments/Accomplishments";
 import Contact from "../Contact/Contact";
 import type { HomepageSection } from "@/types/homepage";
 import type { ProductList } from "@/api/generated/interfaces";
-
-const scaleUp = {
-  hidden: { opacity: 0, scale: 0.8 },
-  visible: {
-    opacity: 1,
-    scale: 1,
-    transition: {
-      duration: 0.6,
-    },
-  },
-};
 
 const fadeInUp = {
   hidden: { opacity: 0, y: 60 },
@@ -44,8 +33,8 @@ const MainPage = ({
   initialFeaturedProducts,
 }: MainPageProps) => {
   return (
-    <>
-      <motion.div initial="hidden" animate="visible" variants={scaleUp}>
+    <LazyMotion features={domAnimation} strict>
+      <div>
         <HeroAndCategory
           dictionary={{
             ...dictionary.hero,
@@ -54,9 +43,9 @@ const MainPage = ({
           homepageSections={homepageSections}
           lang={lang}
         />
-      </motion.div>
+      </div>
 
-      <motion.div
+      <m.div
         initial="hidden"
         whileInView="visible"
         viewport={{ once: true, amount: 0.2 }}
@@ -66,9 +55,9 @@ const MainPage = ({
           dictionary={dictionary.newProducts}
           initialFeaturedProducts={initialFeaturedProducts}
         />
-      </motion.div>
+      </m.div>
 
-      <motion.div
+      <m.div
         initial="hidden"
         whileInView="visible"
         viewport={{ once: true, amount: 0.2 }}
@@ -79,9 +68,9 @@ const MainPage = ({
           homepageSections={homepageSections}
           lang={lang}
         />
-      </motion.div>
+      </m.div>
 
-      <motion.div
+      <m.div
         initial="hidden"
         whileInView="visible"
         viewport={{ once: true, amount: 0.2 }}
@@ -92,9 +81,9 @@ const MainPage = ({
           homepageSections={homepageSections}
           lang={lang}
         />
-      </motion.div>
+      </m.div>
 
-      <motion.div
+      <m.div
         initial="hidden"
         whileInView="visible"
         viewport={{ once: true, amount: 0.2 }}
@@ -106,8 +95,8 @@ const MainPage = ({
           homepageSections={homepageSections}
           lang={lang}
         />
-      </motion.div>
-    </>
+      </m.div>
+    </LazyMotion>
   );
 };
 

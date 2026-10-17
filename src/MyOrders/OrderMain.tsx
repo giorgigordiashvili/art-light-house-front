@@ -25,21 +25,16 @@ const Container = styled.div`
   }
 `;
 
-const DesktopWrapper = styled.div`
+// Single tree for desktop and mobile so <Order> (and its request) is mounted once.
+// DetailBar hides itself at <=1080px; the mobile dropdowns hide themselves on desktop.
+const PageBody = styled.div`
   /* Keep 20px from the viewport edge once the 1292px content no longer fits */
   @media (max-width: 1332px) {
     padding-inline: 20px;
   }
 
   @media (max-width: 1080px) {
-    display: none;
-  }
-`;
-
-const MobileWrapper = styled.div`
-  display: none;
-
-  @media (max-width: 1080px) {
+    padding-inline: 0;
     display: flex;
     flex-direction: column;
     gap: 20px;
@@ -51,6 +46,11 @@ const ContentWrapper = styled.div`
   flex-direction: row;
   width: 100%;
   gap: 24px;
+
+  @media (max-width: 1080px) {
+    flex-direction: column;
+    gap: 20px;
+  }
 `;
 
 const RightSection = styled.div`
@@ -58,6 +58,17 @@ const RightSection = styled.div`
   flex-direction: column;
   flex-grow: 1;
   gap: 20px;
+
+  @media (max-width: 1080px) {
+    gap: 8px;
+  }
+`;
+
+// On mobile the order list is only visible while the dropdown is open
+const OrderSlot = styled.div<{ $open: boolean }>`
+  @media (max-width: 1080px) {
+    display: ${({ $open }) => ($open ? "block" : "none")};
+  }
 `;
 
 const PageTitle = styled.h1`
@@ -80,41 +91,29 @@ const PageTitle = styled.h1`
   }
 `;
 
-const DetailBarWrapper = styled.div<{ $isOpen: boolean }>`
-  display: ${({ $isOpen }) => ($isOpen ? "block" : "none")};
-  margin-bottom: 20px;
-
-  @media (min-width: 1081px) {
-    display: none;
-  }
-`;
-
 const MyOrder = ({ dictionary }: any) => {
-  const [isDropdownOpen] = useState(false);
+  const [isMobileOpen, setIsMobileOpen] = useState(false);
 
   return (
     <StyledComponent>
       <Container>
-        {/* Desktop */}
-        <DesktopWrapper>
+        <PageBody>
           <PageTitle>{dictionary?.title || "My Orders"}</PageTitle>
+          <MobileDetailDropdown dictionary={dictionary} />
           <ContentWrapper>
             <DetailBar dictionary={dictionary} />
             <RightSection>
-              <Order dictionary={dictionary} />
+              <MobileOrderDropdown
+                dictionary={dictionary}
+                open={isMobileOpen}
+                onToggle={() => setIsMobileOpen((prev) => !prev)}
+              />
+              <OrderSlot $open={isMobileOpen}>
+                <Order dictionary={dictionary} />
+              </OrderSlot>
             </RightSection>
           </ContentWrapper>
-        </DesktopWrapper>
-
-        {/* Mobile */}
-        <MobileWrapper>
-          <PageTitle>{dictionary?.title || "My Orders"}</PageTitle>
-          <MobileDetailDropdown dictionary={dictionary} />
-          <MobileOrderDropdown dictionary={dictionary} />
-          <DetailBarWrapper $isOpen={isDropdownOpen}>
-            <DetailBar dictionary={dictionary} />
-          </DetailBarWrapper>
-        </MobileWrapper>
+        </PageBody>
       </Container>
     </StyledComponent>
   );

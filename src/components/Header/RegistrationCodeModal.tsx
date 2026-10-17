@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import styled from "styled-components";
 import PrimaryButton from "../Buttons/PrimaryButton";
 import ModalInput from "./ModalInput";
@@ -96,6 +96,7 @@ const RegistrationCodeModal = ({
 }: RegistrationCodeModalProps) => {
   const [code, setCode] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const submittingRef = useRef(false);
   const [error, setError] = useState("");
   const [isResending, setIsResending] = useState(false);
   const [resendInfo, setResendInfo] = useState("");
@@ -110,12 +111,15 @@ const RegistrationCodeModal = ({
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === "Enter") {
       e.preventDefault();
+      if (!code.trim()) return;
       handleVerify();
     }
   };
 
   const handleVerify = async () => {
+    if (submittingRef.current || isLoading) return;
     try {
+      submittingRef.current = true;
       setIsLoading(true);
       setError("");
       // Always pull the latest token from local state; if missing, fall back to window
@@ -158,6 +162,7 @@ const RegistrationCodeModal = ({
           "Invalid or expired code. Please try again."
       );
     } finally {
+      submittingRef.current = false;
       setIsLoading(false);
     }
   };

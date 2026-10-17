@@ -1,6 +1,6 @@
 "use client";
 import styled from "styled-components";
-import { useState, useMemo, useEffect } from "react";
+import { useState, useMemo, useEffect, useRef } from "react";
 import CheckoutCard from "@/components/Checkout/CheckoutCard";
 import DeliveryOptionCard from "@/components/Checkout/DeliveryOptionCard";
 import InputWithLabel from "@/components/Profile/Input";
@@ -24,6 +24,7 @@ import {
   getStoreTheme,
 } from "@/api/generated/api";
 import { useRouter, usePathname } from "next/navigation";
+import { normalizeCardType } from "@/utils/cardType";
 
 // --------------- styled components ---------------
 const Container = styled.div`
@@ -215,6 +216,15 @@ interface CheckoutProps {
       cashOnDeliveryDesc?: string;
       shippingMethod?: string;
       estimatedDays?: string;
+      errorNoAddress?: string;
+      errorNoPhone?: string;
+      errorNoCard?: string;
+      errorEmptyCart?: string;
+      errorOrderFailed?: string;
+      loadingCards?: string;
+      noCardsSaved?: string;
+      selectCard?: string;
+      loading?: string;
     };
   };
 }
@@ -233,11 +243,13 @@ const Checkout: React.FC<CheckoutProps> = ({ dictionary }) => {
   const [cart, setCart] = useState<Cart | null>(null);
   const [loadingCart, setLoadingCart] = useState(true);
   const [submitting, setSubmitting] = useState(false);
+  // Synchronous in-flight guard so rapid double clicks cannot create two orders
+  const submittingRef = useRef(false);
 
   // Payment method state
   const [paymentType, setPaymentType] = useState<PaymentType>("card");
   const [paymentMethods, setPaymentMethods] = useState<PaymentMethodData[]>([]);
-  const [loadingCards, setLoadingCards] = useState(false);
+  const [loadingCards, setLoadingCards] = useState(true);
   const [selectedPaymentMethodId, setSelectedPaymentMethodId] = useState<string | null>(null);
   const [isPaymentMethodModalOpen, setIsPaymentMethodModalOpen] = useState(false);
 
@@ -248,10 +260,23 @@ const Checkout: React.FC<CheckoutProps> = ({ dictionary }) => {
   // Shipping method state
   const [shippingMethods, setShippingMethods] = useState<ShippingMethod[]>([]);
   const [selectedShippingMethodId, setSelectedShippingMethodId] = useState<number | null>(null);
-  const [loadingShipping, setLoadingShipping] = useState(false);
+  const [loadingShipping, setLoadingShipping] = useState(true);
 
   // Fetch addresses
-  const { addresses } = useAddresses();
+  const { addresses, loading: loadingAddresses } = useAddresses();
+
+  // Re-enable the pay button when the page is restored from the back-forward cache
+  // (e.g. the user pressed Back on the bank payment page)
+  useEffect(() => {
+    const handlePageShow = (e: PageTransitionEvent) => {
+      if (e.persisted) {
+        submittingRef.current = false;
+        setSubmitting(false);
+      }
+    };
+    window.addEventListener("pageshow", handlePageShow);
+    return () => window.removeEventListener("pageshow", handlePageShow);
+  }, []);
 
   // Fetch store theme / payment config
   useEffect(() => {
@@ -301,11 +326,7 @@ const Checkout: React.FC<CheckoutProps> = ({ dictionary }) => {
         if (response && Array.isArray(response)) {
           const transformed: PaymentMethodData[] = response.map((card: any) => ({
             id: card.id?.toString() || "",
-            cardType: (card.card_type?.toLowerCase() === "mastercard"
-              ? "mastercard"
-              : card.card_type?.toLowerCase() === "amex"
-                ? "amex"
-                : "visa") as "visa" | "mastercard" | "amex",
+            cardType: normalizeCardType(card.card_type),
             cardNumber: card.masked_card_number || "",
             cvv: "",
             expiry: card.card_expiry || "",
@@ -401,33 +422,44 @@ const Checkout: React.FC<CheckoutProps> = ({ dictionary }) => {
 
   // Handle payment/order creation
   const handlePayment = async () => {
+    if (submittingRef.current) return;
+    if (loadingCart || loadingShipping || (paymentType === "card" && loadingCards)) return;
+
     if (!currentAddress) {
-      alert("Please select a delivery address");
+      alert(dictionary?.checkout?.errorNoAddress || "Please select a delivery address");
       return;
     }
 
     if (!phoneNumber.trim()) {
-      alert("Please enter a phone number");
+      alert(dictionary?.checkout?.errorNoPhone || "Please enter a phone number");
       return;
     }
 
     if (paymentType === "card" && paymentMethods.length > 0 && !selectedPaymentMethodId) {
-      alert("Please select a payment card");
+      alert(dictionary?.checkout?.errorNoCard || "Please select a payment card");
       return;
     }
 
     if (!cart || cart.items.length === 0) {
-      alert("Your cart is empty");
+      alert(dictionary?.checkout?.errorEmptyCart || "Your cart is empty");
       return;
     }
 
+    submittingRef.current = true;
+    setSubmitting(true);
+
     try {
-      setSubmitting(true);
+      // The order API has no phone field, so pass the phone number to the shop via notes
+      const trimmedPhone = phoneNumber.trim();
+      const phoneLabel = dictionary?.checkout?.subTitle4 || "ტელეფონი";
+      const notes = [`${phoneLabel}: ${trimmedPhone}`, deliveryNotes.trim()]
+        .filter(Boolean)
+        .join("\n");
 
       const orderData: OrderCreateRequest = {
         cart_id: cart.id,
         delivery_address_id: currentAddress.id,
-        notes: deliveryNotes || "",
+        notes,
         ...(selectedShippingMethodId ? { shipping_method_id: selectedShippingMethodId } : {}),
         ...(paymentType === "card" && selectedPaymentMethodId
           ? { card_id: parseInt(selectedPaymentMethodId, 10) }
@@ -436,21 +468,26 @@ const Checkout: React.FC<CheckoutProps> = ({ dictionary }) => {
 
       const response: any = await ecommerceClientOrdersCreate(orderData);
 
+      // On success keep the button disabled while the browser navigates away
       const paymentUrl = response?.payment_url;
       if (paymentUrl) {
         window.location.href = paymentUrl;
         return;
       }
 
-      // Cash on delivery or no payment URL — go to success page
+      // Cash on delivery or no payment URL — refresh the header cart badge, then go to success page
+      window.dispatchEvent(new CustomEvent("cartUpdated"));
       router.push(`/${locale}/succsess`);
     } catch (e) {
       console.error("Order creation failed", e);
-      alert("Failed to create order. Please try again.");
-    } finally {
+      submittingRef.current = false;
       setSubmitting(false);
+      alert(dictionary?.checkout?.errorOrderFailed || "Failed to create order. Please try again.");
     }
   };
+
+  const checkoutBusy =
+    submitting || loadingCart || loadingShipping || (paymentType === "card" && loadingCards);
 
   // Payment method display helpers
   const selectedPaymentMethod =
@@ -477,10 +514,10 @@ const Checkout: React.FC<CheckoutProps> = ({ dictionary }) => {
   const paymentMethodLabel = selectedPaymentMethod
     ? maskNumber(selectedPaymentMethod)
     : loadingCards
-      ? "Loading cards..."
+      ? dictionary?.checkout?.loadingCards || "Loading cards..."
       : paymentMethods.length === 0
-        ? "No cards saved"
-        : "Select card";
+        ? dictionary?.checkout?.noCardsSaved || "No cards saved"
+        : dictionary?.checkout?.selectCard || "Select card";
 
   const paymentMethodTitle = selectedPaymentMethod
     ? dictionary?.checkout?.cardTitle2 || "ბარათი"
@@ -588,7 +625,7 @@ const Checkout: React.FC<CheckoutProps> = ({ dictionary }) => {
           <CardsWrapper>
             <DeliveryOptionCard
               method="..."
-              desc="იტვირთება..."
+              desc={dictionary?.checkout?.loading || "იტვირთება..."}
               imageSrc="/assets/Delivery Icon.svg"
               selected={false}
               onSelect={() => {}}
@@ -620,6 +657,31 @@ const Checkout: React.FC<CheckoutProps> = ({ dictionary }) => {
     );
   };
 
+  // Address card props shared by the desktop and mobile layouts
+  const addressCardProps = {
+    label: dictionary?.checkout?.subTitle1 || "მისამართი",
+    method: currentAddress
+      ? getAddressTypeName(currentAddress.label as any)
+      : dictionary?.checkout?.selectAddress || "მისამართის არჩევა",
+    desc: currentAddress
+      ? `${currentAddress.address}${currentAddress.city ? ", " + currentAddress.city : ""}`
+      : loadingAddresses
+        ? dictionary?.checkout?.loading || "იტვირთება..."
+        : dictionary?.checkout?.noAddresses || "მისამართები არ მოიძებნა",
+    imageSrc: currentAddress
+      ? getAddressTypeIcon(currentAddress.label as any)
+      : "/assets/addressIcon.svg",
+    showChangeButton: true,
+    onChangeClick: () => {
+      if (!loadingAddresses && addresses.length === 0) {
+        router.push(`/${locale}/address`);
+      } else {
+        setIsAddressModalOpen(true);
+      }
+    },
+    dictionary: dictionary?.checkout,
+  };
+
   const summaryDictionary = {
     ...dictionary?.checkout,
     summary: dictionary?.checkout?.summary || "შეჯამება",
@@ -637,29 +699,7 @@ const Checkout: React.FC<CheckoutProps> = ({ dictionary }) => {
 
         <CheckoutContent>
           <LeftSection>
-            <CheckoutCard
-              label={dictionary?.checkout?.subTitle1 || "მისამართი"}
-              method={
-                currentAddress
-                  ? getAddressTypeName(currentAddress.label as any)
-                  : dictionary?.checkout?.cardTitle1 || "სამსახური"
-              }
-              desc={
-                (currentAddress
-                  ? `${currentAddress.address}${currentAddress.city ? ", " + currentAddress.city : ""}`
-                  : undefined) ||
-                dictionary?.checkout?.cardDescription1 ||
-                "5 Petre Kavtaradze Street"
-              }
-              imageSrc={
-                currentAddress
-                  ? getAddressTypeIcon(currentAddress.label as any)
-                  : "/assets/icons/job.svg"
-              }
-              showChangeButton={true}
-              onChangeClick={() => setIsAddressModalOpen(true)}
-              dictionary={dictionary?.checkout}
-            />
+            <CheckoutCard {...addressCardProps} />
 
             {renderPaymentTypeSection()}
             {renderCardSection()}
@@ -670,7 +710,7 @@ const Checkout: React.FC<CheckoutProps> = ({ dictionary }) => {
               dictionary={summaryDictionary}
               cart={cart}
               onPayment={handlePayment}
-              submitting={submitting || loadingCart}
+              submitting={checkoutBusy}
               shippingCost={shippingCost}
             />
           </RightSection>
@@ -698,29 +738,7 @@ const Checkout: React.FC<CheckoutProps> = ({ dictionary }) => {
       <MobileWrapper>
         <PageTitle>{dictionary?.checkout?.title || "შეკვეთის გაფორმება"}</PageTitle>
 
-        <CheckoutCard
-          label={dictionary?.checkout?.subTitle1 || "მისამართი"}
-          method={
-            currentAddress
-              ? getAddressTypeName(currentAddress.label as any)
-              : dictionary?.checkout?.cardTitle1 || "სამსახური"
-          }
-          desc={
-            (currentAddress
-              ? `${currentAddress.address}${currentAddress.city ? ", " + currentAddress.city : ""}`
-              : undefined) ||
-            dictionary?.checkout?.cardDescription1 ||
-            "5 Petre Kavtaradze Street"
-          }
-          imageSrc={
-            currentAddress
-              ? getAddressTypeIcon(currentAddress.label as any)
-              : "/assets/icons/job.svg"
-          }
-          showChangeButton={true}
-          onChangeClick={() => setIsAddressModalOpen(true)}
-          dictionary={dictionary?.checkout}
-        />
+        <CheckoutCard {...addressCardProps} />
 
         {renderPaymentTypeSection()}
         {renderCardSection()}
@@ -730,7 +748,7 @@ const Checkout: React.FC<CheckoutProps> = ({ dictionary }) => {
             dictionary={summaryDictionary}
             cart={cart}
             onPayment={handlePayment}
-            submitting={submitting || loadingCart}
+            submitting={checkoutBusy}
             shippingCost={shippingCost}
           />
         </RightSection>

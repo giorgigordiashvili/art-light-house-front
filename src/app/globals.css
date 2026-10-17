@@ -1,6 +1,8 @@
 @font-face {
   font-family: "Helvetica";
-  src: url("/fonts/helgeo45.ttf") format("truetype");
+  src:
+    url("/fonts/helgeo45.woff2") format("woff2"),
+    url("/fonts/helgeo45.ttf") format("truetype");
   font-weight: normal;
   font-style: normal;
   font-display: swap;
@@ -8,7 +10,9 @@
 
 @font-face {
   font-family: "Helvetica";
-  src: url("/fonts/helgeo75.ttf") format("truetype");
+  src:
+    url("/fonts/helgeo75.woff2") format("woff2"),
+    url("/fonts/helgeo75.ttf") format("truetype");
   font-weight: 700;
   font-style: normal;
   font-display: swap;
@@ -97,7 +101,9 @@ h6 {
 
 @font-face {
   font-family: "HelGeo45";
-  src: url("/fonts/helgeo45.ttf") format("truetype");
+  src:
+    url("/fonts/helgeo45.woff2") format("woff2"),
+    url("/fonts/helgeo45.ttf") format("truetype");
   font-weight: normal;
   font-style: normal;
   font-display: swap;
@@ -105,7 +111,9 @@ h6 {
 
 @font-face {
   font-family: "HelGeo75";
-  src: url("/fonts/helgeo75.ttf") format("truetype");
+  src:
+    url("/fonts/helgeo75.woff2") format("woff2"),
+    url("/fonts/helgeo75.ttf") format("truetype");
   font-weight: bold;
   font-style: normal;
   font-display: swap;
@@ -113,15 +121,9 @@ h6 {
 
 @font-face {
   font-family: "HelRom";
-  src: url("/fonts/helrom.ttf") format("truetype");
-  font-weight: normal;
-  font-style: normal;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: "HelveticaNeueGeo";
-  src: url("/fonts/helvetica-neue-lt-geo-55-ro.ttf") format("truetype");
+  src:
+    url("/fonts/helrom.woff2") format("woff2"),
+    url("/fonts/helrom.ttf") format("truetype");
   font-weight: normal;
   font-style: normal;
   font-display: swap;

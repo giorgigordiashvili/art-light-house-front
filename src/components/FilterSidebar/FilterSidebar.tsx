@@ -4,7 +4,7 @@ import styled from "styled-components";
 import Line from "./Line";
 import PriceFilter from "./PriceFilter";
 import PriceInput from "@/components/ListProductCard/PriceInput";
-import PriceRangeSlider from "./PriceRangeSlider";
+import dynamic from "next/dynamic";
 import PrimaryButton from "../Buttons/PrimaryButton";
 import { useFilterContext } from "@/contexts/FilterContext";
 import CheckboxGroup from "./CheckboxGroup";
@@ -12,6 +12,12 @@ import { useFilterAttributeGroups, FilterGroup } from "@/hooks/useFilterAttribut
 import { usePathname } from "next/navigation";
 import { getLocaleFromPath } from "@/utils/getLocaleFromPath";
 import FiltersLoadingSkeleton from "./FiltersLoadingSkeleton";
+
+// Loaded lazily so MUI/emotion stay out of the initial products bundle
+const PriceRangeSlider = dynamic(() => import("./PriceRangeSlider"), {
+  ssr: false,
+  loading: () => <div style={{ height: 46 }} aria-hidden />,
+});
 
 const SidebarWrapper = styled.div`
   width: 308px;
@@ -201,8 +207,8 @@ function FilterSidebar({ dictionary, initialAttributes }: FilterSidebarProps) {
       <Line />
       <PriceFilter dictionary={dictionary} />
       <StyledInputs>
-        <PriceInput text="დან" type="min" />
-        <PriceInput text="მდე" type="max" />
+        <PriceInput text={dictionary.placeholder1 ?? "დან"} type="min" />
+        <PriceInput text={dictionary.placeholder2 ?? "მდე"} type="max" />
       </StyledInputs>
       <PriceRangeSlider min={0} max={10000} />
       <Line />

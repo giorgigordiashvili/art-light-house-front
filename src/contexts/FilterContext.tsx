@@ -64,6 +64,9 @@ export const FilterProvider: React.FC<FilterProviderProps> = ({ children }) => {
   const [filters, setFilters] = useState<FilterState>({
     selectedCategoryFilters: [],
   });
+  // Always holds the latest filters so updaters called from stale closures
+  // (e.g. debounced inputs) never revert newer changes
+  const filtersRef = useRef<FilterState>(filters);
   const [isInitialized, setIsInitialized] = useState(false);
   const onFilterChangeRef = useRef<((filters: FilterState) => void) | null>(null);
   // Track if we're in the middle of an internal update to avoid loops
@@ -73,6 +76,7 @@ export const FilterProvider: React.FC<FilterProviderProps> = ({ children }) => {
   useEffect(() => {
     const urlSearchParams = new URLSearchParams(window.location.search);
     const initialFilters = parseFiltersFromUrl(urlSearchParams);
+    filtersRef.current = initialFilters;
     setFilters(initialFilters);
     setIsInitialized(true);
   }, []);
@@ -95,20 +99,17 @@ export const FilterProvider: React.FC<FilterProviderProps> = ({ children }) => {
     const filtersChanged = JSON.stringify(newFilters) !== JSON.stringify(filters);
 
     if (filtersChanged) {
+      // Only sync state here. The new server data arrives together with the new
+      // URL, so triggering the loading callback would leave skeletons stuck.
+      filtersRef.current = newFilters;
       setFilters(newFilters);
-      // Trigger immediate filtering when URL changes externally
-      if (onFilterChangeRef.current) {
-        onFilterChangeRef.current(newFilters);
-      }
     }
-  }, [searchParamsString, isInitialized, router, filters]); // Re-run when query string changes
+  }, [searchParamsString, isInitialized, filters]); // Re-run when query string changes
 
-  // Update URL when filters change (but only after initialization)
-  const syncFiltersToUrl = (newFilters: FilterState) => {
-    if (!isInitialized || typeof window === "undefined") return;
-
-    // Mark as internal update to prevent the URL-change effect from re-triggering
-    isInternalUpdate.current = true;
+  // Update URL when filters change (but only after initialization).
+  // Returns true when a navigation was triggered.
+  const syncFiltersToUrl = (newFilters: FilterState): boolean => {
+    if (!isInitialized || typeof window === "undefined") return false;
 
     const current = new URLSearchParams(window.location.search);
 
@@ -122,13 +123,13 @@ export const FilterProvider: React.FC<FilterProviderProps> = ({ children }) => {
       current.delete("categories");
     }
 
-    if (newFilters.minPrice) {
+    if (newFilters.minPrice !== undefined && !Number.isNaN(newFilters.minPrice)) {
       current.set("minPrice", newFilters.minPrice.toString());
     } else {
       current.delete("minPrice");
     }
 
-    if (newFilters.maxPrice) {
+    if (newFilters.maxPrice !== undefined && !Number.isNaN(newFilters.maxPrice)) {
       current.set("maxPrice", newFilters.maxPrice.toString());
     } else {
       current.delete("maxPrice");
@@ -158,74 +159,65 @@ export const FilterProvider: React.FC<FilterProviderProps> = ({ children }) => {
       current.delete("on_sale");
     }
 
-    const newUrl = `${pathname}?${current.toString()}`;
+    const queryString = current.toString();
+    const currentSearch = window.location.search.replace(/^\?/, "");
+    // Nothing changed in the URL: skip the navigation (and the server round-trip)
+    if (queryString === currentSearch) return false;
+
+    // Mark as internal update to prevent the URL-change effect from re-triggering
+    isInternalUpdate.current = true;
+
+    const newUrl = `${pathname}?${queryString}`;
     router.replace(newUrl, { scroll: false });
+    return true;
+  };
+
+  // Apply new filters: update state, sync URL and trigger the loading callback
+  const commitFilters = (newFilters: FilterState) => {
+    filtersRef.current = newFilters;
+    setFilters(newFilters);
+    const navigated = syncFiltersToUrl(newFilters);
+    // Trigger immediate filtering only when a navigation will bring new data,
+    // otherwise the loading state would never be reset
+    if (navigated && onFilterChangeRef.current) {
+      onFilterChangeRef.current(newFilters);
+    }
   };
 
   const updateCategoryFilter = (categoryFilters: string[]) => {
-    const newFilters = {
-      ...filters,
+    commitFilters({
+      ...filtersRef.current,
       selectedCategoryFilters: categoryFilters,
-    };
-    setFilters(newFilters);
-    syncFiltersToUrl(newFilters);
-    // Trigger immediate filtering when categories change
-    if (onFilterChangeRef.current) {
-      onFilterChangeRef.current(newFilters);
-    }
+    });
   };
 
   const updatePriceFilter = (minPrice?: number, maxPrice?: number) => {
-    const newFilters = {
-      ...filters,
+    commitFilters({
+      ...filtersRef.current,
       minPrice,
       maxPrice,
-    };
-    setFilters(newFilters);
-    syncFiltersToUrl(newFilters);
-    // Trigger immediate filtering when price changes
-    if (onFilterChangeRef.current) {
-      onFilterChangeRef.current(newFilters);
-    }
+    });
   };
 
   const updateAttributeFilter = (attributes?: string) => {
-    const newFilters = {
-      ...filters,
+    commitFilters({
+      ...filtersRef.current,
       selectedAttributes: attributes,
-    };
-    setFilters(newFilters);
-    syncFiltersToUrl(newFilters);
-    // Trigger immediate filtering when attributes change
-    if (onFilterChangeRef.current) {
-      onFilterChangeRef.current(newFilters);
-    }
+    });
   };
 
   const updateOrdering = (ordering?: string) => {
-    const newFilters = {
-      ...filters,
+    commitFilters({
+      ...filtersRef.current,
       ordering,
-    };
-    setFilters(newFilters);
-    syncFiltersToUrl(newFilters);
-    // Trigger immediate filtering when ordering changes
-    if (onFilterChangeRef.current) {
-      onFilterChangeRef.current(newFilters);
-    }
+    });
   };
 
   const updateOnSaleFilter = (onSale?: boolean) => {
-    const newFilters = {
-      ...filters,
+    commitFilters({
+      ...filtersRef.current,
       onSale,
-    };
-    setFilters(newFilters);
-    syncFiltersToUrl(newFilters);
-    // Trigger immediate filtering when onSale changes
-    if (onFilterChangeRef.current) {
-      onFilterChangeRef.current(newFilters);
-    }
+    });
   };
 
   const clearFilters = () => {
@@ -239,20 +231,19 @@ export const FilterProvider: React.FC<FilterProviderProps> = ({ children }) => {
       onSale: undefined,
     };
 
+    filtersRef.current = newFilters;
     setFilters(newFilters);
 
-    // Sync cleared filters to URL (removes all query params and page)
-    syncFiltersToUrl(newFilters);
-
-    // Additionally, make sure user is on the base products path
-    // e.g. /ge/products or /en/products (no query string)
-    if (typeof window !== "undefined") {
+    // Navigate once to the base products path (no query string),
+    // e.g. /ge/products or /en/products. Skip if already there.
+    if (typeof window !== "undefined" && window.location.search !== "") {
+      if (isInitialized) isInternalUpdate.current = true;
       router.replace(pathname, { scroll: false });
-    }
 
-    // Trigger immediate filtering when clearing
-    if (onFilterChangeRef.current) {
-      onFilterChangeRef.current(newFilters);
+      // Trigger immediate filtering when clearing
+      if (onFilterChangeRef.current) {
+        onFilterChangeRef.current(newFilters);
+      }
     }
   };
 

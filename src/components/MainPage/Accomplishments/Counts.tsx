@@ -44,13 +44,14 @@ const StyledSubTitle = styled.p`
 `;
 
 type Props = {
-  count: string;
+  count: string | number;
   subTitle: string;
 };
 
 const Counts = (props: Props) => {
-  const hasPlus = props.count.includes("+");
-  const numberOnly = props.count.replace("+", "");
+  const count = String(props.count ?? "");
+  const hasPlus = count.includes("+");
+  const numberOnly = count.replace("+", "");
 
   return (
     <StyledContainer>

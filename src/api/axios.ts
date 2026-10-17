@@ -10,6 +10,88 @@ const getApiUrl = (): string => {
   return apiUrl;
 };
 
+// Endpoints that must be called WITHOUT Authorization header (and never trigger a refresh)
+const authFreePaths = [
+  "/api/ecommerce/clients/login/",
+  "/api/ecommerce/clients/register/",
+  "/api/ecommerce/clients/verify/",
+  "/api/ecommerce/clients/password-reset/request/",
+  "/api/ecommerce/clients/password-reset/confirm/",
+];
+
+// Single in-flight token refresh shared by every axios instance, so concurrent 401s
+// don't each send their own refresh (which breaks with refresh-token rotation)
+let refreshPromise: Promise<string> | null = null;
+
+const clearAuthAndLogout = () => {
+  localStorage.removeItem("auth_access_token");
+  localStorage.removeItem("auth_refresh_token");
+  localStorage.removeItem("auth_user");
+  localStorage.removeItem("artLightHouse_filters");
+
+  // Dispatch a custom event to notify AuthContext about the forced logout
+  const logoutEvent = new CustomEvent("forceLogout", {
+    detail: { reason: "tokenExpired" },
+  });
+  window.dispatchEvent(logoutEvent);
+
+  // Only redirect if we're on a protected page
+  const currentPath = window.location.pathname;
+  if (!currentPath.startsWith("/ge") && !currentPath.startsWith("/en") && currentPath !== "/") {
+    window.location.href = "/";
+  }
+};
+
+const refreshAccessToken = (): Promise<string> => {
+  if (!refreshPromise) {
+    refreshPromise = (async () => {
+      const refreshToken = localStorage.getItem("auth_refresh_token");
+      if (!refreshToken) {
+        throw new Error("No refresh token");
+      }
+
+      // Call ecommerce client refresh token endpoint
+      const response = await axios.post(
+        `${getApiUrl()}/api/ecommerce/clients/refresh-token/`,
+        { refresh: refreshToken },
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      const access: string | undefined = response.data?.access;
+      if (!access) {
+        throw new Error("Refresh response did not include an access token");
+      }
+
+      // Store new access token
+      localStorage.setItem("auth_access_token", access);
+
+      // If a new refresh token is provided, update it as well
+      if (response.data.refresh) {
+        localStorage.setItem("auth_refresh_token", response.data.refresh);
+      }
+
+      return access;
+    })()
+      .catch((refreshError) => {
+        // Only log out when the refresh token was actually rejected; network errors,
+        // timeouts and 5xx keep the session. Runs once per refresh, not per request.
+        const status = axios.isAxiosError(refreshError) ? refreshError.response?.status : undefined;
+        if (status === 400 || status === 401) {
+          clearAuthAndLogout();
+        }
+        throw refreshError;
+      })
+      .finally(() => {
+        refreshPromise = null;
+      });
+  }
+  return refreshPromise;
+};
+
 // Create axios instance with base configuration
 const createAxiosInstance = (baseURL?: string): AxiosInstance => {
   const instance = axios.create({
@@ -29,15 +111,6 @@ const createAxiosInstance = (baseURL?: string): AxiosInstance => {
       } else if (baseURL) {
         config.baseURL = baseURL;
       }
-
-      // Endpoints that must be called WITHOUT Authorization header
-      const authFreePaths = [
-        "/api/ecommerce/clients/login/",
-        "/api/ecommerce/clients/register/",
-        "/api/ecommerce/clients/verify/",
-        "/api/ecommerce/clients/password-reset/request/",
-        "/api/ecommerce/clients/password-reset/confirm/",
-      ];
 
       const urlPath = (config.url || "").toString();
       const isAuthFree = authFreePaths.some((p) => urlPath.includes(p));
@@ -86,6 +159,12 @@ const createAxiosInstance = (baseURL?: string): AxiosInstance => {
     async (error) => {
       const originalRequest = error.config;
 
+      // Never try to refresh for auth endpoints (login, register, etc.)
+      const requestPath = (originalRequest?.url || "").toString();
+      if (!originalRequest || authFreePaths.some((p) => requestPath.includes(p))) {
+        return Promise.reject(error);
+      }
+
       // Check if error is 401 and we haven't already tried to refresh
       if (error.response?.status === 401 && !originalRequest._retry) {
         originalRequest._retry = true;
@@ -97,58 +176,20 @@ const createAxiosInstance = (baseURL?: string): AxiosInstance => {
 
           // Only attempt refresh if we have both tokens and access token is not "cookie-based"
           if (refreshToken && accessToken && accessToken !== "cookie-based") {
+            // If another refresh already finished, retry with the current token right away
+            const sentAuth = originalRequest.headers?.Authorization;
+            if (!refreshPromise && sentAuth && sentAuth !== `Bearer ${accessToken}`) {
+              originalRequest.headers.Authorization = `Bearer ${accessToken}`;
+              return instance(originalRequest);
+            }
+
             try {
-              // Call ecommerce client refresh token endpoint
-              const response = await axios.post(
-                `${getApiUrl()}/api/ecommerce/clients/refresh-token/`,
-                { refresh: refreshToken },
-                {
-                  headers: {
-                    "Content-Type": "application/json",
-                  },
-                }
-              );
+              const newAccess = await refreshAccessToken();
 
-              if (response.data.access) {
-                // Store new access token
-                localStorage.setItem("auth_access_token", response.data.access);
-
-                // If a new refresh token is provided, update it as well
-                if (response.data.refresh) {
-                  localStorage.setItem("auth_refresh_token", response.data.refresh);
-                }
-
-                // Update the failed request with new token
-                originalRequest.headers.Authorization = `Bearer ${response.data.access}`;
-
-                // Retry the original request
-                return instance(originalRequest);
-              }
+              // Update the failed request with new token and retry it
+              originalRequest.headers.Authorization = `Bearer ${newAccess}`;
+              return instance(originalRequest);
             } catch (refreshError) {
-              // Refresh token failed or expired - force logout only if user was authenticated
-              if (accessToken && accessToken !== "cookie-based") {
-                localStorage.removeItem("auth_access_token");
-                localStorage.removeItem("auth_refresh_token");
-                localStorage.removeItem("auth_user");
-                localStorage.removeItem("artLightHouse_filters");
-
-                // Dispatch a custom event to notify AuthContext about the forced logout
-                const logoutEvent = new CustomEvent("forceLogout", {
-                  detail: { reason: "tokenExpired" },
-                });
-                window.dispatchEvent(logoutEvent);
-
-                // Only redirect if we're on a protected page
-                const currentPath = window.location.pathname;
-                if (
-                  !currentPath.startsWith("/ge") &&
-                  !currentPath.startsWith("/en") &&
-                  currentPath !== "/"
-                ) {
-                  window.location.href = "/";
-                }
-              }
-
               return Promise.reject(refreshError);
             }
           } else {

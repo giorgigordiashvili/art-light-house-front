@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React from "react";
 import styled, { css } from "styled-components";
 import Image from "next/image";
 import ProductTitle from "../Header/ProductTitle";
@@ -7,6 +7,7 @@ import ProductPrice from "../Header/ProductPrice";
 import PrimaryButton from "../Buttons/PrimaryButton";
 import QuantitySelector from "../Header/QuantitySelector";
 import CompactButton from "../Buttons/CompactButton";
+import { useMediaQuery } from "@/hooks/useMediaQuery";
 
 type Props = {
   card: "favorite" | "cart";
@@ -150,18 +151,7 @@ const FavoriteCard = ({
   onRemove,
   onDetails,
 }: Props) => {
-  const [isMobile, setIsMobile] = useState(false);
-
-  useEffect(() => {
-    const checkMobile = () => {
-      setIsMobile(window.innerWidth < 1080);
-    };
-
-    checkMobile();
-    window.addEventListener("resize", checkMobile);
-
-    return () => window.removeEventListener("resize", checkMobile);
-  }, []);
+  const isMobile = useMediaQuery("(max-width: 1079.98px)");
 
   const getImageSrc = () => {
     if (!imageSrc) return "/assets/ProductImageContainer.svg";

@@ -7,6 +7,9 @@ import styled from "styled-components";
 import { ecommerceClientFavoritesList, ecommerceClientFavoritesDestroy } from "@/api/generated/api";
 import type { FavoriteProduct } from "@/api/generated/interfaces";
 import EmptyFavoritesCard from "@/components/Favorites/EmptyFavoritesCard";
+import { fetchAllPages } from "@/utils/fetchAllPages";
+
+const FAVORITES_PAGE_EVENT_SOURCE = "favoritesPage";
 
 const StyledContainer = styled.div``;
 
@@ -52,9 +55,9 @@ const Favorites = ({ dictionary }: { dictionary: any }) => {
 
   useEffect(() => {
     let mounted = true;
-    const fetchData = async () => {
+    const fetchData = async ({ background = false }: { background?: boolean } = {}) => {
       try {
-        setLoading(true);
+        if (!background) setLoading(true);
         const hasToken =
           typeof window !== "undefined" && !!localStorage.getItem("auth_access_token");
         if (!hasToken) {
@@ -63,15 +66,19 @@ const Favorites = ({ dictionary }: { dictionary: any }) => {
           setError(null);
           return;
         }
-        const response = await ecommerceClientFavoritesList();
+        const all = await fetchAllPages((p) => ecommerceClientFavoritesList(undefined, p));
         if (!mounted) return;
-        setItems(response.results || []);
+        setItems(all);
+        setError(null);
       } catch (e: any) {
         if (!mounted) return;
         const status = e?.response?.status;
         if (status === 401) {
           setError(null);
           setItems([]);
+        } else if (background) {
+          // keep the currently displayed items if a background refresh fails
+          return;
         } else {
           setError(e?.message || "Failed to load favorites");
           setItems([]);
@@ -83,7 +90,11 @@ const Favorites = ({ dictionary }: { dictionary: any }) => {
     fetchData();
 
     // keep in sync if app dispatches favoritesUpdated
-    const onFavUpdated = () => fetchData();
+    // (ignore events this page dispatches itself; it already updated its state)
+    const onFavUpdated = (e: Event) => {
+      if ((e as CustomEvent).detail?.source === FAVORITES_PAGE_EVENT_SOURCE) return;
+      fetchData({ background: true });
+    };
     if (typeof window !== "undefined") {
       window.addEventListener("favoritesUpdated", onFavUpdated as EventListener);
     }
@@ -150,7 +161,13 @@ const Favorites = ({ dictionary }: { dictionary: any }) => {
                   }).length;
                   window.dispatchEvent(
                     new CustomEvent("favoritesUpdated", {
-                      detail: { count: remaining, hasAny: remaining > 0, productId, removed: true },
+                      detail: {
+                        count: remaining,
+                        hasAny: remaining > 0,
+                        productId,
+                        removed: true,
+                        source: FAVORITES_PAGE_EVENT_SOURCE,
+                      },
                     })
                   );
                 }

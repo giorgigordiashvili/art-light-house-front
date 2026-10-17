@@ -242,7 +242,7 @@ const ProjectDetailScreen = ({
       <StyledComponent>
         <Container>
           <ErrorContainer>
-            <h3>{dictionary.projects?.errorTitle ?? "Project Not Found"}</h3>
+            <h3>{dictionary.projects?.notFoundTitle ?? "Project Not Found"}</h3>
             <p>{error || dictionary.projects?.errorDescription || "Please try again later."}</p>
             <BackButton href={`/${lang}/projects`}>
               <svg fill="currentColor" viewBox="0 0 24 24">
@@ -259,7 +259,7 @@ const ProjectDetailScreen = ({
   const images = project.images || [];
   const hasImages = images.length > 0 || Boolean(project.primary_image_url);
   const currentImage = images[selectedImageIndex] || {
-    image_url: project.primary_image_url || "/assets/placeholder.png",
+    image_url: project.primary_image_url || "/assets/bedroom.webp",
     alt_text: project.title,
   };
 

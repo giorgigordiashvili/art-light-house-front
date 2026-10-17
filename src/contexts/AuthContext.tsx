@@ -44,11 +44,23 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
             setUser(currentUser);
             setToken(storedToken);
             localStorage.setItem(USER_KEY, JSON.stringify(currentUser));
-          } catch {
-            // Token invalid, clear storage
-            localStorage.removeItem(TOKEN_KEY);
-            localStorage.removeItem(REFRESH_KEY);
-            localStorage.removeItem(USER_KEY);
+          } catch (e: any) {
+            const status = e?.response?.status;
+            if (status === 401 || status === 403) {
+              // Token invalid, clear storage
+              localStorage.removeItem(TOKEN_KEY);
+              localStorage.removeItem(REFRESH_KEY);
+              localStorage.removeItem(USER_KEY);
+            } else {
+              // Transient error (network, timeout, 5xx): keep the session.
+              // Re-read storage in case the interceptor already logged out.
+              const tokenNow = localStorage.getItem(TOKEN_KEY);
+              const userNow = localStorage.getItem(USER_KEY);
+              if (tokenNow && userNow) {
+                setToken(tokenNow);
+                setUser(JSON.parse(userNow));
+              }
+            }
           }
         } else if (storedToken === "cookie-based" && storedUser) {
           // Using cookie-based auth, just load user from storage

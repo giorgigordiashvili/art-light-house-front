@@ -1,5 +1,6 @@
 "use client";
 import React, { useEffect, useRef, useState } from "react";
+import dynamic from "next/dynamic";
 import styled from "styled-components";
 import Container from "../ui/Container";
 import Logo from "../Logo/Logo";
@@ -10,21 +11,32 @@ import AuthorizationButton from "./AuthorizationButton";
 import BurgerIcon from "./BurgerIcon";
 import BurgerMenu from "./BurgerMenu";
 import UserMenu from "./UserMenu";
-import AuthorizationModal from "./AuthorizationModal";
-import RecoverPasswordModal from "./RecoverPasswordModal";
-import PasswordResetVerifyModal from "./PasswordResetVerifyModal";
-import RegistrationCodeModal from "./RegistrationCodeModal";
-import RegistrationSuccessModal from "./RegistrationSuccessModal";
 import EmptyCartModal from "./EmptyCartModal";
-import CartModal from "./CartModal";
-import FavoritesModal from "./FavoritesModal";
 import LanguageSwitcher from "./LanguageSwitcher/LanguageSwitcher";
-import LanguageSwitcherModal from "./LanguageSwitcher/LanguageSwitcherModal";
 import { useAuth } from "@/contexts/AuthContext";
 import { useAuthModal } from "@/contexts/AuthModalContext";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 import { ecommerceClientCartGetOrCreateRetrieve } from "@/api/generated/api";
 import { Locale, i18n } from "@/config/i18n";
+
+// Modals render only after user interaction, so load them on demand
+const loadAuthorizationModal = () => import("./AuthorizationModal");
+const loadCartModal = () => import("./CartModal");
+const loadFavoritesModal = () => import("./FavoritesModal");
+const AuthorizationModal = dynamic(loadAuthorizationModal, { ssr: false });
+const RecoverPasswordModal = dynamic(() => import("./RecoverPasswordModal"), { ssr: false });
+const PasswordResetVerifyModal = dynamic(() => import("./PasswordResetVerifyModal"), {
+  ssr: false,
+});
+const RegistrationCodeModal = dynamic(() => import("./RegistrationCodeModal"), { ssr: false });
+const RegistrationSuccessModal = dynamic(() => import("./RegistrationSuccessModal"), {
+  ssr: false,
+});
+const CartModal = dynamic(loadCartModal, { ssr: false });
+const FavoritesModal = dynamic(loadFavoritesModal, { ssr: false });
+const LanguageSwitcherModal = dynamic(() => import("./LanguageSwitcher/LanguageSwitcherModal"), {
+  ssr: false,
+});
 
 const ensureValidLanguage = (lang: string): Locale => {
   return i18n.locales.includes(lang as Locale) ? (lang as Locale) : "ge";
@@ -153,7 +165,6 @@ interface HeaderProps {
 
 const Header = ({ header, dictionary }: HeaderProps) => {
   const pathname = usePathname();
-  const router = useRouter();
   const { isAuthModalOpen, closeAuthModal, openAuthModal } = useAuthModal();
   const [cartItemCount, setCartItemCount] = useState<number>(0);
   const [isBurgerMenuOpen, setIsBurgerMenuOpen] = useState(false);
@@ -168,6 +179,8 @@ const Header = ({ header, dictionary }: HeaderProps) => {
   const [isFavoritesModalOpen, setIsFavoritesModalOpen] = useState(false);
   const [cartIconColor, setCartIconColor] = useState("#fff");
   const [isLanguageSwitcherModalOpen, setIsLanguageSwitcherModalOpen] = useState(false);
+  const [regEmail, setRegEmail] = useState("");
+  const [regToken, setRegToken] = useState("");
   const [selectedLanguage, setSelectedLanguage] = useState<"ge" | "en">(
     (pathname?.split("/")[1] as "ge" | "en") || "ge"
   );
@@ -177,13 +190,22 @@ const Header = ({ header, dictionary }: HeaderProps) => {
   const userMenuRef = useRef<HTMLDivElement>(null);
   const authButtonRef = useRef<HTMLDivElement>(null);
   const originalBodyPaddingRef = useRef<string | null>(null);
+  const isEmptyCartModalOpenRef = useRef(false);
   // const originalBodyBackgroundRef = useRef<string | null>(null);
 
   const toggleBurgerMenu = () => {
     setIsBurgerMenuOpen((prev) => !prev);
   };
 
-  useEffect(() => {}, []);
+  useEffect(() => {
+    isEmptyCartModalOpenRef.current = isEmptyCartModalOpen;
+  }, [isEmptyCartModalOpen]);
+
+  // Safety net: close navigation menus whenever the route changes
+  useEffect(() => {
+    setIsBurgerMenuOpen(false);
+    setIsUserMenuOpen(false);
+  }, [pathname]);
 
   const shouldLockBody =
     isBurgerMenuOpen ||
@@ -194,7 +216,9 @@ const Header = ({ header, dictionary }: HeaderProps) => {
     isCartModalOpen ||
     isFavoritesModalOpen ||
     isLanguageSwitcherModalOpen ||
-    isAuthModalOpen;
+    isAuthModalOpen ||
+    isRegistrationCodeOpen ||
+    isRegistrationSuccessOpen;
 
   useEffect(() => {
     if (typeof window === "undefined") {
@@ -352,7 +376,7 @@ const Header = ({ header, dictionary }: HeaderProps) => {
     setIsFavoritesModalOpen(false);
   };
 
-  const handleCartClick = async () => {
+  const handleCartClick = () => {
     const hasToken = typeof window !== "undefined" && !!localStorage.getItem("auth_access_token");
     if (!hasToken) {
       // User is not authenticated - open auth modal instead
@@ -360,38 +384,38 @@ const Header = ({ header, dictionary }: HeaderProps) => {
       return;
     }
 
-    try {
-      const data = await ecommerceClientCartGetOrCreateRetrieve();
-      const normalized = (data as any)?.cart ? (data as any).cart : (data as any);
-      const count =
-        normalized.items?.reduce((acc: number, it: any) => acc + (it.quantity || 0), 0) || 0;
-      setCartItemCount(count);
-      if (count === 0) {
-        if (isEmptyCartModalOpen) {
-          closeEmptyCartModal();
-        } else {
-          setIsEmptyCartModalOpen(true);
-          setCartIconColor("#FFCB40");
-        }
-      } else {
-        if (isCartModalOpen) {
-          closeCartModal();
-        } else {
-          setIsCartModalOpen(true);
-          setCartIconColor("#FFCB40");
-        }
-      }
+    if (isCartModalOpen) {
+      closeCartModal();
       closeFavoritesModal();
-    } catch {
-      setCartItemCount(0);
-      if (isEmptyCartModalOpen) {
-        closeEmptyCartModal();
-      } else {
-        setIsEmptyCartModalOpen(true);
-        setCartIconColor("#FFCB40");
-      }
-      closeFavoritesModal();
+      return;
     }
+    if (isEmptyCartModalOpen) {
+      closeEmptyCartModal();
+      closeFavoritesModal();
+      return;
+    }
+
+    // Open immediately based on the tracked count; CartModal fetches its own data
+    if (cartItemCount > 0) {
+      setIsCartModalOpen(true);
+    } else {
+      setIsEmptyCartModalOpen(true);
+      // Guard against a stale count of 0: refresh in background and swap if needed
+      ecommerceClientCartGetOrCreateRetrieve()
+        .then((data) => {
+          const normalized = (data as any)?.cart ? (data as any).cart : (data as any);
+          const count =
+            normalized?.items?.reduce((acc: number, it: any) => acc + (it.quantity || 0), 0) || 0;
+          setCartItemCount(count);
+          if (count > 0 && isEmptyCartModalOpenRef.current) {
+            setIsEmptyCartModalOpen(false);
+            setIsCartModalOpen(true);
+          }
+        })
+        .catch(() => {});
+    }
+    setCartIconColor("#FFCB40");
+    closeFavoritesModal();
   };
 
   useEffect(() => {
@@ -414,6 +438,16 @@ const Header = ({ header, dictionary }: HeaderProps) => {
     loadCart();
   }, [isAuthenticated]);
 
+  // Prefetch modal chunks so the first open doesn't lag
+  useEffect(() => {
+    if (!isAuthenticated) {
+      loadAuthorizationModal().catch(() => {});
+    } else {
+      loadCartModal().catch(() => {});
+      loadFavoritesModal().catch(() => {});
+    }
+  }, [isAuthenticated]);
+
   const closeLanguageSwitcherModal = () => {
     setIsLanguageSwitcherModalOpen(false);
   };
@@ -426,14 +460,9 @@ const Header = ({ header, dictionary }: HeaderProps) => {
   };
 
   const handleLanguageChange = (language: "ge" | "en") => {
+    // Navigation is handled by the <Link> in LanguageSwitcherModal
     setSelectedLanguage(language);
     closeLanguageSwitcherModal();
-
-    if (!pathname) return;
-    const segments = pathname.split("/");
-    segments[1] = language;
-    const newPath = segments.join("/");
-    router.push(newPath);
   };
 
   const handleNavItemClick = () => {
@@ -448,7 +477,7 @@ const Header = ({ header, dictionary }: HeaderProps) => {
       <StyledContainer>
         <Container>
           <StyledContentWrapper>
-            <Logo size="small" href="/" />
+            <Logo size="small" href={`/${ensureValidLanguage(pathname?.split("/")[1] ?? "")}`} />
             <StyledActionsWrapper>
               <StyledNavigation>
                 <NavItem
@@ -560,6 +589,10 @@ const Header = ({ header, dictionary }: HeaderProps) => {
               onLanguageChange={handleLanguageChange}
               currentLanguage={ensureValidLanguage(selectedLanguage)}
               onLanguageSwitcherClick={handleLanguageSwitcherClick}
+              onNavigate={() => {
+                setIsBurgerMenuOpen(false);
+                handleNavItemClick();
+              }}
               dictionary={dictionary}
             />
           </div>
@@ -583,11 +616,9 @@ const Header = ({ header, dictionary }: HeaderProps) => {
                     }}
                     onRegisterSuccess={(email?: string, verificationToken?: string) => {
                       setIsUserMenuOpen(false);
+                      setRegEmail(email ?? "");
+                      setRegToken(verificationToken ?? "");
                       setIsRegistrationCodeOpen(true);
-                      // Store email and verification token temporarily on window for passing to code modal
-                      if (email) (window as any).__reg_email = email;
-                      if (verificationToken)
-                        (window as any).__reg_verification_token = verificationToken;
                     }}
                     dictionary={header}
                   />
@@ -641,8 +672,8 @@ const Header = ({ header, dictionary }: HeaderProps) => {
               setIsRegistrationCodeOpen(false);
               setIsRegistrationSuccessOpen(true);
             }}
-            email={(window as any).__reg_email || ""}
-            verificationToken={(window as any).__reg_verification_token || ""}
+            email={regEmail}
+            verificationToken={regToken}
             dictionary={dictionary}
           />
         </>
@@ -720,11 +751,9 @@ const Header = ({ header, dictionary }: HeaderProps) => {
                 }}
                 onRegisterSuccess={(email?: string, verificationToken?: string) => {
                   closeAuthModal();
+                  setRegEmail(email ?? "");
+                  setRegToken(verificationToken ?? "");
                   setIsRegistrationCodeOpen(true);
-                  // Store email and verification token temporarily on window for passing to code modal
-                  if (email) (window as any).__reg_email = email;
-                  if (verificationToken)
-                    (window as any).__reg_verification_token = verificationToken;
                 }}
                 dictionary={header}
               />

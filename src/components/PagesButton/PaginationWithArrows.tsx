@@ -8,6 +8,10 @@ const PaginationWrapper = styled.div`
   align-items: center;
   gap: 34px;
   z-index: 1;
+
+  @media (max-width: 480px) {
+    gap: 20px;
+  }
 `;
 
 const PageNumber = styled.button<{ $active?: boolean }>`
@@ -28,6 +32,33 @@ const PageNumber = styled.button<{ $active?: boolean }>`
   top: ${({ $active }) => ($active ? "0" : "0")}; // თუ გინდა დაბლა დაჯდეს 7პხ
   background-color: ${({ $active }) => ($active ? "#F1C654" : "transparent")};
 `;
+
+const Ellipsis = styled.span`
+  color: #fff;
+  font-size: 16px;
+  min-width: 9px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  user-select: none;
+`;
+
+type PageItem = number | "ellipsis-left" | "ellipsis-right";
+
+const getPageItems = (currentPage: number, totalPages: number): PageItem[] => {
+  if (totalPages <= 7) {
+    return Array.from({ length: totalPages }, (_, i) => i + 1);
+  }
+  const items: PageItem[] = [1];
+  const start = Math.max(2, currentPage - 1);
+  const end = Math.min(totalPages - 1, currentPage + 1);
+  if (currentPage - 1 > 2) items.push("ellipsis-left");
+  for (let page = start; page <= end; page++) items.push(page);
+  if (currentPage + 1 < totalPages - 1) items.push("ellipsis-right");
+  items.push(totalPages);
+  return items;
+};
 
 const PaginationWithArrows = ({
   currentPage,
@@ -65,11 +96,26 @@ const PaginationWithArrows = ({
       >
         <LeftArrow />
       </div>
-      {Array.from({ length: totalPages }, (_, i) => (
-        <PageNumber key={i + 1} $active={i + 1 === currentPage} onClick={() => onPageChange(i + 1)}>
-          {i + 1}
-        </PageNumber>
-      ))}
+      {getPageItems(currentPage, totalPages).map((item) => {
+        if (typeof item !== "number") {
+          return (
+            <Ellipsis key={item} aria-hidden="true">
+              ...
+            </Ellipsis>
+          );
+        }
+        const isActive = item === currentPage;
+        return (
+          <PageNumber
+            key={item}
+            $active={isActive}
+            aria-current={isActive ? "page" : undefined}
+            onClick={isActive ? undefined : () => onPageChange(item)}
+          >
+            {item}
+          </PageNumber>
+        );
+      })}
       <div
         onClick={handleNext}
         style={{ cursor: hasNextPage ? "pointer" : "not-allowed", opacity: hasNextPage ? 1 : 0.5 }}

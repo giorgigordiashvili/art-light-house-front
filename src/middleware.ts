@@ -15,13 +15,17 @@ function getLocale(request: NextRequest): string {
   // Get locale from referrer if it exists
   const referrer = request.headers.get("referer");
   if (referrer) {
-    const referrerUrl = new URL(referrer);
-    const referrerLocale = i18n.locales.find(
-      (locale) =>
-        referrerUrl.pathname.startsWith(`/${locale}/`) || referrerUrl.pathname === `/${locale}`
-    );
-    if (referrerLocale) {
-      return referrerLocale;
+    try {
+      const referrerUrl = new URL(referrer, request.url);
+      const referrerLocale = i18n.locales.find(
+        (locale) =>
+          referrerUrl.pathname.startsWith(`/${locale}/`) || referrerUrl.pathname === `/${locale}`
+      );
+      if (referrerLocale) {
+        return referrerLocale;
+      }
+    } catch {
+      // Ignore malformed referer headers and fall back to the default locale
     }
   }
 
@@ -64,9 +68,10 @@ export default function middleware(request: NextRequest) {
 
     // e.g. incoming request is /products
     // The new URL is now /ge/products
-    return NextResponse.redirect(
-      new URL(`/${locale}${pathname.startsWith("/") ? "" : "/"}${pathname}`, request.url)
-    );
+    // Clone nextUrl so the query string (and basePath) survive the redirect
+    const url = request.nextUrl.clone();
+    url.pathname = `/${locale}${pathname.startsWith("/") ? "" : "/"}${pathname}`;
+    return NextResponse.redirect(url);
   }
 }
 

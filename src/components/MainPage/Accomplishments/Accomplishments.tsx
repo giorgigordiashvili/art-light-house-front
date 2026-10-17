@@ -129,7 +129,7 @@ const Accomplishments = ({ dictionary, homepageSections, lang }: Accomplishments
   // Map statistics to counts
   const labelKey = lang === "en" ? "label_en" : "label_ka";
   const counts = statistics.map((stat: any) => ({
-    count: stat.custom_data?.count || stat.label,
+    count: String(stat.custom_data?.count ?? stat.label?.[apiLang] ?? ""),
     label: stat.custom_data?.[labelKey] || "",
   }));
 
