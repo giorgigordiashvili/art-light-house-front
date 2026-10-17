@@ -14,6 +14,13 @@ const StyledComponent = styled.div`
   align-items: center;
 `;
 
+// Keeps the page content above the decorative BigCircle
+const StyledContent = styled.div`
+  position: relative;
+  z-index: 1;
+  width: 100%;
+`;
+
 const SettingsScreen = ({ dictionary }: any) => {
   const { isAuthenticated, isLoading } = useAuth();
   const router = useRouter();
@@ -34,7 +41,10 @@ const SettingsScreen = ({ dictionary }: any) => {
 
   return (
     <StyledComponent>
-      <Settings dictionary={dictionary.settings}></Settings>
+      <BigCircle variant={2} />
+      <StyledContent>
+        <Settings dictionary={dictionary.settings} />
+      </StyledContent>
     </StyledComponent>
   );
 };

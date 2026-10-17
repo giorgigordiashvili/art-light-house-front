@@ -11,6 +11,8 @@ import {
   ecommerceClientCartItemsPartialUpdate,
   ecommerceClientCartItemsDestroy,
 } from "@/api/generated/api";
+import { canAddMore, getStockLimit } from "@/utils/stock";
+import { showStockLimitToast } from "@/utils/toast";
 import type { Cart } from "@/api/generated/interfaces";
 import { useAuth } from "@/contexts/AuthContext";
 
@@ -174,6 +176,11 @@ const Cart = ({ dictionary }: any) => {
 
   const handleIncrease = async (itemId: number, current: number) => {
     if (!isAuthenticated) return;
+    const item = cart?.items?.find((it) => it.id === itemId);
+    if (item && !canAddMore(item.product, current)) {
+      showStockLimitToast(getStockLimit(item.product));
+      return;
+    }
     try {
       await ecommerceClientCartItemsPartialUpdate(String(itemId), { quantity: current + 1 });
       const updated = await ecommerceClientCartGetOrCreateRetrieve();
@@ -252,6 +259,7 @@ const Cart = ({ dictionary }: any) => {
                   onIncrease={() => handleIncrease(it.id, it.quantity || 1)}
                   onDecrease={() => handleDecrease(it.id, it.quantity || 1)}
                   onRemove={() => handleRemove(it.id)}
+                  canIncrease={canAddMore(it.product, it.quantity || 1)}
                 />
               ))
             ) : (
@@ -266,6 +274,7 @@ const Cart = ({ dictionary }: any) => {
                   onIncrease={() => handleIncrease(it.id, it.quantity || 1)}
                   onDecrease={() => handleDecrease(it.id, it.quantity || 1)}
                   onRemove={() => handleRemove(it.id)}
+                  canIncrease={canAddMore(it.product, it.quantity || 1)}
                 />
               ))
             )

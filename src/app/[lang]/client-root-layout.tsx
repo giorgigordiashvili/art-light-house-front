@@ -11,6 +11,7 @@ import { AuthModalProvider } from "@/contexts/AuthModalContext";
 import { ReactNode, useEffect } from "react";
 import { Dictionary } from "@/config/get-dictionary";
 import QueryProvider from "@/providers/QueryProvider";
+import Toast from "@/components/ui/Toast";
 
 interface ClientRootLayoutProps {
   children: ReactNode;
@@ -46,6 +47,7 @@ export default function ClientRootLayout({ children, dictionary }: ClientRootLay
             {!isAdminRoute && <Header header={dictionary.header} dictionary={dictionary} />}
             {children}
             {!isAdminRoute && <Footer footer={dictionary.footer} />}
+            <Toast dictionary={dictionary} />
           </StyledComponentsRegistry>
         </AuthModalProvider>
       </AuthProvider>

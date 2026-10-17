@@ -8,6 +8,8 @@ import {
   ecommerceClientCartItemsPartialUpdate,
 } from "@/api/generated/api";
 import { useAuthModal } from "@/contexts/AuthModalContext";
+import { canAddMore, getStockLimit } from "@/utils/stock";
+import { showStockLimitToast } from "@/utils/toast";
 
 const StyledButton = styled.button`
   width: 55px;
@@ -28,15 +30,29 @@ const StyledButton = styled.button`
   &:hover {
     box-shadow: 0px 14px 32.8px -8px #f7cb576e;
   }
+
+  &:disabled {
+    opacity: 0.35;
+    cursor: not-allowed;
+    &:hover {
+      box-shadow: none;
+    }
+  }
 `;
 
-const PlusButton = ({ product }: { product?: ProductList }) => {
+const PlusButton = ({
+  product,
+  disabled = false,
+}: {
+  product?: ProductList;
+  disabled?: boolean;
+}) => {
   const { openAuthModal } = useAuthModal();
 
   const handleClick = async (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    if (!product) return;
+    if (!product || disabled) return;
 
     // Check if user is authenticated
     const hasToken = typeof window !== "undefined" && !!localStorage.getItem("auth_access_token");
@@ -61,6 +77,11 @@ const PlusButton = ({ product }: { product?: ProductList }) => {
         : undefined;
 
       if (existing) {
+        // Never exceed the available stock - tell the user why nothing happened
+        if (!canAddMore(product, existing.quantity || 0)) {
+          showStockLimitToast(getStockLimit(product));
+          return;
+        }
         await ecommerceClientCartItemsPartialUpdate(String(existing.id), {
           quantity: (existing.quantity || 0) + 1,
         } as any);
@@ -82,7 +103,7 @@ const PlusButton = ({ product }: { product?: ProductList }) => {
   };
 
   return (
-    <StyledButton type="button" onClick={handleClick} data-plus-button="true">
+    <StyledButton type="button" onClick={handleClick} data-plus-button="true" disabled={disabled}>
       <Image src={"/assets/BlackPlus.svg"} width={28} height={28} alt="plus-icon" />
     </StyledButton>
   );

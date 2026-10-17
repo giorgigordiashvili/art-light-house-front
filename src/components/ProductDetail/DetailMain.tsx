@@ -15,6 +15,8 @@ import Circle from "../ui/Circle";
 import RightSlide from "../MainPage/NewProducts/RightSlide";
 import ReturnIcon from "../Header/ReturnIcon";
 import { useSimilarProducts } from "@/hooks/useSimilarProducts";
+import { canAddMore, getStockLimit } from "@/utils/stock";
+import { showStockLimitToast } from "@/utils/toast";
 import { useAuthModal } from "@/contexts/AuthModalContext";
 import {
   ecommerceClientCartItemsCreate,
@@ -609,8 +611,10 @@ function DetailMain({
     }
   };
 
+  const isOutOfStock = product?.is_in_stock === false;
+
   const handleAddToCart = async () => {
-    if (!product) return;
+    if (!product || isOutOfStock) return;
 
     // Check if user is authenticated
     const hasToken = typeof window !== "undefined" && !!localStorage.getItem("auth_access_token");
@@ -636,6 +640,11 @@ function DetailMain({
         : undefined;
 
       if (existing) {
+        // Never exceed the available stock - tell the user why nothing happened
+        if (!canAddMore(product, existing.quantity || 0)) {
+          showStockLimitToast(getStockLimit(product));
+          return;
+        }
         await ecommerceClientCartItemsPartialUpdate(String(existing.id), {
           quantity: (existing.quantity || 0) + 1,
         } as any);
@@ -766,6 +775,7 @@ function DetailMain({
             <ButtonRow>
               <BuyButton
                 dictionary={dictionary}
+                disabled={isOutOfStock}
                 onClick={() => {
                   const hasToken =
                     typeof window !== "undefined" && !!localStorage.getItem("auth_access_token");
@@ -779,7 +789,11 @@ function DetailMain({
                   }
                 }}
               />
-              <AddToCartButton onClick={handleAddToCart} dictionary={dictionary} />
+              <AddToCartButton
+                onClick={handleAddToCart}
+                disabled={isOutOfStock}
+                dictionary={dictionary}
+              />
             </ButtonRow>
           </RightColumn>
         </FlexRow>

@@ -8,8 +8,10 @@ import {
   ecommerceClientCartItemsPartialUpdate,
 } from "@/api/generated/api";
 import { useAuthModal } from "@/contexts/AuthModalContext";
+import { canAddMore, getStockLimit } from "@/utils/stock";
+import { showStockLimitToast } from "@/utils/toast";
 
-const StyledAddButton = styled.div`
+const StyledAddButton = styled.div<{ $disabled?: boolean }>`
   position: absolute;
   width: 268px;
   height: 55px;
@@ -36,21 +38,41 @@ const StyledAddButton = styled.div`
     /* background-color: #090700; */
     background-color: #030300;
   }
+
+  ${({ $disabled }) =>
+    $disabled &&
+    `
+    opacity: 0.35;
+    cursor: not-allowed;
+    &:hover {
+      background: linear-gradient(
+        92.9deg,
+        rgba(247, 203, 87, 0.4) 3.7%,
+        rgba(216, 177, 70, 0.4) 97.98%
+      );
+    }
+  `}
 `;
 
 type Props = {
   onClick?: () => void;
+  /** Out of stock etc. - the button is shown but does nothing */
+  disabled?: boolean;
 };
 
 const AddButton = ({
   onClick,
+  disabled = false,
   product,
   dictionary,
 }: Props & { product: ProductList; dictionary?: any }) => {
   const { openAuthModal } = useAuthModal();
 
   const handleClick = async (e: React.MouseEvent) => {
+    // Prevent the surrounding product link from navigating
+    e.preventDefault();
     e.stopPropagation();
+    if (disabled) return;
 
     // Check if user is authenticated
     const hasToken = typeof window !== "undefined" && !!localStorage.getItem("auth_access_token");
@@ -75,6 +97,11 @@ const AddButton = ({
         : undefined;
 
       if (existing) {
+        // Never exceed the available stock - tell the user why nothing happened
+        if (!canAddMore(product, existing.quantity || 0)) {
+          showStockLimitToast(getStockLimit(product));
+          return;
+        }
         await ecommerceClientCartItemsPartialUpdate(String(existing.id), {
           quantity: (existing.quantity || 0) + 1,
         } as any);
@@ -97,7 +124,7 @@ const AddButton = ({
   };
 
   return (
-    <StyledAddButton onClick={handleClick} data-add-button="true">
+    <StyledAddButton onClick={handleClick} data-add-button="true" $disabled={disabled}>
       <Image
         src="/assets/plus.svg"
         alt={dictionary?.products?.addToCartAlt || "დამატება"}

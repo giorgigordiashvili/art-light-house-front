@@ -9,6 +9,8 @@ type Props = {
   onIncrease?: () => void;
   onDecrease?: () => void;
   disabled?: boolean;
+  /** Stock limit reached - only the plus control is inactive */
+  canIncrease?: boolean;
 };
 
 const StyledContainer = styled.div<{ size: "small" | "large" }>`
@@ -48,9 +50,11 @@ const QuantitySelector = ({
   onIncrease,
   onDecrease,
   disabled,
+  canIncrease = true,
 }: Props) => {
+  const increaseBlocked = disabled || !canIncrease;
   const increase = () => {
-    if (!disabled && onIncrease) onIncrease();
+    if (!increaseBlocked && onIncrease) onIncrease();
   };
   const decrease = () => {
     if (!disabled && onDecrease) onDecrease();
@@ -67,7 +71,10 @@ const QuantitySelector = ({
       <StyledQuantity>{quantity}</StyledQuantity>
       <div
         onClick={increase}
-        style={{ cursor: disabled ? "not-allowed" : "pointer", opacity: disabled ? 0.6 : 1 }}
+        style={{
+          cursor: increaseBlocked ? "not-allowed" : "pointer",
+          opacity: increaseBlocked ? 0.4 : 1,
+        }}
       >
         <IncreaseIcon />
       </div>

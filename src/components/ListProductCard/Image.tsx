@@ -5,12 +5,15 @@ import Desktoplampa from "../../../public/assets/desktopLampa.svg";
 import mobilelampa from "../../../public/assets/mobileLampa.svg";
 import { ProductList } from "@/api/generated/interfaces";
 
-const StyledLampaImage = styled.div`
+const StyledLampaImage = styled.div<{ $dimmed?: boolean }>`
   position: absolute;
   width: 309px;
   height: 218px;
   top: 30px;
   left: -1px;
+  opacity: ${({ $dimmed }) => ($dimmed ? 0.35 : 1)};
+  filter: ${({ $dimmed }) => ($dimmed ? "grayscale(1)" : "none")};
+  transition: opacity 0.2s ease-in-out;
 
   @media (max-width: 1080px) {
     width: 129.24px;
@@ -39,9 +42,11 @@ const MobileOnlyIcons = styled.div`
 const LampaImage = ({
   product,
   priority = false,
+  dimmed = false,
 }: {
   product: ProductList;
   priority?: boolean;
+  dimmed?: boolean;
 }) => {
   // Use image field from ProductList interface
   const imageUrl = product.image;
@@ -53,7 +58,7 @@ const LampaImage = ({
   const altText = typeof product.name === "string" ? product.name : "Product";
 
   return (
-    <StyledLampaImage>
+    <StyledLampaImage $dimmed={dimmed}>
       <MobileOnlyIcons>
         {hasValidImage ? (
           <Image

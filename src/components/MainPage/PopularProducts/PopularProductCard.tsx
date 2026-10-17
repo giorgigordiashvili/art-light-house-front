@@ -61,7 +61,10 @@ const ImageWrapper = styled.div<{
   left: 0;
   width: 100%;
   height: 100%;
-  transition: transform 0.3s ease;
+
+  img {
+    transition: transform 0.2s ease-in-out;
+  }
 
   ${({ $isRightAligned }) =>
     $isRightAligned &&

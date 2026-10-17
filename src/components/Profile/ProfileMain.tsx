@@ -97,12 +97,14 @@ const StyledComponent = styled.div`
 const Container = styled.div`
   width: 100%;
   max-width: 1292px;
+  /* Keep 20px from the viewport edge once the 1292px content no longer fits */
   @media (max-width: 1332px) {
+    padding-inline: 20px;
   }
 
   @media (max-width: 1080px) {
     max-width: 100%;
-    padding: 0 16px;
+    padding: 0 20px;
   }
 `;
 

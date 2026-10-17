@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import styled from "styled-components";
 import { useRouter } from "next/navigation";
 import ProductContent from "./ProductContent";
@@ -166,9 +166,12 @@ const FavoritesModal = ({ onClose, dictionary }: Props) => {
   const [loading, setLoading] = useState(false);
   const { isAuthenticated } = useAuth();
 
-  const fetchFavorites = async () => {
+  // Marks events dispatched by this modal so we don't refetch our own changes
+  const ownEventRef = useRef(false);
+
+  const fetchFavorites = async (silent = false) => {
     try {
-      setLoading(true);
+      if (!silent) setLoading(true);
       const hasToken = typeof window !== "undefined" && !!localStorage.getItem("auth_access_token");
       if (!hasToken) {
         setItems([]);
@@ -179,7 +182,7 @@ const FavoritesModal = ({ onClose, dictionary }: Props) => {
     } catch {
       setItems([]);
     } finally {
-      setLoading(false);
+      if (!silent) setLoading(false);
     }
   };
 
@@ -192,7 +195,14 @@ const FavoritesModal = ({ onClose, dictionary }: Props) => {
   }, [isAuthenticated]);
 
   useEffect(() => {
-    const onFavUpdated = () => fetchFavorites();
+    const onFavUpdated = () => {
+      if (ownEventRef.current) {
+        ownEventRef.current = false;
+        return;
+      }
+      // Change came from elsewhere (product card heart etc.) - sync without a loading flash
+      fetchFavorites(true);
+    };
     if (typeof window !== "undefined") {
       window.addEventListener("favoritesUpdated", onFavUpdated as EventListener);
     }
@@ -260,9 +270,10 @@ const FavoritesModal = ({ onClose, dictionary }: Props) => {
             typeof (i as any).product === "object" ? (i as any).product?.id : (i as any).product;
           return Number(pid) !== Number(productId);
         }).length;
+        ownEventRef.current = true;
         window.dispatchEvent(
           new CustomEvent("favoritesUpdated", {
-            detail: { count: remaining, hasAny: remaining > 0 },
+            detail: { count: remaining, hasAny: remaining > 0, productId, removed: true },
           })
         );
       }

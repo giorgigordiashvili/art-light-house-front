@@ -6,7 +6,8 @@ import Pass from "./Pass";
 import MobileDetailDropdown from "@/components/DetailBar/MobileDetailDropdown";
 
 const StyledComponent = styled.div`
-  background: #0b0b0b;
+  /* Transparent so the screen's BigCircle background shows through */
+  background: transparent;
   margin-top: 80px;
   margin-bottom: 219px;
   width: 100%;
@@ -20,12 +21,15 @@ const Container = styled.div`
 
   @media (max-width: 1080px) {
     max-width: 100%;
-    padding: 0 16px;
+    padding: 0 20px;
   }
 `;
 
 const DesktopWrapper = styled.div`
-  padding: 20px;
+  /* Keep 20px from the viewport edge once the 1292px content no longer fits */
+  @media (max-width: 1332px) {
+    padding-inline: 20px;
+  }
 
   @media (max-width: 1080px) {
     display: none;

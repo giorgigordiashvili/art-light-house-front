@@ -81,6 +81,34 @@ const StyledLink = styled(Link)`
   display: block;
 `;
 
+// "Out of stock" pill shown over the dimmed product image
+const OutOfStockBadge = styled.span`
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  z-index: 1;
+  padding: 6px 12px;
+  border-radius: 999px;
+  border: 1px solid #ffffff1f;
+  background: #0b0b0bcc;
+  backdrop-filter: blur(8px);
+  font-family: "Helvetica", sans-serif;
+  font-size: 13px;
+  line-height: 16px;
+  font-weight: 400;
+  color: #ffffffb3;
+  white-space: nowrap;
+  pointer-events: none;
+
+  @media (max-width: 1080px) {
+    top: 8px;
+    left: 8px;
+    padding: 4px 8px;
+    font-size: 11px;
+    line-height: 14px;
+  }
+`;
+
 function Card({
   product,
   dictionary,
@@ -90,6 +118,8 @@ function Card({
   dictionary: any;
   priority?: boolean;
 }) {
+  const isOutOfStock = product.is_in_stock === false;
+
   const handleInteractiveClick = (e: React.MouseEvent) => {
     // Stop propagation for interactive elements to prevent navigation
     e.preventDefault();
@@ -103,10 +133,13 @@ function Card({
           <div data-heart-button onClick={handleInteractiveClick}>
             <ProductHeartIcon productId={product.id} />
           </div>
-          <LampaImage product={product} priority={priority} />
+          {isOutOfStock && (
+            <OutOfStockBadge>{dictionary?.outOfStock || "Out of stock"}</OutOfStockBadge>
+          )}
+          <LampaImage product={product} priority={priority} dimmed={isOutOfStock} />
           <ProductText product={product} />
           <div data-add-button onClick={handleInteractiveClick}>
-            <AddButton product={product} dictionary={dictionary} />
+            <AddButton product={product} dictionary={dictionary} disabled={isOutOfStock} />
           </div>
         </ClickableArea>
       </StyledRectangle>

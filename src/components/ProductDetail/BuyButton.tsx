@@ -2,7 +2,7 @@
 import { useRouter, usePathname } from "next/navigation";
 import styled from "styled-components";
 
-const StyleBuyButton = styled.div`
+const StyleBuyButton = styled.div<{ $disabled?: boolean }>`
   width: 195px;
   height: 56px;
   background: #ffcb40;
@@ -17,6 +17,13 @@ const StyleBuyButton = styled.div`
   @media (max-width: 1080px) {
     max-width: 100%;
   }
+
+  ${({ $disabled }) =>
+    $disabled &&
+    `
+    opacity: 0.45;
+    cursor: not-allowed;
+  `}
 `;
 
 const ButtonText = styled.p`
@@ -35,14 +42,17 @@ const ButtonText = styled.p`
 
 type Props = {
   onClick?: () => void;
+  /** Product is out of stock - button is shown but inactive */
+  disabled?: boolean;
 };
 
-const BuyButton = ({ onClick, dictionary }: Props & { dictionary: any }) => {
+const BuyButton = ({ onClick, disabled = false, dictionary }: Props & { dictionary: any }) => {
   const router = useRouter();
   const pathname = usePathname();
   const locale = pathname.split("/")[1];
 
   const handleBuy = (e?: React.MouseEvent) => {
+    if (disabled) return;
     if (onClick) {
       onClick();
     } else {
@@ -55,6 +65,7 @@ const BuyButton = ({ onClick, dictionary }: Props & { dictionary: any }) => {
   };
 
   const handleBuyMouseDown = (e: React.MouseEvent) => {
+    if (disabled) return;
     if (e.button === 1) {
       e.preventDefault();
       if (onClick) {
@@ -66,7 +77,7 @@ const BuyButton = ({ onClick, dictionary }: Props & { dictionary: any }) => {
   };
 
   return (
-    <StyleBuyButton onClick={handleBuy} onMouseDown={handleBuyMouseDown}>
+    <StyleBuyButton onClick={handleBuy} onMouseDown={handleBuyMouseDown} $disabled={disabled}>
       <ButtonText>{dictionary?.productDetails?.buy || "Buy"}</ButtonText>
     </StyleBuyButton>
   );

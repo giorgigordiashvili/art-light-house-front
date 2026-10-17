@@ -37,8 +37,8 @@ export default async function ProductsPage({
   const dictionary = await getDictionary(isLocale(lang) ? lang : "ge");
   const search = await searchParams;
 
-  // Fetch attributes first to support mapping to attr_* query keys
-  const initialAttributes: AttributeDefinition[] | null = await fetchServerAttributes().catch(
+  // Start fetching attributes right away; they are only awaited where needed
+  const attributesPromise: Promise<AttributeDefinition[] | null> = fetchServerAttributes().catch(
     (error) => {
       console.error("Failed to fetch attributes server-side:", error);
       return null;
@@ -127,8 +127,10 @@ export default async function ProductsPage({
       attrAccumulator.set(key, acc);
     };
 
+    // Mapping attribute ids to keys needs the definitions, so wait for them here
+    const defsForMapping = await attributesPromise;
     const defById = new Map<number, AttributeDefinition>();
-    (initialAttributes || []).forEach((def) => defById.set(def.id, def));
+    (defsForMapping || []).forEach((def) => defById.set(def.id, def));
 
     for (const pair of pairs) {
       const [idStr, value] = pair.split(":");
@@ -144,11 +146,14 @@ export default async function ProductsPage({
     }
   }
 
-  // Finally fetch products with server-side ISR
-  const initialProductsData = await fetchServerProducts(queryParams).catch((error) => {
-    console.error("Failed to fetch products server-side:", error);
-    return null;
-  });
+  // Fetch products and (if still pending) attributes in parallel
+  const [initialProductsData, initialAttributes] = await Promise.all([
+    fetchServerProducts(queryParams).catch((error) => {
+      console.error("Failed to fetch products server-side:", error);
+      return null;
+    }),
+    attributesPromise,
+  ]);
 
   return (
     <ProductsScreen
