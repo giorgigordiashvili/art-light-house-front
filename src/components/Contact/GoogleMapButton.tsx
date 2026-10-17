@@ -41,7 +41,7 @@ type Props = {
 
 const GoogleMapButton = ({ text, url }: Props) => {
   const defaultUrl =
-    "https://www.google.com/maps/place/41%C2%B043'14.0%22N+44%C2%B045'53.2%22E/@41.720542,44.764789,17z/data=!3m1!4b1!4m4!3m3!8m2!3d41.720542!4d44.764789?entry=ttu&g_ep=EgoyMDI1MDQxNi4xIKXMDSoASAFQAw%3D%3D";
+    "https://www.google.com/maps/place/art+light+house/@41.738805,44.7787057,622m/data=!3m2!1e3!4b1!4m6!3m5!1s0x40447294d400a6ef:0x5cb5a5a9dcbb867f!8m2!3d41.738801!4d44.7812806!16s%2Fg%2F11h9y5dypt";
 
   return (
     <StyledContainer href={url || defaultUrl} target="_blank" rel="noopener noreferrer">

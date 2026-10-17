@@ -52,7 +52,7 @@ export default function GoogleMap({
   location,
   fullheight = false,
 }: Props) {
-  const defaultPosition2 = { lat: 41.703998, lng: 44.791769 };
+  const defaultPosition2 = { lat: 41.738801, lng: 44.7812806 };
   const [open, setOpen] = useState(false);
 
   const isValidCoord = (p?: { lat: number; lng: number }) =>
