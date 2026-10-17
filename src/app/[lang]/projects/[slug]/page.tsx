@@ -3,6 +3,7 @@ import { getDictionary } from "@/config/get-dictionary";
 import type { Locale } from "@/config/i18n";
 import { PageProps } from "@/models/lang.model";
 import type { Metadata } from "next";
+import { notFound } from "next/navigation";
 import { fetchServerProjectDetail } from "@/api/server-project-detail";
 import { buildSeoMetadata } from "@/lib/seo";
 
@@ -49,6 +50,8 @@ export default async function ProjectDetailPage({ params }: ProjectPageProps) {
   const resolvedLang = isLocale(lang) ? lang : "ge";
   const dictionary = await getDictionary(resolvedLang);
   const { project, error } = await fetchServerProjectDetail(resolvedLang, slug);
+  // Real 404 when the project lookup fails; other errors keep the error UI
+  if (!project && error === "Project not found") notFound();
   return (
     <ProjectDetailScreen
       dictionary={dictionary}

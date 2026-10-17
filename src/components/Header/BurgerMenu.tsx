@@ -58,27 +58,46 @@ type Props = {
   onLanguageChange: (language: "ge" | "en") => void;
   currentLanguage: "ge" | "en";
   onLanguageSwitcherClick: () => void;
+  onNavigate?: () => void;
   dictionary: any;
 };
 
-const BurgerMenu = ({ currentLanguage, onLanguageSwitcherClick, dictionary }: Props) => {
+const BurgerMenu = ({
+  currentLanguage,
+  onLanguageSwitcherClick,
+  onNavigate,
+  dictionary,
+}: Props) => {
   return (
     <StyledBurgeMenu>
       <StyledBurgerMenuContent>
         <StyledNavItem>
-          <NavItem text={dictionary?.header?.products} href={`/${currentLanguage}/products`} />
+          <NavItem
+            text={dictionary?.header?.products}
+            href={`/${currentLanguage}/products`}
+            onClick={onNavigate}
+          />
         </StyledNavItem>
         <StyledNavItem>
           <NavItem
             text={dictionary?.header?.sale}
             href={`/${currentLanguage}/products?on_sale=true`}
+            onClick={onNavigate}
           />
         </StyledNavItem>
         <StyledNavItem>
-          <NavItem text={dictionary?.header?.project} href={`/${currentLanguage}/projects`} />
+          <NavItem
+            text={dictionary?.header?.project}
+            href={`/${currentLanguage}/projects`}
+            onClick={onNavigate}
+          />
         </StyledNavItem>
         <StyledNavItem>
-          <NavItem text={dictionary?.header?.contact} href={`/${currentLanguage}/contact`} />
+          <NavItem
+            text={dictionary?.header?.contact}
+            href={`/${currentLanguage}/contact`}
+            onClick={onNavigate}
+          />
         </StyledNavItem>
         <StyledLanguageSwitcher onClick={onLanguageSwitcherClick}>
           <StyledLanguage>{dictionary?.header?.language}</StyledLanguage>

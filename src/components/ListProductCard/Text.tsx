@@ -75,7 +75,9 @@ const ProductText = ({ product }: { product: ProductList }) => {
   const language = getLocaleFromPath(pathname);
 
   // Check if product is on sale
-  const isOnSale = product.compare_at_price && product.compare_at_price > product.price;
+  const price = Number(product.price);
+  const compareAt = Number(product.compare_at_price);
+  const isOnSale = Number.isFinite(price) && Number.isFinite(compareAt) && compareAt > price;
 
   // Get product name based on current language
   const getProductName = () => {

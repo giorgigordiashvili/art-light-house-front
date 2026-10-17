@@ -1,6 +1,5 @@
 "use client";
 import styled from "styled-components";
-import { useState } from "react";
 import DetailBar from "@/components/DetailBar/DetailBar";
 import Pass from "./Pass";
 import MobileDetailDropdown from "@/components/DetailBar/MobileDetailDropdown";
@@ -25,21 +24,16 @@ const Container = styled.div`
   }
 `;
 
-const DesktopWrapper = styled.div`
+// Single tree for desktop and mobile so the form (and its state) is mounted once.
+// DetailBar hides itself at <=1080px and MobileDetailDropdown hides itself on desktop.
+const PageBody = styled.div`
   /* Keep 20px from the viewport edge once the 1292px content no longer fits */
   @media (max-width: 1332px) {
     padding-inline: 20px;
   }
 
   @media (max-width: 1080px) {
-    display: none;
-  }
-`;
-
-const MobileWrapper = styled.div`
-  display: none;
-
-  @media (max-width: 1080px) {
+    padding-inline: 0;
     display: flex;
     flex-direction: column;
     gap: 20px;
@@ -51,6 +45,11 @@ const ContentWrapper = styled.div`
   flex-direction: row;
   width: 100%;
   gap: 24px;
+
+  @media (max-width: 1080px) {
+    flex-direction: column;
+    gap: 20px;
+  }
 `;
 
 const RightSection = styled.div`
@@ -79,41 +78,20 @@ const PageTitle = styled.h1`
   }
 `;
 
-const DetailBarWrapper = styled.div<{ $isOpen: boolean }>`
-  display: ${({ $isOpen }) => ($isOpen ? "block" : "none")};
-  margin-bottom: 20px;
-
-  @media (min-width: 1081px) {
-    display: none;
-  }
-`;
-
 const Settings = ({ dictionary }: any) => {
-  const [isDropdownOpen] = useState(false);
-
   return (
     <StyledComponent>
       <Container>
-        <DesktopWrapper>
+        <PageBody>
           <PageTitle>{dictionary?.title1}</PageTitle>
+          <MobileDetailDropdown dictionary={dictionary} />
           <ContentWrapper>
             <DetailBar dictionary={dictionary} />
             <RightSection>
               <Pass dictionary={dictionary} />
             </RightSection>
           </ContentWrapper>
-        </DesktopWrapper>
-
-        <MobileWrapper>
-          <PageTitle>{dictionary?.title1}</PageTitle>
-          <MobileDetailDropdown dictionary={dictionary} />
-          <DetailBarWrapper $isOpen={isDropdownOpen}>
-            <DetailBar dictionary={dictionary} />
-          </DetailBarWrapper>
-          <RightSection>
-            <Pass dictionary={dictionary} />
-          </RightSection>
-        </MobileWrapper>
+        </PageBody>
       </Container>
     </StyledComponent>
   );

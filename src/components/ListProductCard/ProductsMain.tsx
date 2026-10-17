@@ -130,10 +130,9 @@ function ProductsMain({
   const isFirstRender = React.useRef(true);
 
   const products = useMemo(() => initialProductsData?.results || [], [initialProductsData]);
-  const totalPages = useMemo(
-    () => (initialProductsData?.count ? Math.ceil(initialProductsData.count / 12) : 1),
-    [initialProductsData]
-  );
+  const totalCount: number =
+    typeof initialProductsData?.count === "number" ? initialProductsData.count : products.length;
+  const totalPages = useMemo(() => (totalCount ? Math.ceil(totalCount / 12) : 1), [totalCount]);
   const currentPage = initialPage || 1;
   const hasNextPage = currentPage < totalPages;
   const hasPreviousPage = currentPage > 1;
@@ -141,9 +140,9 @@ function ProductsMain({
   const zeroResultsText = dictionary?.results?.zero ?? "0 products found";
   const countResultsTemplate = dictionary?.results?.count ?? "{count} products found";
   const resultsTitleMessage =
-    products.length === 0
+    totalCount === 0
       ? zeroResultsText
-      : countResultsTemplate.replace("{count}", products.length.toString());
+      : countResultsTemplate.replace("{count}", String(totalCount));
 
   // Detect URL changes (e.g., clicking Sale link in header) and show skeletons
   useEffect(() => {
@@ -175,6 +174,7 @@ function ProductsMain({
   };
 
   const handlePageChange = (page: number) => {
+    if (page === currentPage || page < 1 || page > totalPages) return;
     setIsNavigating(true);
     // Update URL to reflect new page; server will fetch via ISR
     const current = new URLSearchParams(window.location.search);

@@ -2,7 +2,8 @@ import React from "react";
 import UserMenuItem from "./UserMenuItem";
 import styled from "styled-components";
 import { useAuth } from "@/contexts/AuthContext";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
+import { i18n } from "@/config/i18n";
 
 const StyledContainer = styled.div`
   width: 304px;
@@ -70,6 +71,11 @@ interface UserMenuProps {
 const UserMenu = ({ closeModal, dictionary }: UserMenuProps) => {
   const { logout, isAuthenticated } = useAuth();
   const router = useRouter();
+  const pathname = usePathname();
+  const localeSegment = pathname?.split("/")[1];
+  const lang = (i18n.locales as readonly string[]).includes(localeSegment ?? "")
+    ? localeSegment
+    : i18n.defaultLocale;
 
   const handleSignOut = async () => {
     try {
@@ -78,11 +84,11 @@ const UserMenu = ({ closeModal, dictionary }: UserMenuProps) => {
       }
 
       if (closeModal) closeModal();
-      router.push("/");
+      router.push(`/${lang}`);
     } catch {
       // Still close modal and redirect even if logout fails
       if (closeModal) closeModal();
-      router.push("/");
+      router.push(`/${lang}`);
     }
   };
 

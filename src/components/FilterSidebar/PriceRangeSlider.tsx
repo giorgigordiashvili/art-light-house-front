@@ -1,6 +1,5 @@
 "use client";
 import React from "react";
-import Box from "@mui/material/Box";
 import Slider from "@mui/material/Slider";
 import styled from "styled-components";
 import { useFilterContext } from "@/contexts/FilterContext";
@@ -95,12 +94,27 @@ const PriceRangeSlider: React.FC<PriceRangeSliderProps> = ({ min = 0, max = 1000
     if (!Array.isArray(newValue)) {
       return;
     }
-    updatePriceFilter(newValue[0], newValue[1]);
+    let [lo, hi] = newValue;
+    // Enforce minDistance from the committed value (state may be stale on keyboard commits)
+    if (hi - lo < minDistance) {
+      if (lo !== value[0]) {
+        lo = Math.max(min, hi - minDistance);
+      } else {
+        hi = Math.min(max, lo + minDistance);
+      }
+    }
+    // A thumb at its end of the range means "no bound"
+    const nextMin = lo > min ? lo : undefined;
+    const nextMax = hi < max ? hi : undefined;
+    if (nextMin === filters.minPrice && nextMax === filters.maxPrice) {
+      return;
+    }
+    updatePriceFilter(nextMin, nextMax);
   };
 
   return (
     <SliderWrapper>
-      <Box sx={{ width: "100%" }}>
+      <div>
         <Slider
           getAriaLabel={() => "Price range"}
           value={value}
@@ -113,7 +127,7 @@ const PriceRangeSlider: React.FC<PriceRangeSliderProps> = ({ min = 0, max = 1000
           min={min}
           max={max}
         />
-      </Box>
+      </div>
     </SliderWrapper>
   );
 };

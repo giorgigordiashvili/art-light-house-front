@@ -1,4 +1,5 @@
 "use client";
+import type { Dictionary } from "@/config/get-dictionary";
 import { Suspense } from "react";
 import ProductsMain from "@/components/ListProductCard/ProductsMain";
 import { FilterProvider } from "@/contexts/FilterContext";
@@ -31,7 +32,7 @@ const StyledCircle = styled.div`
 `;
 
 interface ProductsScreenProps {
-  dictionary: any;
+  dictionary: Pick<Dictionary, "products">;
   initialProductsData?: PaginatedProductListList | null;
   initialAttributes?: any[] | null;
   initialPage?: number;

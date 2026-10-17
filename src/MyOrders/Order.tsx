@@ -3,6 +3,7 @@ import OrderCard from "@/MyOrders/OrderCard";
 import { useEffect, useState } from "react";
 import { ecommerceClientOrdersList } from "@/api/generated/api";
 import type { Order as OrderType } from "@/api/generated/interfaces";
+import { fetchAllPages } from "@/utils/fetchAllPages";
 
 const StylePass = styled.div`
   width: 100%;
@@ -185,8 +186,8 @@ const Order = ({ dictionary }: any) => {
     const fetchOrders = async () => {
       try {
         setLoading(true);
-        const response = await ecommerceClientOrdersList();
-        setOrders((response.results ?? []).filter(isVisibleOrder));
+        const all = await fetchAllPages((p) => ecommerceClientOrdersList(undefined, p));
+        setOrders(all.filter(isVisibleOrder));
       } catch {
         setHasError(true);
       } finally {

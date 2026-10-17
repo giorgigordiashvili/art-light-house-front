@@ -39,6 +39,7 @@ export const useSimilarProducts = (
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
+    let cancelled = false;
     const fetchSimilarProducts = async () => {
       if (!currentProductId) {
         setLoading(false);
@@ -50,43 +51,58 @@ export const useSimilarProducts = (
         setLoading(true);
         setError(null);
 
-        // Fetch all products (can add pagination or filters as needed)
-        const response = await ecommerceClientProductsList(
-          undefined, // attr_Furniture
-          undefined, // attrColor
-          undefined, // attrMaterial
-          undefined, // attrNumberOfLamps
-          undefined, // attrSubcategory
-          undefined, // isFeatured
-          undefined, // language
-          undefined, // maxPrice
-          undefined, // minPrice
-          undefined, // onSale
-          undefined, // ordering
-          1 // page
-        );
-
-        let candidates = (response.results || []).filter((p) => p.id !== currentProductId);
-
-        // If we have currentProduct with attributes, filter by shared attribute values
-        if (currentProduct) {
-          candidates = candidates.filter((candidate) =>
-            hasSharedAttribute(currentProduct, candidate)
+        // Fetch a large candidate pool (API max page size) and keep paging until we have
+        // enough attribute matches or run out of pages
+        const PAGE_SIZE = 100;
+        const MAX_PAGES = 5;
+        let candidates: ProductList[] = [];
+        for (let page = 1; page <= MAX_PAGES; page++) {
+          const response = await ecommerceClientProductsList(
+            undefined, // attr_Furniture
+            undefined, // attrColor
+            undefined, // attrMaterial
+            undefined, // attrNumberOfLamps
+            undefined, // attrSubcategory
+            undefined, // isFeatured
+            undefined, // language
+            undefined, // maxPrice
+            undefined, // minPrice
+            undefined, // onSale
+            undefined, // ordering
+            page, // page
+            PAGE_SIZE // pageSize
           );
+
+          let pageCandidates = (response.results || []).filter((p) => p.id !== currentProductId);
+
+          // If we have currentProduct with attributes, filter by shared attribute values
+          if (currentProduct) {
+            pageCandidates = pageCandidates.filter((candidate) =>
+              hasSharedAttribute(currentProduct, candidate)
+            );
+          }
+
+          candidates = candidates.concat(pageCandidates);
+          if (candidates.length >= limit || !response.next) break;
         }
+        if (cancelled) return;
 
         // Limit results
         const filtered = candidates.slice(0, limit);
         setSimilarProducts(filtered);
       } catch (err: any) {
+        if (cancelled) return;
         setError(err.message || "Failed to fetch similar products");
         setSimilarProducts([]);
       } finally {
-        setLoading(false);
+        if (!cancelled) setLoading(false);
       }
     };
 
     fetchSimilarProducts();
+    return () => {
+      cancelled = true;
+    };
   }, [categoryId, currentProductId, limit, currentProduct]);
 
   return { similarProducts, loading, error };

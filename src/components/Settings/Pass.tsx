@@ -1,6 +1,6 @@
 "use client";
 import styled from "styled-components";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import InputWithLabel from "../Profile/Input";
 import SaveButton from "@/ProfileButton/Save";
 import Cancel from "@/ProfileButton/Cancel";
@@ -108,6 +108,16 @@ const Pass = ({ dictionary }: any) => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
+  const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const clearTimer = () => {
+    if (timerRef.current) {
+      clearTimeout(timerRef.current);
+      timerRef.current = null;
+    }
+  };
+
+  useEffect(() => () => clearTimer(), []);
 
   const resetForm = () => {
     setCode("");
@@ -145,7 +155,9 @@ const Pass = ({ dictionary }: any) => {
           "Password reset instructions have been sent to your email. Please check your inbox."
       );
       // Move to confirmation step after 2 seconds
-      setTimeout(() => {
+      clearTimer();
+      timerRef.current = setTimeout(() => {
+        timerRef.current = null;
         setStep("confirm");
         setSuccess(null);
       }, 2000);
@@ -206,7 +218,9 @@ const Pass = ({ dictionary }: any) => {
           "Password has been reset successfully! You can now login with your new password."
       );
       // Reset form after success
-      setTimeout(() => {
+      clearTimer();
+      timerRef.current = setTimeout(() => {
+        timerRef.current = null;
         resetForm();
         setStep("request");
         setEmail(user?.email || "");
@@ -228,6 +242,7 @@ const Pass = ({ dictionary }: any) => {
   };
 
   const handleCancel = () => {
+    clearTimer();
     setError(null);
     setSuccess(null);
     if (step === "confirm") {
@@ -250,7 +265,7 @@ const Pass = ({ dictionary }: any) => {
     newPassword.length >= 8 &&
     newPassword === confirmPassword;
 
-  const isDisabled = isLoading || (step === "request" ? !canRequest : !canConfirm);
+  const isDisabled = isLoading || !!success || (step === "request" ? !canRequest : !canConfirm);
 
   return (
     <StylePass>
@@ -314,7 +329,7 @@ const Pass = ({ dictionary }: any) => {
             <SaveButton
               dictionary={{
                 ...dictionary,
-                button1: passwordDictionary?.sendResetButton || "Send Reset Email",
+                button2: passwordDictionary?.sendResetButton || "Send Reset Email",
               }}
               onSave={handleRequestReset}
               disabled={isDisabled}
@@ -360,7 +375,7 @@ const Pass = ({ dictionary }: any) => {
             <SaveButton
               dictionary={{
                 ...dictionary,
-                button1: passwordDictionary?.resetButton || "Reset Password",
+                button2: passwordDictionary?.resetButton || "Reset Password",
               }}
               onSave={handleConfirmReset}
               disabled={isDisabled}

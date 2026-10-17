@@ -1,7 +1,7 @@
 "use client";
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import styled from "styled-components";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import CartProduct from "./CartProduct";
 import PrimaryButton from "../Buttons/PrimaryButton";
 import SummaryPrice from "./SummaryPrice";
@@ -15,6 +15,7 @@ import { canAddMore, getStockLimit } from "@/utils/stock";
 import { showStockLimitToast } from "@/utils/toast";
 import type { Cart } from "@/api/generated/interfaces";
 import { useAuth } from "@/contexts/AuthContext";
+import { i18n } from "@/config/i18n";
 
 type Props = {
   itemCount?: number; // deprecated, will be overridden by API data
@@ -151,14 +152,25 @@ function pickLocalized(value: any, fallback = ""): string {
 
 const CartModal = ({ onClose, dictionary }: Props) => {
   const router = useRouter();
+  const pathname = usePathname();
+  const localeSegment = pathname?.split("/")[1];
+  const lang = (i18n.locales as readonly string[]).includes(localeSegment ?? "")
+    ? localeSegment
+    : i18n.defaultLocale;
   const [cart, setCart] = useState<Cart | null>(null);
   const [loading, setLoading] = useState(false);
   const { isAuthenticated } = useAuth();
+  // Per-item in-flight guard so rapid clicks don't send stale quantities
+  const pendingRef = useRef<Set<number>>(new Set());
+  // Request sequence counter so out-of-order cart responses are ignored
+  const seqRef = useRef(0);
 
   const fetchCart = async () => {
     try {
       setLoading(true);
+      const mySeq = ++seqRef.current;
       const data = await ecommerceClientCartGetOrCreateRetrieve();
+      if (mySeq !== seqRef.current) return;
       const normalized = (data as any)?.cart ? (data as any).cart : (data as any);
       setCart(normalized as Cart);
     } catch {
@@ -227,13 +239,11 @@ const CartModal = ({ onClose, dictionary }: Props) => {
   const handleRedirect = (e?: React.MouseEvent) => {
     if (e && (e.ctrlKey || e.metaKey)) {
       // Ctrl+click or Cmd+click - open in new tab
-      const pathname = typeof window !== "undefined" ? window.location.pathname : "";
-      const locale = pathname.split("/")[1] || "ge";
-      window.open(`/${locale}/cart`, "_blank");
+      window.open(`/${lang}/cart`, "_blank");
       onClose();
       return;
     }
-    router.push("/cart");
+    router.push(`/${lang}/cart`);
     onClose();
   };
 
@@ -241,9 +251,7 @@ const CartModal = ({ onClose, dictionary }: Props) => {
     if (e.button === 1) {
       // Middle mouse button
       e.preventDefault();
-      const pathname = typeof window !== "undefined" ? window.location.pathname : "";
-      const locale = pathname.split("/")[1] || "ge";
-      window.open(`/${locale}/cart`, "_blank");
+      window.open(`/${lang}/cart`, "_blank");
       onClose();
     }
   };
@@ -260,84 +268,93 @@ const CartModal = ({ onClose, dictionary }: Props) => {
     return cart.items?.reduce((acc, it) => acc + (it.quantity || 0), 0) || 0;
   }, [cart]);
 
+  // Treat "no data yet" as loading so the empty state never flashes on open
+  const isLoading = loading || cart === null;
+
   const isEmpty = useMemo(() => {
-    return !loading && (!cart?.items || cart.items.length === 0);
-  }, [loading, cart]);
+    return !isLoading && (!cart?.items || cart.items.length === 0);
+  }, [isLoading, cart]);
 
-  const handleIncrease = async (itemId: number, current: number) => {
-    const item = cart?.items?.find((it) => it.id === itemId);
-    if (item && !canAddMore(item.product, current)) {
-      showStockLimitToast(getStockLimit(item.product));
-      return;
-    }
+  const refreshCart = async () => {
+    const mySeq = ++seqRef.current;
+    const updated = await ecommerceClientCartGetOrCreateRetrieve();
+    if (mySeq !== seqRef.current) return;
+    const normalized = (updated as any)?.cart ? (updated as any).cart : (updated as any);
+    setCart(normalized as Cart);
     try {
-      await ecommerceClientCartItemsPartialUpdate(String(itemId), { quantity: current + 1 });
-      const updated = await ecommerceClientCartGetOrCreateRetrieve();
-      const normalized = (updated as any)?.cart ? (updated as any).cart : (updated as any);
-      setCart(normalized as Cart);
-      try {
-        const count =
-          normalized.items?.reduce((acc: number, it: any) => acc + (it.quantity || 0), 0) || 0;
-        if (typeof window !== "undefined") {
-          window.dispatchEvent(
-            new CustomEvent("cartUpdated", { detail: { count, cart: normalized } })
-          );
-        }
-      } catch {}
-    } catch {
+      const count =
+        normalized.items?.reduce((acc: number, it: any) => acc + (it.quantity || 0), 0) || 0;
+      if (typeof window !== "undefined") {
+        window.dispatchEvent(
+          new CustomEvent("cartUpdated", { detail: { count, cart: normalized } })
+        );
+      }
+    } catch {}
+  };
+
+  const resyncCart = async () => {
+    try {
+      await refreshCart();
+    } catch {}
+  };
+
+  const runItemAction = async (itemId: number, fn: () => Promise<void>) => {
+    if (pendingRef.current.has(itemId)) return;
+    pendingRef.current.add(itemId);
+    try {
+      await fn();
     } finally {
+      pendingRef.current.delete(itemId);
     }
   };
 
-  const handleDecrease = async (itemId: number, current: number) => {
-    if (current <= 1) {
-      await handleRemove(itemId);
-      return;
-    }
-    try {
-      await ecommerceClientCartItemsPartialUpdate(String(itemId), { quantity: current - 1 });
-      const updated = await ecommerceClientCartGetOrCreateRetrieve();
-      const normalized = (updated as any)?.cart ? (updated as any).cart : (updated as any);
-      setCart(normalized as Cart);
-      try {
-        const count =
-          normalized.items?.reduce((acc: number, it: any) => acc + (it.quantity || 0), 0) || 0;
-        if (typeof window !== "undefined") {
-          window.dispatchEvent(
-            new CustomEvent("cartUpdated", { detail: { count, cart: normalized } })
-          );
-        }
-      } catch {}
-    } catch {
-    } finally {
-    }
-  };
-
-  const handleRemove = async (itemId: number) => {
+  const removeItem = async (itemId: number) => {
     try {
       await ecommerceClientCartItemsDestroy(String(itemId));
-      const updated = await ecommerceClientCartGetOrCreateRetrieve();
-      const normalized = (updated as any)?.cart ? (updated as any).cart : (updated as any);
-      setCart(normalized as Cart);
-      try {
-        const count =
-          normalized.items?.reduce((acc: number, it: any) => acc + (it.quantity || 0), 0) || 0;
-        if (typeof window !== "undefined") {
-          window.dispatchEvent(
-            new CustomEvent("cartUpdated", { detail: { count, cart: normalized } })
-          );
-        }
-      } catch {}
+      await refreshCart();
     } catch {
-    } finally {
+      await resyncCart();
     }
   };
+
+  const handleIncrease = (itemId: number, current: number) =>
+    runItemAction(itemId, async () => {
+      const item = cart?.items?.find((it) => it.id === itemId);
+      if (item && !canAddMore(item.product, current)) {
+        showStockLimitToast(getStockLimit(item.product));
+        return;
+      }
+      try {
+        await ecommerceClientCartItemsPartialUpdate(String(itemId), { quantity: current + 1 });
+        await refreshCart();
+      } catch {
+        await resyncCart();
+      }
+    });
+
+  const handleDecrease = (itemId: number, current: number) =>
+    runItemAction(itemId, async () => {
+      if (current <= 1) {
+        await removeItem(itemId);
+        return;
+      }
+      try {
+        await ecommerceClientCartItemsPartialUpdate(String(itemId), { quantity: current - 1 });
+        await refreshCart();
+      } catch {
+        await resyncCart();
+      }
+    });
+
+  const handleRemove = (itemId: number) => runItemAction(itemId, () => removeItem(itemId));
 
   return (
     <ModalLayoutWrapper>
       <ModalLayout>
         {isEmpty ? (
           <EmptyCartModal dictionary={dictionary} />
+        ) : cart === null ? (
+          <StyledContainer $isEmpty={false} />
         ) : (
           <StyledContainer $isEmpty={isEmpty}>
             <StyledCartContent>

@@ -133,6 +133,7 @@ const FeaturedBadge = styled.div`
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.5px;
+  white-space: nowrap;
 `;
 
 const ProjectInfo = styled.div`
@@ -265,12 +266,13 @@ const ProjectsScreen = ({
             <p>{error}</p>
           </EmptyState>
         )}
-        {filteredProjects.length === 0 ? (
+        {!error && filteredProjects.length === 0 && (
           <EmptyState>
             <h3>{dictionary.projects.noProjectsFound}</h3>
             <p>{dictionary.projects.noProjectsDescription}</p>
           </EmptyState>
-        ) : (
+        )}
+        {filteredProjects.length > 0 && (
           <ProjectsGrid>
             {filteredProjects.map((project) => {
               const projectHref = project.slug ? `/${lang}/projects/${project.slug}` : "#";
@@ -279,31 +281,33 @@ const ProjectsScreen = ({
                 <ProjectCard key={project.id} href={projectHref} className="project-card">
                   <ProjectImageWrapper>
                     <Image
-                      src={project.imageUrl || "/assets/placeholder.png"}
+                      src={project.imageUrl || "/assets/bedroom.webp"}
                       alt={project.title}
                       fill
                       sizes="(max-width: 768px) 100vw, 350px"
                       style={{ objectFit: "cover" }}
                       className="image"
                     />
-                    {project.isFeatured && <FeaturedBadge>Featured</FeaturedBadge>}
+                    {project.isFeatured && (
+                      <FeaturedBadge>{dictionary.projects.featuredProject}</FeaturedBadge>
+                    )}
                   </ProjectImageWrapper>
                   <ProjectInfo>
                     <ProjectTitle>{project.title}</ProjectTitle>
                     <ProjectMeta>
                       {project.category && (
                         <MetaItem>
-                          <strong>Category:</strong> {project.category}
+                          <strong>{dictionary.projects.category}:</strong> {project.category}
                         </MetaItem>
                       )}
                       {project.year && (
                         <MetaItem>
-                          <strong>Year:</strong> {project.year}
+                          <strong>{dictionary.projects.year}:</strong> {project.year}
                         </MetaItem>
                       )}
                       {project.location && (
                         <MetaItem>
-                          <strong>Location:</strong> {project.location}
+                          <strong>{dictionary.projects.location}:</strong> {project.location}
                         </MetaItem>
                       )}
                     </ProjectMeta>

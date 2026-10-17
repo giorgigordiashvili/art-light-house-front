@@ -7,6 +7,9 @@ import { ecommerceClientHomepageList } from "@/api/generated/api";
 import type { HomepageSection } from "@/types/homepage";
 import { buildSeoMetadata } from "@/lib/seo";
 
+// Revalidate this page every 60 seconds so branch data stays fresh
+export const revalidate = 60;
+
 function isLocale(lang: string): lang is Locale {
   return ["ge", "en"].includes(lang);
 }
@@ -45,6 +48,10 @@ export default async function ContactPage({ params }: PageProps) {
   }
 
   return (
-    <ContactScreen dictionary={dictionary} homepageSections={homepageSections} lang={locale} />
+    <ContactScreen
+      dictionary={{ contact: dictionary.contact }}
+      homepageSections={homepageSections}
+      lang={locale}
+    />
   );
 }

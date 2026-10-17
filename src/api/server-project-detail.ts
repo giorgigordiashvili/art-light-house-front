@@ -1,3 +1,5 @@
+import { sanitizeDescription } from "./sanitize-description";
+
 interface RawListItem {
   id?: number | string;
   custom_id?: string;
@@ -94,7 +96,7 @@ function buildDetail(item: any): ServerProjectDetail {
     id: Number.isNaN(numericId) ? 0 : numericId,
     title: cd.title || item.label || `Project ${item.id}`,
     short_description: cd.short_description,
-    description: cd.description,
+    description: sanitizeDescription(cd.description),
     client: cd.client,
     category: cd.category || cd.type,
     year: cd.year,

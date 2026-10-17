@@ -49,8 +49,11 @@ export default async function ProductsPage({
   const queryParams: ProductQueryParams = {};
 
   // Pagination
-  if (search.page) {
-    queryParams.page = typeof search.page === "string" ? parseInt(search.page, 10) : 1;
+  if (typeof search.page === "string") {
+    const page = parseInt(search.page, 10);
+    if (Number.isFinite(page) && page > 0) {
+      queryParams.page = page;
+    }
   }
 
   // Ordering
@@ -69,10 +72,16 @@ export default async function ProductsPage({
   const maxPriceRaw =
     (search.max_price as string | undefined) || (search.maxPrice as string | undefined);
   if (typeof minPriceRaw === "string") {
-    queryParams.min_price = parseFloat(minPriceRaw);
+    const minPrice = parseFloat(minPriceRaw);
+    if (Number.isFinite(minPrice)) {
+      queryParams.min_price = minPrice;
+    }
   }
   if (typeof maxPriceRaw === "string") {
-    queryParams.max_price = parseFloat(maxPriceRaw);
+    const maxPrice = parseFloat(maxPriceRaw);
+    if (Number.isFinite(maxPrice)) {
+      queryParams.max_price = maxPrice;
+    }
   }
 
   // On sale
@@ -157,7 +166,7 @@ export default async function ProductsPage({
 
   return (
     <ProductsScreen
-      dictionary={dictionary}
+      dictionary={{ products: dictionary.products }}
       initialProductsData={initialProductsData}
       initialAttributes={initialAttributes}
       initialPage={queryParams.page as number | undefined}

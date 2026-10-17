@@ -108,11 +108,28 @@ const Product = ({ orderItem }: ProductProps) => {
       </ProductsCard>
     );
   }
+  const title = resolveLocalized(orderItem.product_name, langParam) || "Product";
   return (
     <ProductsCard>
-      <ImagePlaceholder>Product image</ImagePlaceholder>
+      <ImagePlaceholder>
+        {orderItem.product_image ? (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img
+            src={orderItem.product_image}
+            alt={title}
+            loading="lazy"
+            decoding="async"
+            width={73}
+            height={73}
+            style={{ objectFit: "cover", width: "100%", height: "100%" }}
+            onError={(e) => {
+              e.currentTarget.style.display = "none";
+            }}
+          />
+        ) : null}
+      </ImagePlaceholder>
       <InfoWrapper>
-        <Title>{resolveLocalized(orderItem.product_name, langParam) || "Product"}</Title>
+        <Title>{title}</Title>
         <PriceRow>
           <Price>{orderItem.subtotal} ₾</Price>
           <Quantity>x {orderItem.quantity}</Quantity>

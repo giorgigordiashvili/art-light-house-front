@@ -40,6 +40,21 @@ export default function ClientRootLayout({ children, dictionary }: ClientRootLay
 
   return (
     <QueryProvider>
+      {/* Preload above-the-fold fonts (React 19 hoists these into <head>) */}
+      <link
+        rel="preload"
+        href="/fonts/helgeo45.woff2"
+        as="font"
+        type="font/woff2"
+        crossOrigin="anonymous"
+      />
+      <link
+        rel="preload"
+        href="/fonts/helrom.woff2"
+        as="font"
+        type="font/woff2"
+        crossOrigin="anonymous"
+      />
       <NextTopLoader color="#FFD700" height={3} showSpinner={false} />
       <AuthProvider>
         <AuthModalProvider>

@@ -26,8 +26,9 @@ const HeaderHeartIcon = ({ size = 30, isModalOpen = false }: Props) => {
           if (isMounted) setIsFilled(false);
           return;
         }
-        const response = await ecommerceClientFavoritesList();
-        if (isMounted) setIsFilled((response.results || []).length > 0);
+        // Only need to know whether any favorite exists: request a single item
+        const response = await ecommerceClientFavoritesList(undefined, 1, 1);
+        if (isMounted) setIsFilled((response.count ?? (response.results || []).length) > 0);
       } catch {
         if (isMounted) setIsFilled(false);
       }

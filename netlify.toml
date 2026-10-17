@@ -6,10 +6,12 @@
 # Environment variables needed for build
 [build.environment]
   NEXT_TELEMETRY_DISABLED = "1"
-  # Disable all forms of secrets scanning for Google Maps API keys
-  SECRETS_SCAN_ENABLED = "false"
+  # Secrets scanning stays enabled. Only the public Google Maps keys are
+  # exempt: they are NEXT_PUBLIC_* values inlined into the client bundle by design.
+  SECRETS_SCAN_OMIT_KEYS = "NEXT_PUBLIC_GOOGLE_MAPS_API_KEY,NEXT_PUBLIC_MAP_ID"
+  # Smart detection flags the inlined public Maps key ("AIza...") by value,
+  # so it is off; the env-var based scan above still runs for every other secret.
   SECRETS_SCAN_SMART_DETECTION_ENABLED = "false"
-  NETLIFY_SECRETS_SCAN_ENABLED = "false"
 
 # Ensure Next.js is properly handled
 [[plugins]]
@@ -32,6 +34,40 @@
   for = "/_next/static/*"
   [headers.values]
     Cache-Control = "public, max-age=31536000, immutable"
+
+# Fonts in public/fonts are not content-hashed: if a font file is ever
+# replaced, give it a new filename (browsers keep the old one up to a year).
+[[headers]]
+  for = "/fonts/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+  for = "/assets/*"
+  [headers.values]
+    Cache-Control = "public, max-age=604800, stale-while-revalidate=86400"
+
+[[headers]]
+  for = "/favicon.ico"
+  [headers.values]
+    Cache-Control = "public, max-age=86400"
+
+[[headers]]
+  for = "/favicon.png"
+  [headers.values]
+    Cache-Control = "public, max-age=86400"
+
+# Security headers (no full CSP: only frame-ancestors, so scripts, styles
+# and Google Maps are unaffected). No Cache-Control here, so the caching
+# rules above are unchanged.
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Frame-Options = "SAMEORIGIN"
+    Content-Security-Policy = "frame-ancestors 'self'"
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    Permissions-Policy = "camera=(), microphone=(), geolocation=(self)"
 
 # Redirect handling for images
 [[redirects]]

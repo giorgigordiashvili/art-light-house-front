@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import styled from "styled-components";
 import ModalInput from "@/components/Header/ModalInput";
 import InputTitle from "@/components/Header/InputTitle";
@@ -8,7 +8,7 @@ import PlaceSelector from "./PlaceSelector";
 import ModalTitle from "./ModalTitle";
 import dynamic from "next/dynamic";
 
-const GoogleMap = dynamic(() => import("@/components/Contact/GoogleMap"), { ssr: false });
+const AddressMap = dynamic(() => import("./AddressMap"), { ssr: false });
 import ToggleDefaultButton from "@/components/Buttons/ToggleDefaultButton";
 import { AddressData } from "@/types";
 import {
@@ -17,6 +17,7 @@ import {
 } from "@/api/generated/api";
 import { PatchedClientAddressRequest, ClientAddress } from "@/api/generated/interfaces";
 import { mapPlaceToAddressType } from "@/utils/addressHelpers";
+import { useDebouncedValue } from "@/hooks/useDebouncedValue";
 
 const StyledContainer = styled.div`
   width: 508px;
@@ -75,6 +76,33 @@ const AddressModal = ({ onClose, onSave, initialData, dictionary }: Props) => {
       ? { lat: parseFloat(initialData.latitude), lng: parseFloat(initialData.longitude) }
       : null
   );
+  // Address whose coordinates are already known (picked on the map, or the saved address with
+  // its stored coordinates). Forward geocoding is skipped for it to keep the more precise point.
+  const lastPickedAddressRef = useRef<string | null>(
+    initialData?.address && initialData?.latitude && initialData?.longitude
+      ? initialData.address
+      : null
+  );
+  const lastPickedCoordsRef = useRef(coordinates);
+  const initialCenterRef = useRef(coordinates);
+  const addressRef = useRef(address);
+  addressRef.current = address;
+  const debouncedAddress = useDebouncedValue(address.trim(), 500);
+  const addressToGeocode =
+    debouncedAddress && debouncedAddress !== lastPickedAddressRef.current?.trim()
+      ? debouncedAddress
+      : undefined;
+
+  // Text edited and then reverted to the picked address: restore the picked coordinates
+  useEffect(() => {
+    if (
+      debouncedAddress &&
+      debouncedAddress === lastPickedAddressRef.current?.trim() &&
+      lastPickedCoordsRef.current
+    ) {
+      setCoordinates(lastPickedCoordsRef.current);
+    }
+  }, [debouncedAddress]);
   const [isDefault, setIsDefault] = useState(initialData?.is_default || false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -182,14 +210,22 @@ const AddressModal = ({ onClose, onSave, initialData, dictionary }: Props) => {
         />
       </StyledInputWrapper>
       <StyledMap>
-        <GoogleMap
-          variant={2}
-          searchedAddress={address}
+        <AddressMap
+          searchedAddress={addressToGeocode}
+          location={initialCenterRef.current}
           onLocationSelect={(locationName, coords) => {
+            lastPickedAddressRef.current = locationName;
             setAddress(locationName);
             if (coords) {
+              lastPickedCoordsRef.current = coords;
               setCoordinates(coords);
             }
+          }}
+          onGeocoded={(coords, geocodedAddress) => {
+            // Ignore late results for text the user has since changed or replaced via a map click
+            if (geocodedAddress !== addressRef.current.trim()) return;
+            if (geocodedAddress === lastPickedAddressRef.current?.trim()) return;
+            setCoordinates(coords);
           }}
         />
         {/* {coordinates && (

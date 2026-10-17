@@ -1,7 +1,7 @@
 "use client";
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import styled from "styled-components";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import ProductContent from "./ProductContent";
 import PrimaryButton from "../Buttons/PrimaryButton";
 import { ecommerceClientFavoritesList, ecommerceClientFavoritesDestroy } from "@/api/generated/api";
@@ -9,6 +9,7 @@ import type { FavoriteProduct } from "@/api/generated/interfaces";
 import { useAuth } from "@/contexts/AuthContext";
 import Image from "next/image";
 import TrashIcon from "./TrashIcon";
+import { i18n } from "@/config/i18n";
 
 type Props = {
   onClose: () => void;
@@ -162,6 +163,11 @@ function pickLocalized(value: any, fallback = ""): string {
 
 const FavoritesModal = ({ onClose, dictionary }: Props) => {
   const router = useRouter();
+  const pathname = usePathname();
+  const localeSegment = pathname?.split("/")[1];
+  const lang = (i18n.locales as readonly string[]).includes(localeSegment ?? "")
+    ? localeSegment
+    : i18n.defaultLocale;
   const [items, setItems] = useState<FavoriteProduct[]>([]);
   const [loading, setLoading] = useState(false);
   const { isAuthenticated } = useAuth();
@@ -219,13 +225,11 @@ const FavoritesModal = ({ onClose, dictionary }: Props) => {
   const handleRedirect = (e?: React.MouseEvent) => {
     if (e && (e.ctrlKey || e.metaKey)) {
       // Ctrl+click or Cmd+click - open in new tab
-      const pathname = typeof window !== "undefined" ? window.location.pathname : "";
-      const locale = pathname.split("/")[1] || "ge";
-      window.open(`/${locale}/favorites`, "_blank");
+      window.open(`/${lang}/favorites`, "_blank");
       onClose();
       return;
     }
-    router.push("/favorites");
+    router.push(`/${lang}/favorites`);
     onClose();
   };
 
@@ -233,9 +237,7 @@ const FavoritesModal = ({ onClose, dictionary }: Props) => {
     if (e.button === 1) {
       // Middle mouse button
       e.preventDefault();
-      const pathname = typeof window !== "undefined" ? window.location.pathname : "";
-      const locale = pathname.split("/")[1] || "ge";
-      window.open(`/${locale}/favorites`, "_blank");
+      window.open(`/${lang}/favorites`, "_blank");
       onClose();
     }
   };
@@ -334,7 +336,10 @@ const FavoritesModal = ({ onClose, dictionary }: Props) => {
                     height={70}
                     alt={"empty-favorites"}
                   />
-                  {loading ? "იტვირთება..." : dictionary?.cart?.emptyCart?.subTitle}
+                  {loading
+                    ? dictionary?.cart?.favorites?.loading ||
+                      (lang === "en" ? "Loading..." : "იტვირთება...")
+                    : dictionary?.cart?.emptyFavorites?.subTitle}
                 </div>
               )}
             </ProductList>
@@ -342,7 +347,9 @@ const FavoritesModal = ({ onClose, dictionary }: Props) => {
           {!isEmpty && (
             <StyledButton onClick={handleRedirect} onMouseDown={handleRedirectMouseDown}>
               <PrimaryButton
-                text={dictionary?.cart?.favorites?.button || "დეტალურად"}
+                text={
+                  dictionary?.cart?.favorites?.button || (lang === "en" ? "Details" : "დეტალურად")
+                }
                 height="50px"
                 width="317px"
                 media="full"

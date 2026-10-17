@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import styled from "styled-components";
 import PrimaryButton from "../Buttons/PrimaryButton";
 import CloseIcon from "../Header/CloseIcon";
@@ -166,6 +166,7 @@ const AuthorizationModal: React.FC<AuthorizationModalProps> = ({
   const [phoneNumber, setPhoneNumber] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const submittingRef = useRef(false);
   const [error, setError] = useState("");
 
   const { loginWithTokens } = useAuth();
@@ -206,11 +207,13 @@ const AuthorizationModal: React.FC<AuthorizationModalProps> = ({
   };
 
   const handleSubmit = async () => {
+    if (submittingRef.current || isLoading) return;
     if (!email || !password) {
       setError(dictionary?.authorizationModal?.alert3 || "Please fill in all fields");
       return;
     }
 
+    submittingRef.current = true;
     setIsLoading(true);
     setError("");
 
@@ -378,6 +381,7 @@ const AuthorizationModal: React.FC<AuthorizationModalProps> = ({
         }
       }
     } finally {
+      submittingRef.current = false;
       setIsLoading(false);
     }
   };

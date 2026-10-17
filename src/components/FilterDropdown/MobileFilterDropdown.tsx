@@ -4,7 +4,7 @@ import styled, { keyframes } from "styled-components";
 import Line from "../FilterSidebar/Line";
 import PriceFilter from "../FilterSidebar/PriceFilter";
 import ButtonFilter from "./ButtonFilter";
-import PriceRangeSlider from "../FilterSidebar/PriceRangeSlider";
+import dynamic from "next/dynamic";
 import PriceInput from "@/components/ListProductCard/PriceInput";
 import CheckboxGroup from "../FilterSidebar/CheckboxGroup";
 import { useFilterContext } from "@/contexts/FilterContext";
@@ -12,6 +12,12 @@ import { useFilterAttributeGroups, FilterGroup } from "@/hooks/useFilterAttribut
 import { usePathname } from "next/navigation";
 import { getLocaleFromPath } from "@/utils/getLocaleFromPath";
 import FiltersLoadingSkeleton from "../FilterSidebar/FiltersLoadingSkeleton";
+
+// Loaded lazily so MUI/emotion stay out of the initial products bundle
+const PriceRangeSlider = dynamic(() => import("../FilterSidebar/PriceRangeSlider"), {
+  ssr: false,
+  loading: () => <div style={{ height: 46 }} aria-hidden />,
+});
 
 const slideUp = keyframes`
   from {
@@ -242,7 +248,12 @@ const MobileFilterDropdown: React.FC<MobileFilterDropdownProps> = ({
       <Overlay onClick={onClose} />
       <DropdownWrapper>
         <ScrollArea>
-          <CloseButton onClick={onClose}>{dictionary.filter.clear}</CloseButton>
+          <CloseButton
+            onClick={onClose}
+            aria-label={dictionary.filter?.close ?? dictionary.filter?.clear}
+          >
+            {dictionary.filter?.close ?? dictionary.filter?.clear}
+          </CloseButton>
           <Title>{dictionary.filter.title}</Title>
           <Line />
           {showSkeleton && <FiltersLoadingSkeleton sections={2} rowsPerSection={4} compact />}

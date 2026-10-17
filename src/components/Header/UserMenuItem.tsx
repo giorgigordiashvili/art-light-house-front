@@ -2,6 +2,7 @@ import React from "react";
 import styled, { css } from "styled-components";
 import Image from "next/image";
 import { useRouter, usePathname } from "next/navigation";
+import { i18n } from "@/config/i18n";
 
 interface StyledContainerProps {
   textcolor?: string;
@@ -62,15 +63,21 @@ const UserMenuItem = ({ text, icon, color, route, onClick }: Props) => {
   // Path without the locale prefix, used to detect the active menu item
   const currentPath = (pathname || "/").replace(/^\/(ge|en)(?=\/|$)/, "") || "/";
   const isActive = !!route && (currentPath === route || currentPath.startsWith(`${route}/`));
+  const localeSegment = pathname?.split("/")[1];
+  const lang = (i18n.locales as readonly string[]).includes(localeSegment ?? "")
+    ? localeSegment
+    : i18n.defaultLocale;
+  // Locale-prefixed target avoids a middleware redirect (and a wrong-locale guess)
+  const href = route ? `/${lang}${route}` : undefined;
 
   const handleClick = (e: React.MouseEvent) => {
     if (route) {
       // Check for Ctrl+click (Windows/Linux) or Cmd+click (Mac) or middle-click
       if (e.ctrlKey || e.metaKey || e.button === 1) {
-        window.open(route, "_blank");
+        window.open(href, "_blank");
         return;
       }
-      router.push(route);
+      router.push(href!);
     }
     if (onClick) {
       onClick();
@@ -79,9 +86,9 @@ const UserMenuItem = ({ text, icon, color, route, onClick }: Props) => {
 
   const handleMouseDown = (e: React.MouseEvent) => {
     // Handle middle-click (mouse wheel click) only for routes
-    if (e.button === 1 && route) {
+    if (e.button === 1 && href) {
       e.preventDefault(); // Prevent default middle-click behavior
-      window.open(route, "_blank");
+      window.open(href, "_blank");
     }
   };
 

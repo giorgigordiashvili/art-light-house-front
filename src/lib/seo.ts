@@ -3,7 +3,20 @@ import { i18n, Locale } from "@/config/i18n";
 
 export const SITE_URL = "https://artlighthouse.ge";
 export const SITE_NAME = "Art Light House";
-export const DEFAULT_OG_IMAGE = `${SITE_URL}/favicon.png`;
+export const DEFAULT_OG_IMAGE = `${SITE_URL}/og-image.png`;
+export const DEFAULT_OG_IMAGE_WIDTH = 1200;
+export const DEFAULT_OG_IMAGE_HEIGHT = 630;
+
+/**
+ * Serialize JSON-LD safely for inlining in a <script> tag.
+ * Escapes "<", ">" and "&" so backend-controlled strings cannot close the script element.
+ */
+export function safeJsonLd(data: unknown): string {
+  return JSON.stringify(data)
+    .replace(/</g, "\\u003c")
+    .replace(/>/g, "\\u003e")
+    .replace(/&/g, "\\u0026");
+}
 
 /**
  * Map front-end locale codes to BCP-47 hreflang codes.
@@ -13,6 +26,14 @@ const HREFLANG_MAP: Record<string, string> = {
   ge: "ka",
   en: "en",
 };
+
+/** BCP-47 value for <html lang>, e.g. "ge" -> "ka". */
+export function toHtmlLang(locale: string): string {
+  return HREFLANG_MAP[locale] || HREFLANG_MAP[i18n.defaultLocale];
+}
+
+// Titles that already carry the brand must not get the root "%s | Art Light House" template
+const BRAND_IN_TITLE = /light\s*house|ლაითჰაუს/i;
 
 interface SeoMetadataOptions {
   title: string;
@@ -52,7 +73,7 @@ export function buildSeoMetadata({
   languages["x-default"] = `${SITE_URL}/${i18n.defaultLocale}${pathname}`;
 
   const metadata: Metadata = {
-    title,
+    title: BRAND_IN_TITLE.test(title) ? { absolute: title } : title,
     description,
     alternates: {
       canonical: canonicalUrl,
@@ -69,6 +90,7 @@ export function buildSeoMetadata({
         {
           url: image,
           alt: title,
+          ...(ogImage ? {} : { width: DEFAULT_OG_IMAGE_WIDTH, height: DEFAULT_OG_IMAGE_HEIGHT }),
         },
       ],
     },

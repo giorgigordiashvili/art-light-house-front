@@ -155,43 +155,7 @@ const NewProducts = ({ dictionary, initialFeaturedProducts }: NewProductsProps) 
     // Do not prevent default here; only when dragging actually starts
   };
 
-  // Touch events for mobile drag scrolling
-  const handleTouchStart = (e: React.TouchEvent) => {
-    if (!scrollContainerRef.current) return;
-
-    const target = e.target as HTMLElement;
-    if (target.closest("[data-plus-button]")) {
-      return;
-    }
-
-    setIsPointerDown(true);
-    const touch = e.touches[0];
-    setStartX(touch.pageX - scrollContainerRef.current.offsetLeft);
-    setScrollLeft(scrollContainerRef.current.scrollLeft);
-  };
-
-  const handleTouchMove = (e: React.TouchEvent) => {
-    if (!isPointerDown || !scrollContainerRef.current) return;
-
-    const touch = e.touches[0];
-    const x = touch.pageX - scrollContainerRef.current.offsetLeft;
-    const dx = x - startX;
-
-    if (!isDragging && Math.abs(dx) > DRAG_THRESHOLD) {
-      setIsDragging(true);
-    }
-
-    if (isDragging) {
-      e.preventDefault();
-      // On mobile, use 1:1 ratio for natural scrolling feel
-      scrollContainerRef.current.scrollLeft = scrollLeft - dx;
-    }
-  };
-
-  const handleTouchEnd = () => {
-    setIsDragging(false);
-    setIsPointerDown(false);
-  };
+  // Touch devices use native overflow scrolling (no JS touch handlers)
 
   const handleMouseLeave = () => {
     // Only stop dragging if we're not actively dragging
@@ -249,9 +213,6 @@ const NewProducts = ({ dictionary, initialFeaturedProducts }: NewProductsProps) 
           $isDragging={isDragging}
           onMouseDown={handleMouseDown}
           onMouseLeave={handleMouseLeave}
-          onTouchStart={handleTouchStart}
-          onTouchMove={handleTouchMove}
-          onTouchEnd={handleTouchEnd}
         >
           {displayedProducts.map((product) => (
             <NewProductCard key={product.id} product={product} dictionary={dictionary} />

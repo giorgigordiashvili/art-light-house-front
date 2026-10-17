@@ -4,6 +4,7 @@ import Container from "../../ui/Container";
 import styled from "styled-components";
 import PopularProductCard from "./PopularProductCard";
 import type { HomepageSection } from "@/types/homepage";
+import { localized } from "@/utils/localizedText";
 
 const StyledContainer = styled.div`
   margin-top: 121px;
@@ -66,8 +67,8 @@ const PopularProducts = ({ dictionary, homepageSections, lang }: PopularProducts
             return (
               <PopularProductCard
                 key={room.id}
-                image={room.custom_data?.image || "/assets/bedroom.svg"}
-                label={room.custom_data?.[nameKey] || room.label}
+                image={room.custom_data?.image || "/assets/bedroom.webp"}
+                label={room.custom_data?.[nameKey] || localized(room.label, apiLang)}
                 width={room.custom_data?.width || 511}
                 isRightAligned={room.custom_data?.is_right_aligned || false}
                 isMiddleCard={room.custom_data?.is_middle_card || false}

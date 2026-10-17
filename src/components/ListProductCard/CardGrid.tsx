@@ -31,22 +31,6 @@ const EmptyMessage = styled.div`
   pointer-events: none;
 `;
 
-const DesktopOnly = styled.div`
-  display: block;
-
-  @media (max-width: 1080px) {
-    display: none;
-  }
-`;
-
-const MobileOnly = styled.div`
-  display: none;
-
-  @media (max-width: 1080px) {
-    display: block;
-  }
-`;
-
 interface CardGridProps {
   products: ProductList[];
   dictionary: any;
@@ -54,8 +38,7 @@ interface CardGridProps {
 }
 
 const CardGrid = ({ products, dictionary, loading = false }: CardGridProps) => {
-  const CARDS_PER_PAGE_DESKTOP = 12;
-  const CARDS_PER_PAGE_MOBILE = 12;
+  const CARDS_PER_PAGE = 12;
 
   // Create skeleton items for loading state
   const createSkeletonItems = (count: number) => {
@@ -64,7 +47,7 @@ const CardGrid = ({ products, dictionary, loading = false }: CardGridProps) => {
 
   // Create an array of exactly 12 items: real products + placeholders
   // Only first 4 images get priority (above the fold)
-  const createGridItems = (cardsPerPage: number = CARDS_PER_PAGE_DESKTOP) => {
+  const createGridItems = (cardsPerPage: number = CARDS_PER_PAGE) => {
     const items = [];
 
     // Add real products - only first 4 get priority for faster LCP
@@ -83,38 +66,16 @@ const CardGrid = ({ products, dictionary, loading = false }: CardGridProps) => {
   };
 
   if (loading) {
-    return (
-      <>
-        <DesktopOnly>
-          <GridWrapper>{createSkeletonItems(CARDS_PER_PAGE_DESKTOP)}</GridWrapper>
-        </DesktopOnly>
-        <MobileOnly>
-          <GridWrapper>{createSkeletonItems(CARDS_PER_PAGE_MOBILE)}</GridWrapper>
-        </MobileOnly>
-      </>
-    );
+    return <GridWrapper>{createSkeletonItems(CARDS_PER_PAGE)}</GridWrapper>;
   }
 
   return (
-    <>
-      <DesktopOnly>
-        <GridWrapper>
-          {products.length === 0 && (
-            <EmptyMessage>{dictionary?.results?.emptyMessage || "No products found"}</EmptyMessage>
-          )}
-          {createGridItems(CARDS_PER_PAGE_DESKTOP)}
-        </GridWrapper>
-      </DesktopOnly>
-
-      <MobileOnly>
-        <GridWrapper>
-          {products.length === 0 && (
-            <EmptyMessage>{dictionary?.results?.emptyMessage || "No products found"}</EmptyMessage>
-          )}
-          {createGridItems(CARDS_PER_PAGE_MOBILE)}
-        </GridWrapper>
-      </MobileOnly>
-    </>
+    <GridWrapper>
+      {products.length === 0 && (
+        <EmptyMessage>{dictionary?.results?.emptyMessage || "No products found"}</EmptyMessage>
+      )}
+      {createGridItems(CARDS_PER_PAGE)}
+    </GridWrapper>
   );
 };
 

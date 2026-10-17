@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useRef } from "react";
 import styled from "styled-components";
 import Image from "next/image";
 import { ProductList } from "@/api/generated/interfaces";
@@ -48,6 +48,8 @@ const PlusButton = ({
   disabled?: boolean;
 }) => {
   const { openAuthModal } = useAuthModal();
+  // In-flight guard: a fast double click must not create duplicate cart lines
+  const busyRef = useRef(false);
 
   const handleClick = async (e: React.MouseEvent) => {
     e.preventDefault();
@@ -62,6 +64,8 @@ const PlusButton = ({
       return;
     }
 
+    if (busyRef.current) return;
+    busyRef.current = true;
     try {
       // Ensure we have a cart id
       const data = await ecommerceClientCartGetOrCreateRetrieve();
@@ -99,7 +103,11 @@ const PlusButton = ({
           window.dispatchEvent(new CustomEvent("cartUpdated", { detail: { count, cart: n } }));
         }
       } catch {}
-    } catch {}
+    } catch (err) {
+      console.error("Failed to add product to cart", err);
+    } finally {
+      busyRef.current = false;
+    }
   };
 
   return (

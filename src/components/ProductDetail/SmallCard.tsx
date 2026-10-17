@@ -37,10 +37,12 @@ const SmallCard = ({
   image,
   onClick,
   isSelected = false,
+  noImageText,
 }: {
   image: ProductImage;
   onClick?: () => void;
   isSelected?: boolean;
+  noImageText?: string;
 }) => {
   // Check if we have a valid image URL
   const rawImage = image.image || (image as any).image_url;
@@ -60,7 +62,7 @@ const SmallCard = ({
             height: "100%",
           }}
         >
-          No image
+          {noImageText || "No image"}
         </div>
       </StyleSmallCard>
     );
@@ -72,6 +74,7 @@ const SmallCard = ({
         src={rawImage}
         alt={image.alt_text || "Product image"}
         fill
+        sizes="(max-width: 1080px) 64px, 120px"
         style={{ objectFit: "cover" }}
         draggable={false}
       />

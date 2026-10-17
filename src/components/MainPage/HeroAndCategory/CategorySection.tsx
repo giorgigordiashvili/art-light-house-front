@@ -1,10 +1,30 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import styled from "styled-components";
+import Image from "next/image";
 import Container from "../../ui/Container";
 import ProductTitle from "./ProductTitle";
 import Circle from "@/components/ui/Circle";
 import type { HomepageSection } from "@/types/homepage";
+import { localized } from "@/utils/localizedText";
+
+// Must mirror images.remotePatterns in next.config; anything else is served unoptimized
+// so an unexpected CMS host can never break the homepage.
+const OPTIMIZABLE_IMAGE_HOSTS = new Set([
+  "testapi.artlighthouse.ge",
+  "art-light-house-images.fra1.cdn.digitaloceanspaces.com",
+  "echodesk-spaces.fra1.digitaloceanspaces.com",
+  "echodesk-media.fsn1.your-objectstorage.com",
+]);
+
+const isOptimizableImage = (src: string) => {
+  try {
+    const url = new URL(src);
+    return url.protocol === "https:" && OPTIMIZABLE_IMAGE_HOSTS.has(url.hostname);
+  } catch {
+    return false;
+  }
+};
 
 interface Props {
   dictionary: any;
@@ -103,7 +123,6 @@ const Card = styled.div<{
   width: number;
   height: number;
   gradient?: string;
-  $backgroundImage?: string;
 }>`
   position: relative;
   flex: 0 0 auto;
@@ -141,19 +160,7 @@ const Card = styled.div<{
     pointer-events: none;
   }
 
-  &::after {
-    content: "";
-    position: absolute;
-    inset: 0;
-    background-image: url(${(props) => props.$backgroundImage || "none"});
-    background-repeat: no-repeat;
-    background-position: right;
-    background-size: contain;
-    z-index: 0;
-    transition: transform 0.2s ease;
-  }
-
-  &:hover::after {
+  &:hover .card-image {
     transform: scale(1.1);
   }
 
@@ -161,7 +168,7 @@ const Card = styled.div<{
     box-shadow: 0 0 0 0.5px #ffcb40;
   }
 
-  > * {
+  > *:not(.card-image) {
     position: relative;
     z-index: 2;
   }
@@ -190,10 +197,19 @@ const Card = styled.div<{
         height: 92px !important;
       }
     }
+  }
+`;
 
-    &::after {
-      background-size: 70%;
-    }
+const CardImage = styled.div`
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  transition: transform 0.2s ease;
+
+  @media (max-width: 522px) {
+    left: auto;
+    width: 70%;
   }
 `;
 
@@ -237,6 +253,21 @@ const CategorySection = ({ homepageSections, lang }: Props) => {
     }
   };
 
+  const renderCardImage = (src: unknown, cardWidth: number) =>
+    typeof src === "string" && src.trim() !== "" ? (
+      <CardImage className="card-image">
+        <Image
+          src={src}
+          alt=""
+          fill
+          sizes={`(max-width: 522px) 210px, ${cardWidth}px`}
+          unoptimized={!isOptimizableImage(src)}
+          style={{ objectFit: "contain", objectPosition: "right center" }}
+          draggable="false"
+        />
+      </CardImage>
+    ) : null;
+
   // Don't render cards while loading
   if (!homepageSections || categories.length === 0) {
     return null;
@@ -253,7 +284,7 @@ const CategorySection = ({ homepageSections, lang }: Props) => {
                 const dimensions = getCardDimensions(0, index);
                 const nameKey = lang === "en" ? "name_en" : "name_ka";
                 const categoryLabel =
-                  category.custom_data?.[nameKey] || category.label?.[apiLang] || category.label;
+                  category.custom_data?.[nameKey] || localized(category.label, apiLang);
                 const categoryImage = category.custom_data?.image || category.image;
                 const categoryGradient = category.custom_data?.gradient_style || category.gradient;
 
@@ -263,8 +294,8 @@ const CategorySection = ({ homepageSections, lang }: Props) => {
                     width={dimensions.width}
                     height={dimensions.height}
                     gradient={categoryGradient}
-                    $backgroundImage={categoryImage}
                   >
+                    {renderCardImage(categoryImage, dimensions.width)}
                     <ProductTitle text={categoryLabel} />
                   </Card>
                 );
@@ -276,7 +307,7 @@ const CategorySection = ({ homepageSections, lang }: Props) => {
                 const dimensions = getCardDimensions(1, index);
                 const nameKey = lang === "en" ? "name_en" : "name_ka";
                 const categoryLabel =
-                  category.custom_data?.[nameKey] || category.label?.[apiLang] || category.label;
+                  category.custom_data?.[nameKey] || localized(category.label, apiLang);
                 const categoryImage = category.custom_data?.image || category.image;
                 const categoryGradient = category.custom_data?.gradient_style || category.gradient;
 
@@ -286,8 +317,8 @@ const CategorySection = ({ homepageSections, lang }: Props) => {
                     width={dimensions.width}
                     height={dimensions.height}
                     gradient={categoryGradient}
-                    $backgroundImage={categoryImage}
                   >
+                    {renderCardImage(categoryImage, dimensions.width)}
                     <ProductTitle text={categoryLabel} />
                   </Card>
                 );

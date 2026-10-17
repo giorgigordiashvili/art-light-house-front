@@ -65,6 +65,8 @@ const Summary = ({ dictionary, cart, onPayment, submitting, shippingCost = 0 }: 
   const total = subtotal + shippingCost;
 
   const handleCheckout = (e?: React.MouseEvent) => {
+    // Ignore clicks (including on the wrapper padding) while busy, to avoid duplicate orders
+    if (submitting) return;
     if (isCheckoutPage && onPayment) {
       // On checkout page, trigger payment
       onPayment();

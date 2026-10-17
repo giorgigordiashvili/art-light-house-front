@@ -12,6 +12,13 @@ const StyleSaveButton = styled.div<{ disabled?: boolean }>`
   transition: 0.2s ease-in-out;
   opacity: ${({ disabled }) => (disabled ? 0.7 : 1)};
 
+  @media (min-width: 1081px) {
+    min-width: 143px;
+    width: auto;
+    padding: 0 16px;
+    white-space: nowrap;
+  }
+
   @media (max-width: 1080px) {
     max-width: 100%;
     width: 100%;
@@ -41,6 +48,7 @@ type Props = {
   onSave?: () => void;
   disabled?: boolean;
   isLoading?: boolean;
+  loadingText?: string;
 };
 
 const SaveButton = ({
@@ -49,6 +57,7 @@ const SaveButton = ({
   onSave,
   disabled = false,
   isLoading = false,
+  loadingText = "Saving...",
 }: Props) => {
   const handleClick = () => {
     if (disabled || isLoading) return;
@@ -62,7 +71,7 @@ const SaveButton = ({
 
   return (
     <StyleSaveButton onClick={handleClick} disabled={disabled || isLoading}>
-      <ButtonText>{isLoading ? "Saving..." : dictionary?.button2 || "Save"}</ButtonText>
+      <ButtonText>{isLoading ? loadingText : dictionary?.button2 || "Save"}</ButtonText>
     </StyleSaveButton>
   );
 };

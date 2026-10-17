@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import styled from "styled-components";
 import EditIcon from "./EditIcon";
 import Image from "next/image";
@@ -87,6 +87,18 @@ const AddedAddressCard = ({
   dictionary: any;
 }) => {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!isEditModalOpen) return;
+    const handleMouseDown = (event: MouseEvent) => {
+      if (containerRef.current && !containerRef.current.contains(event.target as Node)) {
+        setIsEditModalOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleMouseDown);
+    return () => document.removeEventListener("mousedown", handleMouseDown);
+  }, [isEditModalOpen]);
 
   const iconMap: Record<string, string> = {
     [dictionary.cardTitle2]: "/assets/home.svg",
@@ -95,7 +107,7 @@ const AddedAddressCard = ({
   };
 
   return (
-    <StyledContainer>
+    <StyledContainer ref={containerRef}>
       <StyledContent>
         <Image src={iconMap[data.place]} width={24} height={24} alt="icon" />
         <StyledTextWrapper>
@@ -116,7 +128,7 @@ const AddedAddressCard = ({
             setIsEditModalOpen(false);
             onDeleteAddress();
           }}
-          addressId={data.id || 0}
+          addressId={data.id}
           dictionary={dictionary}
         />
       )}

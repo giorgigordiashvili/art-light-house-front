@@ -63,6 +63,13 @@ interface SummaryBlockProps {
   order?: Order;
 }
 
+// Returns the numeric value when it is a finite, non-zero number; otherwise null
+const nonZeroAmount = (value?: string | number | null): number | null => {
+  if (value === undefined || value === null || value === "") return null;
+  const num = Number(value);
+  return Number.isFinite(num) && num !== 0 ? num : null;
+};
+
 const SummaryBlock = ({ dictionary, order }: SummaryBlockProps) => {
   // If no order provided, show placeholder
   if (!order) {
@@ -100,6 +107,30 @@ const SummaryBlock = ({ dictionary, order }: SummaryBlockProps) => {
 
       <Divider />
 
+      {order.subtotal !== undefined && order.subtotal !== null && order.subtotal !== "" && (
+        <DetailRow>
+          <DetailLabel>{dictionary?.succsessOrder?.productCost || "Product price"}</DetailLabel>
+          <DetailPrice>{order.subtotal} ₾</DetailPrice>
+        </DetailRow>
+      )}
+      {nonZeroAmount(order.shipping_cost) !== null && (
+        <DetailRow>
+          <DetailLabel>{dictionary?.succsessOrder?.deliveryCost || "Delivery service"}</DetailLabel>
+          <DetailPrice>{order.shipping_cost} ₾</DetailPrice>
+        </DetailRow>
+      )}
+      {nonZeroAmount(order.tax_amount) !== null && (
+        <DetailRow>
+          <DetailLabel>{dictionary?.succsessOrder?.tax || "Tax"}</DetailLabel>
+          <DetailPrice>{order.tax_amount} ₾</DetailPrice>
+        </DetailRow>
+      )}
+      {nonZeroAmount(order.discount_amount) !== null && (
+        <DetailRow>
+          <DetailLabel>{dictionary?.succsessOrder?.discount || "Discount"}</DetailLabel>
+          <DetailPrice>-{String(order.discount_amount).replace(/^-/, "")} ₾</DetailPrice>
+        </DetailRow>
+      )}
       <DetailRow>
         <DetailLabel>{dictionary?.succsessOrder?.orderNumber || "Order Number"}</DetailLabel>
         <DetailPrice>{order.order_number}</DetailPrice>
@@ -110,7 +141,10 @@ const SummaryBlock = ({ dictionary, order }: SummaryBlockProps) => {
       </DetailRow>
       <DetailRow>
         <DetailLabel>{dictionary?.succsessOrder?.status || "Status"}</DetailLabel>
-        <DetailPrice>{String(order.status || "pending")}</DetailPrice>
+        <DetailPrice>
+          {dictionary?.succsessOrder?.statuses?.[String(order.status ?? "pending")] ??
+            String(order.status ?? "pending")}
+        </DetailPrice>
       </DetailRow>
     </SummaryContainer>
   );
