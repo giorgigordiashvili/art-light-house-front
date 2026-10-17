@@ -2,11 +2,14 @@
 import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import Image from "next/image";
+import Link from "next/link";
 import Container from "../../ui/Container";
 import ProductTitle from "./ProductTitle";
 import Circle from "@/components/ui/Circle";
 import type { HomepageSection } from "@/types/homepage";
 import { localized } from "@/utils/localizedText";
+import { localizeHref } from "@/utils/localizeHref";
+import { resolveCategoryLink } from "@/utils/categoryLink";
 
 // Must mirror images.remotePatterns in next.config; anything else is served unoptimized
 // so an unexpected CMS host can never break the homepage.
@@ -119,7 +122,9 @@ const Row = styled.div.withConfig({
   }
 `;
 
-const Card = styled.div<{
+const Card = styled(Link).withConfig({
+  shouldForwardProp: (prop) => !["width", "height", "gradient"].includes(prop),
+})<{
   width: number;
   height: number;
   gradient?: string;
@@ -139,6 +144,7 @@ const Card = styled.div<{
   z-index: 1;
   cursor: pointer;
   overflow: hidden;
+  text-decoration: none;
   transition: box-shadow 0.3s ease;
 
   &::before {
@@ -287,6 +293,10 @@ const CategorySection = ({ homepageSections, lang }: Props) => {
                   category.custom_data?.[nameKey] || localized(category.label, apiLang);
                 const categoryImage = category.custom_data?.image || category.image;
                 const categoryGradient = category.custom_data?.gradient_style || category.gradient;
+                const categoryHref = localizeHref(
+                  resolveCategoryLink(category.custom_data?.link),
+                  lang
+                );
 
                 return (
                   <Card
@@ -294,6 +304,8 @@ const CategorySection = ({ homepageSections, lang }: Props) => {
                     width={dimensions.width}
                     height={dimensions.height}
                     gradient={categoryGradient}
+                    href={categoryHref}
+                    draggable={false}
                   >
                     {renderCardImage(categoryImage, dimensions.width)}
                     <ProductTitle text={categoryLabel} />
@@ -310,6 +322,10 @@ const CategorySection = ({ homepageSections, lang }: Props) => {
                   category.custom_data?.[nameKey] || localized(category.label, apiLang);
                 const categoryImage = category.custom_data?.image || category.image;
                 const categoryGradient = category.custom_data?.gradient_style || category.gradient;
+                const categoryHref = localizeHref(
+                  resolveCategoryLink(category.custom_data?.link),
+                  lang
+                );
 
                 return (
                   <Card
@@ -317,6 +333,8 @@ const CategorySection = ({ homepageSections, lang }: Props) => {
                     width={dimensions.width}
                     height={dimensions.height}
                     gradient={categoryGradient}
+                    href={categoryHref}
+                    draggable={false}
                   >
                     {renderCardImage(categoryImage, dimensions.width)}
                     <ProductTitle text={categoryLabel} />

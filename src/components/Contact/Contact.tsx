@@ -86,8 +86,8 @@ const Contact: React.FC<ContactProps> = ({
               side="left"
               dictionary={dictionary}
               location={{
-                lat: branches[0].custom_data?.latitude || 41.720542,
-                lng: branches[0].custom_data?.longitude || 44.764789,
+                lat: branches[0].custom_data?.latitude || 41.738801,
+                lng: branches[0].custom_data?.longitude || 44.7812806,
               }}
               branchData={branches[0]}
               lang={lang}
@@ -100,8 +100,8 @@ const Contact: React.FC<ContactProps> = ({
                   side="left"
                   dictionary={dictionary}
                   location={{
-                    lat: leftBranch.custom_data?.latitude || 41.720542,
-                    lng: leftBranch.custom_data?.longitude || 44.764789,
+                    lat: leftBranch.custom_data?.latitude || 41.738801,
+                    lng: leftBranch.custom_data?.longitude || 44.7812806,
                   }}
                   branchData={leftBranch}
                   lang={lang}

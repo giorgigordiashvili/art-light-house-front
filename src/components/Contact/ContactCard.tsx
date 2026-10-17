@@ -94,7 +94,7 @@ const ContactCard = ({
   lang = "ge",
   fullwidth,
 }: Props & { fullwidth?: boolean }) => {
-  const defaultPosition = { lat: 41.720542, lng: 44.764789 };
+  const defaultPosition = { lat: 41.738801, lng: 44.7812806 };
   const mapPosition = location ?? defaultPosition;
 
   // Map lang to API language key (ge -> ka)

@@ -106,7 +106,11 @@ function FooterLinks({ footer }: any) {
             </a>
           </li>
           <li>
-            <a href="#" target="_blank" rel="noopener noreferrer">
+            <a
+              href="https://www.facebook.com/profile.php?id=100072400697552"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
               {footer?.footerNav2?.Facebook || "Facebook"}
             </a>
           </li>

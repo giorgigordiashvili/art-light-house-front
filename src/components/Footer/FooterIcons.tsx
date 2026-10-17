@@ -36,7 +36,11 @@ function FooterIcons() {
       <a href="#" target="_blank" rel="noopener noreferrer">
         <Image src="/assets/icons/linkedin.svg" alt="LinkedIn" width={24} height={24} />
       </a>
-      <a href="#" target="_blank" rel="noopener noreferrer">
+      <a
+        href="https://www.facebook.com/profile.php?id=100072400697552"
+        target="_blank"
+        rel="noopener noreferrer"
+      >
         <Image src="/assets/icons/fb.svg" alt="Facebook" width={24} height={24} />
       </a>
     </IconsWrapper>
